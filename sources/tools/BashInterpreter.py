@@ -17,7 +17,7 @@ class BashInterpreter(Tools):
         super().__init__()
         self.tag = "bash"
 
-    def execute(self, commands: str, safety = False, timeout = 10):
+    def execute(self, commands: str, safety = False, timeout = 1000):
         """
         Execute bash commands.
         """
@@ -35,7 +35,7 @@ class BashInterpreter(Tools):
                 return output.strip()
             except subprocess.CalledProcessError as e:
                 return f"Command execution failed:\n{e.output}"
-            except subprocess.TimeoutExpired:
+            except subprocess.TimeoutExpired as e:
                 return f"Command timed out. Output:\n{e.output}"
 
     def interpreter_feedback(self, output):

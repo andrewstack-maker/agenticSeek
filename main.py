@@ -26,7 +26,7 @@ def main():
                                server_address="192.168.1.100:5000")
 
     agent = CoderAgent(model="deepseek-r1:14b",
-                       name="Marcus the code agent",
+                       name="jarvis",
                        prompt_path="prompts/coder_agent.txt",
                        provider=server_provider)
 

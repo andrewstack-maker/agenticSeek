@@ -4,14 +4,14 @@ import soundfile as sf
 import subprocess
 import re
 
-# 🇺🇸 'a' => American English, 🇬🇧 'b' => British English
-# 🇯🇵 'j' => Japanese: pip install misaki[ja]
-# 🇨🇳 'z' => Mandarin Chinese: pip install misaki[zh]
-pipeline = KPipeline(lang_code='a') # <= make sure lang_code matches voice
-
 class Speech():
-    def __init__(self) -> None:
-        self.pipeline = KPipeline(lang_code='a')
+    def __init__(self, language = "english") -> None:
+        self.lang_map = {
+            "english": 'a', # 🇺🇸 'a' => American English 
+            "chinese": 'z', # 🇯🇵 'j' => Japanese: pip install misaki[ja]
+            "japanese": 'j' # # 🇨🇳 'z' => Mandarin Chinese: pip install misaki[zh]
+        }
+        self.pipeline = KPipeline(lang_code=self.lang_map[language])
 
     def speak(self, sentence):
         sentence = self.clean_sentence(sentence)
