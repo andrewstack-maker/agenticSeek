@@ -12,3 +12,9 @@ kokoro==0.7.12
 flask==3.1.0
 soundfile==0.13.1
 termcolor
+
+# if use chinese
+ordered_set
+pypinyin
+cn2an
+jieba

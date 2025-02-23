@@ -3,6 +3,7 @@
 import sys
 import signal
 import argparse
+import configparser
 
 from sources.llm_provider import Provider
 from sources.interaction import Interaction
@@ -14,21 +15,26 @@ parser.add_argument('--speak', action='store_true',
                 help='Make AI use text-to-speech')
 args = parser.parse_args()
 
+config = configparser.ConfigParser()
+config.read('config.ini')
+
 def handleInterrupt(signum, frame):
     sys.exit(0)
 
 def main():
     signal.signal(signal.SIGINT, handler=handleInterrupt)
 
-    #local_provider = Provider("ollama", "deepseek-r1:14b", "127.0.0.1:5000")
-    server_provider = Provider(provider_name="server",
-                               model="deepseek-r1:14b",
-                               server_address="192.168.1.100:5000")
+    if config.getboolean('MAIN', 'is_local'):
+        provider = Provider(config["MAIN"]["provider_name"], config["MAIN"]["provider_model"], config["MAIN"]["provider_server_address"])
+    else:
+        provider = Provider(provider_name=config["MAIN"]["provider_name"],
+                                   model=config["MAIN"]["provider_model"],
+                                   server_address=config["MAIN"]["provider_server_address"])
 
-    agent = CoderAgent(model="deepseek-r1:14b",
-                       name="jarvis",
+    agent = CoderAgent(model=config["MAIN"]["provider_model"],
+                       name=config["MAIN"]["agent_name"],
                        prompt_path="prompts/coder_agent.txt",
-                       provider=server_provider)
+                       provider=provider)
 
     interaction = Interaction([agent], tts_enabled=args.speak)
     while interaction.is_active:
