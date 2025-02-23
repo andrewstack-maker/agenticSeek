@@ -3,6 +3,8 @@ from IPython.display import display, Audio
 import soundfile as sf
 import subprocess
 import re
+import platform
+
 
 class Speech():
     def __init__(self, language = "english") -> None:
@@ -26,11 +28,16 @@ class Speech():
             speed=1, split_pattern=r'\n+'
         )
         for i, (gs, ps, audio) in enumerate(generator):
-            audio_file = f'sample.wav'
+            audio_file = 'sample.wav'
+            print(audio_file)
             display(Audio(data=audio, rate=24000, autoplay=i==0))
             sf.write(audio_file, audio, 24000) # save each audio file
-            subprocess.call(["afplay", audio_file])
-    
+            if platform.system().lower() != "windows":
+                subprocess.call(["afplay", audio_file])
+            else:
+                import winsound
+                winsound.PlaySound(audio_file, winsound.SND_FILENAME)
+
     def clean_sentence(self, sentence):
         sentence = re.sub(r'`.*?`', '', sentence)
         sentence = re.sub(r'[^a-zA-Z0-9.,!? ]+', '', sentence)

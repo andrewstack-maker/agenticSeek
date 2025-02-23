@@ -10,3 +10,5 @@ ollama==0.4.7
 scipy==1.15.1
 kokoro==0.7.12
 flask==3.1.0
+soundfile==0.13.1
+termcolor

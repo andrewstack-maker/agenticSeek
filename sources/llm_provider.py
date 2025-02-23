@@ -11,7 +11,7 @@ class Provider:
     def __init__(self, provider_name, model, server_address = "127.0.0.1:5000"):
         self.provider_name = provider_name.lower()
         self.model = model
-        self.server = self.check_address_format(server_address) 
+        self.server = self.check_address_format(server_address)
         self.available_providers = {
             "ollama": self.ollama_fn,
             "server": self.server_fn,
@@ -24,7 +24,7 @@ class Provider:
 
     def check_address_format(self, address):
         """
-        Validate if the address is valid IP. 
+        Validate if the address is valid IP.
         """
         try:
             ip, port = address.rsplit(":", 1)
@@ -34,7 +34,7 @@ class Provider:
         except ValueError as e:
             raise Exception(f"Invalid address format: {e}")
         return address
-    
+
     def respond(self, history, verbose = True):
         """
         Use the choosen provider to generate text.
@@ -60,7 +60,7 @@ class Provider:
         except Exception as e:
             print(f"An error occurred: {e}")
             return False
-    
+
     def server_fn(self, history, verbose = True):
         """
         Use a remote server wit LLM to generate text.
@@ -103,7 +103,7 @@ class Provider:
                 raise Exception("Ollama connection failed. is the server running ?")
             raise e
         return thought
-    
+
     def test_fn(self, history, verbose = True):
         """
         Test function to generate text.
