@@ -7,16 +7,22 @@ import re
 class Speech():
     def __init__(self, language = "english") -> None:
         self.lang_map = {
-            "english": 'a', # 🇺🇸 'a' => American English 
-            "chinese": 'z', # 🇯🇵 'j' => Japanese: pip install misaki[ja]
-            "japanese": 'j' # # 🇨🇳 'z' => Mandarin Chinese: pip install misaki[zh]
+            "english": 'a',
+            "chinese": 'z',
+            "french": 'f'
+        }
+        self.voice_map = {
+            "english": ['af_alloy', 'af_aoede', 'af_bella', 'af_heart', 'af_jessica', 'af_kore', 'af_nicole', 'af_nova', 'af_river', 'af_sarah', 'af_sky', 'am_adam', 'am_echo', 'am_eric', 'am_fenrir', 'am_liam', 'am_michael', 'am_onyx', 'am_puck'],
+            "chinese": ['zf_xiaobei', 'zf_xiaoni', 'zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'],
+            "french": ['ff_siwis']
         }
         self.pipeline = KPipeline(lang_code=self.lang_map[language])
+        self.voice = self.voice_map[language][0]
 
     def speak(self, sentence):
         sentence = self.clean_sentence(sentence)
         generator = self.pipeline(
-            sentence, voice='af_heart', # <= change voice here
+            sentence, voice=self.voice,
             speed=1, split_pattern=r'\n+'
         )
         for i, (gs, ps, audio) in enumerate(generator):

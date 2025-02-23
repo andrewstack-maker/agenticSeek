@@ -101,7 +101,6 @@ class Agent():
         feedback = ""
         blocks = None
 
-        print("Loading tools: ", self._tools.items())
         for name, tool in self._tools.items():
             feedback = ""
             blocks = tool.load_exec_block(answer)

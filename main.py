@@ -20,7 +20,7 @@ def handleInterrupt(signum, frame):
 def main():
     signal.signal(signal.SIGINT, handler=handleInterrupt)
 
-    #local_provider = Provider("ollama", "deepseek-r1:14b", None)
+    #local_provider = Provider("ollama", "deepseek-r1:14b", "127.0.0.1:5000")
     server_provider = Provider(provider_name="server",
                                model="deepseek-r1:14b",
                                server_address="192.168.1.100:5000")

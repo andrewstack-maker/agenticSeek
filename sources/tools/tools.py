@@ -70,25 +70,44 @@ class Tools():
             return text
         return text[:start_idx] + text[end_idx:]
 
-    def load_exec_block(self, generation:str) -> str:
+    def load_exec_block(self, generation: str) -> str:
         """
-        Extract the code/query blocks from the answer text.
+        Extract the code/query blocks from the answer text, removing consistent leading whitespace.
         """
         assert self.tag != "undefined", "Tag not defined"
         start_tag = f'```{self.tag}' 
-        end_tag = '```' 
+        end_tag = '```'
         code_blocks = []
         start_index = 0
-        
+
         if start_tag not in generation:
             return None
+
         while True:
             start_pos = generation.find(start_tag, start_index)
             if start_pos == -1:
                 break
+
+            line_start = generation.rfind('\n', 0, start_pos) + 1
+            if line_start == 0:
+                line_start = 0
+            leading_whitespace = generation[line_start:start_pos]
+
             end_pos = generation.find(end_tag, start_pos + len(start_tag))
             if end_pos == -1:
                 break
-            code_blocks.append(generation[start_pos + len(start_tag):end_pos])
+            content = generation[start_pos + len(start_tag):end_pos]
+            lines = content.split('\n')
+            if leading_whitespace:
+                processed_lines = []
+                for line in lines:
+                    if line.startswith(leading_whitespace):
+                        processed_lines.append(line[len(leading_whitespace):])
+                    else:
+                        processed_lines.append(line)
+                content = '\n'.join(processed_lines)
+
+            code_blocks.append(content)
             start_index = end_pos + len(end_tag)
+
         return code_blocks

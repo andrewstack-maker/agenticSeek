@@ -15,8 +15,7 @@ class Provider:
         self.available_providers = {
             "ollama": self.ollama_fn,
             "server": self.server_fn,
-            "test": self.test_fn
-
+            "test": self.test_fn,
         }
         if self.server != "":
             print("Provider initialized at ", self.server)
@@ -99,7 +98,7 @@ class Provider:
               thought += chunk['message']['content']
         except ollama.ResponseError as e:
             if e.status_code == 404:
-                ollama.pull(self._model)
+                ollama.pull(self.model)
             if "refused" in str(e):
                 raise Exception("Ollama connection failed. is the server running ?")
             raise e
