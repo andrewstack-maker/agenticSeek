@@ -10,6 +10,8 @@ class Interaction:
         self.is_active = True
         self.last_query = None
         self.last_answer = None
+        if tts_enabled:
+            self.speech.speak("Hello Sir, we are online and ready. What can I do for you ?")
 
     def is_active(self):
         return self.is_active
@@ -22,7 +24,7 @@ class Interaction:
                 buffer = input(f">>> ")
             except EOFError:
                 return None
-            if buffer == "exit":
+            if buffer == "exit" or buffer == "goodbye":
                 return None
         return buffer
 

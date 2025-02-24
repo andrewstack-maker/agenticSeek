@@ -103,7 +103,7 @@ class Agent():
 
         for name, tool in self._tools.items():
             feedback = ""
-            blocks = tool.load_exec_block(answer)
+            blocks, save_path = tool.load_exec_block(answer)
 
             if blocks != None:
                 output = tool.execute(blocks)
@@ -115,4 +115,6 @@ class Agent():
                 return False, feedback
             if blocks == None:
                 return True, feedback
+            if save_path != None:
+                tool.save_block(blocks, save_path)
             return True, feedback

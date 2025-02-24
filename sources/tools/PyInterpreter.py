@@ -71,10 +71,19 @@ class PyInterpreter(Tools):
         return False
 
 if __name__ == "__main__":
-    codes = ["""
-def test():
-    print("Hello world")
-test()
-    """]
+    text = """
+Sure here is how to print in python:
+```python:tmp.py
+
+def print_hello():
+    hello = "Hello World"
+    print(hello)
+
+print_hello()
+
+```
+"""
     py = PyInterpreter()
+    codes, save_path = py.load_exec_block(text)
+    py.save_block(codes, save_path)
     print(py.execute(codes))

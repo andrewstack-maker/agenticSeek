@@ -14,18 +14,20 @@ class Speech():
             "french": 'f'
         }
         self.voice_map = {
-            "english": ['af_alloy', 'af_aoede', 'af_bella', 'af_heart', 'af_jessica', 'af_kore', 'af_nicole', 'af_nova', 'af_river', 'af_sarah', 'af_sky', 'am_adam', 'am_echo', 'am_eric', 'am_fenrir', 'am_liam', 'am_michael', 'am_onyx', 'am_puck'],
+            "english": ['af_alloy', 'af_bella', 'af_kore', 'af_nicole', 'af_nova', 'af_sky', 'am_echo', 'am_michael', 'am_puck'],
             "chinese": ['zf_xiaobei', 'zf_xiaoni', 'zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'],
             "french": ['ff_siwis']
         }
         self.pipeline = KPipeline(lang_code=self.lang_map[language])
-        self.voice = self.voice_map[language][0]
+        self.voice = self.voice_map[language][4]
+        self.speed = 1.2
 
-    def speak(self, sentence):
+    def speak(self, sentence, voice_number = 2):
         sentence = self.clean_sentence(sentence)
+        self.voice = self.voice_map["english"][voice_number]
         generator = self.pipeline(
             sentence, voice=self.voice,
-            speed=1, split_pattern=r'\n+'
+            speed=self.speed, split_pattern=r'\n+'
         )
         for i, (gs, ps, audio) in enumerate(generator):
             audio_file = 'sample.wav'
@@ -46,4 +48,6 @@ class Speech():
 
 if __name__ == "__main__":
     speech = Speech()
-    speech.speak("hello would you like coffee ?")
+    for voice_idx in range (len(speech.voice_map["english"])):
+        print(f"Voice {voice_idx}")
+        speech.speak("I have indeed been uploaded, sir. We're online and ready.", voice_idx)

@@ -69,8 +69,18 @@ class Tools():
         if start_idx == -1 or end_idx == -1:
             return text
         return text[:start_idx] + text[end_idx:]
+    
+    def save_block(self, blocks:[str], save_path:str) -> None:
+        """
+        Save the code/query block to a file.
+        """
+        if save_path is None:
+            return
+        for block in blocks:
+            with open(save_path, 'w') as f:
+                f.write(block)
 
-    def load_exec_block(self, generation: str) -> str:
+    def load_exec_block(self, llm_text: str) -> str:
         """
         Extract the code/query blocks from the answer text, removing consistent leading whitespace.
         """
@@ -79,24 +89,25 @@ class Tools():
         end_tag = '```'
         code_blocks = []
         start_index = 0
+        save_path = None
 
-        if start_tag not in generation:
+        if start_tag not in llm_text:
             return None
 
         while True:
-            start_pos = generation.find(start_tag, start_index)
+            start_pos = llm_text.find(start_tag, start_index)
             if start_pos == -1:
                 break
 
-            line_start = generation.rfind('\n', 0, start_pos) + 1
+            line_start = llm_text.rfind('\n', 0, start_pos) + 1
             if line_start == 0:
                 line_start = 0
-            leading_whitespace = generation[line_start:start_pos]
+            leading_whitespace = llm_text[line_start:start_pos]
 
-            end_pos = generation.find(end_tag, start_pos + len(start_tag))
+            end_pos = llm_text.find(end_tag, start_pos + len(start_tag))
             if end_pos == -1:
                 break
-            content = generation[start_pos + len(start_tag):end_pos]
+            content = llm_text[start_pos + len(start_tag):end_pos]
             lines = content.split('\n')
             if leading_whitespace:
                 processed_lines = []
@@ -107,7 +118,9 @@ class Tools():
                         processed_lines.append(line)
                 content = '\n'.join(processed_lines)
 
+            if ':' in content.split('\n')[0]:
+                save_path = content.split('\n')[0].split(':')[1]
+                content = content[content.find('\n')+1:]
             code_blocks.append(content)
             start_index = end_pos + len(end_tag)
-
-        return code_blocks
+        return code_blocks, save_path

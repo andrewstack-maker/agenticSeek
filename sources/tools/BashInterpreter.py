@@ -17,26 +17,37 @@ class BashInterpreter(Tools):
         super().__init__()
         self.tag = "bash"
 
-    def execute(self, commands: str, safety = False, timeout = 1000):
+    def execute(self, commands: str, safety=False, timeout=1000):
         """
-        Execute bash commands.
+        Execute bash commands and display output in real-time.
         """
         if safety and input("Execute command? y/n ") != "y":
             return "Command rejected by user."
-
+    
+        concat_output = ""
         for command in commands:
             try:
-                output = subprocess.check_output(command,
-                                                 shell=True,
-                                                 stderr=subprocess.STDOUT,
-                                                 universal_newlines=True,
-                                                 timeout=timeout
-                                                )
-                return output.strip()
-            except subprocess.CalledProcessError as e:
-                return f"Command execution failed:\n{e.output}"
-            except subprocess.TimeoutExpired as e:
-                return f"Command timed out. Output:\n{e.output}"
+                process = subprocess.Popen(
+                    command,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    universal_newlines=True
+                )
+                command_output = ""
+                for line in process.stdout:
+                    print(line, end="")
+                    command_output += line
+                return_code = process.wait(timeout=timeout)
+                if return_code != 0:
+                    return f"Command {command} failed with return code {return_code}:\n{command_output}"
+                concat_output += f"Output of {command}:\n{command_output.strip()}\n\n"
+            except subprocess.TimeoutExpired:
+                process.kill()  # Kill the process if it times out
+                return f"Command {command} timed out. Output:\n{command_output}"
+            except Exception as e:
+                return f"Command {command} failed:\n{str(e)}"
+        return concat_output
 
     def interpreter_feedback(self, output):
         """
@@ -86,4 +97,4 @@ class BashInterpreter(Tools):
 
 if __name__ == "__main__":
     bash = BashInterpreter()
-    print(bash.execute(["ls", "pwd"]))
+    print(bash.execute(["ls", "pwd", "ip a", "nmap -sC 127.0.0.1"]))
