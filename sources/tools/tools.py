@@ -92,7 +92,7 @@ class Tools():
         save_path = None
 
         if start_tag not in llm_text:
-            return None
+            return None, None
 
         while True:
             start_pos = llm_text.find(start_tag, start_index)

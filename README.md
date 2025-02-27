@@ -9,9 +9,10 @@ THIS IS A WORK IN PROGRESS
 - Make sure you have ollama installed on your machine
 - Install dependencies (`pip3 install -r requirements.txt`)
 
-## Run
+## Run fully local
 
 Simplest way is to use ollama
+- First change the config.ini file to set the provider_name to `ollama` and provider_model to `deepseek-r1:7b`
 - In first terminal run `ollama serve`
 - In second terminal run `python3 main.py`
 - Ollama will download `deepseek-r1:7b` on your machine
@@ -19,6 +20,23 @@ Simplest way is to use ollama
     * For text to speech: `kokoro`
     * For speech to text: `distil-whisper/distil-medium.en`
 - type or say goodbye to exit.
+
+# Run model on another machine
+
+- First change the config.ini file to set the provider_name to `server` and provider_model to `deepseek-r1:7b` (or higher)
+- On the machine that will run the model execute the script in stream_llm.py
+
+```
+python3 stream_llm.py
+```
+
+- In the config.ini file, set the provider_server_address to the ip address of the machine that will run the model.
+
+- On the machine that will run the assistant execute main.py
+
+```
+python3 main.py
+```
 
 ## Text to speech
 
