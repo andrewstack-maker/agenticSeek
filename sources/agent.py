@@ -2,7 +2,8 @@ from typing import Tuple, Callable
 from abc import abstractmethod
 import os
 import random
-
+from sources.history import History
+from sources.utility import pretty_print
 class Agent():
     def __init__(self, model: str,
                        name: str,
@@ -12,17 +13,10 @@ class Agent():
         self._current_directory = os.getcwd()
         self._model = model
         self._llm = provider 
-        self._history = [] 
+        self._history = History(self.load_prompt(prompt_path),
+                                memory_compression=False)
         self._tools = {}
-        self.set_system_prompt(prompt_path)
     
-    def set_system_prompt(self, prompt_path: str) -> None:
-        self.set_history(self.load_prompt(prompt_path))
-    
-    @property
-    def history(self):
-        return self._history
-
     @property
     def name(self) -> str:
         return self._name
@@ -31,21 +25,6 @@ class Agent():
     def get_tools(self) -> dict:
         return self._tools
 
-    def set_history(self, system_prompt: str) -> None:
-        """
-        Set the default history for the agent.
-        Deepseek developers recommand not using a system prompt directly.
-        We therefore pass the system prompt as a user message.
-        """
-        self._history = [{'role': 'user', 'content': system_prompt},
-                         {'role': 'assistant', 'content': f'Hello, How can I help you today ?'}]
-    
-    def add_to_history(self, role: str, content: str) -> None:
-        self._history.append({'role': role, 'content': content})
-    
-    def clear_history(self) -> None:
-        self._history = []
-    
     def add_tool(self, name: str, tool: Callable) -> None:
         if tool is not Callable:
             raise TypeError("Tool must be a callable object (a method)")
@@ -81,12 +60,13 @@ class Agent():
         end_idx = text.rfind(end_tag)+8
         return text[start_idx:end_idx]
     
-    def llm_request(self, history, verbose = True) -> Tuple[str, str]:
+    def llm_request(self, verbose = True) -> Tuple[str, str]:
+        history = self._history.get()
         thought = self._llm.respond(history, verbose)
 
         reasoning = self.extract_reasoning_text(thought)
         answer = self.remove_reasoning_text(thought)
-        self.add_to_history('assistant', answer)
+        self._history.push('assistant', answer)
         return answer, reasoning
     
     def wait_message(self, speech_module):
@@ -96,6 +76,13 @@ class Agent():
                     "Hold on, I’m crunching numbers.",
                     "Working on it sir, please let me think."]
         speech_module.speak(messages[random.randint(0, len(messages)-1)])
+    
+    def print_code_blocks(self, blocks: list, name: str):
+        for block in blocks:
+            pretty_print(f"Executing {name} code...\n", color="output")
+            pretty_print("-"*100, color="output")
+            pretty_print(block, color="code")
+            pretty_print("-"*100, color="output")
 
     def execute_modules(self, answer: str) -> Tuple[bool, str]:
         feedback = ""
@@ -106,15 +93,13 @@ class Agent():
             blocks, save_path = tool.load_exec_block(answer)
 
             if blocks != None:
+                self.print_code_blocks(blocks, name)
                 output = tool.execute(blocks)
                 feedback = tool.interpreter_feedback(output)
-                answer = tool.remove_block(answer)
-                self.add_to_history('user', feedback)
+                self._history.push('user', feedback)
 
             if "failure" in feedback.lower():
                 return False, feedback
-            if blocks == None:
-                return True, feedback
             if save_path != None:
                 tool.save_block(blocks, save_path)
-            return True, feedback
+        return True, feedback

@@ -22,6 +22,7 @@ HU787
 """
 
 import sys
+import os
 from abc import abstractmethod
 
 sys.path.append('..')
@@ -57,26 +58,19 @@ class Tools():
         """
         pass
 
-    def remove_block(self, text:str) -> str:
-        """
-        Remove all code/query blocks within a tag from the answer text.
-        """
-        assert self.tag != "undefined", "Tag not defined"
-        start_tag = f'```{self.tag}' 
-        end_tag = '```' 
-        start_idx = text.find(start_tag)
-        end_idx = text.rfind(end_tag)+3
-        if start_idx == -1 or end_idx == -1:
-            return text
-        return text[:start_idx] + text[end_idx:]
-    
     def save_block(self, blocks:[str], save_path:str) -> None:
         """
         Save the code/query block to a file.
+        Creates the directory path if it doesn't exist.
         """
         if save_path is None:
             return
+        directory = os.path.dirname(save_path)
+        if directory and not os.path.exists(directory):
+            print(f"Creating directory: {directory}")
+            os.makedirs(directory)
         for block in blocks:
+            print(f"Saving code block to: {save_path}")
             with open(save_path, 'w') as f:
                 f.write(block)
 
@@ -124,3 +118,19 @@ class Tools():
             code_blocks.append(content)
             start_index = end_pos + len(end_tag)
         return code_blocks, save_path
+
+if __name__ == "__main__":
+    tool = Tools()
+    tool.tag = "python"
+    rt = tool.load_exec_block("""
+Got it, let me show you the Python files in the current directory using Python:
+
+```python
+import os
+
+for file in os.listdir():
+    if file.endswith('.py'):
+        print(file)
+```
+    """)
+    print(rt)

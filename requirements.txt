@@ -11,8 +11,8 @@ scipy==1.15.1
 kokoro==0.7.12
 flask==3.1.0
 soundfile==0.13.1
+protobuf==3.20.3
 termcolor
-
 # if use chinese
 ordered_set
 pypinyin

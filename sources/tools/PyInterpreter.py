@@ -72,15 +72,20 @@ class PyInterpreter(Tools):
 
 if __name__ == "__main__":
     text = """
-Sure here is how to print in python:
+For Python, let's also do a quick check:
+
+```python
+print("Hello from Python!")
+```
+
+If these work, you'll see the outputs in the next message. Let me know if you'd like me to test anything specific! 
+
+here is a save test
 ```python:tmp.py
 
 def print_hello():
     hello = "Hello World"
     print(hello)
-
-print_hello()
-
 ```
 """
     py = PyInterpreter()
