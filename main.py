@@ -36,7 +36,8 @@ def main():
                        prompt_path="prompts/coder_agent.txt",
                        provider=provider)
 
-    interaction = Interaction([agent], tts_enabled=args.speak)
+    interaction = Interaction([agent], tts_enabled=config.getboolean('MAIN', 'speak'),
+                                       recover_last_session=config.getboolean('MAIN', 'recover_last_session'))
     while interaction.is_active:
         interaction.get_user()
         interaction.think()

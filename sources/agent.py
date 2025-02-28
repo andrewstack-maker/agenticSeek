@@ -5,31 +5,48 @@ import random
 from sources.memory import Memory
 from sources.utility import pretty_print
 
+class executorResult:
+    def __init__(self, blocks, feedback, success):
+        self.blocks = blocks
+        self.feedback = feedback
+        self.success = success
+    
+    def show(self):
+        for block in self.blocks:
+            pretty_print("-"*100, color="output")
+            pretty_print(block, color="code" if self.success else "failure")
+            pretty_print("-"*100, color="output")
+            pretty_print(self.feedback, color="success" if self.success else "failure")
+
 class Agent():
     def __init__(self, model: str,
                        name: str,
                        prompt_path:str,
-                       provider) -> None:
-        self._name = name
-        self._current_directory = os.getcwd()
-        self._model = model
-        self._llm = provider 
-        self._memory = Memory(self.load_prompt(prompt_path),
+                       provider,
+                       recover_last_session=False) -> None:
+        self.agent_name = name
+        self.current_directory = os.getcwd()
+        self.model = model
+        self.llm = provider 
+        self.memory = Memory(self.load_prompt(prompt_path),
+                                recover_last_session=recover_last_session,
                                 memory_compression=False)
-        self._tools = {}
+        self.tools = {}
+        self.blocks_result = []
+        self.last_answer = ""
     
     @property
     def name(self) -> str:
-        return self._name
+        return self.name
 
     @property
     def get_tools(self) -> dict:
-        return self._tools
+        return self.tools
 
     def add_tool(self, name: str, tool: Callable) -> None:
         if tool is not Callable:
             raise TypeError("Tool must be a callable object (a method)")
-        self._tools[name] = tool
+        self.tools[name] = tool
     
     def load_prompt(self, file_path: str) -> str:
         try:
@@ -62,12 +79,12 @@ class Agent():
         return text[start_idx:end_idx]
     
     def llm_request(self, verbose = True) -> Tuple[str, str]:
-        memory = self._memory.get()
-        thought = self._llm.respond(memory, verbose)
+        memory = self.memory.get()
+        thought = self.llm.respond(memory, verbose)
 
         reasoning = self.extract_reasoning_text(thought)
         answer = self.remove_reasoning_text(thought)
-        self._memory.push('assistant', answer)
+        self.memory.push('assistant', answer)
         return answer, reasoning
     
     def wait_message(self, speech_module):
@@ -84,23 +101,27 @@ class Agent():
             pretty_print("-"*100, color="output")
             pretty_print(block, color="code")
             pretty_print("-"*100, color="output")
+    
+    def get_blocks_result(self) -> list:
+        return self.blocks_result
 
     def execute_modules(self, answer: str) -> Tuple[bool, str]:
         feedback = ""
+        success = False
         blocks = None
 
-        for name, tool in self._tools.items():
+        for name, tool in self.tools.items():
             feedback = ""
             blocks, save_path = tool.load_exec_block(answer)
 
             if blocks != None:
-                self.print_code_blocks(blocks, name)
                 output = tool.execute(blocks)
-                feedback = tool.interpreter_feedback(output)
-                self._memory.push('user', feedback)
-
-            if "failure" in feedback.lower():
-                return False, feedback
-            if save_path != None:
-                tool.save_block(blocks, save_path)
+                feedback = tool.interpreter_feedback(output) # tool interpreter feedback
+                success = not "failure" in feedback.lower()
+                self.memory.push('user', feedback)
+                self.blocks_result.append(executorResult(blocks, feedback, success))
+                if not success:
+                    return False, feedback
+                if save_path != None:
+                    tool.save_block(blocks, save_path)
         return True, feedback

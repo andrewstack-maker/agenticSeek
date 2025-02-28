@@ -19,7 +19,7 @@ def pretty_print(text, color = "info"):
         }
         if color not in color_map:
             print(text)
-            pretty_print("Invalid color in pretty_print", "warning")
+            pretty_print(f"Invalid color {color} in pretty_print", "warning")
             return
         print(color_map[color], text, Fore.RESET)
     else:

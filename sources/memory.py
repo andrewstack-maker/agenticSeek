@@ -14,8 +14,8 @@ class Memory():
     def __init__(self, system_prompt: str,
                  recover_last_session: bool = False,
                  memory_compression: bool = True):
-        self._memory = []
-        self._memory = [{'role': 'user', 'content': system_prompt},
+        self.memory = []
+        self.memory = [{'role': 'user', 'content': system_prompt},
                         {'role': 'assistant', 'content': f'Hello, How can I help you today ?'}]
         
         self.session_time = datetime.datetime.now()
@@ -28,8 +28,8 @@ class Memory():
         self.device = self.get_cuda_device()
         self.memory_compression = memory_compression
         if memory_compression:
-            self._tokenizer = AutoTokenizer.from_pretrained(self.model)
-            self._model = AutoModelForSeq2SeqLM.from_pretrained(self.model)
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model)
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model)
     
     def get_filename(self) -> str:
         return f"memory_{self.session_time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
@@ -39,7 +39,7 @@ class Memory():
             os.makedirs(self.conversation_folder)
         filename = self.get_filename()
         path = os.path.join(self.conversation_folder, filename)
-        json_memory = json.dumps(self._memory)
+        json_memory = json.dumps(self.memory)
         with open(path, 'w') as f:
             f.write(json_memory)
     
@@ -60,22 +60,22 @@ class Memory():
             return
         path = os.path.join(self.conversation_folder, filename)
         with open(path, 'r') as f:
-            self._memory = json.load(f)
+            self.memory = json.load(f)
     
     def reset(self, memory: list) -> None:
-        self._memory = memory
+        self.memory = memory
     
     def push(self, role: str, content: str) -> None:
-        self._memory.append({'role': role, 'content': content})
+        self.memory.append({'role': role, 'content': content})
         # EXPERIMENTAL
         if self.memory_compression and role == 'assistant':
             self.compress()
     
     def clear(self) -> None:
-        self._memory = []
+        self.memory = []
     
     def get(self) -> list:
-        return self._memory
+        return self.memory
 
     def get_cuda_device(self) -> str:
         if torch.backends.mps.is_available():
@@ -86,12 +86,12 @@ class Memory():
             return "cpu"
 
     def summarize(self, text: str, min_length: int = 64) -> str:
-        if self._tokenizer is None or self._model is None:
+        if self.tokenizer is None or self.model is None:
             return text
         max_length = len(text) // 2 if len(text) > min_length*2 else min_length*2
         input_text = "summarize: " + text
-        inputs = self._tokenizer(input_text, return_tensors="pt", max_length=512, truncation=True)
-        summary_ids = self._model.generate(
+        inputs = self.tokenizer(input_text, return_tensors="pt", max_length=512, truncation=True)
+        summary_ids = self.model.generate(
             inputs['input_ids'],
             max_length=max_length,  # Maximum length of the summary
             min_length=min_length,  # Minimum length of the summary
@@ -99,7 +99,7 @@ class Memory():
             num_beams=4,  # Beam search for better quality
             early_stopping=True  # Stop when all beams finish
         )
-        summary = self._tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+        summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         return summary
 
     def timer_decorator(func):
@@ -116,11 +116,11 @@ class Memory():
     def compress(self) -> str:
         if not self.memory_compression:
             return
-        for i in range(len(self._memory)):
+        for i in range(len(self.memory)):
             if i <= 2:
                 continue
-            if self._memory[i]['role'] == 'assistant':
-                self._memory[i]['content'] = self.summarize(self._memory[i]['content'])
+            if self.memory[i]['role'] == 'assistant':
+                self.memory[i]['content'] = self.summarize(self.memory[i]['content'])
 
 if __name__ == "__main__":
     memory = Memory("You are a helpful assistant.",

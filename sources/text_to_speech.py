@@ -6,6 +6,7 @@ import re
 import platform
 
 
+
 class Speech():
     def __init__(self, language = "english") -> None:
         self.lang_map = {
@@ -19,10 +20,10 @@ class Speech():
             "french": ['ff_siwis']
         }
         self.pipeline = KPipeline(lang_code=self.lang_map[language])
-        self.voice = self.voice_map[language][4]
+        self.voice = self.voice_map[language][2]
         self.speed = 1.2
 
-    def speak(self, sentence, voice_number = 2):
+    def speak(self, sentence, voice_number = 1):
         sentence = self.clean_sentence(sentence)
         self.voice = self.voice_map["english"][voice_number]
         generator = self.pipeline(
