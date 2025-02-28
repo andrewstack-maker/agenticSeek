@@ -40,14 +40,38 @@ class Speech():
                 import winsound
                 winsound.PlaySound(audio_file, winsound.SND_FILENAME)
 
+    def replace_url(self, m):
+        domain = m.group(1)
+        if re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', domain):
+            return ''
+        return domain
+
+    def extract_filename(self, m):
+        path = m.group()
+        parts = re.split(r'/|\\', path)
+        return parts[-1] if parts else path
+
     def clean_sentence(self, sentence):
+        lines = sentence.split('\n')
+        filtered_lines = [line for line in lines if re.match(r'^\s*[a-zA-Z]', line)]
+        sentence = ' '.join(filtered_lines)
         sentence = re.sub(r'`.*?`', '', sentence)
-        sentence = re.sub(r'[^a-zA-Z0-9.,!? ]+', '', sentence)
+        sentence = re.sub(r'https?://(?:www\.)?([^\s/]+)(?:/[^\s]*)?', self.replace_url, sentence)
+        sentence = re.sub(r'\b[\w./\\-]+\b', self.extract_filename, sentence)
+        sentence = re.sub(r'\b-\w+\b', '', sentence)
+        sentence = re.sub(r'[^a-zA-Z0-9.,!? _ -]+', ' ', sentence)
         sentence = re.sub(r'\s+', ' ', sentence).strip()
+        sentence = sentence.replace('.com', '')
         return sentence
 
 if __name__ == "__main__":
     speech = Speech()
+    tosay = """
+    I looked up recent news using the website https://www.theguardian.com/world
+    Here is how to list files:
+    ls -l -a -h
+    the ip address of the server is 192.168.1.1
+    """
     for voice_idx in range (len(speech.voice_map["english"])):
         print(f"Voice {voice_idx}")
-        speech.speak("I have indeed been uploaded, sir. We're online and ready.", voice_idx)
+        speech.speak(tosay, voice_idx)

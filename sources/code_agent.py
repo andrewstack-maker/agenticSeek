@@ -33,7 +33,7 @@ class CoderAgent(Agent):
         answer = ""
         attempt = 0
         max_attempts = 3
-        self._history.push('user', prompt)
+        self._memory.push('user', prompt)
 
         while attempt < max_attempts:
             pretty_print("Thinking...", color="status")

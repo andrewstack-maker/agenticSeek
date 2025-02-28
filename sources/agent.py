@@ -2,8 +2,9 @@ from typing import Tuple, Callable
 from abc import abstractmethod
 import os
 import random
-from sources.history import History
+from sources.memory import Memory
 from sources.utility import pretty_print
+
 class Agent():
     def __init__(self, model: str,
                        name: str,
@@ -13,7 +14,7 @@ class Agent():
         self._current_directory = os.getcwd()
         self._model = model
         self._llm = provider 
-        self._history = History(self.load_prompt(prompt_path),
+        self._memory = Memory(self.load_prompt(prompt_path),
                                 memory_compression=False)
         self._tools = {}
     
@@ -61,12 +62,12 @@ class Agent():
         return text[start_idx:end_idx]
     
     def llm_request(self, verbose = True) -> Tuple[str, str]:
-        history = self._history.get()
-        thought = self._llm.respond(history, verbose)
+        memory = self._memory.get()
+        thought = self._llm.respond(memory, verbose)
 
         reasoning = self.extract_reasoning_text(thought)
         answer = self.remove_reasoning_text(thought)
-        self._history.push('assistant', answer)
+        self._memory.push('assistant', answer)
         return answer, reasoning
     
     def wait_message(self, speech_module):
@@ -96,7 +97,7 @@ class Agent():
                 self.print_code_blocks(blocks, name)
                 output = tool.execute(blocks)
                 feedback = tool.interpreter_feedback(output)
-                self._history.push('user', feedback)
+                self._memory.push('user', feedback)
 
             if "failure" in feedback.lower():
                 return False, feedback
