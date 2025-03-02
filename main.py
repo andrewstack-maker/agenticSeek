@@ -37,13 +37,14 @@ def main():
                        prompt_path="prompts/coder_agent.txt",
                        provider=provider),
         CasualAgent(model=config["MAIN"]["provider_model"],
-                       name="friday",
+                       name=config["MAIN"]["agent_name"],
                        prompt_path="prompts/casual_agent.txt",
                        provider=provider)
     ]
 
     interaction = Interaction(agents, tts_enabled=config.getboolean('MAIN', 'speak'),
-                                       recover_last_session=config.getboolean('MAIN', 'recover_last_session'))
+                                      stt_enabled=config.getboolean('MAIN', 'listen'),
+                                      recover_last_session=config.getboolean('MAIN', 'recover_last_session'))
     while interaction.is_active:
         interaction.get_user()
         interaction.think()
