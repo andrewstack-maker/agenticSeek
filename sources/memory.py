@@ -4,7 +4,12 @@ import time
 import datetime
 import uuid
 import os
+import sys
 import json
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from sources.utility import timer_decorator
 
 class Memory():
     """
@@ -101,16 +106,6 @@ class Memory():
         )
         summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         return summary
-
-    def timer_decorator(func):
-        from time import time
-        def wrapper(*args, **kwargs):
-            start_time = time()
-            result = func(*args, **kwargs)
-            end_time = time()
-            print(f"{func.__name__} took {end_time - start_time:.2f} seconds to execute")
-            return result
-        return wrapper
     
     @timer_decorator
     def compress(self) -> str:

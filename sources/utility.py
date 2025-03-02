@@ -35,3 +35,13 @@ def pretty_print(text, color = "info"):
         if color not in color_map:
             color = "default"
         print(colored(text, color_map[color]))
+
+def timer_decorator(func):
+    from time import time
+    def wrapper(*args, **kwargs):
+        start_time = time()
+        result = func(*args, **kwargs)
+        end_time = time()
+        print(f"{func.__name__} took {end_time - start_time:.2f} seconds to execute")
+        return result
+    return wrapper

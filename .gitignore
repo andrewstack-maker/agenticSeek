@@ -1,6 +1,8 @@
 *.wav
 config.ini
 experimental/
+.env
+*/.env
 
 
 # Byte-compiled / optimized / DLL files

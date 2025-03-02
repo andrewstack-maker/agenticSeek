@@ -8,11 +8,11 @@ import configparser
 from sources.llm_provider import Provider
 from sources.interaction import Interaction
 from sources.code_agent import CoderAgent
-
+from sources.casual_agent import CasualAgent
 
 parser = argparse.ArgumentParser(description='Deepseek AI assistant')
-parser.add_argument('--speak', action='store_true',
-                help='Make AI use text-to-speech')
+parser.add_argument('--no-speak', action='store_true',
+                help='Make AI not use text-to-speech')
 args = parser.parse_args()
 
 config = configparser.ConfigParser()
@@ -31,13 +31,20 @@ def main():
                                    model=config["MAIN"]["provider_model"],
                                    server_address=config["MAIN"]["provider_server_address"])
 
-    agent = CoderAgent(model=config["MAIN"]["provider_model"],
-                       name=config["MAIN"]["agent_name"],
+    agents = [
+        CoderAgent(model=config["MAIN"]["provider_model"],
+                       name="coder",
                        prompt_path="prompts/coder_agent.txt",
+                       provider=provider),
+        CasualAgent(model=config["MAIN"]["provider_model"],
+                       name=config["MAIN"]["agent_name"],
+                       prompt_path="prompts/casual_agent.txt",
                        provider=provider)
+    ]
 
-    interaction = Interaction([agent], tts_enabled=config.getboolean('MAIN', 'speak'),
-                                       recover_last_session=config.getboolean('MAIN', 'recover_last_session'))
+    interaction = Interaction(agents, tts_enabled=config.getboolean('MAIN', 'speak'),
+                                      stt_enabled=config.getboolean('MAIN', 'listen'),
+                                      recover_last_session=config.getboolean('MAIN', 'recover_last_session'))
     while interaction.is_active:
         interaction.get_user()
         interaction.think()
