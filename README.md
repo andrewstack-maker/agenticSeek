@@ -48,12 +48,22 @@ ollama serve
 Change the config.ini file to set the provider_name to `ollama` and provider_model to `deepseek-r1:7b`
 
 ```sh
+[MAIN]
+is_local = True
+provider_name = ollama
+provider_model = deepseek-r1:7b
+```
+
+Run the assistant:
+
+```sh
 python3 main.py
 ```
 
 ### 4️⃣ **Alternative: Run the Assistant (Own Server)**  
 
 On the other machine that will run the model execute the script in stream_llm.py
+
 
 ```sh
 python3 stream_llm.py
@@ -65,8 +75,22 @@ Get the ip address of the machine that will run the model
 ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
 ```
 
-Change the config.ini file to set the provider_name to `server` and provider_model to `deepseek-r1:7b`.
-Set the provider_server_address to the ip address of the machine that will run the model.
+Change the `config.ini` file to set the `provider_name` to `server` and `provider_model` to `deepseek-r1:7b`.
+Set the `provider_server_address` to the ip address of the machine that will run the model.
+
+```sh
+[MAIN]
+is_local = False
+provider_name = server
+provider_model = deepseek-r1:14b
+provider_server_address = x.x.x.x:5000
+```
+
+Run the assistant:
+
+```sh
+python3 main.py
+```
 
 ## Current capabilities
 
