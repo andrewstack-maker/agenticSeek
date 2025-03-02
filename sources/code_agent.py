@@ -1,7 +1,7 @@
 
-from sources.tools import PyInterpreter, BashInterpreter
 from sources.utility import pretty_print
 from sources.agent import Agent, executorResult
+from sources.tools import PyInterpreter, BashInterpreter, CInterpreter, GoInterpreter
 
 class CoderAgent(Agent):
     def __init__(self, model, name, prompt_path, provider):
@@ -9,6 +9,8 @@ class CoderAgent(Agent):
         self.tools = {
             "bash": BashInterpreter(),
             "python": PyInterpreter()
+            "C": CInterpreter(),
+            "go": GoInterpreter()
         }
 
     def remove_blocks(self, text: str) -> str:
