@@ -1,11 +1,14 @@
 
 from sources.text_to_speech import Speech
 from sources.utility import pretty_print
+from sources.router import AgentRouter
 
 class Interaction:
     def __init__(self, agents, tts_enabled: bool = False, recover_last_session: bool = False):
         self.tts_enabled = tts_enabled
         self.agents = agents
+        self.current_agent = None
+        self.router = AgentRouter(self.agents)
         self.speech = Speech()
         self.is_active = True
         self.last_query = None
@@ -44,10 +47,15 @@ class Interaction:
         return query
     
     def think(self):
-        self.last_answer, _ = self.agents[0].process(self.last_query, self.speech)
+        agent = self.router.select_agent(self.last_query)
+        if self.current_agent != agent:
+            self.current_agent = agent
+            # get history from previous agent
+            self.current_agent.memory.push('user', self.last_query)
+        self.last_answer, _ = agent.process(self.last_query, self.speech)
     
     def show_answer(self):
-        self.agents[0].show_answer()
+        self.current_agent.show_answer()
         if self.tts_enabled:
             self.speech.speak(self.last_answer)
 

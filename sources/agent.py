@@ -2,6 +2,10 @@ from typing import Tuple, Callable
 from abc import abstractmethod
 import os
 import random
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from sources.memory import Memory
 from sources.utility import pretty_print
 
@@ -25,6 +29,7 @@ class Agent():
                        provider,
                        recover_last_session=False) -> None:
         self.agent_name = name
+        self.role = None
         self.current_directory = os.getcwd()
         self.model = model
         self.llm = provider 
@@ -60,7 +65,14 @@ class Agent():
             raise e
     
     @abstractmethod
-    def answer(self, prompt, speech_module) -> str:
+    def show_answer(self):
+        """
+        abstract method, implementation in child class.
+        """
+        pass
+    
+    @abstractmethod
+    def process(self, prompt, speech_module) -> str:
         """
         abstract method, implementation in child class.
         """
@@ -78,7 +90,7 @@ class Agent():
         end_idx = text.rfind(end_tag)+8
         return text[start_idx:end_idx]
     
-    def llm_request(self, verbose = True) -> Tuple[str, str]:
+    def llm_request(self, verbose = False) -> Tuple[str, str]:
         memory = self.memory.get()
         thought = self.llm.respond(memory, verbose)
 
@@ -95,15 +107,29 @@ class Agent():
                     "Working on it sir, please let me think."]
         speech_module.speak(messages[random.randint(0, len(messages)-1)])
     
-    def print_code_blocks(self, blocks: list, name: str):
-        for block in blocks:
-            pretty_print(f"Executing {name} code...\n", color="output")
-            pretty_print("-"*100, color="output")
-            pretty_print(block, color="code")
-            pretty_print("-"*100, color="output")
-    
     def get_blocks_result(self) -> list:
         return self.blocks_result
+
+    def remove_blocks(self, text: str) -> str:
+        """
+        Remove all code/query blocks within a tag from the answer text.
+        """
+        tag = f'```'
+        lines = text.split('\n')
+        post_lines = []
+        in_block = False
+        block_idx = 0
+        for line in lines:
+            if tag in line and not in_block:
+                in_block = True
+                continue
+            if not in_block:
+                post_lines.append(line)
+            if tag in line:
+                in_block = False
+                post_lines.append(f"block:{block_idx}")
+                block_idx += 1
+        return "\n".join(post_lines)
 
     def execute_modules(self, answer: str) -> Tuple[bool, str]:
         feedback = ""

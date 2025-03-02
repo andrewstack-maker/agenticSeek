@@ -4,36 +4,17 @@ from sources.agent import Agent, executorResult
 from sources.tools import PyInterpreter, BashInterpreter, CInterpreter, GoInterpreter
 
 class CoderAgent(Agent):
+    """
+    The code agent is a special for writing code and shell commands.
+    """
     def __init__(self, model, name, prompt_path, provider):
         super().__init__(model, name, prompt_path, provider)
         self.tools = {
             "bash": BashInterpreter(),
             "python": PyInterpreter()
-            "C": CInterpreter(),
-            "go": GoInterpreter()
         }
+        self.role = "coding"
 
-    def remove_blocks(self, text: str) -> str:
-        """
-        Remove all code/query blocks within a tag from the answer text.
-        """
-        tag = f'```'
-        lines = text.split('\n')
-        post_lines = []
-        in_block = False
-        block_idx = 0
-        for line in lines:
-            if tag in line and not in_block:
-                in_block = True
-                continue
-            if not in_block:
-                post_lines.append(line)
-            if tag in line:
-                in_block = False
-                post_lines.append(f"block:{block_idx}")
-                block_idx += 1
-        return "\n".join(post_lines)
-    
     def show_answer(self):
         lines = self.last_answer.split("\n")
         for line in lines:
