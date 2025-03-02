@@ -1,56 +1,81 @@
-# localJarvis
 
-A fully local assistant using swarm of deepseek agents, with multiple capabilities such as code execution, web browsing, etc...
+# 🚀 agenticSeek: Local AI Assistant Powered by DeepSeek Agents  
 
-THIS IS A WORK IN PROGRESS
+**A fully local AI assistant** using a swarm of DeepSeek agents, capable of:  
+✅ **Code execution** (Python, Bash)  
+✅ **Web browsing**  
+✅ **Speech-to-text & text-to-speech**  
+✅ **Self-correcting code execution**  
 
-## Install
+> 🛠️ **Work in Progress** – Looking for contributors! 🚀  
 
-- Make sure you have ollama installed on your machine
-- Install dependencies (`pip3 install -r requirements.txt`)
+---
 
-## Run fully local
+## 🌟 Why?  
 
-Simplest way is to use ollama
-- First change the config.ini file to set the provider_name to `ollama` and provider_model to `deepseek-r1:7b`
-- In first terminal run `ollama serve`
-- In second terminal run `python3 main.py`
-- Ollama will download `deepseek-r1:7b` on your machine
-- 2 model are also downloaded:
-    * For text to speech: `kokoro`
-    * For speech to text: `distil-whisper/distil-medium.en`
-- type or say goodbye to exit.
+-  **Privacy-first**: Runs 100% locally – **no data leaves your machine**  
+- ️ **Voice-enabled**: Speak and interact naturally
+-  **Self-correcting**: Automatically fixes its own code
+- **Multi-agent**: Use a swarm of agents to answer complex questions
+-  **Web browsing (not implemented yet)**: Browse the web and search the internet  
+-  **Knowledge base (not implemented yet)**: Use a knowledge base to answer questions  
 
-# Run model on another machine
+---
 
-- First change the config.ini file to set the provider_name to `server` and provider_model to `deepseek-r1:7b` (or higher)
-- On the machine that will run the model execute the script in stream_llm.py
+## Installation  
 
+### 1️⃣ **Install Dependencies**  
+Make sure you have [Ollama](https://ollama.com/) installed, then run:  
+```sh
+pip3 install -r requirements.txt
 ```
-python3 stream_llm.py
+
+### 2️⃣ **Download Models**  
+
+Download the `deepseek-r1:7b` model from [DeepSeek](https://deepseek.com/models)
+
+```sh
+ollama pull deepseek-r1:7b
 ```
 
-- In the config.ini file, set the provider_server_address to the ip address of the machine that will run the model.
+### 3️⃣ **Run the Assistant (Ollama)**  
 
-- On the machine that will run the assistant execute main.py
-
+Start the ollama server
+```sh
+ollama serve
 ```
+
+Change the config.ini file to set the provider_name to `ollama` and provider_model to `deepseek-r1:7b`
+
+```sh
 python3 main.py
 ```
 
-## Text to speech
+### 4️⃣ **Run the Assistant (Own Server)**  
 
-If you want your AI to speak, run with the `--speak` option.
+On the other machine that will run the model execute the script in stream_llm.py
 
+```sh
+python3 stream_llm.py
 ```
-python3 main.py --speak
+
+Get the ip address of the machine that will run the model
+
+```sh
+ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
 ```
+
+Change the config.ini file to set the provider_name to `server` and provider_model to `deepseek-r1:7b`.
+Set the provider_server_address to the ip address of the machine that will run the model.
 
 ## Current capabilities
 
 - All running locally
 - Reasoning with deepseek R1
-- Python code execution capabilities
-- Bash execution capabilities
-- Get feedback from python/bash interpreter attempt to fix code by itself.
+- Code execution capabilities (Python, Golang, C)
+- Shell control capabilities in bash
+- Will try to fix code by itself
 - Fast text-to-speech using kokoro.
+- Speech-to-text using distil-whisper/distil-medium.en
+- Web browsing (not implemented yet)
+- Knowledge base RAG (not implemented yet)
