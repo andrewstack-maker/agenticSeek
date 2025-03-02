@@ -1,24 +1,20 @@
 
 # 🚀 agenticSeek: Local AI Assistant Powered by DeepSeek Agents  
 
-**A fully local AI assistant** using a swarm of DeepSeek agents, capable of:  
-✅ **Code execution** (Python, Bash)  
-✅ **Web browsing**  
-✅ **Speech-to-text & text-to-speech**  
-✅ **Self-correcting code execution**  
+**A fully local AI assistant** using Deepseek R1 agents.
 
 > 🛠️ **Work in Progress** – Looking for contributors! 🚀  
-
 ---
 
-## 🌟 Why?  
+## Features:
 
 -  **Privacy-first**: Runs 100% locally – **no data leaves your machine**  
 - ️ **Voice-enabled**: Speak and interact naturally
--  **Self-correcting**: Automatically fixes its own code
-- **Multi-agent**: Use a swarm of agents to answer complex questions
+- **Coding abilities**: Code in Python, Bash, C, Golang, and soon more
+-  **Self-correcting**: Automatically fixes errors by itself
+- **Agent routing**: Select the best agent for the task
+- **Multi-agent**: For complex tasks, divide and conquer with multiple agents
 -  **Web browsing (not implemented yet)**: Browse the web and search the internet  
--  **Knowledge base (not implemented yet)**: Use a knowledge base to answer questions  
 
 ---
 
@@ -98,8 +94,15 @@ python3 main.py
 - Reasoning with deepseek R1
 - Code execution capabilities (Python, Golang, C)
 - Shell control capabilities in bash
-- Will try to fix code by itself
+- Will try to fix errors by itself
+- Routing system, select the best agent for the task
 - Fast text-to-speech using kokoro.
+- Memory compression (reduce history as interaction progresses using summary model) 
+- Recovery: recover last session from memory
+
+## UNDER DEVELOPMENT
+
+- Web browsing
+- Knowledge base RAG
+- Graphical interface
 - Speech-to-text using distil-whisper/distil-medium.en
-- Web browsing (not implemented yet)
-- Knowledge base RAG (not implemented yet)
