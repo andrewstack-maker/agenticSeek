@@ -37,7 +37,7 @@ def main():
                        prompt_path="prompts/coder_agent.txt",
                        provider=provider),
         CasualAgent(model=config["MAIN"]["provider_model"],
-                       name="jarvis",
+                       name="friday",
                        prompt_path="prompts/casual_agent.txt",
                        provider=provider)
     ]

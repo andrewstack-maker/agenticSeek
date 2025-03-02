@@ -26,6 +26,8 @@ class BashInterpreter(Tools):
     
         concat_output = ""
         for command in commands:
+            if "python3" in command:
+                continue # because stubborn AI always want to run python3 with bash when it write code
             try:
                 process = subprocess.Popen(
                     command,

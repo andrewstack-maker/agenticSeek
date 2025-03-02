@@ -1,6 +1,9 @@
 
 import os
 import requests
+import dotenv
+
+dotenv.load_dotenv()
 
 if __name__ == "__main__":
     from tools import Tools
@@ -15,10 +18,10 @@ class webSearch(Tools):
         super().__init__()
         self.tag = "web_search"
         self.api_key = api_key or os.getenv("SERPAPI_KEY")  # Requires a SerpApi key
-        if not self.api_key:
-            raise ValueError("SerpApi key is required for webSearch tool. Set SERPAPI_KEY environment variable or pass it to the constructor.")
 
     def execute(self, blocks: str, safety: bool = True) -> str:
+        if self.api_key is None:
+            return "Error: No SerpApi key provided."
         for block in blocks:
             query = block.strip()
             if not query:
@@ -60,7 +63,7 @@ class webSearch(Tools):
 
 
 if __name__ == "__main__":
-    search_tool = webSearch(api_key="c4da252b63b0fc3cbf2c7dd98b931ae632aecf3feacbbfe099e17872eb192c44")
+    search_tool = webSearch(api_key=os.getenv("SERPAPI_KEY"))
     query = "when did covid start"
     result = search_tool.execute(query, safety=True)
     feedback = search_tool.interpreter_feedback(result)

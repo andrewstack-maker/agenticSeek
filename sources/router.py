@@ -26,6 +26,8 @@ class AgentRouter:
         return result
     
     def select_agent(self, text: str) -> Agent:
+        if text is None:
+            return self.agents[0]
         result = self.classify_text(text)
         for agent in self.agents:
             if result["labels"][0] == agent.role:
