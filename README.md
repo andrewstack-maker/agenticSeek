@@ -3,7 +3,8 @@
 
 **A fully local AI assistant** using a swarm of DeepSeek agents, capable of:  
 ✅ **Code execution** (Python, Bash)  
-✅ **Web browsing**  
+✅ **Web browsing**   (under development, see dev)
+✅ **Routing system, select the best agent for the task** (under development, see dev)
 ✅ **Speech-to-text & text-to-speech**  
 ✅ **Self-correcting code execution**  
 
