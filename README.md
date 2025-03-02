@@ -3,10 +3,10 @@
 
 **A fully local AI assistant** using a swarm of DeepSeek agents, capable of:  
 ✅ **Code execution** (Python, Bash)  
-✅ **Web browsing**   (under development, see dev)
-✅ **Routing system, select the best agent for the task** (under development, see dev)
-✅ **Speech-to-text & text-to-speech**  
 ✅ **Self-correcting code execution**  
+✅ **Routing system, select the best agent for the task**
+✅ **Speech-to-text & text-to-speech**  
+✅ **Web browsing** (under development, see dev)
 
 > 🛠️ **Work in Progress** – Looking for contributors! 🚀  
 
@@ -99,8 +99,14 @@ python3 main.py
 - Reasoning with deepseek R1
 - Code execution capabilities (Python, Golang, C)
 - Shell control capabilities in bash
-- Will try to fix code by itself
+- Will try to fix errors by itself
+- Routing system, select the best agent for the task
 - Fast text-to-speech using kokoro.
 - Speech-to-text using distil-whisper/distil-medium.en
-- Web browsing (not implemented yet)
-- Knowledge base RAG (not implemented yet)
+- Memory compression (reduce history as interaction progresses using summary model) 
+- Recovery: recover last session from memory
+
+## UNDER DEVELOPMENT
+
+- Web browsing
+- Knowledge base RAG
