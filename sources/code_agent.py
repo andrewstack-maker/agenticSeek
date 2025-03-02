@@ -5,7 +5,7 @@ from sources.tools import PyInterpreter, BashInterpreter, CInterpreter, GoInterp
 
 class CoderAgent(Agent):
     """
-    The code agent is a special for writing code and shell commands.
+    The code agent is an agent that can write and execute code.
     """
     def __init__(self, model, name, prompt_path, provider):
         super().__init__(model, name, prompt_path, provider)
@@ -15,16 +15,6 @@ class CoderAgent(Agent):
         }
         self.role = "coding"
 
-    def show_answer(self):
-        lines = self.last_answer.split("\n")
-        for line in lines:
-            if "block:" in line:
-                block_idx = int(line.split(":")[1])
-                if block_idx < len(self.blocks_result):
-                    self.blocks_result[block_idx].show()
-            else:
-                pretty_print(line, color="output")
-    
     def process(self, prompt, speech_module) -> str:
         answer = ""
         attempt = 0

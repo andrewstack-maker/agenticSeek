@@ -33,11 +33,11 @@ def main():
 
     agents = [
         CoderAgent(model=config["MAIN"]["provider_model"],
-                       name=config["MAIN"]["agent_name"],
+                       name="coder",
                        prompt_path="prompts/coder_agent.txt",
                        provider=provider),
         CasualAgent(model=config["MAIN"]["provider_model"],
-                       name=config["MAIN"]["agent_name"],
+                       name="jarvis",
                        prompt_path="prompts/casual_agent.txt",
                        provider=provider)
     ]

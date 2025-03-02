@@ -10,6 +10,9 @@ from sources.memory import Memory
 from sources.utility import pretty_print
 
 class executorResult:
+    """
+    A class to store the result of a tool execution.
+    """
     def __init__(self, blocks, feedback, success):
         self.blocks = blocks
         self.feedback = feedback
@@ -23,6 +26,9 @@ class executorResult:
             pretty_print(self.feedback, color="success" if self.success else "failure")
 
 class Agent():
+    """
+    An abstract class for all agents.
+    """
     def __init__(self, model: str,
                        name: str,
                        prompt_path:str,
@@ -40,10 +46,6 @@ class Agent():
         self.blocks_result = []
         self.last_answer = ""
     
-    @property
-    def name(self) -> str:
-        return self.name
-
     @property
     def get_tools(self) -> dict:
         return self.tools
@@ -65,25 +67,25 @@ class Agent():
             raise e
     
     @abstractmethod
-    def show_answer(self):
-        """
-        abstract method, implementation in child class.
-        """
-        pass
-    
-    @abstractmethod
     def process(self, prompt, speech_module) -> str:
         """
         abstract method, implementation in child class.
+        Process the prompt and return the answer of the agent.
         """
         pass
 
     def remove_reasoning_text(self, text: str) -> None:
+        """
+        Remove the reasoning block of reasoning model like deepseek.
+        """
         end_tag = "</think>"
         end_idx = text.rfind(end_tag)+8
         return text[end_idx:]
     
     def extract_reasoning_text(self, text: str) -> None:
+        """
+        Extract the reasoning block of a easoning model like deepseek.
+        """
         start_tag = "<think>"
         end_tag = "</think>"
         start_idx = text.find(start_tag)
@@ -91,6 +93,9 @@ class Agent():
         return text[start_idx:end_idx]
     
     def llm_request(self, verbose = False) -> Tuple[str, str]:
+        """
+        Ask the LLM to process the prompt and return the answer and the reasoning.
+        """
         memory = self.memory.get()
         thought = self.llm.respond(memory, verbose)
 
@@ -109,6 +114,20 @@ class Agent():
     
     def get_blocks_result(self) -> list:
         return self.blocks_result
+
+    def show_answer(self):
+        """
+        Show the answer in a pretty way.
+        Show code blocks and their respective feedback by inserting them in the ressponse.
+        """
+        lines = self.last_answer.split("\n")
+        for line in lines:
+            if "block:" in line:
+                block_idx = int(line.split(":")[1])
+                if block_idx < len(self.blocks_result):
+                    self.blocks_result[block_idx].show()
+            else:
+                pretty_print(line, color="output")
 
     def remove_blocks(self, text: str) -> str:
         """
@@ -132,6 +151,9 @@ class Agent():
         return "\n".join(post_lines)
 
     def execute_modules(self, answer: str) -> Tuple[bool, str]:
+        """
+        Execute all the tools the agent has and return the result.
+        """
         feedback = ""
         success = False
         blocks = None
@@ -141,9 +163,11 @@ class Agent():
             blocks, save_path = tool.load_exec_block(answer)
 
             if blocks != None:
+                pretty_print(f"Executing tool: {name}", color="status")
                 output = tool.execute(blocks)
                 feedback = tool.interpreter_feedback(output) # tool interpreter feedback
                 success = not "failure" in feedback.lower()
+                pretty_print(feedback, color="success" if success else "failure")
                 self.memory.push('user', feedback)
                 self.blocks_result.append(executorResult(blocks, feedback, success))
                 if not success:

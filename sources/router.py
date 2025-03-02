@@ -29,7 +29,7 @@ class AgentRouter:
         result = self.classify_text(text)
         for agent in self.agents:
             if result["labels"][0] == agent.role:
-                pretty_print(f"Selected agent role: {agent.role}", color="warning")
+                pretty_print(f"Selected agent: {agent.agent_name}", color="warning")
                 return agent
         return None
 

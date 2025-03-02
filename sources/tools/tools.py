@@ -38,9 +38,10 @@ class Tools():
         self.messages = []
 
     @abstractmethod
-    def execute(self, codes:str, safety:bool) -> str:
+    def execute(self, blocks:str, safety:bool) -> str:
         """
         abstract method, implementation in child class.
+        Execute the tool.
         """
         pass
 
@@ -48,6 +49,7 @@ class Tools():
     def execution_failure_check(self, output:str) -> bool:
         """
         abstract method, implementation in child class.
+        Check if the execution failed.
         """
         pass
 
@@ -55,6 +57,8 @@ class Tools():
     def interpreter_feedback(self, output:str) -> str:
         """
         abstract method, implementation in child class.
+        Provide feedback to the AI from the tool.
+        For exemple the output of a python code or web search.
         """
         pass
 

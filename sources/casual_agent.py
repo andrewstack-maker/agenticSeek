@@ -1,7 +1,7 @@
 
 from sources.utility import pretty_print
 from sources.agent import Agent
-
+from sources.tools.webSearch import webSearch
 class CasualAgent(Agent):
     def __init__(self, model, name, prompt_path, provider):
         """
@@ -9,21 +9,24 @@ class CasualAgent(Agent):
         """
         super().__init__(model, name, prompt_path, provider)
         self.tools = {
-        } # TODO implement casual tools like basic web search, basic file search, basic image search, basic knowledge search
+            "web_search": webSearch()
+        }
         self.role = "talking"
-
-    def show_answer(self):
-        lines = self.last_answer.split("\n")
-        for line in lines:
-            pretty_print(line, color="output")
     
     def process(self, prompt, speech_module) -> str:
+        complete = False
+        exec_success = False
         self.memory.push('user', prompt)
 
-        pretty_print("Thinking...", color="status")
         self.wait_message(speech_module)
-        answer, reasoning = self.llm_request()
-        self.last_answer = answer
+        while not complete:
+            if exec_success:
+                complete = True
+            pretty_print("Thinking...", color="status")
+            answer, reasoning = self.llm_request()
+            exec_success, _ = self.execute_modules(answer)
+            answer = self.remove_blocks(answer)
+            self.last_answer = answer
         return answer, reasoning
 
 if __name__ == "__main__":
