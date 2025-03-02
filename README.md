@@ -51,7 +51,7 @@ Change the config.ini file to set the provider_name to `ollama` and provider_mod
 python3 main.py
 ```
 
-### 4️⃣ **Run the Assistant (Own Server)**  
+### 4️⃣ **Alternative: Run the Assistant (Own Server)**  
 
 On the other machine that will run the model execute the script in stream_llm.py
 
