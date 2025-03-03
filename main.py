@@ -49,6 +49,8 @@ def main():
         interaction.get_user()
         interaction.think()
         interaction.show_answer()
+    if config.getboolean('MAIN', 'save_session'):
+        interaction.save_session()
 
 if __name__ == "__main__":
     main()

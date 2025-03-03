@@ -26,7 +26,7 @@ class AgentRouter:
         return result
     
     def select_agent(self, text: str) -> Agent:
-        if text is None:
+        if len(self.agents) == 0 or len(self.labels) == 0:
             return self.agents[0]
         result = self.classify_text(text)
         for agent in self.agents:

@@ -39,6 +39,10 @@ class Interaction:
     def recover_last_session(self):
         for agent in self.agents:
             agent.memory.load_memory()
+    
+    def save_session(self):
+        for agent in self.agents:
+            agent.memory.save_memory()
 
     def is_active(self):
         return self.is_active
@@ -78,9 +82,11 @@ class Interaction:
         return query
     
     def think(self):
-        if self.last_query is None:
+        if self.last_query is None or len(self.last_query) == 0:
             return
         agent = self.router.select_agent(self.last_query)
+        if agent is None:
+            return
         if self.current_agent != agent:
             self.current_agent = agent
             # get history from previous agent

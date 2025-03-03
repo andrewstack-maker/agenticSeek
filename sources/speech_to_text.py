@@ -12,7 +12,7 @@ audio_queue = queue.Queue()
 done = False
 
 class AudioRecorder:
-    def __init__(self, format=pyaudio.paInt16, channels=1, rate=44100, chunk=8192, record_seconds=7, verbose=False):
+    def __init__(self, format=pyaudio.paInt16, channels=1, rate=4096, chunk=8192, record_seconds=7, verbose=False):
         self.format = format
         self.channels = channels
         self.rate = rate
@@ -60,8 +60,8 @@ class AudioRecorder:
 class Transcript:
     def __init__(self) -> None:
         self.last_read = None
-        device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+        device = self.get_device()
+        torch_dtype = torch.float16 if device == "cuda" else torch.float32
         model_id = "distil-whisper/distil-medium.en"
         
         model = AutoModelForSpeechSeq2Seq.from_pretrained(
@@ -75,11 +75,26 @@ class Transcript:
             model=model,
             tokenizer=processor.tokenizer,
             feature_extractor=processor.feature_extractor,
-            max_new_tokens=128,
+            max_new_tokens=24, # a human say around 20 token in 7s
             torch_dtype=torch_dtype,
             device=device,
         )
-
+    
+    def get_device(self):
+        if torch.backends.mps.is_available():
+            return "mps"
+        if torch.cuda.is_available():
+            return "cuda:0"
+        else:
+            return "cpu"
+    
+    def remove_hallucinations(self, text: str):
+        # TODO find a better way to do this
+        common_hallucinations = ['Okay.', 'Thank you.', 'Thank you for watching.', 'You\'re', 'Oh', 'you', 'Oh.', 'Uh', 'Oh,', 'Mh-hmm', 'Hmm.']
+        for hallucination in common_hallucinations:
+            text = text.replace(hallucination, "")
+        return text
+    
     def transcript_job(self, audio_data: np.ndarray, sample_rate: int = 16000):
         if audio_data.dtype != np.float32:
             audio_data = audio_data.astype(np.float32) / np.iinfo(audio_data.dtype).max
@@ -88,7 +103,7 @@ class Transcript:
         if sample_rate != 16000:
             audio_data = librosa.resample(audio_data, orig_sr=sample_rate, target_sr=16000)
         result = self.pipe(audio_data)
-        return result["text"]
+        return self.remove_hallucinations(result["text"])
 
 class AudioTranscriber:
     def __init__(self, ai_name: str, verbose=False):
@@ -103,16 +118,18 @@ class AudioTranscriber:
             'ES': [f"{self.ai_name}"]
         }
         self.confirmation_words = {
-            'EN': ["do it", "go ahead", "execute", "run", "start", "thanks", "would ya", "please", "okay?", "proceed", "continue", "go on", "do that", "do that thing"],
-            'FR': ["fais-le", "vas-y", "exécute", "lance", "commence", "merci", "tu veux bien", "s'il te plaît", "d'accord ?", "poursuis", "continue", "vas-y", "fais ça", "fais ce truc"],
-            'ZH': ["做吧", "继续", "执行", "运行", "开始", "谢谢", "可以吗", "请", "好吗", "进行", "继续", "往前走", "做那个", "做那件事"],
+            'EN': ["do it", "go ahead", "execute", "run", "start", "thanks", "would ya", "please", "okay?", "proceed", "continue", "go on", "do that", "go it", "do you understand?"],
+            'FR': ["fais-le", "vas-y", "exécute", "lance", "commence", "merci", "tu veux bien", "s'il te plaît", "d'accord ?", "poursuis", "continue", "vas-y", "fais ça", "compris"],
+            'ZH': ["做吧", "继续", "执行", "运行", "开始", "谢谢", "可以吗", "请", "好吗", "进行", "继续", "往前走", "做那个", "做那件事", "聽得懂"],
             'ES': ["hazlo", "adelante", "ejecuta", "corre", "empieza", "gracias", "lo harías", "por favor", "¿vale?", "procede", "continúa", "sigue", "haz eso", "haz esa cosa"]
         }
         self.recorded = ""
 
     def get_transcript(self):
+        global done
         buffer = self.recorded
         self.recorded = ""
+        done = False
         return buffer
 
     def _transcribe(self):

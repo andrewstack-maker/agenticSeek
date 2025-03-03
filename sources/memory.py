@@ -55,7 +55,9 @@ class Memory():
                 date = filename.split('_')[1]
                 saved_sessions.append((filename, date))
         saved_sessions.sort(key=lambda x: x[1], reverse=True)
-        return saved_sessions[0][0]
+        if len(saved_sessions) > 0:
+            return saved_sessions[0][0]
+        return None
 
     def load_memory(self) -> None:
         if not os.path.exists(self.conversation_folder):

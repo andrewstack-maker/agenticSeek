@@ -21,12 +21,13 @@
 ## Installation  
 
 ### 1️⃣ **Install Dependencies**  
-Make sure you have [Ollama](https://ollama.com/) installed, then run:  
 ```sh
 pip3 install -r requirements.txt
 ```
 
 ### 2️⃣ **Download Models**  
+
+Make sure you have [Ollama](https://ollama.com/) installed.
 
 Download the `deepseek-r1:7b` model from [DeepSeek](https://deepseek.com/models)
 
