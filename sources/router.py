@@ -22,7 +22,14 @@ class AgentRouter:
             return "cpu"
 
     def classify_text(self, text, threshold=0.5):
-        result = self.pipeline(text, self.labels, threshold=threshold)
+        first_sentence = None
+        for line in text.split("\n"):
+            if line.strip() != "":
+                first_sentence = line.strip()
+                break
+        if first_sentence is None:
+            first_sentence = text
+        result = self.pipeline(first_sentence, self.labels, threshold=threshold)
         return result
     
     def select_agent(self, text: str) -> Agent:

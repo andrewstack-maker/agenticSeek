@@ -5,9 +5,10 @@ import subprocess
 import re
 import platform
 
-
-
 class Speech():
+    """
+    Speech is a class for generating speech from text.
+    """
     def __init__(self, language = "english") -> None:
         self.lang_map = {
             "english": 'a',
@@ -24,6 +25,9 @@ class Speech():
         self.speed = 1.2
 
     def speak(self, sentence, voice_number = 1):
+        """
+        Use AI model to generate speech from text after pre-processing the text.
+        """
         sentence = self.clean_sentence(sentence)
         self.voice = self.voice_map["english"][voice_number]
         generator = self.pipeline(
@@ -42,17 +46,39 @@ class Speech():
                 winsound.PlaySound(audio_file, winsound.SND_FILENAME)
 
     def replace_url(self, m):
+        """
+        Replace URL with empty string.
+        """
         domain = m.group(1)
         if re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', domain):
             return ''
         return domain
 
     def extract_filename(self, m):
+        """
+        Extract filename from path.
+        """
         path = m.group()
         parts = re.split(r'/|\\', path)
         return parts[-1] if parts else path
+    
+    def shorten_paragraph(self, sentence):
+        """
+        Shorten paragraph like **explaination**: <long text> by keeping only the first sentence.
+        """
+        lines = sentence.split('\n')
+        lines_edited = []
+        for line in lines:
+            if line.startswith('**'):
+                lines_edited.append(line.split('.')[0])
+            else:
+                lines_edited.append(line)
+        return '\n'.join(lines_edited)
 
     def clean_sentence(self, sentence):
+        """
+        Clean sentence by removing URLs, filenames, and other non-alphanumeric characters.
+        """
         lines = sentence.split('\n')
         filtered_lines = [line for line in lines if re.match(r'^\s*[a-zA-Z]', line)]
         sentence = ' '.join(filtered_lines)

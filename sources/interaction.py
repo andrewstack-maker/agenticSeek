@@ -60,8 +60,8 @@ class Interaction:
         return buffer
     
     def transcription_job(self):
-        self.recorder = AudioRecorder()
-        self.transcriber = AudioTranscriber(self.ai_name, verbose=False)
+        self.recorder = AudioRecorder(verbose=True)
+        self.transcriber = AudioTranscriber(self.ai_name, verbose=True)
         self.transcriber.start()
         self.recorder.start()
         self.recorder.join()
@@ -71,7 +71,7 @@ class Interaction:
 
     def get_user(self):
         if self.stt_enabled:
-            query = self.transcription_job()
+            query = "TTS transcription of user: " + self.transcription_job()
         else:
             query = self.read_stdin()
         if query is None:

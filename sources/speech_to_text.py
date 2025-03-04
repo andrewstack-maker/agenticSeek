@@ -12,7 +12,7 @@ audio_queue = queue.Queue()
 done = False
 
 class AudioRecorder:
-    def __init__(self, format=pyaudio.paInt16, channels=1, rate=4096, chunk=8192, record_seconds=7, verbose=False):
+    def __init__(self, format=pyaudio.paInt16, channels=1, rate=4096, chunk=8192, record_seconds=5, verbose=False):
         self.format = format
         self.channels = channels
         self.rate = rate
@@ -90,7 +90,7 @@ class Transcript:
     
     def remove_hallucinations(self, text: str):
         # TODO find a better way to do this
-        common_hallucinations = ['Okay.', 'Thank you.', 'Thank you for watching.', 'You\'re', 'Oh', 'you', 'Oh.', 'Uh', 'Oh,', 'Mh-hmm', 'Hmm.']
+        common_hallucinations = ['Okay.', 'Thank you.', 'Thank you for watching.', 'You\'re', 'Oh', 'you', 'Oh.', 'Uh', 'Oh,', 'Mh-hmm', 'Hmm.', 'going to.', 'not.']
         for hallucination in common_hallucinations:
             text = text.replace(hallucination, "")
         return text
@@ -140,15 +140,15 @@ class AudioTranscriber:
         while not done or not audio_queue.empty():
             try:
                 audio_data, sample_rate = audio_queue.get(timeout=1.0)
-                if self.verbose:
-                    print(Fore.BLUE + "AudioTranscriber: Processing audio chunk" + Fore.RESET)
                 
+                start_time = time.time()
                 text = self.transcriptor.transcript_job(audio_data, sample_rate)
+                end_time = time.time()
                 self.recorded += text
-                print(Fore.YELLOW + f"Transcribed: {text}" + Fore.RESET)
+                print(Fore.YELLOW + f"Transcribed: {text} in {end_time - start_time} seconds" + Fore.RESET)
                 for language, words in self.trigger_words.items():
                     if any(word in text.lower() for word in words):
-                        print(Fore.GREEN + f"Start listening..." + Fore.RESET)
+                        print(Fore.GREEN + f"Listening again..." + Fore.RESET)
                         self.recorded = text
                 for language, words in self.confirmation_words.items():
                     if any(word in text.lower() for word in words):
