@@ -19,7 +19,7 @@
 
 ---
 
-![demo](./media/demo_img.png)
+
 
 ---
 
