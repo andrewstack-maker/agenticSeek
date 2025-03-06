@@ -1,7 +1,7 @@
 
-# AgenticSeek: Fully local AI Assistant Powered by Reasoning Agents.
+# AgenticSeek: Fully local AI Assistant Powered by Deepseek R1 Agents.
 
-**A fully local AI assistant** using AI agents. The goal of the project is to create a truly Jarvis like assistant using deepseek R1. 
+**A fully local AI assistant** using AI agents. The goal of the project is to create a truly Jarvis like assistant using reasoning model such as deepseek R1. 
 
 > 🛠️ **Work in Progress** – Looking for contributors! 🚀  
 ---
