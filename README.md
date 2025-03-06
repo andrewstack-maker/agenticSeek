@@ -11,10 +11,11 @@
 -  **Privacy-first**: Runs 100% locally – **no data leaves your machine**  
 - ️ **Voice-enabled**: Speak and interact naturally
 - **Coding abilities**: Code in Python, Bash, C, Golang, and soon more
--  **Self-correcting**: Automatically fixes errors by itself
+-  **Trial-and-error**: Automatically fixes code or command upon execution failure
 - **Agent routing**: Select the best agent for the task
 - **Multi-agent**: For complex tasks, divide and conquer with multiple agents
--  **Web browsing (not implemented yet)**: Browse the web and search the internet  
+- ***Tools:**: All agents have their respective tools ability. Basic search, flight API, files explorer, etc...
+-  **Web browsing (not implemented yet)**: Browse the web autonomously to conduct task.
 
 ---
 
