@@ -18,6 +18,11 @@
 
 ---
 
+![demo](./media/demo_img.png)
+
+---
+
+
 ## Installation  
 
 ### 1️⃣ **Install Dependencies**  
