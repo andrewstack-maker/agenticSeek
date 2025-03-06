@@ -77,7 +77,7 @@ class Interaction:
         query = self.transcriber.get_transcript()
         return query
 
-    def get_user_input(self) -> str:
+    def get_user(self) -> str:
         """Get the user input from the microphone or the keyboard."""
         if self.stt_enabled:
             query = "TTS transcription of user: " + self.transcription_job()
