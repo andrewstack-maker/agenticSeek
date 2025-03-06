@@ -21,7 +21,6 @@
 ## Installation  
 
 ### 1️⃣ **Install Dependencies**  
-
 ```sh
 pip3 install -r requirements.txt
 ```

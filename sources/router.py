@@ -6,14 +6,17 @@ from sources.casual_agent import CasualAgent
 from sources.utility import pretty_print
 
 class AgentRouter:
-    def __init__(self, agents: list, model_name="facebook/bart-large-mnli"):
+    """
+    AgentRouter is a class that selects the appropriate agent based on the user query.
+    """
+    def __init__(self, agents: list, model_name: str = "facebook/bart-large-mnli"):
         self.model = model_name 
         self.pipeline = pipeline("zero-shot-classification",
                       model=self.model)
         self.agents = agents
         self.labels = [agent.role for agent in agents]
 
-    def get_device(self):
+    def get_device(self) -> str:
         if torch.backends.mps.is_available():
             return "mps"
         elif torch.cuda.is_available():
@@ -21,12 +24,33 @@ class AgentRouter:
         else:
             return "cpu"
 
-    def classify_text(self, text, threshold=0.5):
-        result = self.pipeline(text, self.labels, threshold=threshold)
+    def classify_text(self, text: str, threshold: float = 0.5) -> list:
+        """
+        Classify the text into labels (agent roles).
+        Args:
+            text (str): The text to classify
+            threshold (float, optional): The threshold for the classification.
+        Returns:
+            list: The list of agents and their scores
+        """
+        first_sentence = None
+        for line in text.split("\n"):
+                first_sentence = line.strip()
+                break
+        if first_sentence is None:
+            first_sentence = text
+        result = self.pipeline(first_sentence, self.labels, threshold=threshold)
         return result
     
     def select_agent(self, text: str) -> Agent:
-        if text is None:
+        """
+        Select the appropriate agent based on the text.
+        Args:
+            text (str): The text to select the agent from
+        Returns:
+            Agent: The selected agent
+        """
+        if len(self.agents) == 0 or len(self.labels) == 0:
             return self.agents[0]
         result = self.classify_text(text)
         for agent in self.agents:

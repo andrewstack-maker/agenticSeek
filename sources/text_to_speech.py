@@ -5,10 +5,11 @@ import subprocess
 import re
 import platform
 
-
-
 class Speech():
-    def __init__(self, language = "english") -> None:
+    """
+    Speech is a class for generating speech from text.
+    """
+    def __init__(self, language: str = "english") -> None:
         self.lang_map = {
             "english": 'a',
             "chinese": 'z',
@@ -23,7 +24,14 @@ class Speech():
         self.voice = self.voice_map[language][2]
         self.speed = 1.2
 
-    def speak(self, sentence, voice_number = 1):
+    def speak(self, sentence: str, voice_number: int = 1):
+        """
+        Convert text to speech using an AI model and play the audio.
+
+        Args:
+            sentence (str): The text to convert to speech. Will be pre-processed.
+            voice_number (int, optional): Index of the voice to use from the voice map.
+        """
         sentence = self.clean_sentence(sentence)
         self.voice = self.voice_map["english"][voice_number]
         generator = self.pipeline(
@@ -41,18 +49,56 @@ class Speech():
                 import winsound
                 winsound.PlaySound(audio_file, winsound.SND_FILENAME)
 
-    def replace_url(self, m):
-        domain = m.group(1)
+    def replace_url(self, url: re.Match) -> str:
+        """
+        Replace URL with domain name or empty string if IP address.
+        Args:
+            url (re.Match): Match object containing the URL pattern match
+        Returns:
+            str: The domain name from the URL, or empty string if IP address
+        """
+        domain = url.group(1)
         if re.match(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', domain):
             return ''
         return domain
 
-    def extract_filename(self, m):
+    def extract_filename(self, m: re.Match) -> str:
+        """
+        Extract filename from path.
+        Args:
+            m (re.Match): Match object containing the path pattern match
+        Returns:
+            str: The filename from the path
+        """
         path = m.group()
         parts = re.split(r'/|\\', path)
         return parts[-1] if parts else path
+    
+    def shorten_paragraph(self, sentence):
+        """
+        Shorten paragraph like **explaination**: <long text> by keeping only the first sentence.
+        Args:
+            sentence (str): The sentence to shorten
+        Returns:
+            str: The shortened sentence
+        """
+        lines = sentence.split('\n')
+        lines_edited = []
+        for line in lines:
+            if line.startswith('**'):
+                lines_edited.append(line.split('.')[0])
+            else:
+                lines_edited.append(line)
+        return '\n'.join(lines_edited)
 
     def clean_sentence(self, sentence):
+        """
+        Clean and normalize text for speech synthesis by removing technical elements.
+        Args:
+            sentence (str): The input text to clean
+        Returns:
+            str: The cleaned text with URLs replaced by domain names, code blocks removed, etc..
+        """
         lines = sentence.split('\n')
         filtered_lines = [line for line in lines if re.match(r'^\s*[a-zA-Z]', line)]
         sentence = ' '.join(filtered_lines)

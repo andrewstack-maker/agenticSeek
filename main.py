@@ -45,10 +45,19 @@ def main():
     interaction = Interaction(agents, tts_enabled=config.getboolean('MAIN', 'speak'),
                                       stt_enabled=config.getboolean('MAIN', 'listen'),
                                       recover_last_session=config.getboolean('MAIN', 'recover_last_session'))
-    while interaction.is_active:
-        interaction.get_user()
-        interaction.think()
-        interaction.show_answer()
+    try:
+        while interaction.is_active:
+            interaction.get_user()
+            interaction.think()
+            interaction.show_answer()
+    except Exception as e:
+        if config.getboolean('MAIN', 'save_session'):
+            interaction.save_session()
+        raise e
+    finally:
+        if config.getboolean('MAIN', 'save_session'):
+            interaction.save_session()
+
 
 if __name__ == "__main__":
     main()

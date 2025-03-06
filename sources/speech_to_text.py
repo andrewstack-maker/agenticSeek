@@ -12,7 +12,10 @@ audio_queue = queue.Queue()
 done = False
 
 class AudioRecorder:
-    def __init__(self, format=pyaudio.paInt16, channels=1, rate=44100, chunk=8192, record_seconds=7, verbose=False):
+    """
+    AudioRecorder is a class that records audio from the microphone and adds it to the audio queue.
+    """
+    def __init__(self, format: int = pyaudio.paInt16, channels: int = 1, rate: int = 4096, chunk: int = 8192, record_seconds: int = 5, verbose: bool = False):
         self.format = format
         self.channels = channels
         self.rate = rate
@@ -22,7 +25,10 @@ class AudioRecorder:
         self.audio = pyaudio.PyAudio()
         self.thread = threading.Thread(target=self._record, daemon=True)
 
-    def _record(self):
+    def _record(self) -> None:
+        """
+        Record audio from the microphone and add it to the audio queue.
+        """
         stream = self.audio.open(format=self.format, channels=self.channels, rate=self.rate,
                                  input=True, frames_per_buffer=self.chunk)
         if self.verbose:
@@ -49,19 +55,22 @@ class AudioRecorder:
         if self.verbose:
             print(Fore.GREEN + "AudioRecorder: Stopped" + Fore.RESET)
 
-    def start(self):
+    def start(self) -> None:
         """Start the recording thread."""
         self.thread.start()
 
-    def join(self):
+    def join(self) -> None:
         """Wait for the recording thread to finish."""
         self.thread.join()
 
 class Transcript:
-    def __init__(self) -> None:
+    """
+    Transcript is a class that transcribes audio from the audio queue and adds it to the transcript.
+    """
+    def __init__(self):
         self.last_read = None
-        device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+        device = self.get_device()
+        torch_dtype = torch.float16 if device == "cuda" else torch.float32
         model_id = "distil-whisper/distil-medium.en"
         
         model = AutoModelForSpeechSeq2Seq.from_pretrained(
@@ -75,12 +84,29 @@ class Transcript:
             model=model,
             tokenizer=processor.tokenizer,
             feature_extractor=processor.feature_extractor,
-            max_new_tokens=128,
+            max_new_tokens=24, # a human say around 20 token in 7s
             torch_dtype=torch_dtype,
             device=device,
         )
-
-    def transcript_job(self, audio_data: np.ndarray, sample_rate: int = 16000):
+    
+    def get_device(self) -> str:
+        if torch.backends.mps.is_available():
+            return "mps"
+        if torch.cuda.is_available():
+            return "cuda:0"
+        else:
+            return "cpu"
+    
+    def remove_hallucinations(self, text: str) -> str:
+        """Remove model hallucinations from the text."""
+        # TODO find a better way to do this
+        common_hallucinations = ['Okay.', 'Thank you.', 'Thank you for watching.', 'You\'re', 'Oh', 'you', 'Oh.', 'Uh', 'Oh,', 'Mh-hmm', 'Hmm.', 'going to.', 'not.']
+        for hallucination in common_hallucinations:
+            text = text.replace(hallucination, "")
+        return text
+    
+    def transcript_job(self, audio_data: np.ndarray, sample_rate: int = 16000) -> str:
+        """Transcribe the audio data."""
         if audio_data.dtype != np.float32:
             audio_data = audio_data.astype(np.float32) / np.iinfo(audio_data.dtype).max
         if len(audio_data.shape) > 1:
@@ -88,10 +114,13 @@ class Transcript:
         if sample_rate != 16000:
             audio_data = librosa.resample(audio_data, orig_sr=sample_rate, target_sr=16000)
         result = self.pipe(audio_data)
-        return result["text"]
+        return self.remove_hallucinations(result["text"])
 
 class AudioTranscriber:
-    def __init__(self, ai_name: str, verbose=False):
+    """
+    AudioTranscriber is a class that transcribes audio from the audio queue and adds it to the transcript.
+    """
+    def __init__(self, ai_name: str, verbose: bool = False):
         self.verbose = verbose
         self.ai_name = ai_name
         self.transcriptor = Transcript()
@@ -103,19 +132,25 @@ class AudioTranscriber:
             'ES': [f"{self.ai_name}"]
         }
         self.confirmation_words = {
-            'EN': ["do it", "go ahead", "execute", "run", "start", "thanks", "would ya", "please", "okay?", "proceed", "continue", "go on", "do that", "do that thing"],
-            'FR': ["fais-le", "vas-y", "exécute", "lance", "commence", "merci", "tu veux bien", "s'il te plaît", "d'accord ?", "poursuis", "continue", "vas-y", "fais ça", "fais ce truc"],
-            'ZH': ["做吧", "继续", "执行", "运行", "开始", "谢谢", "可以吗", "请", "好吗", "进行", "继续", "往前走", "做那个", "做那件事"],
+            'EN': ["do it", "go ahead", "execute", "run", "start", "thanks", "would ya", "please", "okay?", "proceed", "continue", "go on", "do that", "go it", "do you understand?"],
+            'FR': ["fais-le", "vas-y", "exécute", "lance", "commence", "merci", "tu veux bien", "s'il te plaît", "d'accord ?", "poursuis", "continue", "vas-y", "fais ça", "compris"],
+            'ZH_CHT': ["做吧", "繼續", "執行", "運作看看", "開始", "謝謝", "可以嗎", "請", "好嗎", "進行", "做吧", "go", "do it", "執行吧", "懂了"],
+            'ZH_SC': ["做吧", "继续", "执行", "运作看看", "开始", "谢谢", "可以吗", "请", "好吗", "运行", "做吧", "go", "do it", "执行吧", "懂了"],
             'ES': ["hazlo", "adelante", "ejecuta", "corre", "empieza", "gracias", "lo harías", "por favor", "¿vale?", "procede", "continúa", "sigue", "haz eso", "haz esa cosa"]
         }
         self.recorded = ""
 
-    def get_transcript(self):
+    def get_transcript(self) -> str:
+        global done
         buffer = self.recorded
         self.recorded = ""
+        done = False
         return buffer
 
-    def _transcribe(self):
+    def _transcribe(self) -> None:
+        """
+        Transcribe the audio data using AI stt model.
+        """
         global done
         if self.verbose:
             print(Fore.BLUE + "AudioTranscriber: Started processing..." + Fore.RESET)
@@ -123,15 +158,15 @@ class AudioTranscriber:
         while not done or not audio_queue.empty():
             try:
                 audio_data, sample_rate = audio_queue.get(timeout=1.0)
-                if self.verbose:
-                    print(Fore.BLUE + "AudioTranscriber: Processing audio chunk" + Fore.RESET)
                 
+                start_time = time.time()
                 text = self.transcriptor.transcript_job(audio_data, sample_rate)
+                end_time = time.time()
                 self.recorded += text
-                print(Fore.YELLOW + f"Transcribed: {text}" + Fore.RESET)
+                print(Fore.YELLOW + f"Transcribed: {text} in {end_time - start_time} seconds" + Fore.RESET)
                 for language, words in self.trigger_words.items():
                     if any(word in text.lower() for word in words):
-                        print(Fore.GREEN + f"Start listening..." + Fore.RESET)
+                        print(Fore.GREEN + f"Listening again..." + Fore.RESET)
                         self.recorded = text
                 for language, words in self.confirmation_words.items():
                     if any(word in text.lower() for word in words):
