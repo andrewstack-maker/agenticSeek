@@ -94,6 +94,28 @@ Run the assistant:
 python3 main.py
 ```
 
+## Provider
+
+Currently the only provider are :
+- ollama -> Use ollama running on your computer. Ollama program for running locally large language models.
+- server -> A custom script that allow you to have the LLM model run on another machine. Currently it use ollama but we'll switch to other options soon.
+- openai -> Use ChatGPT API (not private).
+- deepseek -> Deepseek API (not private).
+
+To select a provider change the config.ini:
+
+```
+is_local = False
+provider_name = openai
+provider_model = gpt-4o
+provider_server_address = 127.0.0.1:5000
+```
+is_local: should be True for any locally running LLM, otherwise False.
+provider_name: Select the provider to use by its name, see the provider list above.
+provider_model: Set the model to use by the agent.
+provider_server_address: can be set to anything if you are not using the server provider.
+
+
 ## Current capabilities
 
 - All running locally
@@ -106,9 +128,3 @@ python3 main.py
 - Speech to text.
 - Memory compression (reduce history as interaction progresses using summary model) 
 - Recovery: recover and save session from filesystem.
-
-## UNDER DEVELOPMENT
-
-- Web browsing
-- Knowledge base RAG
-- Graphical interface
