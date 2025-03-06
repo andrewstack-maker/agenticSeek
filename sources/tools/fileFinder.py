@@ -2,7 +2,6 @@ import os
 import stat
 import mimetypes
 import configparser
-from abc import ABC
 
 if __name__ == "__main__":
     from tools import Tools
@@ -10,7 +9,7 @@ else:
     from sources.tools.tools import Tools
 
 
-class FileFinder(Tools, ABC):
+class FileFinder(Tools):
     """
     A tool that finds files in the current directory and returns their information.
     """
@@ -19,8 +18,8 @@ class FileFinder(Tools, ABC):
         self.tag = "file_finder"
         self.current_dir = os.path.dirname(os.getcwd()) 
         config = configparser.ConfigParser()
-        config.read('../../config.ini')
-        self.current_dir = config['MAIN']['current_dir']
+        config.read('./config.ini')
+        self.current_dir = config['MAIN']['work_dir']
     
     def read_file(self, file_path: str) -> str:
         """

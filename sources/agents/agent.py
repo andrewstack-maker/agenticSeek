@@ -126,6 +126,7 @@ class Agent():
                     self.blocks_result[block_idx].show()
             else:
                 pretty_print(line, color="output")
+        self.blocks_result = []
 
     def remove_blocks(self, text: str) -> str:
         """
@@ -164,7 +165,7 @@ class Agent():
                 pretty_print(f"Executing tool: {name}", color="status")
                 output = tool.execute(blocks)
                 feedback = tool.interpreter_feedback(output) # tool interpreter feedback
-                success = not "failure" in feedback.lower()
+                success = not tool.execution_failure_check(output)
                 pretty_print(feedback, color="success" if success else "failure")
                 self.memory.push('user', feedback)
                 self.blocks_result.append(executorResult(blocks, feedback, success))
