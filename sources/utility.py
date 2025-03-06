@@ -6,7 +6,19 @@ import platform
 
 def pretty_print(text, color = "info"):
     """
-    print text with color
+    Print text with color formatting.
+
+    Args:
+        text (str): The text to print
+        color (str, optional): The color to use. Defaults to "info".
+            Valid colors are:
+            - "success": Green
+            - "failure": Red 
+            - "status": Light green
+            - "code": Light blue
+            - "warning": Yellow
+            - "output": Cyan
+            - "default": Black (Windows only)
     """
     if platform.system().lower() != "windows":
         color_map = {
@@ -35,3 +47,20 @@ def pretty_print(text, color = "info"):
         if color not in color_map:
             color = "default"
         print(colored(text, color_map[color]))
+
+def timer_decorator(func):
+    """
+    Decorator to measure the execution time of a function.
+    Usage:
+    @timer_decorator
+    def my_function():
+        # code to execute
+    """
+    from time import time
+    def wrapper(*args, **kwargs):
+        start_time = time()
+        result = func(*args, **kwargs)
+        end_time = time()
+        print(f"{func.__name__} took {end_time - start_time:.2f} seconds to execute")
+        return result
+    return wrapper

@@ -1,47 +1,28 @@
 
-from sources.tools import PyInterpreter, BashInterpreter
 from sources.utility import pretty_print
-from sources.agent import Agent, executorResult
+from sources.agents.agent import Agent, executorResult
+
+from sources.tools.C_Interpreter import CInterpreter
+from sources.tools.GoInterpreter import GoInterpreter
+from sources.tools.PyInterpreter import PyInterpreter
+from sources.tools.BashInterpreter import BashInterpreter
+from sources.tools.fileFinder import FileFinder
 
 class CoderAgent(Agent):
+    """
+    The code agent is an agent that can write and execute code.
+    """
     def __init__(self, model, name, prompt_path, provider):
         super().__init__(model, name, prompt_path, provider)
         self.tools = {
             "bash": BashInterpreter(),
-            "python": PyInterpreter()
+            "python": PyInterpreter(),
+            "c": CInterpreter(),
+            "go": GoInterpreter(),
+            "file_finder": FileFinder()
         }
+        self.role = "coding"
 
-    def remove_blocks(self, text: str) -> str:
-        """
-        Remove all code/query blocks within a tag from the answer text.
-        """
-        tag = f'```'
-        lines = text.split('\n')
-        post_lines = []
-        in_block = False
-        block_idx = 0
-        for line in lines:
-            if tag in line and not in_block:
-                in_block = True
-                continue
-            if not in_block:
-                post_lines.append(line)
-            if tag in line:
-                in_block = False
-                post_lines.append(f"block:{block_idx}")
-                block_idx += 1
-        return "\n".join(post_lines)
-    
-    def show_answer(self):
-        lines = self.last_answer.split("\n")
-        for line in lines:
-            if "block:" in line:
-                block_idx = int(line.split(":")[1])
-                if block_idx < len(self.blocks_result):
-                    self.blocks_result[block_idx].show()
-            else:
-                pretty_print(line, color="output")
-    
     def process(self, prompt, speech_module) -> str:
         answer = ""
         attempt = 0

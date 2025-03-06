@@ -4,7 +4,12 @@ import time
 import datetime
 import uuid
 import os
+import sys
 import json
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from sources.utility import timer_decorator
 
 class Memory():
     """
@@ -15,8 +20,7 @@ class Memory():
                  recover_last_session: bool = False,
                  memory_compression: bool = True):
         self.memory = []
-        self.memory = [{'role': 'user', 'content': system_prompt},
-                        {'role': 'assistant', 'content': f'Hello, How can I help you today ?'}]
+        self.memory = [{'role': 'user', 'content': system_prompt}]
         
         self.session_time = datetime.datetime.now()
         self.session_id = str(uuid.uuid4())
@@ -35,6 +39,7 @@ class Memory():
         return f"memory_{self.session_time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
     
     def save_memory(self) -> None:
+        """Save the session memory to a file."""
         if not os.path.exists(self.conversation_folder):
             os.makedirs(self.conversation_folder)
         filename = self.get_filename()
@@ -44,15 +49,19 @@ class Memory():
             f.write(json_memory)
     
     def find_last_session_path(self) -> str:
+        """Find the last session path."""
         saved_sessions = []
         for filename in os.listdir(self.conversation_folder):
             if filename.startswith('memory_'):
                 date = filename.split('_')[1]
                 saved_sessions.append((filename, date))
         saved_sessions.sort(key=lambda x: x[1], reverse=True)
-        return saved_sessions[0][0]
+        if len(saved_sessions) > 0:
+            return saved_sessions[0][0]
+        return None
 
     def load_memory(self) -> None:
+        """Load the memory from the last session."""
         if not os.path.exists(self.conversation_folder):
             return
         filename = self.find_last_session_path()
@@ -66,6 +75,7 @@ class Memory():
         self.memory = memory
     
     def push(self, role: str, content: str) -> None:
+        """Push a message to the memory."""
         self.memory.append({'role': role, 'content': content})
         # EXPERIMENTAL
         if self.memory_compression and role == 'assistant':
@@ -86,6 +96,14 @@ class Memory():
             return "cpu"
 
     def summarize(self, text: str, min_length: int = 64) -> str:
+        """
+        Summarize the text using the AI model.
+        Args:
+            text (str): The text to summarize
+            min_length (int, optional): The minimum length of the summary. Defaults to 64.
+        Returns:
+            str: The summarized text
+        """
         if self.tokenizer is None or self.model is None:
             return text
         max_length = len(text) // 2 if len(text) > min_length*2 else min_length*2
@@ -101,19 +119,12 @@ class Memory():
         )
         summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         return summary
-
-    def timer_decorator(func):
-        from time import time
-        def wrapper(*args, **kwargs):
-            start_time = time()
-            result = func(*args, **kwargs)
-            end_time = time()
-            print(f"{func.__name__} took {end_time - start_time:.2f} seconds to execute")
-            return result
-        return wrapper
     
     @timer_decorator
     def compress(self) -> str:
+        """
+        Compress the memory using the AI model.
+        """
         if not self.memory_compression:
             return
         for i in range(len(self.memory)):
