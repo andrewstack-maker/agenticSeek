@@ -111,8 +111,11 @@ provider_model = gpt-4o
 provider_server_address = 127.0.0.1:5000
 ```
 is_local: should be True for any locally running LLM, otherwise False.
+
 provider_name: Select the provider to use by its name, see the provider list above.
+
 provider_model: Set the model to use by the agent.
+
 provider_server_address: can be set to anything if you are not using the server provider.
 
 
