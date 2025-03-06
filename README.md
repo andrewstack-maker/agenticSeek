@@ -1,7 +1,7 @@
 
-# 🚀 agenticSeek: Local AI Assistant Powered by DeepSeek Agents  
+# AgenticSeek: Fully local AI Assistant Powered by Reasoning Agents.
 
-**A fully local AI assistant** using Deepseek R1 agents.
+**A fully local AI assistant** using AI agents. The goal of the project is to create a truly Jarvis like assistant using deepseek R1. 
 
 > 🛠️ **Work in Progress** – Looking for contributors! 🚀  
 ---
@@ -57,20 +57,24 @@ Run the assistant:
 python3 main.py
 ```
 
-### 4️⃣ **Alternative: Run the Assistant (Own Server)**  
+### 4️⃣ **Alternative: Run the LLM on your own server**  
 
 
-Get the ip address of the machine that will run the model
+On your "server" that will run the AI model, get the ip address
 
 ```sh
 ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
 ```
 
-On the other machine that will run the model execute the script in stream_llm.py
+Clone the repository and then, run the script `stream_llm.py` in `server/`
 
 ```sh
 python3 stream_llm.py
 ```
+
+Now on your personal computer:
+
+Clone the repository.
 
 Change the `config.ini` file to set the `provider_name` to `server` and `provider_model` to `deepseek-r1:7b`.
 Set the `provider_server_address` to the ip address of the machine that will run the model.
@@ -93,17 +97,17 @@ python3 main.py
 
 - All running locally
 - Reasoning with deepseek R1
-- Code execution capabilities (Python, Golang, C)
+- Code execution capabilities (Python, Golang, C, etc..)
 - Shell control capabilities in bash
 - Will try to fix errors by itself
 - Routing system, select the best agent for the task
 - Fast text-to-speech using kokoro.
+- Speech to text.
 - Memory compression (reduce history as interaction progresses using summary model) 
-- Recovery: recover last session from memory
+- Recovery: recover and save session from filesystem.
 
 ## UNDER DEVELOPMENT
 
 - Web browsing
 - Knowledge base RAG
 - Graphical interface
-- Speech-to-text using distil-whisper/distil-medium.en
