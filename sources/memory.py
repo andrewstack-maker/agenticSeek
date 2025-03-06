@@ -39,6 +39,7 @@ class Memory():
         return f"memory_{self.session_time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
     
     def save_memory(self) -> None:
+        """Save the session memory to a file."""
         if not os.path.exists(self.conversation_folder):
             os.makedirs(self.conversation_folder)
         filename = self.get_filename()
@@ -48,6 +49,7 @@ class Memory():
             f.write(json_memory)
     
     def find_last_session_path(self) -> str:
+        """Find the last session path."""
         saved_sessions = []
         for filename in os.listdir(self.conversation_folder):
             if filename.startswith('memory_'):
@@ -59,6 +61,7 @@ class Memory():
         return None
 
     def load_memory(self) -> None:
+        """Load the memory from the last session."""
         if not os.path.exists(self.conversation_folder):
             return
         filename = self.find_last_session_path()
@@ -72,6 +75,7 @@ class Memory():
         self.memory = memory
     
     def push(self, role: str, content: str) -> None:
+        """Push a message to the memory."""
         self.memory.append({'role': role, 'content': content})
         # EXPERIMENTAL
         if self.memory_compression and role == 'assistant':
@@ -92,6 +96,14 @@ class Memory():
             return "cpu"
 
     def summarize(self, text: str, min_length: int = 64) -> str:
+        """
+        Summarize the text using the AI model.
+        Args:
+            text (str): The text to summarize
+            min_length (int, optional): The minimum length of the summary. Defaults to 64.
+        Returns:
+            str: The summarized text
+        """
         if self.tokenizer is None or self.model is None:
             return text
         max_length = len(text) // 2 if len(text) > min_length*2 else min_length*2
@@ -110,6 +122,9 @@ class Memory():
     
     @timer_decorator
     def compress(self) -> str:
+        """
+        Compress the memory using the AI model.
+        """
         if not self.memory_compression:
             return
         for i in range(len(self.memory)):

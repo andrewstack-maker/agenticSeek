@@ -5,6 +5,9 @@ from sources.router import AgentRouter
 from sources.speech_to_text import AudioTranscriber, AudioRecorder
 
 class Interaction:
+    """
+    Interaction is a class that handles the interaction between the user and the agents.
+    """
     def __init__(self, agents,
                  tts_enabled: bool = True,
                  stt_enabled: bool = True,
@@ -29,6 +32,7 @@ class Interaction:
             self.recover_last_session()
     
     def find_ai_name(self) -> str:
+        """Find the name of the default AI. It is required for STT as a trigger word."""
         ai_name = "jarvis"
         for agent in self.agents:
             if agent.role == "talking":
@@ -37,17 +41,20 @@ class Interaction:
         return ai_name
     
     def recover_last_session(self):
+        """Recover the last session."""
         for agent in self.agents:
             agent.memory.load_memory()
     
     def save_session(self):
+        """Save the current session."""
         for agent in self.agents:
             agent.memory.save_memory()
 
-    def is_active(self):
+    def is_active(self) -> bool:
         return self.is_active
     
     def read_stdin(self) -> str:
+        """Read the input from the user."""
         buffer = ""
 
         while buffer == "" or buffer.isascii() == False:
@@ -59,7 +66,8 @@ class Interaction:
                 return None
         return buffer
     
-    def transcription_job(self):
+    def transcription_job(self) -> str:
+        """Transcribe the audio from the microphone."""
         self.recorder = AudioRecorder(verbose=True)
         self.transcriber = AudioTranscriber(self.ai_name, verbose=True)
         self.transcriber.start()
@@ -69,7 +77,8 @@ class Interaction:
         query = self.transcriber.get_transcript()
         return query
 
-    def get_user(self):
+    def get_user_input(self) -> str:
+        """Get the user input from the microphone or the keyboard."""
         if self.stt_enabled:
             query = "TTS transcription of user: " + self.transcription_job()
         else:
@@ -81,7 +90,8 @@ class Interaction:
         self.last_query = query
         return query
     
-    def think(self):
+    def think(self) -> None:
+        """Request AI agents to process the user input."""
         if self.last_query is None or len(self.last_query) == 0:
             return
         agent = self.router.select_agent(self.last_query)
@@ -93,7 +103,8 @@ class Interaction:
             self.current_agent.memory.push('user', self.last_query)
         self.last_answer, _ = agent.process(self.last_query, self.speech)
     
-    def show_answer(self):
+    def show_answer(self) -> None:
+        """Show the answer to the user."""
         if self.last_query is None:
             return
         self.current_agent.show_answer()

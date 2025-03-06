@@ -12,7 +12,10 @@ audio_queue = queue.Queue()
 done = False
 
 class AudioRecorder:
-    def __init__(self, format=pyaudio.paInt16, channels=1, rate=4096, chunk=8192, record_seconds=5, verbose=False):
+    """
+    AudioRecorder is a class that records audio from the microphone and adds it to the audio queue.
+    """
+    def __init__(self, format: int = pyaudio.paInt16, channels: int = 1, rate: int = 4096, chunk: int = 8192, record_seconds: int = 5, verbose: bool = False):
         self.format = format
         self.channels = channels
         self.rate = rate
@@ -22,7 +25,10 @@ class AudioRecorder:
         self.audio = pyaudio.PyAudio()
         self.thread = threading.Thread(target=self._record, daemon=True)
 
-    def _record(self):
+    def _record(self) -> None:
+        """
+        Record audio from the microphone and add it to the audio queue.
+        """
         stream = self.audio.open(format=self.format, channels=self.channels, rate=self.rate,
                                  input=True, frames_per_buffer=self.chunk)
         if self.verbose:
@@ -49,16 +55,19 @@ class AudioRecorder:
         if self.verbose:
             print(Fore.GREEN + "AudioRecorder: Stopped" + Fore.RESET)
 
-    def start(self):
+    def start(self) -> None:
         """Start the recording thread."""
         self.thread.start()
 
-    def join(self):
+    def join(self) -> None:
         """Wait for the recording thread to finish."""
         self.thread.join()
 
 class Transcript:
-    def __init__(self) -> None:
+    """
+    Transcript is a class that transcribes audio from the audio queue and adds it to the transcript.
+    """
+    def __init__(self):
         self.last_read = None
         device = self.get_device()
         torch_dtype = torch.float16 if device == "cuda" else torch.float32
@@ -80,7 +89,7 @@ class Transcript:
             device=device,
         )
     
-    def get_device(self):
+    def get_device(self) -> str:
         if torch.backends.mps.is_available():
             return "mps"
         if torch.cuda.is_available():
@@ -88,14 +97,16 @@ class Transcript:
         else:
             return "cpu"
     
-    def remove_hallucinations(self, text: str):
+    def remove_hallucinations(self, text: str) -> str:
+        """Remove model hallucinations from the text."""
         # TODO find a better way to do this
         common_hallucinations = ['Okay.', 'Thank you.', 'Thank you for watching.', 'You\'re', 'Oh', 'you', 'Oh.', 'Uh', 'Oh,', 'Mh-hmm', 'Hmm.', 'going to.', 'not.']
         for hallucination in common_hallucinations:
             text = text.replace(hallucination, "")
         return text
     
-    def transcript_job(self, audio_data: np.ndarray, sample_rate: int = 16000):
+    def transcript_job(self, audio_data: np.ndarray, sample_rate: int = 16000) -> str:
+        """Transcribe the audio data."""
         if audio_data.dtype != np.float32:
             audio_data = audio_data.astype(np.float32) / np.iinfo(audio_data.dtype).max
         if len(audio_data.shape) > 1:
@@ -106,7 +117,10 @@ class Transcript:
         return self.remove_hallucinations(result["text"])
 
 class AudioTranscriber:
-    def __init__(self, ai_name: str, verbose=False):
+    """
+    AudioTranscriber is a class that transcribes audio from the audio queue and adds it to the transcript.
+    """
+    def __init__(self, ai_name: str, verbose: bool = False):
         self.verbose = verbose
         self.ai_name = ai_name
         self.transcriptor = Transcript()
@@ -126,14 +140,17 @@ class AudioTranscriber:
         }
         self.recorded = ""
 
-    def get_transcript(self):
+    def get_transcript(self) -> str:
         global done
         buffer = self.recorded
         self.recorded = ""
         done = False
         return buffer
 
-    def _transcribe(self):
+    def _transcribe(self) -> None:
+        """
+        Transcribe the audio data using AI stt model.
+        """
         global done
         if self.verbose:
             print(Fore.BLUE + "AudioTranscriber: Started processing..." + Fore.RESET)
