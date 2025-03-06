@@ -1,6 +1,7 @@
 *.wav
 config.ini
 experimental/
+conversations/
 .env
 */.env
 

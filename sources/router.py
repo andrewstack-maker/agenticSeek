@@ -1,8 +1,13 @@
+import os
+import sys
 import torch
 from transformers import pipeline
-from sources.agent import Agent
-from sources.code_agent import CoderAgent
-from sources.casual_agent import CasualAgent
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from sources.agents.agent import Agent
+from sources.agents.code_agent import CoderAgent
+from sources.agents.casual_agent import CasualAgent
 from sources.utility import pretty_print
 
 class AgentRouter:

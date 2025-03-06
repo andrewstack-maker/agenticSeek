@@ -7,8 +7,7 @@ import configparser
 
 from sources.llm_provider import Provider
 from sources.interaction import Interaction
-from sources.code_agent import CoderAgent
-from sources.casual_agent import CasualAgent
+from sources.agents import Agent, CoderAgent, CasualAgent
 
 parser = argparse.ArgumentParser(description='Deepseek AI assistant')
 parser.add_argument('--no-speak', action='store_true',

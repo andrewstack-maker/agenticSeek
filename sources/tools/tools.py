@@ -40,32 +40,44 @@ class Tools():
     @abstractmethod
     def execute(self, blocks:str, safety:bool) -> str:
         """
-        abstract method, implementation in child class.
-        Execute the tool.
+        Abstract method that must be implemented by child classes to execute the tool's functionality.
+        Args:
+            blocks (str): The code or query blocks to execute
+            safety (bool): Whenever human intervention is required
+        Returns:
+            str: The output/result from executing the tool
         """
         pass
 
     @abstractmethod
     def execution_failure_check(self, output:str) -> bool:
         """
-        abstract method, implementation in child class.
-        Check if the execution failed.
+        Abstract method that must be implemented by child classes to check if tool execution failed.
+        Args:
+            output (str): The output string from the tool execution to analyze
+        Returns:
+            bool: True if execution failed, False if successful
         """
         pass
 
     @abstractmethod
     def interpreter_feedback(self, output:str) -> str:
         """
-        abstract method, implementation in child class.
-        Provide feedback to the AI from the tool.
-        For exemple the output of a python code or web search.
+        Abstract method that must be implemented by child classes to provide feedback to the AI from the tool.
+        Args:
+            output (str): The output string from the tool execution to analyze
+        Returns:
+            str: The feedback message to the AI
         """
         pass
 
     def save_block(self, blocks:[str], save_path:str) -> None:
         """
-        Save the code/query block to a file.
+        Save code or query blocks to a file at the specified path.
         Creates the directory path if it doesn't exist.
+        Args:
+            blocks (List[str]): List of code/query blocks to save
+            save_path (str): File path where blocks should be saved
         """
         if save_path is None:
             return
@@ -78,9 +90,16 @@ class Tools():
             with open(save_path, 'w') as f:
                 f.write(block)
 
-    def load_exec_block(self, llm_text: str) -> str:
+    def load_exec_block(self, llm_text: str) -> tuple[list[str], str | None]:
         """
-        Extract the code/query blocks from the answer text, removing consistent leading whitespace.
+        Extract code/query blocks from LLM-generated text and process them for execution.
+        This method parses the text looking for code blocks marked with the tool's tag (e.g. ```python).
+        Args:
+            llm_text (str): The raw text containing code blocks from the LLM
+        Returns:
+            tuple[list[str], str | None]: A tuple containing:
+                - List of extracted and processed code blocks
+                - The path the code blocks was saved to
         """
         assert self.tag != "undefined", "Tag not defined"
         start_tag = f'```{self.tag}' 
