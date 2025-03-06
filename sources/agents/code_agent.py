@@ -1,7 +1,12 @@
 
 from sources.utility import pretty_print
-from sources.agent import Agent, executorResult
-from sources.tools import PyInterpreter, BashInterpreter, CInterpreter, GoInterpreter
+from sources.agents.agent import Agent, executorResult
+
+from sources.tools.C_Interpreter import CInterpreter
+from sources.tools.GoInterpreter import GoInterpreter
+from sources.tools.PyInterpreter import PyInterpreter
+from sources.tools.BashInterpreter import BashInterpreter
+from sources.tools.fileFinder import FileFinder
 
 class CoderAgent(Agent):
     """
@@ -11,7 +16,10 @@ class CoderAgent(Agent):
         super().__init__(model, name, prompt_path, provider)
         self.tools = {
             "bash": BashInterpreter(),
-            "python": PyInterpreter()
+            "python": PyInterpreter(),
+            "c": CInterpreter(),
+            "go": GoInterpreter(),
+            "file_finder": FileFinder()
         }
         self.role = "coding"
 

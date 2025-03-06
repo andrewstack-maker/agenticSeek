@@ -1,8 +1,9 @@
 
 from sources.utility import pretty_print
-from sources.agent import Agent
+from sources.agents.agent import Agent
 from sources.tools.webSearch import webSearch
 from sources.tools.flightSearch import FlightSearch
+from sources.tools.fileFinder import FileFinder
 
 class CasualAgent(Agent):
     def __init__(self, model, name, prompt_path, provider):
@@ -12,7 +13,8 @@ class CasualAgent(Agent):
         super().__init__(model, name, prompt_path, provider)
         self.tools = {
             "web_search": webSearch(),
-            "flight_search": FlightSearch()
+            "flight_search": FlightSearch(),
+            "file_finder": FileFinder()
         }
         self.role = "talking"
     

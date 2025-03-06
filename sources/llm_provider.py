@@ -8,6 +8,7 @@ import ipaddress
 import platform
 from dotenv import load_dotenv, set_key
 from openai import OpenAI
+from huggingface_hub import InferenceClient
 import os
 
 class Provider:
@@ -18,7 +19,8 @@ class Provider:
         self.available_providers = {
             "ollama": self.ollama_fn,
             "server": self.server_fn,
-            "openai": self.openai_fn
+            "openai": self.openai_fn,
+            "huggingface": self.huggingface_fn
         }
         self.api_key = None
         self.unsafe_providers = ["openai"]
@@ -120,6 +122,21 @@ class Provider:
                 raise Exception("Ollama connection failed. is the server running ?")
             raise e
         return thought
+    
+    def huggingface_fn(self, history, verbose=False):
+        """
+        Use huggingface to generate text.
+        """
+        client = InferenceClient(
+        	api_key=self.get_api_key("huggingface")
+        )
+        completion = client.chat.completions.create(
+            model=self.model, 
+        	messages=history, 
+        	max_tokens=1024,
+        )
+        thought = completion.choices[0].message
+        return thought.content
 
     def openai_fn(self, history, verbose=False):
         """

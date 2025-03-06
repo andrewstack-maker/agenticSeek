@@ -1,10 +1,8 @@
+
 from typing import Tuple, Callable
 from abc import abstractmethod
 import os
 import random
-import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sources.memory import Memory
 from sources.utility import pretty_print
