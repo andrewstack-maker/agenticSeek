@@ -76,7 +76,6 @@ def start_generation():
             return jsonify({"error": "Generation already in progress"}), 400
         
         history = data.get('messages', [])
-        # Start generation in background thread
         threading.Thread(target=generate_response, args=(history, state.model)).start()
     return jsonify({"message": "Generation started"}), 202
 
