@@ -10,12 +10,14 @@
 
 -  **Privacy-first**: Runs 100% locally – **no data leaves your machine**  
 - ️ **Voice-enabled**: Speak and interact naturally
-- **Coding abilities**: Code in Python, Bash, C, Golang, and soon more
+- - **Filesystem interaction**: Use bash to interact with your filesystem.
+- **Coding abilities**: Code in Python, C, Golang, and soon more
 -  **Trial-and-error**: Automatically fixes code or command upon execution failure
 - **Agent routing**: Select the best agent for the task
 - **Multi-agent**: For complex tasks, divide and conquer with multiple agents
 - **Tools:**: All agents have their respective tools ability. Basic search, flight API, files explorer, etc...
 -  **Web browsing (not implemented yet)**: Browse the web autonomously to conduct task.
+-  **Memory&Recovery**: Compress conversation over time to retain usefull information, recover conversation session.
 
 ---
 
@@ -122,17 +124,3 @@ provider_name: Select the provider to use by its name, see the provider list abo
 provider_model: Set the model to use by the agent.
 
 provider_server_address: can be set to anything if you are not using the server provider.
-
-
-## Current capabilities
-
-- All running locally
-- Reasoning with deepseek R1
-- Code execution capabilities (Python, Golang, C, etc..)
-- Shell control capabilities in bash
-- Will try to fix errors by itself
-- Routing system, select the best agent for the task
-- Fast text-to-speech using kokoro.
-- Speech to text.
-- Memory compression (reduce history as interaction progresses using summary model) 
-- Recovery: recover and save session from filesystem.
