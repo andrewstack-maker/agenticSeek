@@ -1,0 +1,30 @@
+{
+    "model_name": "deepseek-r1:14b",
+    "known_models": [
+        "qwq:32b",
+        "deepseek-r1:1.5b",
+        "deepseek-r1:7b",
+        "deepseek-r1:14b",
+        "deepseek-r1:32b",
+        "deepseek-r1:70b",
+        "deepseek-r1:671b",
+        "deepseek-coder:1.3b",
+        "deepseek-coder:6.7b",
+        "deepseek-coder:33b",
+        "llama2-uncensored:7b",
+        "llama2-uncensored:70b",
+        "llama3.1:8b",
+        "llama3.1:70b",
+        "llama3.3:70b",
+        "llama3:8b",
+        "llama3:70b",
+        "i4:14b",
+        "mistral:7b",
+        "mistral:70b",
+        "mistral:33b",
+        "qwen1:7b",
+        "qwen1:14b",
+        "qwen1:32b",
+        "qwen1:70b"
+    ]
+}
