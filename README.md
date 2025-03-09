@@ -16,7 +16,7 @@
 - **Agent routing**: Select the best agent for the task
 - **Multi-agent**: For complex tasks, divide and conquer with multiple agents
 - **Tools:**: All agents have their respective tools ability. Basic search, flight API, files explorer, etc...
-- **Web browsing (not implemented yet)**: Browse the web autonomously to conduct task.
+- **Web browsing (not implemented yet | Hight priority task)**: Browse the web autonomously to conduct task.
 - **Memory&Recovery**: Compress conversation over time to retain usefull information, recover conversation session.
 
 ---
