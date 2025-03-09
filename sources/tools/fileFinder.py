@@ -60,7 +60,6 @@ class FileFinder(Tools):
             str | None: The path to the file if found, None otherwise
         """
         file_path = None
-        print(f"Searching in directory: {os.path.abspath(directory_path)}")
         excluded_files = [".pyc", ".o", ".so", ".a", ".lib", ".dll", ".dylib", ".so", ".git"]
         for root, dirs, files in os.walk(directory_path):
             print(f"Root: {root}, Files: {files}")
