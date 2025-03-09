@@ -14,7 +14,7 @@
 - **Coding abilities**: Code in Python, C, Golang, and soon more
 - **Trial-and-error**: Automatically fixes code or command upon execution failure
 - **Agent routing**: Select the best agent for the task
-- **Multi-agent**: For complex tasks, divide and conquer with multiple agents
+- **Multi-agent (On Dev branch)**: For complex tasks, divide and conquer with multiple agents
 - **Tools:**: All agents have their respective tools ability. Basic search, flight API, files explorer, etc...
 - **Web browsing (not implemented yet | Hight priority task)**: Browse the web autonomously to conduct task.
 - **Memory&Recovery**: Compress conversation over time to retain usefull information, recover conversation session.
