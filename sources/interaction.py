@@ -94,7 +94,8 @@ class Interaction:
         """Request AI agents to process the user input."""
         if self.last_query is None or len(self.last_query) == 0:
             return
-        agent = self.router.select_agent(self.last_query)
+        #agent = self.router.select_agent(self.last_query)
+        agent = self.agents[3]
         if agent is None:
             return
         if self.current_agent != agent:

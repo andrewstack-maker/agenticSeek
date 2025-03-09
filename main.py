@@ -7,7 +7,7 @@ import configparser
 
 from sources.llm_provider import Provider
 from sources.interaction import Interaction
-from sources.agents import Agent, CoderAgent, CasualAgent, FileAgent
+from sources.agents import Agent, CoderAgent, CasualAgent, FileAgent, PlannerAgent
 
 parser = argparse.ArgumentParser(description='Deepseek AI assistant')
 parser.add_argument('--no-speak', action='store_true',
@@ -42,6 +42,10 @@ def main():
         FileAgent(model=config["MAIN"]["provider_model"],
                        name="File Agent",
                        prompt_path="prompts/file_agent.txt",
+                       provider=provider),
+        PlannerAgent(model=config["MAIN"]["provider_model"],
+                       name="Planner",
+                       prompt_path="prompts/planner_agent.txt",
                        provider=provider)
     ]
 
