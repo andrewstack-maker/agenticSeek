@@ -7,7 +7,7 @@ import configparser
 
 from sources.llm_provider import Provider
 from sources.interaction import Interaction
-from sources.agents import Agent, CoderAgent, CasualAgent
+from sources.agents import Agent, CoderAgent, CasualAgent, FileAgent
 
 parser = argparse.ArgumentParser(description='Deepseek AI assistant')
 parser.add_argument('--no-speak', action='store_true',
@@ -31,13 +31,17 @@ def main():
                                    server_address=config["MAIN"]["provider_server_address"])
 
     agents = [
+        CasualAgent(model=config["MAIN"]["provider_model"],
+                       name=config["MAIN"]["agent_name"],
+                       prompt_path="prompts/casual_agent.txt",
+                       provider=provider),
         CoderAgent(model=config["MAIN"]["provider_model"],
                        name="coder",
                        prompt_path="prompts/coder_agent.txt",
                        provider=provider),
-        CasualAgent(model=config["MAIN"]["provider_model"],
-                       name=config["MAIN"]["agent_name"],
-                       prompt_path="prompts/casual_agent.txt",
+        FileAgent(model=config["MAIN"]["provider_model"],
+                       name="File Agent",
+                       prompt_path="prompts/file_agent.txt",
                        provider=provider)
     ]
 

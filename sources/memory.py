@@ -118,6 +118,7 @@ class Memory():
             early_stopping=True  # Stop when all beams finish
         )
         summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+        summary.replace('summary:', '')
         return summary
     
     @timer_decorator

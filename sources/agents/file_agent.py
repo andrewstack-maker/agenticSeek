@@ -1,24 +1,20 @@
 
 from sources.utility import pretty_print
 from sources.agents.agent import Agent
-from sources.tools.webSearch import webSearch
-from sources.tools.flightSearch import FlightSearch
 from sources.tools.fileFinder import FileFinder
 from sources.tools.BashInterpreter import BashInterpreter
 
-class CasualAgent(Agent):
+class FileAgent(Agent):
     def __init__(self, model, name, prompt_path, provider):
         """
-        The casual agent is a special for casual talk to the user without specific tasks.
+        The file agent is a special agent for file operations.
         """
         super().__init__(model, name, prompt_path, provider)
         self.tools = {
-            "web_search": webSearch(),
-            "flight_search": FlightSearch(),
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
         }
-        self.role = "talking"
+        self.role = "files operations"
     
     def process(self, prompt, speech_module) -> str:
         complete = False
@@ -41,6 +37,6 @@ if __name__ == "__main__":
 
     #local_provider = Provider("ollama", "deepseek-r1:14b", None)
     server_provider = Provider("server", "deepseek-r1:14b", "192.168.1.100:5000")
-    agent = CasualAgent("deepseek-r1:14b", "jarvis", "prompts/casual_agent.txt", server_provider)
-    ans = agent.process("Hello, how are you?")
+    agent = FileAgent("deepseek-r1:14b", "jarvis", "prompts/file_agent.txt", server_provider)
+    ans = agent.process("What is the content of the file toto.py ?")
     print(ans)
