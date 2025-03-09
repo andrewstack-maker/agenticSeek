@@ -21,12 +21,9 @@
 
 ---
 
+## Run locally
 
-
----
-
-
-## Installation  
+**We recommand you use at least deepseek 14b, as smaller small will have trouble using tool and forget quickly the conversations.**
 
 ### 1️⃣ **Install Dependencies**  
 ```sh
@@ -65,8 +62,9 @@ Run the assistant:
 python3 main.py
 ```
 
-### 4️⃣ **Alternative: Run the LLM on your own server**  
+## **Alternative: Run the LLM on your own server**  
 
+### 1️⃣  **Set up and start the server scripts** 
 
 On your "server" that will run the AI model, get the ip address
 
@@ -79,6 +77,8 @@ Clone the repository and then, run the script `stream_llm.py` in `server/`
 ```sh
 python3 stream_llm.py
 ```
+
+### 2️⃣ **Run it** 
 
 Now on your personal computer:
 
