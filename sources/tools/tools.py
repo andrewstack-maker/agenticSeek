@@ -23,6 +23,7 @@ HU787
 
 import sys
 import os
+import configparser
 from abc import abstractmethod
 
 sys.path.append('..')
@@ -36,6 +37,43 @@ class Tools():
         self.api_key = None
         self.client = None
         self.messages = []
+        self.config = configparser.ConfigParser()
+        self.current_dir = self.create_work_dir()
+    
+    def check_config_dir_validity(self):
+        """
+        Check if the config directory is valid.
+        """
+        path = self.config['MAIN']['work_dir']
+        if path == "":
+            print("WARNING: Work directory not set in config.ini")
+            return False
+        if path.lower() == "none":
+            print("WARNING: Work directory set to none in config.ini")
+            return False
+        if not os.path.exists(path):
+            print(f"WARNING: Work directory {path} does not exist")
+            return False
+        return True
+    
+    def config_exists(self):
+        """
+        Check if the config file exists.
+        """
+        return os.path.exists('./config.ini')
+
+    def create_work_dir(self):
+        """
+        Create the work directory if it does not exist.
+        """
+        default_path = os.path.dirname(os.getcwd())
+        if self.config_exists():
+            self.config.read('./config.ini')
+            config_path = self.config['MAIN']['work_dir']
+            dir_path = default_path if not self.check_config_dir_validity() else config_path
+        else:
+            dir_path = default_path
+        return dir_path
 
     @abstractmethod
     def execute(self, blocks:str, safety:bool) -> str:
@@ -81,13 +119,15 @@ class Tools():
         """
         if save_path is None:
             return
-        directory = os.path.dirname(save_path)
+        save_path_dir = os.path.dirname(save_path)
+        save_path_file = os.path.basename(save_path)
+        directory = os.path.join(self.current_dir, save_path_dir)
         if directory and not os.path.exists(directory):
             print(f"Creating directory: {directory}")
             os.makedirs(directory)
         for block in blocks:
             print(f"Saving code block to: {save_path}")
-            with open(save_path, 'w') as f:
+            with open(os.path.join(directory, save_path_file), 'w') as f:
                 f.write(block)
 
     def load_exec_block(self, llm_text: str) -> tuple[list[str], str | None]:

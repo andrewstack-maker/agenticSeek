@@ -16,6 +16,18 @@ class BashInterpreter(Tools):
     def __init__(self):
         super().__init__()
         self.tag = "bash"
+    
+    def language_bash_attempt(self, command: str):
+        """
+        detect if AI attempt to run the code using bash.
+        if so, return True, otherwise return False.
+        The philosophy is that code written by the AI will be executed, so it should not use bash to run it.
+        """
+        lang_interpreter = ["python3", "gcc", "g++", "go", "javac", "rustc", "clang", "clang++", "rustc", "rustc++", "rustc++"]
+        for word in command.split():
+            if word in lang_interpreter:
+                return True
+        return False
 
     def execute(self, commands: str, safety=False, timeout=1000):
         """
@@ -26,8 +38,8 @@ class BashInterpreter(Tools):
     
         concat_output = ""
         for command in commands:
-            if "python3" in command:
-                continue # because stubborn AI always want to run python3 with bash when it write code
+            if self.language_bash_attempt(command):
+                continue
             try:
                 process = subprocess.Popen(
                     command,

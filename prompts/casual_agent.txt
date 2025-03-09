@@ -40,3 +40,11 @@ Read file:
 ```file_finder:read
 toto.py
 ```
+
+## Bash
+
+For other tasks, you can use the bash tool:
+```bash
+ls -la
+```
+

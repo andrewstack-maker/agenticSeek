@@ -16,10 +16,6 @@ class FileFinder(Tools):
     def __init__(self):
         super().__init__()
         self.tag = "file_finder"
-        self.current_dir = os.path.dirname(os.getcwd()) 
-        config = configparser.ConfigParser()
-        config.read('./config.ini')
-        self.current_dir = config['MAIN']['work_dir']
     
     def read_file(self, file_path: str) -> str:
         """
@@ -54,21 +50,23 @@ class FileFinder(Tools):
         else:
             return {"filename": file_path, "error": "File not found"}
     
-    def recursive_search(self, directory_path: str, filename: str) -> list:
+    def recursive_search(self, directory_path: str, filename: str) -> str | None:
         """
         Recursively searches for files in a directory and its subdirectories.
         Args:
-            directory (str): The directory to search in
+            directory_path (str): The directory to search in
+            filename (str): The filename to search for
         Returns:
-            str: The path to the file
+            str | None: The path to the file if found, None otherwise
         """
         file_path = None
         excluded_files = [".pyc", ".o", ".so", ".a", ".lib", ".dll", ".dylib", ".so", ".git"]
         for root, dirs, files in os.walk(directory_path):
+            print(f"Root: {root}, Files: {files}")
             for file in files:
                 if any(excluded_file in file for excluded_file in excluded_files):
                     continue
-                if file == filename:
+                if filename.strip() in file.strip():
                     file_path = os.path.join(root, file)
                     return file_path
         return None
@@ -147,7 +145,7 @@ class FileFinder(Tools):
 
 if __name__ == "__main__":
     tool = FileFinder()
-    result = tool.execute(["router.py:read"], False)
+    result = tool.execute(["toto.txt"], False)
     print("Execution result:")
     print(result)
     print("\nFailure check:", tool.execution_failure_check(result))

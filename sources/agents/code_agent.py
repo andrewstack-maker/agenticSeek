@@ -40,6 +40,8 @@ class CoderAgent(Agent):
                 break
             self.show_answer()
             attempt += 1
+        if attempt == max_attempts:
+            return "I'm sorry, I couldn't find a solution to your problem. How would you like me to proceed ?", reasoning
         return answer, reasoning
 
 if __name__ == "__main__":
