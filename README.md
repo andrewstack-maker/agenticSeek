@@ -4,6 +4,9 @@
 **A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, and correct it's mistakes all without sending a byte of data to the cloud. The goal of the project is to create a truly Jarvis like assistant using reasoning model such as deepseek R1. 
 
 > 🛠️ **Work in Progress** – Looking for contributors! 🚀  
+
+![alt text](./exemples/whale_readme.jpg)
+
 ---
 
 ## Features:

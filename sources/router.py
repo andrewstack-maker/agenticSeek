@@ -8,6 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sources.agents.agent import Agent
 from sources.agents.code_agent import CoderAgent
 from sources.agents.casual_agent import CasualAgent
+from sources.agents.planner_agent import PlannerAgent
 from sources.utility import pretty_print
 
 class AgentRouter:
@@ -67,7 +68,8 @@ class AgentRouter:
 if __name__ == "__main__":
     agents = [
         CoderAgent("deepseek-r1:14b", "agent1", "../prompts/coder_agent.txt", "server"),
-        CasualAgent("deepseek-r1:14b", "agent2", "../prompts/casual_agent.txt", "server")
+        CasualAgent("deepseek-r1:14b", "agent2", "../prompts/casual_agent.txt", "server"),
+        PlannerAgent("deepseek-r1:14b", "agent3", "../prompts/planner_agent.txt", "server")
     ]
     router = AgentRouter(agents)
     
@@ -79,6 +81,9 @@ if __name__ == "__main__":
     """,
     """
     hey can you give dating advice ?
+    """,
+    """
+    Make a cool game to illustrate the current relation between USA and europe
     """
     ]
 

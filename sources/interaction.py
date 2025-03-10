@@ -57,9 +57,10 @@ class Interaction:
         """Read the input from the user."""
         buffer = ""
 
+        PROMPT = "\033[1;35m➤➤➤ \033[0m"
         while buffer == "" or buffer.isascii() == False:
             try:
-                buffer = input(f">>> ")
+                buffer = input(PROMPT)
             except EOFError:
                 return None
             if buffer == "exit" or buffer == "goodbye":

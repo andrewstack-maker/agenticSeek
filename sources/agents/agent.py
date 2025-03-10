@@ -103,6 +103,8 @@ class Agent():
         return answer, reasoning
     
     def wait_message(self, speech_module):
+        if speech_module is None:
+            return
         messages = ["Please be patient sir, I am working on it.",
                     "At it, sir. In the meantime, how about a joke?",
                     "Computing... I recommand you have a coffee while I work.",

@@ -1,7 +1,6 @@
 
-from sources.utility import pretty_print
+from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent, executorResult
-
 from sources.tools.C_Interpreter import CInterpreter
 from sources.tools.GoInterpreter import GoInterpreter
 from sources.tools.PyInterpreter import PyInterpreter
@@ -21,7 +20,7 @@ class CoderAgent(Agent):
             "go": GoInterpreter(),
             "file_finder": FileFinder()
         }
-        self.role = "coding"
+        self.role = "coding and programming"
 
     def process(self, prompt, speech_module) -> str:
         answer = ""
@@ -30,7 +29,7 @@ class CoderAgent(Agent):
         self.memory.push('user', prompt)
 
         while attempt < max_attempts:
-            pretty_print("Thinking...", color="status")
+            animate_thinking("Thinking...", color="status")
             self.wait_message(speech_module)
             answer, reasoning = self.llm_request()
             exec_success, _ = self.execute_modules(answer)

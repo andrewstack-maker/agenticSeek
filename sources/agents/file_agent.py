@@ -1,5 +1,5 @@
 
-from sources.utility import pretty_print
+from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
 from sources.tools.fileFinder import FileFinder
 from sources.tools.BashInterpreter import BashInterpreter
@@ -25,7 +25,7 @@ class FileAgent(Agent):
         while not complete:
             if exec_success:
                 complete = True
-            pretty_print("Thinking...", color="status")
+            animate_thinking("Thinking...", color="status")
             answer, reasoning = self.llm_request()
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)
