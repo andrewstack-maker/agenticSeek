@@ -133,6 +133,30 @@ provider_server_address = 127.0.0.1:5000
 
 `provider_server_address`: can be set to anything if you are not using the server provider.
 
+## FAQ
+**Q: What hardware do I need?**  
+
+For Deepseek R1 7B, we recommend a  GPU with with 8GB VRAM.
+The 14B model can run on 12GB GPU like the rtx 3060.
+The 32B model needs a GPU with 24GB+ VRAM.
+
+**Q: Why Deepseek R1 over other models?**  
+
+Deepseek R1 excels at reasoning and tool use for its size. We think it’s a solid fit for our needs—other models work fine, but Deepseek is our primary pick.
+
+**Q: I get an error running `main.py`. What do I do?**  
+Ensure Ollama is running (`ollama serve`), your `config.ini` matches your provider, and dependencies are installed. If none work feel free to raise an issue.
+
+**Q: Can it really run 100% locally?**  
+Yes with Ollama or Server providers, all speech to text, LLM and text to speech model run locally. Non-local options (OpenAI, Deepseek API) are optional.
+
+**Q: How can it is older than manus ?**
+we started this a fun side project to make a fully local, Jarvis-like AI. However, with the rise of Manus and openManus, we saw the opportunity to redirected some tasks priority to make yet another alternative.
+
+**Q: How is it better than manus or openManus ?**
+
+It's not, never will be, we just offer an alternative that is more local and enjoyable to use.
+
 ## Current contributor:
 
 Fosowl 🇫🇷
