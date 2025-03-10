@@ -152,7 +152,7 @@ Ensure Ollama is running (`ollama serve`), your `config.ini` matches your provid
 
 Yes with Ollama or Server providers, all speech to text, LLM and text to speech model run locally. Non-local options (OpenAI, Deepseek API) are optional.
 
-**Q: How can it is older than manus ?**
+**Q: How come it is older than manus ?**
 
 we started this a fun side project to make a fully local, Jarvis-like AI. However, with the rise of Manus and openManus, we saw the opportunity to redirected some tasks priority to make yet another alternative.
 
