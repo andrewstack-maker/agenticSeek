@@ -1,5 +1,6 @@
 *.wav
 config.ini
+*.egg-info
 experimental/
 conversations/
 .env
