@@ -1,7 +1,7 @@
 
-# AgenticSeek: Fully local AI Assistant Powered by Deepseek R1 Agents.
+# AgenticSeek: Local AI Assistant Powered by Deepseek R1 Agents.
 
-**A fully local AI assistant** using AI agents. The goal of the project is to create a truly Jarvis like assistant using reasoning model such as deepseek R1. 
+**A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, and correct it's mistakes all without sending a byte of data to the cloud. The goal of the project is to create a truly Jarvis like assistant using reasoning model such as deepseek R1. 
 
 > 🛠️ **Work in Progress** – Looking for contributors! 🚀  
 ---
@@ -12,18 +12,18 @@
 - ️**Voice-enabled**: Speak and interact naturally
 - **Filesystem interaction**: Use bash to interact with your filesystem.
 - **Coding abilities**: Code in Python, C, Golang, and soon more
-- **Trial-and-error**: Automatically fixes code or command upon execution failure
+- **Trial-and-error**: If a command or code fails, the assistant retries to fixes it automatically, saving you time.
 - **Agent routing**: Select the best agent for the task
 - **Multi-agent (On Dev branch)**: For complex tasks, divide and conquer with multiple agents
 - **Tools:**: All agents have their respective tools ability. Basic search, flight API, files explorer, etc...
 - **Web browsing (not implemented yet | Hight priority task)**: Browse the web autonomously to conduct task.
-- **Memory&Recovery**: Compress conversation over time to retain usefull information, recover conversation session.
+- **Memory&Recovery**: Compress conversation over time to retain useful information, recover conversation session.
 
 ---
 
 ## Run locally
 
-**We recommand you use at least deepseek 14b, as smaller small will have trouble using tool and forget quickly the conversations.**
+**We recommend using at least Deepseek 14B—smaller models struggle with tool use and memory retention.**
 
 ### 1️⃣ **Install Dependencies**  
 ```sh
@@ -103,11 +103,18 @@ python3 main.py
 
 ## Provider
 
-Currently the only provider are :
-- ollama -> Use ollama running on your computer. Ollama program for running locally large language models.
-- server -> A custom script that allow you to have the LLM model run on another machine. Currently it use ollama but we'll switch to other options soon.
-- openai -> Use ChatGPT API (not private).
-- deepseek -> Deepseek API (not private).
+## Providers
+
+The table below show the available providers:
+
+| Provider  | Local? | Description                                               |
+|-----------|--------|-----------------------------------------------------------|
+| Ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
+| Server    | Yes    | Host the model on another machine, run your local machine |
+| OpenAI    | No     | Use ChatGPT API (non-private)                             |
+| Deepseek  | No     | Deepseek API (non-private)                                |
+| HuggingFace| No    | Hugging-Face API (non-private)                            |
+
 
 To select a provider change the config.ini:
 
