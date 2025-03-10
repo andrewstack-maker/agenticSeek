@@ -115,7 +115,7 @@ class Transcript:
             audio_data = librosa.resample(audio_data, orig_sr=sample_rate, target_sr=16000)
         result = self.pipe(audio_data)
         return self.remove_hallucinations(result["text"])
-
+    
 class AudioTranscriber:
     """
     AudioTranscriber is a class that transcribes audio from the audio queue and adds it to the transcript.

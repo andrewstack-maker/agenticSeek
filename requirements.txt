@@ -14,6 +14,7 @@ soundfile==0.13.1
 protobuf==3.20.3
 termcolor==2.5.0
 gliclass==0.1.8
+huggingface-hub==0.26.3
 # if use chinese
 ordered_set
 pypinyin

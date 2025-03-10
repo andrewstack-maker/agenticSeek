@@ -30,6 +30,7 @@ setup(
         "protobuf==3.20.3",
         "termcolor==2.5.0",
         "gliclass==0.1.8",
+        "huggingface-hub==0.26.3"
     ],
     extras_require={
         "chinese": [
