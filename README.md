@@ -5,8 +5,6 @@
 
 > 🛠️ **Work in Progress** – Looking for contributors! 🚀  
 
----
-
 ![alt text](./exemples/whale_readme.jpg)
 
 ---
