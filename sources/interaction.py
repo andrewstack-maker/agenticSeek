@@ -57,9 +57,10 @@ class Interaction:
         """Read the input from the user."""
         buffer = ""
 
+        PROMPT = "\033[1;35m➤➤➤ \033[0m"
         while buffer == "" or buffer.isascii() == False:
             try:
-                buffer = input(f">>> ")
+                buffer = input(PROMPT)
             except EOFError:
                 return None
             if buffer == "exit" or buffer == "goodbye":
@@ -94,8 +95,7 @@ class Interaction:
         """Request AI agents to process the user input."""
         if self.last_query is None or len(self.last_query) == 0:
             return
-        #agent = self.router.select_agent(self.last_query)
-        agent = self.agents[3]
+        agent = self.router.select_agent(self.last_query)
         if agent is None:
             return
         if self.current_agent != agent:

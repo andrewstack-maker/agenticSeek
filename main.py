@@ -9,10 +9,8 @@ from sources.llm_provider import Provider
 from sources.interaction import Interaction
 from sources.agents import Agent, CoderAgent, CasualAgent, FileAgent, PlannerAgent
 
-parser = argparse.ArgumentParser(description='Deepseek AI assistant')
-parser.add_argument('--no-speak', action='store_true',
-                help='Make AI not use text-to-speech')
-args = parser.parse_args()
+import warnings
+warnings.filterwarnings("ignore")
 
 config = configparser.ConfigParser()
 config.read('config.ini')
