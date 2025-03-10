@@ -24,7 +24,7 @@
 
 ---
 
-## Run locally
+## Run locally on your machine
 
 **We recommend using at least Deepseek 14B, smaller models struggle with tool use and forget quickly the context.**
 
@@ -67,6 +67,8 @@ python3 main.py
 
 ## **Alternative: Run the LLM on your own server**  
 
+If you have a powerful computer or a server that you can use, but you want to use it from your laptop you have the options to run the LLM on a remote server. 
+
 ### 1️⃣  **Set up and start the server scripts** 
 
 On your "server" that will run the AI model, get the ip address
@@ -96,6 +98,26 @@ is_local = False
 provider_name = server
 provider_model = deepseek-r1:14b
 provider_server_address = x.x.x.x:5000
+```
+
+Run the assistant:
+
+```sh
+python3 main.py
+```
+
+## **Run with an API**  
+
+Clone the repository.
+
+Set the desired provider in the `config.ini`
+
+```sh
+[MAIN]
+is_local = False
+provider_name = openai
+provider_model = gpt4-o
+provider_server_address = 127.0.0.1:5000 # can be set to anything, not used
 ```
 
 Run the assistant:
