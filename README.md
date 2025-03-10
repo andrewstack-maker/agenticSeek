@@ -16,17 +16,17 @@
 - **Filesystem interaction**: Use bash to interact with your filesystem.
 - **Coding abilities**: Code in Python, C, Golang, and soon more
 - **Trial-and-error**: If a command or code fails, the assistant retries to fixes it automatically, saving you time.
-- **Agent routing**: Select the best agent for the task
+- **Agent routing**: Select the best agent for the task.
 - **Multi-agent planning**: For complex tasks, divide and conquer with multiple agents
 - **Tools:**: All agents have their respective tools ability. Basic search, flight API, files explorer, etc...
 - **Web browsing (Not implemented yet)**: Browse the web autonomously to conduct task.
-- **Memory**: Compress conversation over time to retain useful information, recover conversation session, remember your preferences.
+- **Memory**: Retain only useful information, recover conversation session, remember your preferences.
 
 ---
 
 ## Run locally
 
-**We recommend using at least Deepseek 14B—smaller models struggle with tool use and memory retention.**
+**We recommend using at least Deepseek 14B, smaller models struggle with tool use and forget quickly the context.**
 
 ### 1️⃣ **Install Dependencies**  
 ```sh
