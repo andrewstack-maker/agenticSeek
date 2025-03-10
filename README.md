@@ -1,30 +1,29 @@
 
-# AgenticSeek: Fully local AI Assistant Powered by Deepseek R1 Agents.
+# AgenticSeek: Local AI Assistant Powered by Deepseek R1 Agents.
 
-**A fully local AI assistant** using AI agents. The goal of the project is to create a truly Jarvis like assistant using reasoning model such as deepseek R1. 
+**A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, and correct it's mistakes all without sending a byte of data to the cloud. The goal of the project is to create a truly Jarvis like assistant using reasoning model such as deepseek R1. 
 
 > 🛠️ **Work in Progress** – Looking for contributors! 🚀  
 ---
 
 ## Features:
 
--  **Privacy-first**: Runs 100% locally – **no data leaves your machine**  
-- ️ **Voice-enabled**: Speak and interact naturally
-- **Coding abilities**: Code in Python, Bash, C, Golang, and soon more
--  **Trial-and-error**: Automatically fixes code or command upon execution failure
+- **Privacy-first**: Runs 100% locally – **no data leaves your machine**  
+- ️**Voice-enabled**: Speak and interact naturally
+- **Filesystem interaction**: Use bash to interact with your filesystem.
+- **Coding abilities**: Code in Python, C, Golang, and soon more
+- **Trial-and-error**: If a command or code fails, the assistant retries to fixes it automatically, saving you time.
 - **Agent routing**: Select the best agent for the task
-- **Multi-agent**: For complex tasks, divide and conquer with multiple agents
+- **Multi-agent (On Dev branch)**: For complex tasks, divide and conquer with multiple agents
 - **Tools:**: All agents have their respective tools ability. Basic search, flight API, files explorer, etc...
--  **Web browsing (not implemented yet)**: Browse the web autonomously to conduct task.
+- **Web browsing (not implemented yet | Hight priority task)**: Browse the web autonomously to conduct task.
+- **Memory&Recovery**: Compress conversation over time to retain useful information, recover conversation session.
 
 ---
 
+## Run locally
 
-
----
-
-
-## Installation  
+**We recommend using at least Deepseek 14B—smaller models struggle with tool use and memory retention.**
 
 ### 1️⃣ **Install Dependencies**  
 ```sh
@@ -63,8 +62,9 @@ Run the assistant:
 python3 main.py
 ```
 
-### 4️⃣ **Alternative: Run the LLM on your own server**  
+## **Alternative: Run the LLM on your own server**  
 
+### 1️⃣  **Set up and start the server scripts** 
 
 On your "server" that will run the AI model, get the ip address
 
@@ -77,6 +77,8 @@ Clone the repository and then, run the script `stream_llm.py` in `server/`
 ```sh
 python3 stream_llm.py
 ```
+
+### 2️⃣ **Run it** 
 
 Now on your personal computer:
 
@@ -99,13 +101,18 @@ Run the assistant:
 python3 main.py
 ```
 
-## Provider
+## Providers
 
-Currently the only provider are :
-- ollama -> Use ollama running on your computer. Ollama program for running locally large language models.
-- server -> A custom script that allow you to have the LLM model run on another machine. Currently it use ollama but we'll switch to other options soon.
-- openai -> Use ChatGPT API (not private).
-- deepseek -> Deepseek API (not private).
+The table below show the available providers:
+
+| Provider  | Local? | Description                                               |
+|-----------|--------|-----------------------------------------------------------|
+| Ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
+| Server    | Yes    | Host the model on another machine, run your local machine |
+| OpenAI    | No     | Use ChatGPT API (non-private)                             |
+| Deepseek  | No     | Deepseek API (non-private)                                |
+| HuggingFace| No    | Hugging-Face API (non-private)                            |
+
 
 To select a provider change the config.ini:
 
@@ -115,24 +122,15 @@ provider_name = openai
 provider_model = gpt-4o
 provider_server_address = 127.0.0.1:5000
 ```
-is_local: should be True for any locally running LLM, otherwise False.
+`is_local`: should be True for any locally running LLM, otherwise False.
 
-provider_name: Select the provider to use by its name, see the provider list above.
+`provider_name`: Select the provider to use by its name, see the provider list above.
 
-provider_model: Set the model to use by the agent.
+`provider_model`: Set the model to use by the agent.
 
-provider_server_address: can be set to anything if you are not using the server provider.
+`provider_server_address`: can be set to anything if you are not using the server provider.
 
+## Current contributor:
 
-## Current capabilities
-
-- All running locally
-- Reasoning with deepseek R1
-- Code execution capabilities (Python, Golang, C, etc..)
-- Shell control capabilities in bash
-- Will try to fix errors by itself
-- Routing system, select the best agent for the task
-- Fast text-to-speech using kokoro.
-- Speech to text.
-- Memory compression (reduce history as interaction progresses using summary model) 
-- Recovery: recover and save session from filesystem.
+Fosowl 🇫🇷
+steveh8758 🇹🇼
