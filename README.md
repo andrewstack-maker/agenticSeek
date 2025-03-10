@@ -101,8 +101,6 @@ Run the assistant:
 python3 main.py
 ```
 
-## Provider
-
 ## Providers
 
 The table below show the available providers:
@@ -131,3 +129,8 @@ provider_server_address = 127.0.0.1:5000
 `provider_model`: Set the model to use by the agent.
 
 `provider_server_address`: can be set to anything if you are not using the server provider.
+
+## Current contributor:
+
+Fosowl 🇫🇷
+steveh8758 🇹🇼
