@@ -190,5 +190,5 @@ we started this a fun side project to make a fully local, Jarvis-like AI. Howeve
 It's not, our goal is just offer an alternative that is more local and enjoyable to use.
 
 ## Authors:
- > [Fosowl](https://github.com/Fosowl) [name=Martin]
+ > [Fosowl](https://github.com/Fosowl)
  > [steveh8758](https://github.com/steveh8758) 
