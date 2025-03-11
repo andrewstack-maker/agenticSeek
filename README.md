@@ -199,8 +199,9 @@ we started this a fun side project to make a fully local, Jarvis-like AI. Howeve
 
 It's not but we prioritizes local execution and privacy over cloud based approach. It’s a fun, accessible alternative!
 
-Contribute
-We’re looking for developers to enhance AgenticSeek! Check out open issues or join our Discord to collaborate.
+## Contribute
+
+We’re looking for developers to improve AgenticSeek! Check out open issues or discussion.
 
 ## Authors:
  > [Fosowl](https://github.com/Fosowl)
