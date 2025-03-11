@@ -81,6 +81,9 @@ class PlannerAgent(Agent):
             speech_module.speak(f"I will {task_name}. I assigned the {task['agent']} agent to the task.")
             try:
                 self.agents[task['agent'].lower()].process(agent_prompt, None)
+                pretty_print(f"-- Agent answer ---\n\n", color="output")
+                self.agents[task['agent'].lower()].show_answer()
+                pretty_print(f"\n\n", color="output")
             except Exception as e:
                 pretty_print(f"Error: {e}", color="failure")
                 speech_module.speak(f"I encountered an error: {e}")

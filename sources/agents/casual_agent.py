@@ -18,7 +18,7 @@ class CasualAgent(Agent):
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
         }
-        self.role = "talking, advices and philosophical"
+        self.role = "talking, advices, events and philosophical"
     
     def process(self, prompt, speech_module) -> str:
         complete = False
@@ -32,8 +32,10 @@ class CasualAgent(Agent):
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)
             self.last_answer = answer
-            if exec_success:
-                complete = True
+            complete = True
+            for tool in self.tools.values():
+                if tool.found_executable_blocks():
+                    complete = False # AI read results and continue the conversation
         return answer, reasoning
 
 if __name__ == "__main__":
