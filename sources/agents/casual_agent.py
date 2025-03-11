@@ -22,7 +22,6 @@ class CasualAgent(Agent):
     
     def process(self, prompt, speech_module) -> str:
         complete = False
-        exec_success = False
         self.memory.push('user', prompt)
 
         self.wait_message(speech_module)
