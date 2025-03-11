@@ -2,6 +2,9 @@
 from colorama import Fore
 from termcolor import colored
 import platform
+import threading
+import itertools
+import time
 
 
 def pretty_print(text, color = "info"):
@@ -49,44 +52,41 @@ def pretty_print(text, color = "info"):
             color = "default"
         print(colored(text, color_map[color]))
 
-def animate_thinking(text="thinking...", color="status", duration=2):
+def animate_thinking(text, color="status", duration=2):
     """
-    Display an animated "thinking..." indicator.
-
+    Display an animated "thinking..." indicator in a separate thread.
     Args:
-        text (str): Text to display (default: "thinking...")
-        color (str): Color for the text (matches pretty_print colors)
+        text (str): Text to display
+        color (str): Color for the text
         duration (float): How long to animate in seconds
     """
-    import time
-    import itertools
+    def _animate():
+        color_map = {
+            "success": (Fore.GREEN, "green"),
+            "failure": (Fore.RED, "red"),
+            "status": (Fore.LIGHTGREEN_EX, "light_green"),
+            "code": (Fore.LIGHTBLUE_EX, "light_blue"),
+            "warning": (Fore.YELLOW, "yellow"),
+            "output": (Fore.LIGHTCYAN_EX, "cyan"),
+            "default": (Fore.RESET, "black"),
+            "info": (Fore.CYAN, "cyan")
+        }
 
-    color_map = {
-        "success": (Fore.GREEN, "green"),
-        "failure": (Fore.RED, "red"),
-        "status": (Fore.LIGHTGREEN_EX, "light_green"),
-        "code": (Fore.LIGHTBLUE_EX, "light_blue"),
-        "warning": (Fore.YELLOW, "yellow"),
-        "output": (Fore.LIGHTCYAN_EX, "cyan"),
-        "default": (Fore.RESET, "black"),
-        "info": (Fore.CYAN, "cyan")
-    }
+        fore_color, term_color = color_map[color]
+        spinner = itertools.cycle(['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'])
+        end_time = time.time() + duration
 
-    if color not in color_map:
-        color = "info"
-
-    fore_color, term_color = color_map[color]
-    spinner = itertools.cycle(['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'])
-    end_time = time.time() + duration
-
-    while time.time() < end_time:
-        symbol = next(spinner)
-        if platform.system().lower() != "windows":
-            print(f"\r{fore_color}{symbol} {text}{Fore.RESET}", end="", flush=True)
-        else:
-            print(colored(f"\r{symbol} {text}", term_color), end="", flush=True)
-        time.sleep(0.1)
-    print()
+        while time.time() < end_time:
+            symbol = next(spinner)
+            if platform.system().lower() != "windows":
+                print(f"\r{fore_color}{symbol} {text}{Fore.RESET}", end="", flush=True)
+            else:
+                print(colored(f"\r{symbol} {text}", term_color), end="", flush=True)
+            time.sleep(0.1)
+        print()
+    animation_thread = threading.Thread(target=_animate)
+    animation_thread.daemon = True
+    animation_thread.start()
 
 def timer_decorator(func):
     """

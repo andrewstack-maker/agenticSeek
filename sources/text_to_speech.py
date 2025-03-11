@@ -40,8 +40,7 @@ class Speech():
         )
         for i, (gs, ps, audio) in enumerate(generator):
             audio_file = 'sample.wav'
-            print(audio_file)
-            display(Audio(data=audio, rate=24000, autoplay=i==0))
+            display(Audio(data=audio, rate=24000, autoplay=i==0), display_id=False)
             sf.write(audio_file, audio, 24000) # save each audio file
             if platform.system().lower() != "windows":
                 subprocess.call(["afplay", audio_file])

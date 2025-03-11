@@ -27,13 +27,13 @@ class CasualAgent(Agent):
 
         self.wait_message(speech_module)
         while not complete:
-            if exec_success:
-                complete = True
             animate_thinking("Thinking...", color="status")
             answer, reasoning = self.llm_request()
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)
             self.last_answer = answer
+            if exec_success:
+                complete = True
         return answer, reasoning
 
 if __name__ == "__main__":
