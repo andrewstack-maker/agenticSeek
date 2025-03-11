@@ -4,37 +4,36 @@
 
 **A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, browse the web and correct it's mistakes all without sending a byte of data to the cloud. The goal of the project is to create an autonomous agent like Manus but using reasoning model such as deepseek R1, all running locally.
 
-> 🛠️ **Work in Progress** – Looking for contributors! 🚀  
+> 🛠️ **Work in Progress** – Looking for contributors!
 
 ![alt text](./exemples/whale_readme.jpg)
 
 
-![License](https://img.shields.io/badge/license-GPL--3.0-green) ![GitHub Issues](https://img.shields.io/github/issues/Fosowl/agenticSeek) ![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) ![GitHub Issues](https://img.shields.io/github/issues/Fosowl/agenticSeek) ![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)
 
-[Website](https://fosowl.github.io/agenticSeek.html)
 
 ---
 
 ## Features:
-- 100% Local: No cloud, runs on your hardware. Your data stays yours.
+- **100% Local**: No cloud, runs on your hardware. Your data stays yours.
 
-- Voice interaction: Voice-enabled natural interaction.
+- **Voice interaction**: Voice-enabled natural interaction.
 
-- Filesystem interaction: Use bash to navigate and manipulate your files effortlessly.
+- **Filesystem interaction**: Use bash to navigate and manipulate your files effortlessly.
 
-- Code what you ask: Can write, debug, and run code in Python, C, Golang and more languages on the way.
+- **Code what you ask**: Can write, debug, and run code in Python, C, Golang and more languages on the way.
 
-- Self-Correcting: If a command flops or code breaks, it retries and fixes it by itself.
+- **Autonomous**: If a command flops or code breaks, it retries and fixes it by itself.
 
-- Agent routing: Automatically picks the right agent for the job.
+- **Agent routing**: Automatically picks the right agent for the job.
 
-- Divide and Conquer: For big tasks, spins up multiple agents to plan and execute.
+- **Divide and Conquer**: For big tasks, spins up multiple agents to plan and execute.
 
-- Tool-Equipped: From basic search to flight APIs and file exploration, every agent has it's own tools.
+- **Tool-Equipped**: From basic search to flight APIs and file exploration, every agent has it's own tools.
 
-- Memory: Remembers what’s useful, your preferences and past sessions conversation.
+- **Memory**: Remembers what’s useful, your preferences and past sessions conversation.
 
-- Web Browsing: Autonomous web navigation is underway. (Under development)
+- **Web Browsing**: Autonomous web navigation is underway. (Under development)
 
 ---
 
