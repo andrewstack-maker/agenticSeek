@@ -77,11 +77,11 @@ class Tools():
         return dir_path
 
     @abstractmethod
-    def execute(self, blocks:str, safety:bool) -> str:
+    def execute(self, blocks:[str], safety:bool) -> str:
         """
         Abstract method that must be implemented by child classes to execute the tool's functionality.
         Args:
-            blocks (str): The code or query blocks to execute
+            blocks (List[str]): The codes or queries blocks to execute
             safety (bool): Whenever human intervention is required
         Returns:
             str: The output/result from executing the tool

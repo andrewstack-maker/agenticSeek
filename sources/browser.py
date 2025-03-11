@@ -11,7 +11,7 @@ import markdownify
 import logging
 
 class Browser:
-    def __init__(self, headless=True):
+    def __init__(self, headless=False):
         """Initialize the browser with optional headless mode."""
         try:
             chrome_options = Options()
@@ -38,6 +38,10 @@ class Browser:
         except WebDriverException as e:
             self.logger.error(f"Error navigating to {url}: {str(e)}")
             return False
+    
+    def is_sentence(self, text):
+        """Check if the text is a sentence."""
+        return len(text.split(" ")) > 5 and '.' in text
 
     def getText(self):
         """Get page text and convert it to README (Markdown) format."""
@@ -51,7 +55,7 @@ class Browser:
             
             lines = (line.strip() for line in text.splitlines())
             chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-            text = "\n".join(chunk for chunk in chunks if chunk)
+            text = "\n".join(chunk for chunk in chunks if chunk and self.is_sentence(chunk))
             
             markdown_text = markdownify.markdownify(text, heading_style="ATX")
             
@@ -142,7 +146,7 @@ if __name__ == "__main__":
     browser = Browser(headless=False)
     
     try:
-        browser.goTo("https://github.com/geohot")
+        browser.goTo("https://karpathy.github.io/")
         text = browser.getText()
         print("Page Text in Markdown:")
         print(text)
