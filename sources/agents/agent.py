@@ -3,9 +3,12 @@ from typing import Tuple, Callable
 from abc import abstractmethod
 import os
 import random
+import time
 
 from sources.memory import Memory
 from sources.utility import pretty_print
+
+random.seed(time.time())
 
 class executorResult:
     """
@@ -106,7 +109,6 @@ class Agent():
         if speech_module is None:
             return
         messages = ["Please be patient sir, I am working on it.",
-                    "At it, sir. In the meantime, how about a joke?",
                     "Computing... I recommand you have a coffee while I work.",
                     "Hold on, I’m crunching numbers.",
                     "Working on it sir, please let me think."]

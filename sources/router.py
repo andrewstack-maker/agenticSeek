@@ -80,7 +80,7 @@ if __name__ == "__main__":
     Hey could you search the web for the latest news on the stock market ?
     """,
     """
-    hey can you give dating advice ?
+    hey can you give give a list of the files in the current directory ?
     """,
     """
     Make a cool game to illustrate the current relation between USA and europe

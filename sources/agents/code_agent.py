@@ -32,6 +32,7 @@ class CoderAgent(Agent):
             animate_thinking("Thinking...", color="status")
             self.wait_message(speech_module)
             answer, reasoning = self.llm_request()
+            animate_thinking("Executing code...", color="status")
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)
             self.last_answer = answer

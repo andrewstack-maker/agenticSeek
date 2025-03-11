@@ -62,7 +62,6 @@ class FileFinder(Tools):
         file_path = None
         excluded_files = [".pyc", ".o", ".so", ".a", ".lib", ".dll", ".dylib", ".so", ".git"]
         for root, dirs, files in os.walk(directory_path):
-            print(f"Root: {root}, Files: {files}")
             for file in files:
                 if any(excluded_file in file for excluded_file in excluded_files):
                     continue
