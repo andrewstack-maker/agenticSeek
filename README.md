@@ -2,7 +2,7 @@
 # AgenticSeek: Manus-like AI powered by Deepseek R1 Agents.
 
 
-**A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, browse the web and correct it's mistakes all without sending a byte of data to the cloud. The goal of the project is to create a truly Jarvis like assistant using reasoning model such as deepseek R1. 
+**A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, browse the web and correct it's mistakes all without sending a byte of data to the cloud. The goal of the project is to create an autonomous agent like Manus but using reasoning model such as deepseek R1, all running locally.
 
 > 🛠️ **Work in Progress** – Looking for contributors! 🚀  
 
@@ -16,23 +16,23 @@
 ---
 
 ## Features:
-- 100% Local, 100% Private: No cloud, runs on your hardware. Your data stays yours.
+- 100% Local: No cloud, runs on your hardware. Your data stays yours.
 
-- Talk to It: Voice-enabled interact naturally with speech to text and text to speech.
+- Voice interaction: Voice-enabled natural interaction.
 
 - Filesystem interaction: Use bash to navigate and manipulate your files effortlessly.
 
-- Code like a Pro: Can write, debug, and run code in Python, C, Golang—with more languages on the way.
+- Code what you ask: Can write, debug, and run code in Python, C, Golang and more languages on the way.
 
-- Self-Correcting: If a command flops or code breaks, it retries and fixes itself.
+- Self-Correcting: If a command flops or code breaks, it retries and fixes it by itself.
 
-- Agentic routing: Automatically picks the right agent for the job.
+- Agent routing: Automatically picks the right agent for the job.
 
 - Divide and Conquer: For big tasks, spins up multiple agents to plan and execute.
 
 - Tool-Equipped: From basic search to flight APIs and file exploration, every agent has it's own tools.
 
-- Memory That Matters: Remembers what’s useful, your preferences and past sessions conversation.
+- Memory: Remembers what’s useful, your preferences and past sessions conversation.
 
 - Web Browsing: Autonomous web navigation is underway. (Under development)
 
