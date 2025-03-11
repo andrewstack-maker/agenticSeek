@@ -2,7 +2,7 @@
 # AgenticSeek: Manus-like AI powered by Deepseek R1 Agents.
 
 
-**A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, browse the web and correct it's mistakes all without sending a byte of data to the cloud. The goal of the project is to create an autonomous agent like Manus but using reasoning model such as deepseek R1, all running locally.
+**A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, browse the web and correct it's mistakes all without sending a byte of data to the cloud. Built with reasoning models like DeepSeek R1, this autonomous agent runs entirely on your hardware, keeping your data private.
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
@@ -171,9 +171,9 @@ provider_server_address = 127.0.0.1:5000
 ## FAQ
 **Q: What hardware do I need?**  
 
-For Deepseek R1 7B, we recommend a  GPU with with 8GB VRAM.
-The 14B model can run on 12GB GPU like the rtx 3060.
-The 32B model needs a GPU with 24GB+ VRAM.
+7B Model: GPU with 8GB VRAM.
+14B Model: 12GB GPU (e.g., RTX 3060).
+32B Model: 24GB+ VRAM.
 
 **Q: Why Deepseek R1 over other models?**  
 
@@ -185,7 +185,7 @@ Ensure Ollama is running (`ollama serve`), your `config.ini` matches your provid
 
 **Q: How to join the discord ?**
 
-Please ask in the community section and you will be approved.
+Ask in the Community section for an invite.
 
 **Q: Can it really run 100% locally?**  
 
@@ -197,7 +197,10 @@ we started this a fun side project to make a fully local, Jarvis-like AI. Howeve
 
 **Q: How is it better than manus  ?**
 
-It's not, this is just a fun project, but it run locally and show that it's not rocket science to make hyped AI agents.
+It's not but we prioritizes local execution and privacy over cloud based approach. It’s a fun, accessible alternative!
+
+Contribute
+We’re looking for developers to enhance AgenticSeek! Check out open issues or join our Discord to collaborate.
 
 ## Authors:
  > [Fosowl](https://github.com/Fosowl)
