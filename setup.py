@@ -30,6 +30,9 @@ setup(
         "protobuf==3.20.3",
         "termcolor==2.5.0",
         "gliclass==0.1.8",
+        "ipython==7.16.1",
+        "pyaudio-0.2.14",
+        "librosa==0.10.2.post1"
     ],
     extras_require={
         "chinese": [
