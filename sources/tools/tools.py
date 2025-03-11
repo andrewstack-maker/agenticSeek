@@ -39,6 +39,7 @@ class Tools():
         self.messages = []
         self.config = configparser.ConfigParser()
         self.current_dir = self.create_work_dir()
+        self.excutable_blocks_found = False
     
     def check_config_dir_validity(self):
         """
@@ -129,6 +130,14 @@ class Tools():
             print(f"Saving code block to: {save_path}")
             with open(os.path.join(directory, save_path_file), 'w') as f:
                 f.write(block)
+    
+    def found_executable_blocks(self):
+        """
+        Check if executable blocks were found.
+        """
+        tmp = self.excutable_blocks_found
+        self.excutable_blocks_found = False
+        return tmp
 
     def load_exec_block(self, llm_text: str) -> tuple[list[str], str | None]:
         """
@@ -178,6 +187,7 @@ class Tools():
             if ':' in content.split('\n')[0]:
                 save_path = content.split('\n')[0].split(':')[1]
                 content = content[content.find('\n')+1:]
+            self.excutable_blocks_found = True
             code_blocks.append(content)
             start_index = end_pos + len(end_tag)
         return code_blocks, save_path

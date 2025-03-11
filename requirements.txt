@@ -13,8 +13,10 @@ flask==3.1.0
 soundfile==0.13.1
 protobuf==3.20.3
 termcolor==2.5.0
+ipython==9.0.2
 gliclass==0.1.8
-huggingface-hub==0.26.3
+pyaudio==0.2.14
+librosa==0.10.2.post1
 # if use chinese
 ordered_set
 pypinyin

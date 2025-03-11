@@ -1,5 +1,6 @@
 
 import sys
+import os
 import re
 from io import StringIO
 
@@ -25,10 +26,15 @@ class PyInterpreter(Tools):
             return "Code rejected by user."
         stdout_buffer = StringIO()
         sys.stdout = stdout_buffer
+        global_vars = {
+            '__builtins__': __builtins__,
+            'os': os,
+            'sys': sys,
+        }
         code = '\n\n'.join(codes)
         try:
             try:
-                buffer = exec(code)
+                buffer = exec(code, global_vars)
                 if buffer is not None:
                     output = buffer + '\n'
             except Exception as e:

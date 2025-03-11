@@ -30,6 +30,10 @@ class FileAgent(Agent):
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)
             self.last_answer = answer
+            complete = True
+            for name, tool in self.tools.items():
+                if tool.found_executable_blocks():
+                    complete = False # AI read results and continue the conversation
         return answer, reasoning
 
 if __name__ == "__main__":
