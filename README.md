@@ -1,6 +1,10 @@
 
 # AgenticSeek: Danus-like AI powered by Deepseek R1 Agents.
 
+![License](https://img.shields.io/badge/license-GPL--3.0-orange)
+
+![GitHub Issues](https://img.shields.io/github/issues/Fosowl/repository)
+
 **A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, browse the web and correct it's mistakes all without sending a byte of data to the cloud. The goal of the project is to create a truly Jarvis like assistant using reasoning model such as deepseek R1. 
 
 > 🛠️ **Work in Progress** – Looking for contributors! 🚀  
@@ -180,9 +184,8 @@ we started this a fun side project to make a fully local, Jarvis-like AI. Howeve
 
 **Q: How is it better than manus or openManus ?**
 
-It's not, never will be, we just offer an alternative that is more local and enjoyable to use.
+It's not, our goal is just offer an alternative that is more local and enjoyable to use.
 
-## Current contributor:
-
-Fosowl 🇫🇷
-steveh8758 🇹🇼
+## Authors:
+ > [Fosowl](https://github.com/Fosowl) [name=Martin]
+ > [steveh8758](https://github.com/steveh8758) 
