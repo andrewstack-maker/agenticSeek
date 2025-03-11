@@ -9,7 +9,7 @@
 ![alt text](./exemples/whale_readme.jpg)
 
 
-![License](https://img.shields.io/badge/license-GPL--3.0-green) ![GitHub Issues](https://img.shields.io/github/issues/Fosowl/agenticSeek) ![Discord](https://img.shields.io/badge/twitter-follow-blue?logo=twitter)
+![License](https://img.shields.io/badge/license-GPL--3.0-green) ![GitHub Issues](https://img.shields.io/github/issues/Fosowl/agenticSeek) ![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)
 ---
 
 ## Features:
@@ -167,21 +167,25 @@ The 32B model needs a GPU with 24GB+ VRAM.
 
 **Q: Why Deepseek R1 over other models?**  
 
-Deepseek R1 excels at reasoning and tool use for its size. We think it’s a solid fit for our needs—other models work fine, but Deepseek is our primary pick.
+Deepseek R1 excels at reasoning and tool use for its size. We think it’s a solid fit for our needs other models work fine, but Deepseek is our primary pick.
 
 **Q: I get an error running `main.py`. What do I do?**  
 
 Ensure Ollama is running (`ollama serve`), your `config.ini` matches your provider, and dependencies are installed. If none work feel free to raise an issue.
 
+**Q: How to join the discord ?**
+
+Please ask in the community section and you will be approved.
+
 **Q: Can it really run 100% locally?**  
 
-Yes with Ollama or Server providers, all speech to text, LLM and text to speech model run locally. Non-local options (OpenAI, Deepseek API) are optional.
+Yes with Ollama or Server providers, all speech to text, LLM and text to speech model run locally. Non-local options (OpenAI or others API) are optional.
 
 **Q: How come it is older than manus ?**
 
-we started this a fun side project to make a fully local, Jarvis-like AI. However, with the rise of Manus and openManus, we saw the opportunity to redirected some tasks priority to make yet another alternative.
+we started this a fun side project to make a fully local, Jarvis-like AI. However, with the rise of Manus, we saw the opportunity to redirected some tasks priority to make yet another alternative.
 
-**Q: How is it better than manus or openManus ?**
+**Q: How is it better than manus  ?**
 
 It's not, our goal is just offer an alternative that is more local and enjoyable to use.
 
