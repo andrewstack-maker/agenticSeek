@@ -9,21 +9,24 @@
 ![alt text](./exemples/whale_readme.jpg)
 
 
-![License](https://img.shields.io/badge/license-GPL--3.0-green) ![GitHub Issues](https://img.shields.io/github/issues/Fosowl/agenticSeek) ![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white) [Website](https://fosowl.github.io/agenticSeek.html)
+![License](https://img.shields.io/badge/license-GPL--3.0-green) ![GitHub Issues](https://img.shields.io/github/issues/Fosowl/agenticSeek) ![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)
+
+[Website](https://fosowl.github.io/agenticSeek.html)
+
 ---
 
 ## Features:
 
-- **Privacy-first**: Runs 100% locally – **no data leaves your machine**  
-- ️**Voice-enabled**: Speak and interact naturally
-- **Filesystem interaction**: Use bash to interact with your filesystem.
-- **Coding abilities**: Code in Python, C, Golang, and soon more
-- **Trial-and-error**: If a command or code fails, the assistant retries to fixes it automatically, saving you time.
-- **Agent routing**: Select the best agent for the task.
-- **Multi-agent planning**: For complex tasks, divide and conquer with multiple agents
-- **Tools:**: All agents have their respective tools ability. Basic search, flight API, files explorer, etc...
-- **Web browsing (Not implemented yet)**: Browse the web autonomously to conduct task.
-- **Memory**: Retain only useful information, recover conversation session, remember your preferences.
+100% Local, 100% Private: No cloud, runs on your hardware. Your data stays yours.
+Talk to It: Voice-enabled interact naturally with speech to text and text to speech.
+Filesystem interaction: Use bash to navigate and manipulate your files effortlessly.
+Code like a Pro: Can write, debug, and run code in Python, C, Golang—with more languages on the way.
+Self-Correcting: If a command flops or code breaks, it retries and fixes itself.
+Agentic routing: Automatically picks the right agent for the job.
+Divide and Conquer: For big tasks, spins up multiple agents to plan and execute.
+Tool-Equipped: From basic search to flight APIs and file exploration, every agent has it's own tools.
+Memory That Matters: Remembers what’s useful, your preferences and past sessions conversation.
+Web Browsing: Autonomous web navigation is underway. (Under development)
 
 ---
 
