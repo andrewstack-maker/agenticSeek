@@ -186,11 +186,11 @@ Yes with Ollama or Server providers, all speech to text, LLM and text to speech 
 
 **Q: How come it is older than manus ?**
 
-we started this a fun side project to make a fully local, Jarvis-like AI. However, with the rise of Manus, we saw the opportunity to redirected some tasks priority to make yet another alternative.
+we started this a fun side project to make a fully local, Jarvis-like AI. However, with the rise of Manus, we saw the opportunity to redirected some tasks to make yet another alternative.
 
 **Q: How is it better than manus  ?**
 
-It's not, our goal is just offer an alternative that is more local and enjoyable to use.
+It's not, this is just a fun project, but it run locally and show that it's not rocket science to make hyped AI agents.
 
 ## Authors:
  > [Fosowl](https://github.com/Fosowl)
