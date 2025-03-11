@@ -6,7 +6,7 @@
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
-![alt text](./exemples/whale_readme.jpg)
+![alt text](./media/whale_readme.jpg)
 
 
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) ![GitHub Issues](https://img.shields.io/github/issues/Fosowl/agenticSeek) ![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)
