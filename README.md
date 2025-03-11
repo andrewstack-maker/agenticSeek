@@ -4,17 +4,15 @@
 
 **A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, browse the web and correct it's mistakes all without sending a byte of data to the cloud. Built with reasoning models like DeepSeek R1, this autonomous agent runs entirely on your hardware, keeping your data private.
 
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) ![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)
 > 🛠️ **Work in Progress** – Looking for contributors!
 
 ![alt text](./media/whale_readme.jpg)
 
 
-[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) ![GitHub Issues](https://img.shields.io/github/issues/Fosowl/agenticSeek) ![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)
-
-
----
 
 ## Features:
+
 - **100% Local**: No cloud, runs on your hardware. Your data stays yours.
 
 - **Voice interaction**: Voice-enabled natural interaction.
@@ -37,16 +35,33 @@
 
 ---
 
-## Run locally on your machine
+## **Installation**
 
-**We recommend using at least Deepseek 14B, smaller models struggle with tool use and forget quickly the context.**
+### 1️⃣ **Clone the repository**
 
-### 1️⃣ **Install Dependencies**  
+```sh
+git clone https://github.com/Fosowl/agenticSeek.git
+cd agenticSeek
+```
+
+### 2️ **Create a virtual env**
+
+```sh
+python3 -m venv agentic_seek_env
+source agentic_seek_env/bin/activate      # On Windows: agentic_seek_env\Scripts\activate
+```
+
+### 3️⃣ **Install Dependencies**
+
 ```sh
 pip3 install -r requirements.txt
 ```
 
-### 2️⃣ **Download Models**  
+## Run locally on your machine
+
+**We recommend using at least Deepseek 14B, smaller models struggle with tool use and forget quickly the context.**
+
+### 1️⃣ **Download Models**  
 
 Make sure you have [Ollama](https://ollama.com/) installed.
 
@@ -56,7 +71,7 @@ Download the `deepseek-r1:7b` model from [DeepSeek](https://deepseek.com/models)
 ollama pull deepseek-r1:7b
 ```
 
-### 3️⃣ **Run the Assistant (Ollama)**  
+### 2️ **Run the Assistant (Ollama)**  
 
 Start the ollama server
 ```sh
@@ -78,7 +93,9 @@ Run the assistant:
 python3 main.py
 ```
 
-## **Alternative: Run the LLM on your own server**  
+---
+
+## **Run the LLM on your own server**  
 
 If you have a powerful computer or a server that you can use, but you want to use it from your laptop you have the options to run the LLM on a remote server. 
 
@@ -89,6 +106,8 @@ On your "server" that will run the AI model, get the ip address
 ```sh
 ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
 ```
+
+Note: For Windows or macOS, use ipconfig or ifconfig respectively to find the IP address.
 
 Clone the repository and then, run the script `stream_llm.py` in `server/`
 
@@ -138,6 +157,8 @@ Run the assistant:
 ```sh
 python3 main.py
 ```
+
+---
 
 ## Providers
 
