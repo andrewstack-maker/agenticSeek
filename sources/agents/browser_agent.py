@@ -17,6 +17,7 @@ class BrowserAgent(Agent):
         self.role = "deep research and web search"
         self.browser = Browser()
         self.browser.goTo("https://github.com/")
+        self.search_history = []
     
     def make_init_prompt(self, user_prompt: str, search_result: str):
         return f"""
@@ -31,7 +32,7 @@ class BrowserAgent(Agent):
         return re.findall(r'https?://[^\s]+', search_result)
     
     def make_navigation_prompt(self, user_prompt: str, page_text: str, navigable_links: list):
-        format_links = "\n".join([f"[{i}] {link['text']} - {link['url']}" for i, link in enumerate(navigable_links)])
+        remaining_links = "\n".join([f"[{i}] {link}" for i, link in enumerate(navigable_links) if link not in self.search_history])
         return f"""
         \nYou are browsing the web. Not the user, you are the browser.
 
@@ -39,7 +40,7 @@ class BrowserAgent(Agent):
         {page_text}
 
         Navigable links:
-        {format_links}
+        {remaining_links}
 
 
         You must choose a link to navigate to or do a new search.
@@ -51,6 +52,7 @@ class BrowserAgent(Agent):
         weather in tokyo
         ```
         If you have an answer and want to exit the browser, please say "REQUEST_EXIT".
+        If you don't choose a link or do a new search I will cut my fucking arm off.
         """
     
     def clean_links(self, links: list):
@@ -88,6 +90,7 @@ class BrowserAgent(Agent):
             animate_thinking(f"Navigating to {links[0]}", color="status")
             speech_module.speak(f"Navigating to {links[0]}")
             self.browser.goTo(links[0])
+            self.search_history.append(links[0])
             page_text = self.browser.getText()[:2048]
             navigable_links = self.browser.getNavigable()[:15]
             prompt = self.make_navigation_prompt(user_prompt, page_text, navigable_links)
