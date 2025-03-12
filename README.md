@@ -31,7 +31,7 @@
 
 - **Memory**: Remembers what’s useful, your preferences and past sessions conversation.
 
-- **Web Browsing**: Autonomous web navigation is underway. (Under development)
+- **Web Browsing**: Autonomous web navigation is underway. (See it on browser branch)
 
 ---
 
