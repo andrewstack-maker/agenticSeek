@@ -41,10 +41,15 @@ class BrowserAgent(Agent):
         Navigable links:
         {format_links}
 
-        Remember, you must seek the information the user want.
-        The user query was : {user_prompt}
 
-        You must choose a link to navigate to.
+        You must choose a link to navigate to or do a new search.
+        Remember, you seek the information the user want.
+        The user query was : {user_prompt}
+        If you want to do a new search, use the "web_search" tool.
+        Exemple:
+        ```web_search
+        weather in tokyo
+        ```
         If you have an answer and want to exit the browser, please say "REQUEST_EXIT".
         """
     
@@ -68,13 +73,17 @@ class BrowserAgent(Agent):
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', user_prompt)
             answer, reasoning = self.llm_request(prompt)
+            pretty_print("-"*100)
+            pretty_print(answer, color="output")
+            pretty_print("-"*100)
             if "REQUEST_EXIT" in answer:
                 complete = True
                 break
             links = self.extract_links(answer)
             links_clean = self.clean_links(links)
             if len(links_clean) == 0:
-                prompt = "Please choose a link to navigate to."
+                prompt = f"Please choose a link to navigate to or do a new search. Links found:\n{links_clean}"
+                pretty_print("No links found, doing a new search.", color="warning")
                 continue
             animate_thinking(f"Navigating to {links[0]}", color="status")
             speech_module.speak(f"Navigating to {links[0]}")

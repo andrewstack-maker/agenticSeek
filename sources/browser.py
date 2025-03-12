@@ -41,6 +41,8 @@ class Browser:
     
     def is_sentence(self, text):
         """Check if the text is a sentence."""
+        if "404" in text:
+            return True # we want the ai to see the error
         return len(text.split(" ")) > 5 and '.' in text
 
     def getText(self):
