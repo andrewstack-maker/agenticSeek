@@ -11,14 +11,8 @@ For example:
 ```python
 print("Hello world")
 ```
-
 This is then executed by the tool with its own class implementation of execute().
-
 A tool is not just for code tool but also API, internet, etc..
-For example a flight API tool could be used like so:
-```flight_search
-HU787
-```
 """
 
 import sys
