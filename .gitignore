@@ -3,7 +3,6 @@ config.ini
 *.egg-info
 experimental/
 conversations/
-agentic_env/
 agentic_env/*
 .env
 */.env
