@@ -9,6 +9,7 @@ import time
 from bs4 import BeautifulSoup
 import markdownify
 import logging
+import sys
 
 class Browser:
     def __init__(self, headless=False):
@@ -24,7 +25,6 @@ class Browser:
             self.wait = WebDriverWait(self.driver, 10)
             self.logger = logging.getLogger(__name__)
             self.logger.info("Browser initialized successfully")
-            
         except Exception as e:
             raise Exception(f"Failed to initialize browser: {str(e)}")
 
@@ -136,7 +136,7 @@ class Browser:
             self.driver.quit()
             self.logger.info("Browser closed")
         except Exception as e:
-            self.logger.error(f"Error closing browser: {str(e)}")
+            raise e
 
     def __del__(self):
         """Destructor to ensure browser is closed."""
