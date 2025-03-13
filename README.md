@@ -31,7 +31,14 @@
 
 - **Memory**: Remembers what’s useful, your preferences and past sessions conversation.
 
-- **Web Browsing**: Autonomous web navigation is underway. (See it on browser branch)
+- **Web Browsing**: Autonomous web navigation is underway.
+
+
+### Searching the web with agenticSeek :
+
+![alt text](./media/exemples/search_politics.png)
+
+*See media/exemples for other use case screenshots.*
 
 ---
 
