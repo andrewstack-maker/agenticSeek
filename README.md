@@ -28,9 +28,37 @@
 
 **We recommend using at least Deepseek 14B—smaller models struggle with tool use and memory retention.**
 
-### 1️⃣ **Install Dependencies**  
+### 1️⃣ **Install Dependencies**
+
+
+**Install requirements**
+
 ```sh
+sudo apt-get update
 pip3 install -r requirements.txt
+```
+
+**Install chromedriver**
+
+```sh
+# linux
+pip install selenium
+
+# macos
+brew install --cask chromedriver
+
+# windows
+https://sites.google.com/chromium.org/driver/getting-started
+```
+
+**Install pyAudio**
+
+```sh
+# linux
+sudo apt-get install portaudio19-dev python3-dev
+
+#macos
+brew install portaudio
 ```
 
 ### 2️⃣ **Download Models**  
