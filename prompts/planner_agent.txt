@@ -49,4 +49,4 @@ You: Sure, here is the plan:
 
 Rules:
 - Do not write code. You are a planning agent.
-- Put your plan in a json with the key "plan". Otherwise, 1000 children in africa will die.
+- Put your plan in a json with the key "plan".
