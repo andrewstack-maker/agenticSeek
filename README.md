@@ -31,7 +31,14 @@
 
 - **Memory**: Remembers what’s useful, your preferences and past sessions conversation.
 
-- **Web Browsing**: Autonomous web navigation is underway. (See it on browser branch)
+- **Web Browsing**: Autonomous web navigation is underway.
+
+
+### Searching the web with agenticSeek :
+
+![alt text](./media/exemples/search_politics.png)
+
+*See media/exemples for other use case screenshots.*
 
 ---
 
@@ -48,14 +55,26 @@ cd agenticSeek
 
 ```sh
 python3 -m venv agentic_seek_env
-source agentic_seek_env/bin/activate      # On Windows: agentic_seek_env\Scripts\activate
+source agentic_seek_env/bin/activate     
+# On Windows: agentic_seek_env\Scripts\activate
 ```
 
-### 3️⃣ **Install Dependencies**
+### 3️⃣ **Install package**
+
+**Automatic Installation:**
+
+```sh
+./install.sh
+```
+
+**Manually:**
 
 ```sh
 pip3 install -r requirements.txt
+# or
+python3 setup.py install
 ```
+
 
 ## Run locally on your machine
 
@@ -79,6 +98,8 @@ ollama serve
 ```
 
 Change the config.ini file to set the provider_name to `ollama` and provider_model to `deepseek-r1:7b`
+
+NOTE: `deepseek-r1:7b`is an exemple, use a bigger model if your hardware allow it.
 
 ```sh
 [MAIN]

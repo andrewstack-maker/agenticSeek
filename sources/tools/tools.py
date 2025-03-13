@@ -11,14 +11,8 @@ For example:
 ```python
 print("Hello world")
 ```
-
 This is then executed by the tool with its own class implementation of execute().
-
 A tool is not just for code tool but also API, internet, etc..
-For example a flight API tool could be used like so:
-```flight_search
-HU787
-```
 """
 
 import sys
@@ -77,11 +71,11 @@ class Tools():
         return dir_path
 
     @abstractmethod
-    def execute(self, blocks:str, safety:bool) -> str:
+    def execute(self, blocks:[str], safety:bool) -> str:
         """
         Abstract method that must be implemented by child classes to execute the tool's functionality.
         Args:
-            blocks (str): The code or query blocks to execute
+            blocks (List[str]): The codes or queries blocks to execute
             safety (bool): Whenever human intervention is required
         Returns:
             str: The output/result from executing the tool

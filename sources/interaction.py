@@ -100,7 +100,7 @@ class Interaction:
             return
         if self.current_agent != agent:
             self.current_agent = agent
-            # get history from previous agent
+            # get history from previous agent, good ?
             self.current_agent.memory.push('user', self.last_query)
         self.last_answer, _ = agent.process(self.last_query, self.speech)
     

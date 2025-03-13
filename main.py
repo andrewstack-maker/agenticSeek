@@ -7,7 +7,7 @@ import configparser
 
 from sources.llm_provider import Provider
 from sources.interaction import Interaction
-from sources.agents import Agent, CoderAgent, CasualAgent, FileAgent, PlannerAgent
+from sources.agents import Agent, CoderAgent, CasualAgent, FileAgent, PlannerAgent, BrowserAgent
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -44,6 +44,10 @@ def main():
         PlannerAgent(model=config["MAIN"]["provider_model"],
                        name="Planner",
                        prompt_path="prompts/planner_agent.txt",
+                       provider=provider),
+        BrowserAgent(model=config["MAIN"]["provider_model"],
+                       name="Browser",
+                       prompt_path="prompts/browser_agent.txt",
                        provider=provider)
     ]
 
