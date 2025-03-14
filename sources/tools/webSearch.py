@@ -22,6 +22,37 @@ class webSearch(Tools):
         super().__init__()
         self.tag = "web_search"
         self.api_key = api_key or os.getenv("SERPAPI_KEY")  # Requires a SerpApi key
+        self.paywall_keywords = [
+            "subscribe", "paywall", "login to continue", "access denied", "restricted content"
+        ]
+
+    async def link_valid(self, session, link):
+        """asyncronously check if a link is shit."""
+        if not link.startswith("http"):
+            return "Status: Invalid URL"
+        try:
+            async with session.get(link, timeout=aiohttp.ClientTimeout(total=5)) as response:
+                status = response.status
+                if status == 200:
+                    content = await response.text(encoding='utf-8', errors='ignore')[:1000]
+                    if any(keyword in content.lower() for keyword in self.paywall_keywords):
+                        return "Status: Possible Paywall"
+                    return "Status: Accessible"
+                elif status == 404:
+                    return "Status: 404 Not Found"
+                elif status == 403:
+                    return "Status: 403 Forbidden"
+                else:
+                    return f"Status: {status} {response.reason}"
+        except Exception as e:
+            return f"Error: {str(e)}"
+
+    async def check_all_links(self, links):
+        """Check all links asynchronously using a single session."""
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+        async with aiohttp.ClientSession(headers=headers) as session:
+            tasks = [self.link_valid(session, link) for link in links]
+            return await asyncio.gather(*tasks)
 
     def execute(self, blocks: str, safety: bool = True) -> str:
         if self.api_key is None:

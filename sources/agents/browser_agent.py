@@ -19,6 +19,7 @@ class BrowserAgent(Agent):
         self.browser.go_to("https://github.com/")
         self.search_history = []
         self.navigable_links = []
+        self.ai_notes = []
     
     def extract_links(self, search_result: str):
         links = re.findall(r'https?://[^\s]+', search_result)
@@ -64,8 +65,8 @@ class BrowserAgent(Agent):
         If you found a clear answer, please say "REQUEST_EXIT".
         You must choose a link to navigate to, go back or exit.
         Do not explain your choice.
+        You can take note about your finding with TAKE_NOTE("<your note>")
         """
-
     
     def llm_decide(self, prompt):
         animate_thinking("Thinking...", color="status")
