@@ -35,7 +35,7 @@ class Browser:
         except Exception as e:
             raise Exception(f"Failed to initialize browser: {str(e)}")
 
-    def goTo(self, url):
+    def go_to(self, url):
         """Navigate to a specified URL."""
         try:
             self.driver.get(url)
@@ -47,12 +47,19 @@ class Browser:
             return False
     
     def is_sentence(self, text):
-        """Check if the text is a sentence."""
-        if "404" in text:
-            return True # we want the ai to see the error
-        return len(text.split(" ")) > 5 and '.' in text
+        """Check if the text qualifies as a meaningful sentence or contains important error codes."""
+        text = text.strip()
+        error_codes = ["404", "403", "500", "502", "503"]
+        if any(code in text for code in error_codes):
+            return True
+        words = text.split()
+        word_count = len(words)
+        has_punctuation = text.endswith(('.', '!', '?'))
+        is_long_enough = word_count > 5
+        has_letters = any(word.isalpha() for word in words)
+        return (word_count >= 5 and (has_punctuation or is_long_enough) and has_letters)
 
-    def getText(self):
+    def get_text(self):
         """Get page text and convert it to README (Markdown) format."""
         try:
             soup = BeautifulSoup(self.driver.page_source, 'html.parser')
@@ -72,8 +79,24 @@ class Browser:
         except Exception as e:
             self.logger.error(f"Error getting text: {str(e)}")
             return None
+    
+    def clean_url(self, url):
+        clean = url.split('#')[0]
+        parts = clean.split('?', 1)
+        base_url = parts[0]
+        if len(parts) > 1:
+            query = parts[1]
+            essential_params = []
+            for param in query.split('&'):
+                if param.startswith('_skw=') or param.startswith('q=') or param.startswith('s='):
+                    essential_params.append(param)
+                elif param.startswith('_') or param.startswith('hash=') or param.startswith('itmmeta='):
+                    break
+            if essential_params:
+                return f"{base_url}?{'&'.join(essential_params)}"
+        return base_url
 
-    def getNavigable(self):
+    def get_navigable(self):
         """Get all navigable links on the current page."""
         try:
             links = []
@@ -89,12 +112,12 @@ class Browser:
                     })
             
             self.logger.info(f"Found {len(links)} navigable links")
-            return links
+            return [self.clean_url(link['url']) for link in links if link['is_displayed'] == True and len(link) < 256]
         except Exception as e:
             self.logger.error(f"Error getting navigable links: {str(e)}")
             return []
 
-    def clickElement(self, xpath):
+    def click_element(self, xpath):
         """Click an element specified by xpath."""
         try:
             element = self.wait.until(
@@ -107,15 +130,15 @@ class Browser:
             self.logger.error(f"Element not found or not clickable: {xpath}")
             return False
 
-    def getCurrentUrl(self):
+    def get_current_url(self):
         """Get the current URL of the page."""
         return self.driver.current_url
 
-    def getPageTitle(self):
+    def get_page_title(self):
         """Get the title of the current page."""
         return self.driver.title
 
-    def scrollToBottom(self):
+    def scroll_bottom(self):
         """Scroll to the bottom of the page."""
         try:
             self.driver.execute_script(
@@ -127,7 +150,7 @@ class Browser:
             self.logger.error(f"Error scrolling: {str(e)}")
             return False
 
-    def takeScreenshot(self, filename):
+    def screenshot(self, filename):
         """Take a screenshot of the current page."""
         try:
             self.driver.save_screenshot(filename)
@@ -155,16 +178,11 @@ if __name__ == "__main__":
     browser = Browser(headless=False)
     
     try:
-        browser.goTo("https://karpathy.github.io/")
-        text = browser.getText()
+        browser.go_to("https://karpathy.github.io/")
+        text = browser.get_text()
         print("Page Text in Markdown:")
         print(text)
-        links = browser.getNavigable()
-        print("\nNavigable Links:")
-        for link in links[:50]:
-            print(f"Text: {link['text']}, URL: {link['url']}")
-        
-        browser.takeScreenshot("example.png")
-        
+        links = browser.get_navigable()
+        print("\nNavigable Links:", links)
     finally:
         browser.close()
