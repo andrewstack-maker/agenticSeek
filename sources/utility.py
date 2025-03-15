@@ -44,7 +44,7 @@ def pretty_print(text, color = "info"):
             "failure": "red",
             "status": "light_green",
             "code": "light_blue",
-            "warning": "yello",
+            "warning": "yellow",
             "output": "cyan",
             "default": "black"
         }
