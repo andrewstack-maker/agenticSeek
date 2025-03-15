@@ -36,7 +36,7 @@
 
 ### Searching the web with agenticSeek :
 
-![alt text](./media/exemples/search_politics.png)
+![alt text](./media/exemples/search_startup.png)
 
 *See media/exemples for other use case screenshots.*
 
