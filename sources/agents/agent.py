@@ -108,10 +108,10 @@ class Agent():
     def wait_message(self, speech_module):
         if speech_module is None:
             return
-        messages = ["Please be patient sir, I am working on it.",
+        messages = ["Please be patient, I am working on it.",
                     "Computing... I recommand you have a coffee while I work.",
                     "Hold on, I’m crunching numbers.",
-                    "Working on it sir, please let me think."]
+                    "Working on it, please let me think."]
         speech_module.speak(messages[random.randint(0, len(messages)-1)])
     
     def get_blocks_result(self) -> list:
