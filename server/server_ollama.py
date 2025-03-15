@@ -93,4 +93,4 @@ if __name__ == '__main__':
     config.load()
     config.validate_model(config.model_name)
     state.model = config.model_name
-    app.run(host='0.0.0.0', port=5001, debug=False, threaded=True)
+    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
