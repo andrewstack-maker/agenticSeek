@@ -133,7 +133,7 @@ Note: For Windows or macOS, use ipconfig or ifconfig respectively to find the IP
 Clone the repository and then, run the script `stream_llm.py` in `server/`
 
 ```sh
-python3 stream_llm.py
+python3 server_ollama.py
 ```
 
 ### 2️⃣ **Run it** 
