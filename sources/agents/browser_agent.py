@@ -70,7 +70,7 @@ class BrowserAgent(Agent):
         The user query was : {user_prompt}
         You must choose a link (write it down) to navigate to, go go back.
         For exemple you can say: i want to go to www.events.org/events
-        Always end with a sentence that summarize your finding for exemple:
+        Always end with a sentence that summarize useful information if any for exemple:
         Summary: According to https://karpathy.github.io/ LeCun net is the earliest real-world application of a neural net"
         Another exemple:
         Summary: the BBC website does not provide useful informations.
@@ -117,7 +117,7 @@ class BrowserAgent(Agent):
     
     def save_notes(self, text):
         lines = text.split('\n')
-        for line in line
+        for line in lines:
             if "summary:" in line:
                 self.notes.append(line)
 
@@ -127,6 +127,7 @@ class BrowserAgent(Agent):
         animate_thinking(f"Searching...", color="status")
         search_result_raw = self.tools["web_search"].execute([user_prompt], False)
         search_result = self.jsonify_search_results(search_result_raw)
+        search_result = search_result[:10] # until futher improvement
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
         while not complete:
