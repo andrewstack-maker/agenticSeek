@@ -34,7 +34,7 @@ class Agent():
                        name: str,
                        prompt_path:str,
                        provider,
-                       recover_last_session=False) -> None:
+                       recover_last_session=True) -> None:
         self.agent_name = name
         self.role = None
         self.current_directory = os.getcwd()
