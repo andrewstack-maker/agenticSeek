@@ -23,36 +23,41 @@ class webSearch(Tools):
         self.tag = "web_search"
         self.api_key = api_key or os.getenv("SERPAPI_KEY")  # Requires a SerpApi key
         self.paywall_keywords = [
-            "subscribe", "paywall", "login to continue", "access denied", "restricted content"
+            "subscribe", "login to continue", "access denied", "restricted content", "404", "this page is not working"
         ]
 
-    async def link_valid(self, session, link):
-        """asyncronously check if a link is shit."""
+    def link_valid(self, link):
+        """check if a link is valid."""
         if not link.startswith("http"):
             return "Status: Invalid URL"
+        
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
         try:
-            async with session.get(link, timeout=aiohttp.ClientTimeout(total=5)) as response:
-                status = response.status
-                if status == 200:
-                    content = await response.text(encoding='utf-8', errors='ignore')[:1000]
-                    if any(keyword in content.lower() for keyword in self.paywall_keywords):
-                        return "Status: Possible Paywall"
-                    return "Status: Accessible"
-                elif status == 404:
-                    return "Status: 404 Not Found"
-                elif status == 403:
-                    return "Status: 403 Forbidden"
-                else:
-                    return f"Status: {status} {response.reason}"
-        except Exception as e:
+            response = requests.get(link, headers=headers, timeout=5)
+            status = response.status_code
+            if status == 200:
+                content = response.text[:1000].lower()
+                if any(keyword in content for keyword in self.paywall_keywords):
+                    return "Status: Possible Paywall"
+                return "Status: OK"
+            elif status == 404:
+                return "Status: 404 Not Found"
+            elif status == 403:
+                return "Status: 403 Forbidden"
+            else:
+                return f"Status: {status} {response.reason}"
+        except requests.exceptions.RequestException as e:
             return f"Error: {str(e)}"
 
-    async def check_all_links(self, links):
-        """Check all links asynchronously using a single session."""
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-        async with aiohttp.ClientSession(headers=headers) as session:
-            tasks = [self.link_valid(session, link) for link in links]
-            return await asyncio.gather(*tasks)
+    def check_all_links(self, links):
+        """Check all links, one by one."""
+        # TODO Make it asyncromous or smth
+        statuses = []
+        print("Workers started, scrawling the web...")
+        for i, link in enumerate(links):
+            status = self.link_valid(link)
+            statuses.append(status)
+        return statuses
 
     def execute(self, blocks: str, safety: bool = True) -> str:
         if self.api_key is None:
@@ -68,7 +73,7 @@ class webSearch(Tools):
                 params = {
                     "q": query,
                     "api_key": self.api_key,
-                    "num": 100,
+                    "num": 50,
                     "output": "json"
                 }
                 response = requests.get(url, params=params)
@@ -77,7 +82,12 @@ class webSearch(Tools):
                 data = response.json()
                 results = []
                 if "organic_results" in data and len(data["organic_results"]) > 0:
-                    for result in data["organic_results"][:50]:
+                    organic_results = data["organic_results"][:50]
+                    links = [result.get("link", "No link available") for result in organic_results]
+                    statuses = self.check_all_links(links)
+                    for result, status in zip(organic_results, statuses):
+                        if not "OK" in status:
+                            continue
                         title = result.get("title", "No title")
                         snippet = result.get("snippet", "No snippet available")
                         link = result.get("link", "No link available")
@@ -104,5 +114,5 @@ if __name__ == "__main__":
     search_tool = webSearch(api_key=os.getenv("SERPAPI_KEY"))
     query = "when did covid start"
     result = search_tool.execute([query], safety=True)
-    feedback = search_tool.interpreter_feedback(result)
-    print(feedback)
+    output = search_tool.interpreter_feedback(result)
+    print(output)

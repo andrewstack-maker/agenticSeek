@@ -21,13 +21,18 @@ class BrowserAgent(Agent):
         self.navigable_links = []
         self.ai_notes = []
     
+
     def extract_links(self, search_result: str):
-        links = re.findall(r'https?://[^\s]+', search_result)
-        return self.clean_links(links)
+        pattern = r'(https?://\S+|www\.\S+)'
+        matches = re.findall(pattern, search_result)
+        trailing_punct = ".,!?;:"
+        cleaned_links = [link.rstrip(trailing_punct) for link in matches]
+        return self.clean_links(cleaned_links)
         
     def clean_links(self, links: list):
         links_clean = []
         for link in links:
+            link = link.strip()
             if link[-1] == '.':
                 links_clean.append(link[:-1])
             else:
@@ -65,7 +70,6 @@ class BrowserAgent(Agent):
         If you found a clear answer, please say "REQUEST_EXIT".
         You must choose a link to navigate to, go back or exit.
         Do not explain your choice.
-        You can take note about your finding with TAKE_NOTE("<your note>")
         """
     
     def llm_decide(self, prompt):
