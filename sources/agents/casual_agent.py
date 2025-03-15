@@ -18,7 +18,7 @@ class CasualAgent(Agent):
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
         }
-        self.role = "talking, advices, events and philosophical"
+        self.role = "casual talking"
     
     def process(self, prompt, speech_module) -> str:
         complete = False

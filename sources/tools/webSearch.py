@@ -91,7 +91,7 @@ class webSearch(Tools):
                         title = result.get("title", "No title")
                         snippet = result.get("snippet", "No snippet available")
                         link = result.get("link", "No link available")
-                        results.append(f"Title: {title}\nSnippet: {snippet}\nLink: {link}")
+                        results.append(f"Title:{title}\nSnippet:{snippet}\nLink:{link}")
                     return "\n\n".join(results)
                 else:
                     return "No results found for the query."
