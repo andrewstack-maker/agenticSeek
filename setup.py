@@ -34,11 +34,11 @@ setup(
         "librosa==0.10.2.post1",
         "selenium==4.29.0",
         "markdownify==1.1.0",
-        "httpx>=0.27,<0.29"
-        "anyio>=3.5.0,<5"
-        "distro>=1.7.0,<2"
-        "jiter>=0.4.0,<1"
-        "sniffio"
+        "httpx>=0.27,<0.29",
+        "anyio>=3.5.0,<5",
+        "distro>=1.7.0,<2",
+        "jiter>=0.4.0,<1",
+        "sniffio",
         "tqdm>4"
     ],
     extras_require={
