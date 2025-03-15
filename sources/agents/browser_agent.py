@@ -68,12 +68,13 @@ class BrowserAgent(Agent):
         If no link seem appropriate, please say "GO_BACK".
         Remember, you seek the information the user want.
         The user query was : {user_prompt}
-        You must choose a link (write it down) to navigate to, go go back.
-        For exemple you can say: i want to go to www.events.org/events
-        Always end with a sentence that summarize useful information if any for exemple:
+        You must choose a link (write it down) to navigate to, or go back.
+        For exemple you can say: i want to go to www.wikipedia.org/cats
+        Always end with a sentence that summarize when useful information is found for exemple:
         Summary: According to https://karpathy.github.io/ LeCun net is the earliest real-world application of a neural net"
-        Another exemple:
-        Summary: the BBC website does not provide useful informations.
+        Do not say "according to this page", always write down the whole link.
+        If a website does not have usefull information say Error, for exemple:
+        Error: This forum does not discus anything that can answer the user query
         Do not explain your choice, be short, concise.
         """
     
@@ -118,8 +119,17 @@ class BrowserAgent(Agent):
     def save_notes(self, text):
         lines = text.split('\n')
         for line in lines:
-            if "summary:" in line:
+            if "summary:" in line.lower():
                 self.notes.append(line)
+    
+    def conclude_prompt(self, user_query):
+        search_note = '\n -'.join(self.notes)
+        return f"""
+        Following a web search about:
+        {user_query}
+        Write a conclusion based on these notes:
+        {search_note}
+        """
 
     def process(self, user_prompt, speech_module) -> str:
         complete = False
@@ -155,7 +165,9 @@ class BrowserAgent(Agent):
 
         speech_module.speak(answer)
         self.browser.close()
-        print("Final notes:", notes)
+        prompt = self.conclude_prompt(user_prompt)
+        answer, reasoning = self.llm_request(prompt)
+        pretty_print(answer, color="output")
         return answer, reasoning
 
 if __name__ == "__main__":
