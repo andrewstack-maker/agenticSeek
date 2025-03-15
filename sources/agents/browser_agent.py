@@ -72,6 +72,7 @@ class BrowserAgent(Agent):
         For exemple you can say: i want to go to www.wikipedia.org/cats
         Always end with a sentence that summarize when useful information is found for exemple:
         Summary: According to https://karpathy.github.io/ LeCun net is the earliest real-world application of a neural net"
+        Do not say "according to this page", always write down the whole link.
         If a website does not have usefull information say Error, for exemple:
         Error: This forum does not discus anything that can answer the user query
         Do not explain your choice, be short, concise.
