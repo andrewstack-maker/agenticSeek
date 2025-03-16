@@ -38,7 +38,7 @@
 
 ![alt text](./media/exemples/search_startup.png)
 
-*See media/exemples for other use case screenshots.*
+*See media/examples for other use case screenshots.*
 
 ---
 
@@ -99,7 +99,7 @@ ollama serve
 
 Change the config.ini file to set the provider_name to `ollama` and provider_model to `deepseek-r1:7b`
 
-NOTE: `deepseek-r1:7b`is an exemple, use a bigger model if your hardware allow it.
+NOTE: `deepseek-r1:7b`is an example, use a bigger model if your hardware allow it.
 
 ```sh
 [MAIN]
