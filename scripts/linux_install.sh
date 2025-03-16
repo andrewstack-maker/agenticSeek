@@ -12,6 +12,6 @@ pip3 install -r requirements.txt
 pip3 install selenium
 
 # Install portaudio for pyAudio
-sudo apt-get install -y portaudio19-dev python3-dev
+sudo apt-get install -y portaudio19-dev python3-dev alsa-utils
 
 echo "Installation complete for Linux!"

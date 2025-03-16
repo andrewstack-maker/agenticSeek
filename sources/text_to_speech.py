@@ -42,11 +42,13 @@ class Speech():
             audio_file = 'sample.wav'
             display(Audio(data=audio, rate=24000, autoplay=i==0), display_id=False)
             sf.write(audio_file, audio, 24000) # save each audio file
-            if platform.system().lower() != "windows":
-                subprocess.call(["afplay", audio_file])
-            else:
+            if platform.system().lower() == "windows":
                 import winsound
                 winsound.PlaySound(audio_file, winsound.SND_FILENAME)
+            elif platform.system().lower() == "linux":
+                subprocess.call(["aplay", audio_file])
+            else:
+                subprocess.call(["afplay", audio_file])
 
     def replace_url(self, url: re.Match) -> str:
         """
