@@ -30,7 +30,7 @@ class Provider:
             print("Warning: you are using an API provider. You data will be sent to the cloud.")
             self.get_api_key(self.provider_name)
         elif self.server != "":
-            print("Provider initialized at ", self.server)
+            print("Provider", provider_name, "initialized at", self.server)
 
     def get_api_key(self, provider):
         load_dotenv()
@@ -48,7 +48,8 @@ class Provider:
         """
         try:
             ip, port = address.rsplit(":", 1)
-            ipaddress.ip_address(ip)
+            if all(c.lower() in ".:abcdef0123456789" for c in ip):
+                ipaddress.ip_address(ip)
             if not port.isdigit() or not (0 <= int(port) <= 65535):
                 raise ValueError("Port must be a number between 0 and 65535.")
         except ValueError as e:
