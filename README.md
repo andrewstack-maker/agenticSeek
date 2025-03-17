@@ -108,6 +108,12 @@ provider_name = ollama
 provider_model = deepseek-r1:7b
 ```
 
+start all services :
+
+```sh
+./start_services.sh
+```
+
 Run the assistant:
 
 ```sh
@@ -156,6 +162,7 @@ provider_server_address = x.x.x.x:5000
 Run the assistant:
 
 ```sh
+./start_services.sh
 python3 main.py
 ```
 
@@ -176,6 +183,7 @@ provider_server_address = 127.0.0.1:5000 # can be set to anything, not used
 Run the assistant:
 
 ```sh
+./start_services.sh
 python3 main.py
 ```
 

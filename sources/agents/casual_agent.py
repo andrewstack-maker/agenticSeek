@@ -1,7 +1,7 @@
 
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
-from sources.tools.webSearch import webSearch
+from sources.tools.searxSearch import searxSearch
 from sources.tools.flightSearch import FlightSearch
 from sources.tools.fileFinder import FileFinder
 from sources.tools.BashInterpreter import BashInterpreter
@@ -13,7 +13,7 @@ class CasualAgent(Agent):
         """
         super().__init__(model, name, prompt_path, provider)
         self.tools = {
-            "web_search": webSearch(),
+            "web_search": searxSearch(),
             "flight_search": FlightSearch(),
             "file_finder": FileFinder(),
             "bash": BashInterpreter()

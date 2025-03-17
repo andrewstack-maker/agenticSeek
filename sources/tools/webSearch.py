@@ -14,6 +14,11 @@ else:
     from sources.tools.tools import Tools
     from sources.utility import animate_thinking, pretty_print
 
+"""
+WARNING
+webSearch is fully deprecated and is being replaced by searxSearch for web search.
+"""
+
 class webSearch(Tools):
     def __init__(self, api_key: str = None):
         """

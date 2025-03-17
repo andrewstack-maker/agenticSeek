@@ -3,8 +3,9 @@ import time
 
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
-from sources.tools.webSearch import webSearch
+from sources.tools.searxSearch import searxSearch
 from sources.browser import Browser
+
 class BrowserAgent(Agent):
     def __init__(self, model, name, prompt_path, provider):
         """
@@ -12,7 +13,7 @@ class BrowserAgent(Agent):
         """
         super().__init__(model, name, prompt_path, provider)
         self.tools = {
-            "web_search": webSearch(),
+            "web_search": searxSearch(),
         }
         self.role = "deep research and web search"
         self.browser = Browser()
