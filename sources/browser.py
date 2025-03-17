@@ -34,7 +34,7 @@ class Browser:
             self.logger.info("Browser initialized successfully")
         except Exception as e:
             raise Exception(f"Failed to initialize browser: {str(e)}")
-
+    
     def go_to(self, url):
         """Navigate to a specified URL."""
         try:

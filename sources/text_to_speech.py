@@ -76,8 +76,9 @@ class Speech():
         return parts[-1] if parts else path
     
     def shorten_paragraph(self, sentence):
+        #TODO find a better way, we would like to have the TTS not be annoying, speak only useful informations
         """
-        Shorten paragraph like **explaination**: <long text> by keeping only the first sentence.
+        Find long paragraph like **explaination**: <long text> by keeping only the first sentence.
         Args:
             sentence (str): The sentence to shorten
         Returns:
