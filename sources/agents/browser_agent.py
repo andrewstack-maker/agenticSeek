@@ -125,6 +125,7 @@ class BrowserAgent(Agent):
     
     def conclude_prompt(self, user_query):
         search_note = '\n -'.join(self.notes)
+        print("AI research notes:\n", search_note)
         return f"""
         Following a web search about:
         {user_query}
@@ -138,7 +139,7 @@ class BrowserAgent(Agent):
         animate_thinking(f"Searching...", color="status")
         search_result_raw = self.tools["web_search"].execute([user_prompt], False)
         search_result = self.jsonify_search_results(search_result_raw)
-        search_result = search_result[:10] # until futher improvement
+        search_result = search_result[:5] # until futher improvement
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
         while not complete:
@@ -148,14 +149,14 @@ class BrowserAgent(Agent):
                 complete = True
                 break
             links = self.extract_links(answer)
+            if len(unvisited) == 0:
+                break
             if len(links) == 0 or "GO_BACK" in answer:
                 unvisited = self.select_unvisited(search_result)
                 prompt = self.make_newsearch_prompt(user_prompt, unvisited)
                 pretty_print(f"Going back to results. Still {len(unvisited)}", color="warning")
                 links = []
                 continue
-            if len(unvisited) == 0:
-                break
             animate_thinking(f"Navigating to {links[0]}", color="status")
             speech_module.speak(f"Navigating to {links[0]}")
             self.browser.go_to(links[0])
@@ -164,11 +165,11 @@ class BrowserAgent(Agent):
             self.navigable_links = self.browser.get_navigable()
             prompt = self.make_navigation_prompt(user_prompt, page_text)
 
-        speech_module.speak(answer)
         self.browser.close()
         prompt = self.conclude_prompt(user_prompt)
         answer, reasoning = self.llm_request(prompt)
         pretty_print(answer, color="output")
+        speech_module.speak(answer)
         return answer, reasoning
 
 if __name__ == "__main__":
