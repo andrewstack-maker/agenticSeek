@@ -27,7 +27,7 @@ class Interaction:
             self.transcriber = AudioTranscriber(self.ai_name, verbose=False)
             self.recorder = AudioRecorder()
         if tts_enabled:
-            self.speech.speak("Hello Sir, we are online and ready. What can I do for you ?")
+            self.speech.speak("Hello, we are online and ready. What can I do for you ?")
         if recover_last_session:
             self.recover_last_session()
     
