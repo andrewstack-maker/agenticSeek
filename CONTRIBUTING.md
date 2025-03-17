@@ -74,11 +74,13 @@ Push your changes to your fork and submit a pull request to the main branch of t
 
 Here are some high-priority tasks and areas where we need contributions:
 
-- Web Browsing: Implement autonomous web browsing capabilities for the assistant.
-- Multi-Agent System: Enhance the multi-agent functionality on the dev branch.
-- Memory & Recovery: Improve conversation compression.
+- Web Browsing: Improve the autonomous web browsing capabilities for the assistant.
+- Graphical interface, a web graphical interface. (please ask first)
+- Multi-Agent System: Enhance the planner agent for divide and conqueer for task (please ask first).
 - New Tools: Add support for additional programming languages or APIs.
-- Testing: Write comprehensive tests for existing and new features.
+- Multi-language support for Text to speech & speech to text (english, chinese, spanish first)
+- Testing: Write comprehensive tests for existing features.
+- Better readme image: make a better readme image (robot whale that use tools. Ghibli or anime style, inspiration could be https://sakana.ai/assets/ai-scientist/cover.jpeg)
 
 
 If you're unsure where to start, feel free to reach out by opening an issue or joining our community discussions.
