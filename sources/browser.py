@@ -38,10 +38,12 @@ class Browser:
             chrome_options.add_argument("--disable-dev-shm-usage")
              # Automatically find ChromeDriver path
             chromedriver_path = shutil.which("chromedriver")
-            if not chromedriver_path:
-                raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
             service = Service(chromedriver_path)
-            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+            if chromedriver_path:
+                self.driver = webdriver.Chrome(service=service, options=chrome_options)
+            else:
+                self.driver = webdriver.Chrome(service=service)
+                #raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
             self.wait = WebDriverWait(self.driver, 10)
             self.logger = logging.getLogger(__name__)
             self.logger.info("Browser initialized successfully")
@@ -57,7 +59,7 @@ class Browser:
                 os.path.join(os.environ.get("LOCALAPPDATA", ""), "Google\\Chrome\\Application\\chrome.exe")  # User install
             ]
         elif sys.platform.startswith("darwin"):  # macOS
-            paths = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"]
+            paths = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta"]
         else:  # Linux
             paths = ["/usr/bin/google-chrome", "/usr/bin/chromium-browser", "/usr/bin/chromium"]
 
