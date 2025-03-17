@@ -44,11 +44,12 @@
 
 ## **Installation**
 
-### 1️⃣ **Clone the repository**
+### 1️⃣ **Clone the repository and setup**
 
 ```sh
 git clone https://github.com/Fosowl/agenticSeek.git
 cd agenticSeek
+mv .env.example .env
 ```
 
 ### 2️ **Create a virtual env**
