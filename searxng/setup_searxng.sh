@@ -85,17 +85,6 @@ else
     exit 1
 fi
 
-# Stop containers
-echo "Stopping containers to apply security settings..."
-docker-compose down
-
-# Start containers again with secure settings
-echo "Deploying SearXNG with secure settings..."
-if ! docker-compose up -d; then
-    echo "Error: Failed to deploy SearXNG. Check logs with 'docker compose logs'."
-    exit 1
-fi
-
 # Display status and access instructions
 echo "SearXNG setup complete!"
 docker ps -a --filter "name=searxng" --filter "name=redis"
