@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 import time
+import os
 from bs4 import BeautifulSoup
 import markdownify
 import logging
@@ -23,6 +24,12 @@ class Browser:
         self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
         try:
             chrome_options = Options()
+            chrome_path = self.get_chrome_path()
+            
+            if not chrome_path:
+                raise FileNotFoundError("Google Chrome not found. Please install it.")
+            chrome_options.binary_location = chrome_path
+            
             if headless:
                 chrome_options.add_argument("--headless")
             chrome_options.add_argument("--disable-gpu")
@@ -34,6 +41,25 @@ class Browser:
             self.logger.info("Browser initialized successfully")
         except Exception as e:
             raise Exception(f"Failed to initialize browser: {str(e)}")
+            
+    @staticmethod
+    def get_chrome_path():
+        if sys.platform.startswith("win"):
+            paths = [
+                "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+                "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+                os.path.join(os.environ.get("LOCALAPPDATA", ""), "Google\\Chrome\\Application\\chrome.exe")  # User install
+            ]
+        elif sys.platform.startswith("darwin"):  # macOS
+            paths = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"]
+        else:  # Linux
+            paths = ["/usr/bin/google-chrome", "/usr/bin/chromium-browser", "/usr/bin/chromium"]
+
+        for path in paths:
+            if os.path.exists(path) and os.access(path, os.X_OK):  # Check if executable
+                return path
+        return None
+
     
     def go_to(self, url):
         """Navigate to a specified URL."""
