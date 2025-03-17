@@ -66,23 +66,25 @@ class BrowserAgent(Agent):
         You can navigate to these links:
         {remaining_links}
 
+        You must choose a link (write it down) to navigate to, or go back.
+        For exemple you can say: i want to go to www.wikipedia.org/cats
+
+        Follow up with a summary of the page content (of the current page, not of the link), for example:
+        Summary: According to https://karpathy.github.io/ LeCun net is the earliest real-world application of a neural net"
+        The summary should include any useful finding that are useful in answering user query.
+        If a website does not have usefull information say Error, for exemple:
+        Error: This forum does not discus anything that can answer the user query
+        Be short, concise, direct.
+
         If no link seem appropriate, please say "GO_BACK".
         Remember, you seek the information the user want.
         The user query was : {user_prompt}
-        You must choose a link (write it down) to navigate to, or go back.
-        For exemple you can say: i want to go to www.wikipedia.org/cats
-        Always end with a sentence that summarize when useful information is found for exemple:
-        Summary: According to https://karpathy.github.io/ LeCun net is the earliest real-world application of a neural net"
-        Do not say "according to this page", always write down the whole link.
-        If a website does not have usefull information say Error, for exemple:
-        Error: This forum does not discus anything that can answer the user query
-        Do not explain your choice, be short, concise.
         """
     
     def llm_decide(self, prompt):
         animate_thinking("Thinking...", color="status")
         self.memory.push('user', prompt)
-        answer, reasoning = self.llm_request(prompt)
+        answer, reasoning = self.llm_request()
         pretty_print("-"*100)
         pretty_print(answer, color="output")
         pretty_print("-"*100)
@@ -120,17 +122,20 @@ class BrowserAgent(Agent):
     def save_notes(self, text):
         lines = text.split('\n')
         for line in lines:
-            if "summary:" in line.lower():
+            if "summary" in line.lower():
                 self.notes.append(line)
     
     def conclude_prompt(self, user_query):
-        search_note = '\n -'.join(self.notes)
+        annotated_notes = [f"{i+1}: {note.lower().replace('summary:', '')}" for i, note in enumerate(self.notes)]
+        search_note = '\n'.join(annotated_notes)
         print("AI research notes:\n", search_note)
         return f"""
-        Following a web search about:
+        Following a human request:
         {user_query}
-        Write a conclusion based on these notes:
+        A web AI made the following finding across different pages:
         {search_note}
+
+        Summarize the finding, and provide a conclusion that answer the request.
         """
 
     def process(self, user_prompt, speech_module) -> str:
@@ -138,8 +143,7 @@ class BrowserAgent(Agent):
 
         animate_thinking(f"Searching...", color="status")
         search_result_raw = self.tools["web_search"].execute([user_prompt], False)
-        search_result = self.jsonify_search_results(search_result_raw)
-        search_result = search_result[:5] # until futher improvement
+        search_result = self.jsonify_search_results(search_result_raw)[:5] # until futher improvement
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
         while not complete:
@@ -167,6 +171,7 @@ class BrowserAgent(Agent):
 
         self.browser.close()
         prompt = self.conclude_prompt(user_prompt)
+        self.memory.push('user', prompt)
         answer, reasoning = self.llm_request(prompt)
         pretty_print(answer, color="output")
         speech_module.speak(answer)

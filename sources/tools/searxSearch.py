@@ -90,6 +90,8 @@ class searxSearch(Tools):
                     title = article.find('h3').text.strip() if article.find('h3') else "No Title"
                     description = article.find('p', class_='content').text.strip() if article.find('p', class_='content') else "No Description"
                     results.append(f"Title:{title}\nSnippet:{description}\nLink:{url}")
+            if len(results) == 0:
+                raise Exception("Searx search failed. did you run start_services.sh? Did docker die?")
             return "\n\n".join(results)  # Return results as a single string, separated by newlines
         except requests.exceptions.RequestException as e:
             return f"Error during search: {str(e)}"
