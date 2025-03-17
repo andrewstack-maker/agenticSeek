@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 import time
 import os
+import shutil
 from bs4 import BeautifulSoup
 import markdownify
 import logging
@@ -35,7 +36,12 @@ class Browser:
             chrome_options.add_argument("--disable-gpu")
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
-            self.driver = webdriver.Chrome(options=chrome_options)
+             # Automatically find ChromeDriver path
+            chromedriver_path = shutil.which("chromedriver")
+            if not chromedriver_path:
+                raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
+            service = Service(chromedriver_path)
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
             self.wait = WebDriverWait(self.driver, 10)
             self.logger = logging.getLogger(__name__)
             self.logger.info("Browser initialized successfully")
