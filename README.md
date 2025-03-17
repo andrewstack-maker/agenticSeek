@@ -254,6 +254,8 @@ It's not but we prioritizes local execution and privacy over cloud based approac
 
 We’re looking for developers to improve AgenticSeek! Check out open issues or discussion.
 
+[![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
+
 ## Authors:
  > [Fosowl](https://github.com/Fosowl)
  > [steveh8758](https://github.com/steveh8758) 
