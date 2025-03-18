@@ -8,6 +8,7 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 import chromedriver_autoinstaller
 import time
 import os
+import shutil
 from bs4 import BeautifulSoup
 import markdownify
 import logging
@@ -36,9 +37,12 @@ class Browser:
             chrome_options.add_argument("--disable-gpu")
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
-
-            # Automatically install or find ChromeDriver path.
-            chromedriver_path = chromedriver_autoinstaller.install()
+            # Automatically install or find ChromeDriver path.(for google chrome and chrome beta).
+            try:
+                chromedriver_path = chromedriver_autoinstaller.install()
+            except FileNotFoundError as e:
+                chromedriver_path = shutil.which("chromedriver")
+                
             if not chromedriver_path:
                 raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
             service = Service(chromedriver_path)
