@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
+import chromedriver_autoinstaller
 import time
 import os
 import shutil
@@ -36,6 +37,9 @@ class Browser:
             chrome_options.add_argument("--disable-gpu")
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
+
+            # Automatically find ChromeDriver path
+            chromedriver_autoinstaller.install()
              # Automatically find ChromeDriver path
             chromedriver_path = shutil.which("chromedriver")
             if not chromedriver_path:
