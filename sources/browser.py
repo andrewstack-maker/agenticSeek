@@ -8,7 +8,6 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 import chromedriver_autoinstaller
 import time
 import os
-import shutil
 from bs4 import BeautifulSoup
 import markdownify
 import logging
@@ -38,10 +37,8 @@ class Browser:
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
 
-            # Automatically find ChromeDriver path
-            chromedriver_autoinstaller.install()
-             # Automatically find ChromeDriver path
-            chromedriver_path = shutil.which("chromedriver")
+            # Automatically install or find ChromeDriver path.
+            chromedriver_path = chromedriver_autoinstaller.install()
             if not chromedriver_path:
                 raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
             service = Service(chromedriver_path)
