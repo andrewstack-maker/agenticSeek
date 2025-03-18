@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 import markdownify
 import logging
 import sys
+import re
 
 class Browser:
     def __init__(self, headless=False, anticaptcha_install=False):
@@ -91,6 +92,19 @@ class Browser:
         has_letters = any(word.isalpha() for word in words)
         return (word_count >= 5 and (has_punctuation or is_long_enough) and has_letters)
 
+    def is_sentence(self, text):
+        """Check if the text qualifies as a meaningful sentence or contains important error codes."""
+        text = text.strip()
+
+        error_codes = ["404", "403", "500", "502", "503"]
+        if any(code in text for code in error_codes):
+            return True
+        words = re.findall(r'\w+', text, re.UNICODE)
+        word_count = len(words)
+        has_punctuation = any(text.endswith(p) for p in ['.', '，', ',', '!', '?', '。', '！', '？', '।', '۔'])
+        is_long_enough = word_count > 5
+        return (word_count >= 5 and (has_punctuation or is_long_enough))
+
     def get_text(self):
         """Get page text and convert it to README (Markdown) format."""
         try:
@@ -145,7 +159,7 @@ class Browser:
                     })
             
             self.logger.info(f"Found {len(links)} navigable links")
-            return [self.clean_url(link['url']) for link in links if link['is_displayed'] == True and len(link) < 256]
+            return [self.clean_url(link['url']) for link in links if (link['is_displayed'] == True and len(link['url']) < 64)]
         except Exception as e:
             self.logger.error(f"Error getting navigable links: {str(e)}")
             return []
@@ -211,7 +225,7 @@ if __name__ == "__main__":
     browser = Browser(headless=False)
     
     try:
-        browser.go_to("https://karpathy.github.io/")
+        browser.go_to("https://www.seoul.co.kr/")
         text = browser.get_text()
         print("Page Text in Markdown:")
         print(text)
