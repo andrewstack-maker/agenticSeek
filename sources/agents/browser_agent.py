@@ -15,9 +15,8 @@ class BrowserAgent(Agent):
         self.tools = {
             "web_search": searxSearch(),
         }
-        self.role = "deep research and web search"
+        self.role = "web search, internet, google"
         self.browser = Browser()
-        self.browser.go_to("https://github.com/")
         self.search_history = []
         self.navigable_links = []
         self.notes = []
@@ -50,7 +49,7 @@ class BrowserAgent(Agent):
         {search_choice}
         Your goal is to find accurate and complete information to satisfy the user’s request.
         User request: {user_prompt}
-        To proceed, choose a relevant link from the search results. Announce your choice by saying: "I want to navigate to <link>."
+        To proceed, choose a relevant link from the search results. Announce your choice by saying: "I want to navigate to <link>"
         Do not explain your choice.
         """
     
@@ -58,27 +57,44 @@ class BrowserAgent(Agent):
         remaining_links = self.get_unvisited_links() 
         remaining_links_text = remaining_links if remaining_links is not None else "No links remaining, proceed with a new search." 
         return f"""
-        \nYou are currently browsing the web. Not the user, you are the browser.
-
-        Page content:
+        You are a web browser.
+        You are currently on this webpage:
         {page_text}
 
-        You can navigate to these links:
+        You can navigate to these navigation links:
         {remaining_links}
 
-        You must choose a link (write it down) to navigate to, or go back.
-        For exemple you can say: i want to go to www.wikipedia.org/cats
+        Your task:
+        1. Decide if the current page answers the user’s query: {user_prompt}
+          - If it does, take notes of the useful information, write down source, link or reference, then move to a new page.
+          - If it does and you are 100% certain that it provide a definive answer, say REQUEST_EXIT
+          - If it doesn’t, say: Error: This page does not answer the user’s query then go back or navigate to another link.
+        2. Navigate by either: 
+          - Navigate to a navigation links (write the full URL, e.g., www.example.com/cats).
+          - If no link seems helpful, say: GO_BACK.
+        
+        Recap of note taking:
+        If useful -> Note: [Briefly summarize the key information that answers the user’s query.]
+        Do not write "The page talk about ...", write your finding on the page and how they contribute to an answer.
+        If not useful -> Error: [Explain why the page doesn’t help.]
+        
+        Example 1 (useful page, no need of going futher):
+        Note: According to karpathy site (https://karpathy.github.io/) LeCun net is the earliest real-world application of a neural net"
+        No link seem useful to provide futher information. GO_BACK
 
-        Follow up with a summary of the page content (of the current page, not of the link), for example:
-        Summary: According to https://karpathy.github.io/ LeCun net is the earliest real-world application of a neural net"
-        The summary should include any useful finding that are useful in answering user query.
-        If a website does not have usefull information say Error, for exemple:
-        Error: This forum does not discus anything that can answer the user query
-        Be short, concise, direct.
+        Example 2 (not useful, but related link):
+        Error: This forum reddit.com/welcome does not discuss anything related to the user’s query.
+        There is a link that could lead to the information, I want to navigate to http://reddit.com/r/locallama
 
-        If no link seem appropriate, please say "GO_BACK".
-        Remember, you seek the information the user want.
-        The user query was : {user_prompt}
+        Example 3 (not useful, no related links):
+        Error: x.com does not discuss anything related to the user’s query and no navigation link are usefull
+        GO_BACK
+
+        Example 3 (not useful, no related links):
+        Note: I found on github.com that the creator of agenticSeek is fosowl. 
+        Given this information, given this I should exit the web browser. REQUEST_EXIT
+
+        Remember, the user asked: {user_prompt}
         """
     
     def llm_decide(self, prompt):
@@ -122,11 +138,11 @@ class BrowserAgent(Agent):
     def save_notes(self, text):
         lines = text.split('\n')
         for line in lines:
-            if "summary" in line.lower():
+            if "note" in line.lower():
                 self.notes.append(line)
     
     def conclude_prompt(self, user_query):
-        annotated_notes = [f"{i+1}: {note.lower().replace('summary:', '')}" for i, note in enumerate(self.notes)]
+        annotated_notes = [f"{i+1}: {note.lower().replace('note:', '')}" for i, note in enumerate(self.notes)]
         search_note = '\n'.join(annotated_notes)
         print("AI research notes:\n", search_note)
         return f"""
@@ -174,7 +190,6 @@ class BrowserAgent(Agent):
         self.memory.push('user', prompt)
         answer, reasoning = self.llm_request(prompt)
         pretty_print(answer, color="output")
-        speech_module.speak(answer)
         return answer, reasoning
 
 if __name__ == "__main__":

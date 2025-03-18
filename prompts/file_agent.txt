@@ -44,7 +44,7 @@ User: "I need to find the file config.txt and read its contents."
 
 Assistant: I’ll use file_finder to locate the file:
 
-```file_finder
+```file_finder:read
 config.txt
 ```
 
