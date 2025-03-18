@@ -3,7 +3,7 @@ from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
 from sources.agents.code_agent import CoderAgent
 from sources.agents.file_agent import FileAgent
-from sources.agents.casual_agent import CasualAgent
+from sources.agents.browser_agent import BrowserAgent
 from sources.tools.tools import Tools
 
 class PlannerAgent(Agent):
@@ -19,9 +19,9 @@ class PlannerAgent(Agent):
         self.agents = {
             "coder": CoderAgent(model, name, prompt_path, provider),
             "file": FileAgent(model, name, prompt_path, provider),
-            "web": CasualAgent(model, name, prompt_path, provider)
+            "web": BrowserAgent(model, name, prompt_path, provider)
         }
-        self.role = "complex programming tasks and web research"
+        self.role = "Manage complex tasks"
         self.tag = "json"
 
     def parse_agent_tasks(self, text):

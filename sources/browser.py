@@ -38,12 +38,10 @@ class Browser:
             chrome_options.add_argument("--disable-dev-shm-usage")
              # Automatically find ChromeDriver path
             chromedriver_path = shutil.which("chromedriver")
+            if not chromedriver_path:
+                raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
             service = Service(chromedriver_path)
-            if chromedriver_path:
-                self.driver = webdriver.Chrome(service=service, options=chrome_options)
-            else:
-                self.driver = webdriver.Chrome(service=service)
-                #raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
             self.wait = WebDriverWait(self.driver, 10)
             self.logger = logging.getLogger(__name__)
             self.logger.info("Browser initialized successfully")
@@ -115,6 +113,7 @@ class Browser:
             return None
     
     def clean_url(self, url):
+        """Clean URL to keep only the part needed for navigation to the page"""
         clean = url.split('#')[0]
         parts = clean.split('?', 1)
         base_url = parts[0]

@@ -102,6 +102,7 @@ class Interaction:
             self.current_agent = agent
             # get history from previous agent, good ?
             self.current_agent.memory.push('user', self.last_query)
+            self.current_agent.memory.push('assistant', self.last_answer)
         self.last_answer, _ = agent.process(self.last_query, self.speech)
     
     def show_answer(self) -> None:
