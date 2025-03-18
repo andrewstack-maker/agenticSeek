@@ -74,7 +74,7 @@ class Browser:
         """Navigate to a specified URL."""
         try:
             self.driver.get(url)
-            time.sleep(2)  # Wait for page to load
+            time.sleep(1)  # Wait for page to load
             self.logger.info(f"Navigated to: {url}")
             return True
         except WebDriverException as e:
