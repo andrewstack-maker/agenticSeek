@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
+import chromedriver_autoinstaller
 import time
 import os
 import shutil
@@ -38,10 +39,16 @@ class Browser:
             chrome_options.add_argument("--disable-gpu")
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
-             # Automatically find ChromeDriver path
-            chromedriver_path = shutil.which("chromedriver")
+            
+            chromedriver_path = shutil.which("chromedriver") # system installed driver.
+            
+            #If not found, try auto-installing the correct version
+            if not chromedriver_path:
+                chromedriver_path = chromedriver_autoinstaller.install()
+          
             if not chromedriver_path:
                 raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
+                
             service = Service(chromedriver_path)
             self.driver = webdriver.Chrome(service=service, options=chrome_options)
             self.wait = WebDriverWait(self.driver, 10)
