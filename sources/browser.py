@@ -12,6 +12,8 @@ from bs4 import BeautifulSoup
 import markdownify
 import logging
 import sys
+import re
+from urllib.parse import urlparse
 
 class Browser:
     def __init__(self, headless=False, anticaptcha_install=False):
@@ -57,7 +59,8 @@ class Browser:
                 os.path.join(os.environ.get("LOCALAPPDATA", ""), "Google\\Chrome\\Application\\chrome.exe")  # User install
             ]
         elif sys.platform.startswith("darwin"):  # macOS
-            paths = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"]
+            paths = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+                     "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta"]
         else:  # Linux
             paths = ["/usr/bin/google-chrome", "/usr/bin/chromium-browser", "/usr/bin/chromium"]
 
@@ -81,15 +84,15 @@ class Browser:
     def is_sentence(self, text):
         """Check if the text qualifies as a meaningful sentence or contains important error codes."""
         text = text.strip()
+
         error_codes = ["404", "403", "500", "502", "503"]
         if any(code in text for code in error_codes):
             return True
-        words = text.split()
+        words = re.findall(r'\w+', text, re.UNICODE)
         word_count = len(words)
-        has_punctuation = text.endswith(('.', '!', '?'))
+        has_punctuation = any(text.endswith(p) for p in ['.', '，', ',', '!', '?', '。', '！', '？', '।', '۔'])
         is_long_enough = word_count > 5
-        has_letters = any(word.isalpha() for word in words)
-        return (word_count >= 5 and (has_punctuation or is_long_enough) and has_letters)
+        return (word_count >= 5 and (has_punctuation or is_long_enough))
 
     def get_text(self):
         """Get page text and convert it to README (Markdown) format."""
@@ -104,15 +107,14 @@ class Browser:
             lines = (line.strip() for line in text.splitlines())
             chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
             text = "\n".join(chunk for chunk in chunks if chunk and self.is_sentence(chunk))
-            
-            markdown_text = markdownify.markdownify(text, heading_style="ATX")
-            
-            return markdown_text
+            #markdown_text = markdownify.markdownify(text, heading_style="ATX")
+            return "[Start of page]\n" + text + "\n[End of page]"
         except Exception as e:
             self.logger.error(f"Error getting text: {str(e)}")
             return None
     
     def clean_url(self, url):
+        """Clean URL to keep only the part needed for navigation to the page"""
         clean = url.split('#')[0]
         parts = clean.split('?', 1)
         base_url = parts[0]
@@ -127,6 +129,22 @@ class Browser:
             if essential_params:
                 return f"{base_url}?{'&'.join(essential_params)}"
         return base_url
+    
+    def is_link_valid(self, url):
+        """Check if a URL is a valid link (page, not related to icon or metadata)."""
+        if len(url) > 64:
+            return False
+        parsed_url = urlparse(url)
+        if not parsed_url.scheme or not parsed_url.netloc:
+            return False
+        if re.search(r'/\d+$', parsed_url.path):
+            return False
+        image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp']
+        metadata_extensions = ['.ico', '.xml', '.json', '.rss', '.atom']
+        for ext in image_extensions + metadata_extensions:
+            if url.lower().endswith(ext):
+                return False
+        return True
 
     def get_navigable(self):
         """Get all navigable links on the current page."""
@@ -144,7 +162,7 @@ class Browser:
                     })
             
             self.logger.info(f"Found {len(links)} navigable links")
-            return [self.clean_url(link['url']) for link in links if link['is_displayed'] == True and len(link) < 256]
+            return [self.clean_url(link['url']) for link in links if (link['is_displayed'] == True and self.is_link_valid(link['url']))]
         except Exception as e:
             self.logger.error(f"Error getting navigable links: {str(e)}")
             return []
@@ -210,7 +228,7 @@ if __name__ == "__main__":
     browser = Browser(headless=False)
     
     try:
-        browser.go_to("https://karpathy.github.io/")
+        browser.go_to("https://github.com/Fosowl/agenticSeek")
         text = browser.get_text()
         print("Page Text in Markdown:")
         print(text)

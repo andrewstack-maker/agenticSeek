@@ -91,10 +91,10 @@ class searxSearch(Tools):
                     description = article.find('p', class_='content').text.strip() if article.find('p', class_='content') else "No Description"
                     results.append(f"Title:{title}\nSnippet:{description}\nLink:{url}")
             if len(results) == 0:
-                raise Exception("Searx search failed. did you run start_services.sh? Did docker die?")
+                return "No search results, web search failed."
             return "\n\n".join(results)  # Return results as a single string, separated by newlines
         except requests.exceptions.RequestException as e:
-            return f"Error during search: {str(e)}"
+            raise Exception("\nSearxng search failed. did you run start_services.sh? is docker still running?") from e
 
     def execution_failure_check(self, output: str) -> bool:
         """

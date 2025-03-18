@@ -44,6 +44,10 @@
 
 ## **Installation**
 
+Make sure you have chrome driver and docker installed.
+
+For issues related to chrome driver, see the **Chromedriver** section.
+
 ### 1️⃣ **Clone the repository and setup**
 
 ```sh
@@ -218,6 +222,29 @@ provider_server_address = 127.0.0.1:5000
 `provider_model`: Set the model to use by the agent.
 
 `provider_server_address`: can be set to anything if you are not using the server provider.
+
+# Known issues
+
+## Chromedriver Issues
+
+**Known error #1:** *chromedriver mismatch*
+
+`Exception: Failed to initialize browser: Message: session not created: This version of ChromeDriver only supports Chrome version 113
+Current browser version is 134.0.6998.89 with binary path`
+
+This happen if there is a mismatch between your browser and chromedriver version.
+
+You need to navigate to download the latest version:
+
+https://developer.chrome.com/docs/chromedriver/downloads
+
+If you're using Chrome version 115 or newer go to:
+
+https://googlechromelabs.github.io/chrome-for-testing/
+
+And download the chromedriver version matching your OS.
+
+![alt text](./media/chromedriver_readme.png)
 
 ## FAQ
 **Q: What hardware do I need?**  
