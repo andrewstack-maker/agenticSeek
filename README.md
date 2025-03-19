@@ -89,10 +89,10 @@ python3 setup.py install
 
 Make sure you have [Ollama](https://ollama.com/) installed.
 
-Download the `deepseek-r1:7b` model from [DeepSeek](https://deepseek.com/models)
+Download the `deepseek-r1:14b` model from [DeepSeek](https://deepseek.com/models)
 
 ```sh
-ollama pull deepseek-r1:7b
+ollama pull deepseek-r1:14b
 ```
 
 ### 2️ **Run the Assistant (Ollama)**  
@@ -102,15 +102,16 @@ Start the ollama server
 ollama serve
 ```
 
-Change the config.ini file to set the provider_name to `ollama` and provider_model to `deepseek-r1:7b`
+Change the config.ini file to set the provider_name to `ollama` and provider_model to `deepseek-r1:14b`
 
-NOTE: `deepseek-r1:7b`is an example, use a bigger model if your hardware allow it.
+NOTE: `deepseek-r1:14b`is an example, use a bigger model if your hardware allow it.
 
 ```sh
 [MAIN]
 is_local = True
 provider_name = ollama
-provider_model = deepseek-r1:7b
+provider_model = deepseek-r1:14b
+provider_server_address = 127.0.0.1:11434
 ```
 
 start all services :
@@ -153,7 +154,7 @@ Now on your personal computer:
 
 Clone the repository.
 
-Change the `config.ini` file to set the `provider_name` to `server` and `provider_model` to `deepseek-r1:7b`.
+Change the `config.ini` file to set the `provider_name` to `server` and `provider_model` to `deepseek-r1:14b`.
 Set the `provider_server_address` to the ip address of the machine that will run the model.
 
 ```sh

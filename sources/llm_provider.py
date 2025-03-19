@@ -21,15 +21,16 @@ class Provider:
             "ollama": self.ollama_fn,
             "server": self.server_fn,
             "openai": self.openai_fn,
-            "huggingface": self.huggingface_fn
+            "huggingface": self.huggingface_fn,
+            "deepseek-api": self.deepseek_fn
         }
         self.api_key = None
-        self.unsafe_providers = ["openai"]
+        self.unsafe_providers = ["openai", "deepseek-api"]
         if self.provider_name not in self.available_providers:
             raise ValueError(f"Unknown provider: {provider_name}")
         if self.provider_name in self.unsafe_providers:
             print("Warning: you are using an API provider. You data will be sent to the cloud.")
-            self.get_api_key(self.provider_name)
+            self.api_key = self.get_api_key(self.provider_name)
         elif self.server != "":
             print("Provider", provider_name, "initialized at", self.server)
         self.check_address_format(self.server)
@@ -79,6 +80,8 @@ class Provider:
         """
         Check if an IP address is online by sending a ping request.
         """
+        if ip_address == "127.0.0.1":
+            return True
         param = '-n' if platform.system().lower() == 'windows' else '-c'
         command = ['ping', param, '1', ip_address]
         try:
@@ -164,8 +167,7 @@ class Provider:
         """
         Use openai to generate text.
         """
-        api_key = self.get_api_key("openai")
-        client = OpenAI(api_key=api_key)
+        client = OpenAI(api_key=self.api_key)
         try:
             response = client.chat.completions.create(
                 model=self.model,
@@ -177,6 +179,24 @@ class Provider:
             return thought
         except Exception as e:
             raise Exception(f"OpenAI API error: {str(e)}") from e
+
+    def deepseek_fn(self, history, verbose=False):
+        """
+        Use deepseek api to generate text.
+        """
+        client = OpenAI(api_key=self.api_key, base_url="https://api.deepseek.com")
+        try:
+            response = client.chat.completions.create(
+                model="deepseek-chat",
+                messages=history,
+                stream=False
+            )
+            thought = response.choices[0].message.content
+            if verbose:
+                print(thought)
+            return thought
+        except Exception as e:
+            raise Exception(f"Deepseek API error: {str(e)}") from e
 
     def test_fn(self, history, verbose = True):
         """
