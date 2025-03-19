@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.webdriver.chrome.options import Options
 import chromedriver_autoinstaller
 import time
 import os
@@ -39,6 +40,19 @@ class Browser:
             chrome_options.add_argument("--disable-gpu")
             chrome_options.add_argument("--no-sandbox")
             chrome_options.add_argument("--disable-dev-shm-usage")
+            chrome_options.add_argument("--autoplay-policy=user-gesture-required")
+            chrome_options.add_argument("--mute-audio")
+            chrome_options.add_argument("--disable-webgl")
+            chrome_options.add_argument("--disable-notifications")
+            security_prefs = {
+                "profile.default_content_setting_values.media_stream": 2,  # Block webcam/mic
+                "profile.default_content_setting_values.notifications": 2,  # Block notifications
+                "profile.default_content_setting_values.popups": 2,  # Block pop-ups
+                "profile.default_content_setting_values.geolocation": 2,  # Block geolocation
+                "download_restrictions": 3,  # Block all downloads
+                "safebrowsing.enabled": True,  # Enable safe browsing
+            }
+            chrome_options.add_experimental_option("prefs", security_prefs)
             
             chromedriver_path = shutil.which("chromedriver") # system installed driver.
             
@@ -76,18 +90,19 @@ class Browser:
                 return path
         return None
 
-    
     def go_to(self, url):
         """Navigate to a specified URL."""
         try:
+            initial_handles = self.driver.window_handles
             self.driver.get(url)
-            time.sleep(1)  # Wait for page to load
+            time.sleep(1)
+            self.apply_web_countermeasures()
             self.logger.info(f"Navigated to: {url}")
             return True
         except WebDriverException as e:
             self.logger.error(f"Error navigating to {url}: {str(e)}")
             return False
-    
+
     def is_sentence(self, text):
         """Check if the text qualifies as a meaningful sentence or contains important error codes."""
         text = text.strip()
@@ -217,6 +232,130 @@ class Browser:
             self.logger.error(f"Error taking screenshot: {str(e)}")
             return False
 
+#######################
+#      WEB SECURITY   #
+#######################
+
+    def apply_web_countermeasures(self):
+        """
+        Apply security measures to block any website malicious execution, privacy violation etc..
+        """
+        self.inject_safety_script()
+        self.neutralize_event_listeners()
+        self.monitor_and_reset_css()
+        self.block_clipboard_access()
+        self.limit_intervals_and_timeouts()
+        self.block_external_requests()
+        self.monitor_and_close_popups()
+
+    def inject_safety_script(self):
+        script = """
+        // Block hardware access by removing or disabling APIs
+        Object.defineProperty(navigator, 'serial', { get: () => undefined });
+        Object.defineProperty(navigator, 'hid', { get: () => undefined });
+        Object.defineProperty(navigator, 'bluetooth', { get: () => undefined });
+        // Block media playback
+        HTMLMediaElement.prototype.play = function() {
+            this.pause(); // Immediately pause if play is called
+            return Promise.reject('Blocked by script');
+        };
+        // Block fullscreen requests
+        Element.prototype.requestFullscreen = function() {
+            console.log('Blocked fullscreen request');
+            return Promise.reject('Blocked by script');
+        };
+        // Block pointer lock
+        Element.prototype.requestPointerLock = function() {
+            console.log('Blocked pointer lock');
+        };
+        // Block iframe creation (optional, since browser already blocks these)
+        const originalCreateElement = document.createElement;
+        document.createElement = function(tagName) {
+            if (tagName.toLowerCase() === 'iframe') {
+                console.log('Blocked iframe creation');
+                return null;
+            }
+            return originalCreateElement.apply(this, arguments);
+        };
+        // Block annoying dialogs
+        window.alert = function() {};
+        window.confirm = function() { return false; };
+        window.prompt = function() { return null; };
+        """
+        self.driver.execute_script(script)
+
+    def neutralize_event_listeners(self):
+        script = """
+        const originalAddEventListener = EventTarget.prototype.addEventListener;
+        EventTarget.prototype.addEventListener = function(type, listener, options) {
+            if (['mousedown', 'mouseup', 'click', 'touchstart', 'keydown', 'keyup', 'keypress'].includes(type)) {
+                console.log(`Blocked adding listener for ${type}`);
+                return;
+            }
+            originalAddEventListener.apply(this, arguments);
+        };
+        """
+        self.driver.execute_script(script)
+
+    def monitor_and_reset_css(self):
+        script = """
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const html = document.querySelector('html');
+                    if (html.style.cursor === 'none') {
+                        html.style.cursor = 'auto';
+                    }
+                }
+            });
+        });
+        observer.observe(document.querySelector('html'), { attributes: true });
+        """
+        self.driver.execute_script(script)
+
+    def block_clipboard_access(self):
+        script = """
+        navigator.clipboard.readText = function() {
+            console.log('Blocked clipboard read');
+            return Promise.reject('Blocked');
+        };
+        navigator.clipboard.writeText = function() {
+            console.log('Blocked clipboard write');
+            return Promise.resolve();
+        };
+        """
+        self.driver.execute_script(script)
+
+    def limit_intervals_and_timeouts(self):
+        script = """
+        const originalSetInterval = window.setInterval;
+        window.setInterval = function(callback, delay) {
+            if (typeof callback === 'function' && callback.toString().includes('alert')) {
+                console.log('Blocked suspicious interval');
+                return;
+            }
+            return originalSetInterval.apply(this, arguments);
+        };
+        """
+        self.driver.execute_script(script)
+
+    def monitor_and_close_popups(self):
+        initial_handles = self.driver.window_handles
+        for handle in self.driver.window_handles:
+            if handle not in initial_handles:
+                self.driver.switch_to.window(handle)
+                self.driver.close()
+        self.driver.switch_to.window(self.driver.window_handles[0])
+
+    def block_external_requests(self):
+        script = """
+        window.fetch = function() {
+            console.log('Blocked fetch request');
+            return Promise.reject('Blocked');
+        };
+        """
+        self.driver.execute_script(script)
+
     def close(self):
         """Close the browser."""
         try:
@@ -235,11 +374,16 @@ if __name__ == "__main__":
     browser = Browser(headless=False)
     
     try:
-        browser.go_to("https://github.com/Fosowl/agenticSeek")
+        # stress test
+        browser.go_to("https://www.bbc.com/news")
         text = browser.get_text()
         print("Page Text in Markdown:")
         print(text)
         links = browser.get_navigable()
         print("\nNavigable Links:", links)
+        print("WARNING SECURITY STRESS TEST WILL BE RUN IN 20s")
+        time.sleep(20)
+        browser.go_to("https://theannoyingsite.com/")
+        time.sleep(15)
     finally:
         browser.close()

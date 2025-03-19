@@ -186,7 +186,7 @@ class BrowserAgent(Agent):
         self.memory.push('user', self.search_prompt(user_prompt))
         ai_prompt, _ = self.llm_request()
         search_result_raw = self.tools["web_search"].execute([ai_prompt], False)
-        search_result = self.jsonify_search_results(search_result_raw)[:5] # until futher improvement
+        search_result = self.jsonify_search_results(search_result_raw)[:7] # until futher improvement
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
         while not complete:
