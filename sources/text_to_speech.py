@@ -4,6 +4,7 @@ import soundfile as sf
 import subprocess
 import re
 import platform
+from sys import modules
 
 class Speech():
     """
@@ -24,7 +25,7 @@ class Speech():
         self.voice = self.voice_map[language][2]
         self.speed = 1.2
 
-    def speak(self, sentence: str, voice_number: int = 1):
+    def speak(self, sentence: str, voice_number: int = 1 , audio_file: str = 'sample.wav'):
         """
         Convert text to speech using an AI model and play the audio.
 
@@ -38,17 +39,17 @@ class Speech():
             sentence, voice=self.voice,
             speed=self.speed, split_pattern=r'\n+'
         )
-        for i, (gs, ps, audio) in enumerate(generator):
-            audio_file = 'sample.wav'
-            display(Audio(data=audio, rate=24000, autoplay=i==0), display_id=False)
+        for i, (_, _, audio) in enumerate(generator):
+            if 'ipykernel' in modules: #only display in jupyter notebook.
+                display(Audio(data=audio, rate=24000, autoplay=i==0), display_id=False)
             sf.write(audio_file, audio, 24000) # save each audio file
             if platform.system().lower() == "windows":
                 import winsound
                 winsound.PlaySound(audio_file, winsound.SND_FILENAME)
-            elif platform.system().lower() == "linux":
-                subprocess.call(["aplay", audio_file])
-            else:
+            elif platform.system().lower() == "darwin":  # macOS
                 subprocess.call(["afplay", audio_file])
+            else: # linux or other.
+                subprocess.call(["aplay", audio_file])
 
     def replace_url(self, url: re.Match) -> str:
         """
