@@ -5,6 +5,7 @@ from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
 from sources.tools.searxSearch import searxSearch
 from sources.browser import Browser
+from datetime import date
 
 class BrowserAgent(Agent):
     def __init__(self, model, name, prompt_path, provider):
@@ -15,12 +16,16 @@ class BrowserAgent(Agent):
         self.tools = {
             "web_search": searxSearch(),
         }
-        self.role = "web search, internet, google"
+        self.role = "web search, internet browsing, news"
         self.browser = Browser()
         self.search_history = []
         self.navigable_links = []
         self.notes = []
+        self.date = self.get_today_date()
     
+    def get_today_date(self) -> str:
+        date_time = date.today()
+        return date_time.strftime("%B %d, %Y")
 
     def extract_links(self, search_result: str):
         pattern = r'(https?://\S+|www\.\S+)'
@@ -90,11 +95,13 @@ class BrowserAgent(Agent):
         Error: x.com does not discuss anything related to the user’s query and no navigation link are usefull
         GO_BACK
 
-        Example 3 (not useful, no related links):
-        Note: I found on github.com that the creator of agenticSeek is fosowl. 
+        Example 3 (query answer found):
+        Note: I found on github.com that agenticSeek is Fosowl.
         Given this information, given this I should exit the web browser. REQUEST_EXIT
 
+        Current date: {self.date}
         Remember, the user asked: {user_prompt}
+        Do not exit until you found information the user seek or accomplished the task.
         """
     
     def llm_decide(self, prompt):
@@ -153,12 +160,32 @@ class BrowserAgent(Agent):
 
         Summarize the finding, and provide a conclusion that answer the request.
         """
+    
+    def search_prompt(self, user_prompt):
+        return f"""
+        Current date: {self.date}
+        Make a efficient search engine query to help users with their request:
+        {user_prompt}
+        Example:
+        User: "search: hey jarvis i want you to login to my twitter and say hello everyone "
+        You: Twitter 
+
+        User: "I need info on the best laptops for AI this year."
+        You: "search: best laptops 2025 to run Machine Learning model, reviews"
+
+        User: "Search for recent news about space missions."
+        You: "search: Recent space missions news, {self.date}"
+
+        Do not explain, do not write anything beside the search query.
+        """
 
     def process(self, user_prompt, speech_module) -> str:
         complete = False
 
         animate_thinking(f"Searching...", color="status")
-        search_result_raw = self.tools["web_search"].execute([user_prompt], False)
+        self.memory.push('user', self.search_prompt(user_prompt))
+        ai_prompt, _ = self.llm_request()
+        search_result_raw = self.tools["web_search"].execute([ai_prompt], False)
         search_result = self.jsonify_search_results(search_result_raw)[:5] # until futher improvement
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
@@ -188,7 +215,7 @@ class BrowserAgent(Agent):
         self.browser.close()
         prompt = self.conclude_prompt(user_prompt)
         self.memory.push('user', prompt)
-        answer, reasoning = self.llm_request(prompt)
+        answer, reasoning = self.llm_request()
         pretty_print(answer, color="output")
         return answer, reasoning
 

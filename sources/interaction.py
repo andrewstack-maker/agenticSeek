@@ -58,7 +58,7 @@ class Interaction:
         buffer = ""
 
         PROMPT = "\033[1;35m➤➤➤ \033[0m"
-        while buffer == "" or buffer.isascii() == False:
+        while not buffer:
             try:
                 buffer = input(PROMPT)
             except EOFError:
@@ -98,11 +98,11 @@ class Interaction:
         agent = self.router.select_agent(self.last_query)
         if agent is None:
             return
-        if self.current_agent != agent:
-            self.current_agent = agent
-            # get history from previous agent, good ?
+        if self.current_agent != agent and self.last_answer is not None:
+            ## get history from previous agent, good ?
             self.current_agent.memory.push('user', self.last_query)
             self.current_agent.memory.push('assistant', self.last_answer)
+        self.current_agent = agent
         self.last_answer, _ = agent.process(self.last_query, self.speech)
     
     def show_answer(self) -> None:
