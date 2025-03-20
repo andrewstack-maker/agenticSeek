@@ -143,8 +143,6 @@ python3 main.py
 
 ## Usage
 
-致中文使用者的重要提示：目前根据您的提示选择最佳AI代理的系统（代理路由）在处理中文文本时效果不佳，这是因为我们使用的是基于英文文本训练的一次性分类模型。我们正在努力解决这个问题。请暂时使用英文
-
 Warning: currently the system that choose the best AI agent routing system will work poorly with non-english text. This is because the agent routing currently use a model that was trained on english text. We are working hard to fix this. Please use english for now.
 
 
