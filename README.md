@@ -9,7 +9,13 @@
 
 ![alt text](./media/whale_readme.jpg)
 
+> *Do a web search to find tech startup in Japan working on cutting edge AI research*
 
+> *Make a snake game in Python*
+
+> *Scan my network with nmap, find out who is connected?*
+
+> *Hey can you find where is contract.pdf*?
 
 ## Features:
 
@@ -32,6 +38,7 @@
 - **Memory**: Remembers what’s useful, your preferences and past sessions conversation.
 
 - **Web Browsing**: Autonomous web navigation is underway.
+
 
 
 ### Searching the web with agenticSeek :
@@ -126,6 +133,77 @@ Run the assistant:
 python3 main.py
 ```
 
+*See the **Usage** section if you don't understand how to use it*
+
+*See the **Known issues** section if you are having issues*
+
+*See the **Run with an API** section if your hardware can't run deepseek locally*
+
+---
+
+## Usage
+
+Warning: currently the system that choose the best AI agent routing system will work poorly with non-english text. This is because the agent routing currently use a model that was trained on english text. We are working hard to fix this. Please use english for now.
+
+
+Make sure the services are up and running with `./start_services.sh` and run the agenticSeek with `python3 main.py`
+
+```sh
+./start_services.sh
+python3 main.py
+```
+
+You will be prompted with `>>> `
+This indicate agenticSeek await you type for instructions.
+You can also use speech to text by setting `listen = True` in the config.
+
+Here are some example usage:
+
+### Coding/Bash
+
+> *Help me with matrix multiplication in Golang*
+
+> *Scan my network with nmap, find if any suspicious devices is connected*
+
+> *Make a snake game in python*
+
+### Web search
+
+> *Do a web search to find cool tech startup in Japan working on cutting edge AI research*
+
+> *Can you find on the internet who created agenticSeek?*
+
+> *Can you find on which website I can buy a rtx 4090 for cheap*
+
+### File system
+
+> *Hey can you find where is million_dollars_contract.pdf i lost it*
+
+> *Show me how much space I have left on my disk*
+
+> *Find and read the README.md and follow the install instruction*
+
+### Casual
+
+> *Tell me a joke*
+
+> *Where is flight ABC777 ? my mom is on that plane*
+
+> *what is the meaning of life ?*
+
+
+After you type your query, agenticSeek will allocate the best agent for the task.
+
+Because this is an early prototype, the agent routing system might not always allocate the right agent based on your query.
+
+Therefore, you should be very explicit in what you want and how the AI might proceed for example if you want it to conduct a web search, do not say:
+
+`Do you know some good countries for solo-travel?`
+
+Instead, ask:
+
+`Do a web search and find out which are the best country for solo-travel`
+
 ---
 
 ## **Run the LLM on your own server**  
@@ -194,6 +272,30 @@ python3 main.py
 ```
 
 ---
+
+
+
+## Speech to Text
+
+The speech to text is disabled by default, you can enable it by setting listen to true in the config.ini:
+
+```
+listen = True
+```
+
+The speech to text will await for a AI name as a trigger keyword before it start listening, you can change the AI name by changing the agent_name in the config.ini:
+
+```
+agent_name = Friday
+```
+
+It will work better if you use a common english name like John or Emma.
+
+After hearing it's name agenticSeek will listen until it hear one of the following keyword for confirmation:
+
+```
+"do it", "go ahead", "execute", "run", "start", "thanks", "would ya", "please", "okay?", "proceed", "continue", "go on", "do that", "go it", "do you understand?"
+```
 
 ## Providers
 

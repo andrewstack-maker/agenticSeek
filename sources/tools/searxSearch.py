@@ -50,7 +50,6 @@ class searxSearch(Tools):
         """Check all links, one by one."""
         # TODO Make it asyncromous or smth
         statuses = []
-        print("Web scrawl to verify links accessibilty...")
         for i, link in enumerate(links):
             status = self.link_valid(link)
             statuses.append(status)

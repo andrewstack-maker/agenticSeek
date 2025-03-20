@@ -58,7 +58,6 @@ class webSearch(Tools):
         """Check all links, one by one."""
         # TODO Make it asyncromous or smth
         statuses = []
-        print("Workers started, scrawling the web...")
         for i, link in enumerate(links):
             status = self.link_valid(link)
             statuses.append(status)

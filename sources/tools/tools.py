@@ -118,10 +118,8 @@ class Tools():
         save_path_file = os.path.basename(save_path)
         directory = os.path.join(self.current_dir, save_path_dir)
         if directory and not os.path.exists(directory):
-            print(f"Creating directory: {directory}")
             os.makedirs(directory)
         for block in blocks:
-            print(f"Saving code block to: {save_path}")
             with open(os.path.join(directory, save_path_file), 'w') as f:
                 f.write(block)
     
