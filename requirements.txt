@@ -1,11 +1,11 @@
 requests==2.31.0
-openai==1.61.1
 colorama==0.4.6
 python-dotenv==1.0.0
 playsound==1.3.0
 soundfile==0.13.1
-transformers==4.48.3
-torch==2.5.1
+transformers==4.46.3
+python-dotenv==1.0.0
+torch==2.4.1
 ollama==0.4.7
 scipy==1.15.1
 kokoro==0.7.12
@@ -28,6 +28,8 @@ distro>=1.7.0,<2
 jiter>=0.4.0,<1
 sniffio
 tqdm>4
+# for api provider
+openai
 # if use chinese
 ordered_set
 pypinyin

@@ -16,7 +16,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "requests==2.31.0",
-        "openai==1.61.1",
+        "openai",
         "colorama==0.4.6",
         "python-dotenv==1.0.0",
         "playsound==1.3.0",
@@ -35,6 +35,7 @@ setup(
         "selenium==4.29.0",
         "markdownify==1.1.0",
         "text2emotion==0.0.5",
+        "python-dotenv==1.0.0",
         "langid==1.1.6",
         "httpx>=0.27,<0.29",
         "anyio>=3.5.0,<5",

@@ -4,7 +4,8 @@
 
 **A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, browse the web and correct it's mistakes all without sending a byte of data to the cloud. Built with reasoning models like DeepSeek R1, this autonomous agent runs entirely on your hardware, keeping your data private.
 
-[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) ![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj)
+
 > 🛠️ **Work in Progress** – Looking for contributors!
 
 ![alt text](./media/whale_readme.jpg)
@@ -51,7 +52,7 @@
 
 ## **Installation**
 
-Make sure you have chrome driver and docker installed.
+Make sure you have chrome driver, docker and python3.10 (or newer) installed.
 
 For issues related to chrome driver, see the **Chromedriver** section.
 
@@ -124,7 +125,7 @@ provider_server_address = 127.0.0.1:11434
 start all services :
 
 ```sh
-./start_services.sh
+sudo ./start_services.sh
 ```
 
 Run the assistant:
@@ -149,7 +150,7 @@ Warning: currently the system that choose the best AI agent routing system will 
 Make sure the services are up and running with `./start_services.sh` and run the agenticSeek with `python3 main.py`
 
 ```sh
-./start_services.sh
+sudo ./start_services.sh
 python3 main.py
 ```
 
@@ -246,7 +247,7 @@ provider_server_address = x.x.x.x:5000
 Run the assistant:
 
 ```sh
-./start_services.sh
+sudo ./start_services.sh
 python3 main.py
 ```
 
@@ -267,7 +268,7 @@ provider_server_address = 127.0.0.1:5000 # can be set to anything, not used
 Run the assistant:
 
 ```sh
-./start_services.sh
+sudo ./start_services.sh
 python3 main.py
 ```
 
@@ -349,7 +350,30 @@ And download the chromedriver version matching your OS.
 
 ![alt text](./media/chromedriver_readme.png)
 
+## Docker issues
+
+**Known error #1:** *chromedriver mismatch*
+
+```
+requests.exceptions.InvalidURL: Not supported URL scheme http+docker
+Error: Failed to start containers. Check Docker logs with 'docker compose logs'.
+Possible fixes: Run with sudo or ensure port 8080 is free.
+```
+
+**Solution:**
+
+Get the PID of program using port 8080:
+
+`lsof -i :8080`
+
+If a program appear and you are not using it, kill it with:
+
+`sudo kill -9 <PID>`
+
+Run with sudo: `sudo ./start_services.sh`
+
 ## FAQ
+
 **Q: What hardware do I need?**  
 
 7B Model: GPU with 8GB VRAM.
