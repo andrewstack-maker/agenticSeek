@@ -135,7 +135,9 @@ python3 main.py
 
 *See the **Usage** section if you don't understand how to use it*
 
-*See the **Config** section for more informations on the config*
+*See the **Known issues** section if you are having issues*
+
+*See the **Run with an API** section if your hardware can't run deepseek locally*
 
 ---
 
