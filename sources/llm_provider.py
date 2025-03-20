@@ -12,6 +12,8 @@ from huggingface_hub import InferenceClient
 import os
 import httpx
 
+from sources.utility import pretty_print, animate_thinking
+
 class Provider:
     def __init__(self, provider_name, model, server_address = "127.0.0.1:5000"):
         self.provider_name = provider_name.lower()
@@ -29,10 +31,10 @@ class Provider:
         if self.provider_name not in self.available_providers:
             raise ValueError(f"Unknown provider: {provider_name}")
         if self.provider_name in self.unsafe_providers:
-            print("Warning: you are using an API provider. You data will be sent to the cloud.")
+            pretty_print("Warning: you are using an API provider. You data will be sent to the cloud.", color="warning")
             self.api_key = self.get_api_key(self.provider_name)
         elif self.server != "":
-            print("Provider", provider_name, "initialized at", self.server)
+            pretty_print(f"Provider: {provider_name} initialized at {self.server}", color="success")
         self.check_address_format(self.server)
         if not self.is_ip_online(self.server.split(':')[0]):
             raise Exception(f"Server at {self.server} is offline.")
@@ -89,13 +91,11 @@ class Provider:
             if output.returncode == 0:
                 return True
             else:
-                print("errorcode:", output)
                 return False
         except subprocess.TimeoutExpired:
-            print("timeout")
-            return True
+            return False
         except Exception as e:
-            print(f"is_ip_online error:\n{e}")
+            pretty_print(f"Error with ping request {str(e)}", color="failure")
             return False
 
     def server_fn(self, history, verbose = False):
@@ -117,7 +117,7 @@ class Provider:
                 is_complete = bool(response.json()["is_complete"])
                 time.sleep(2)
         except KeyError as e:
-            raise f"{str(e)}\n\nError occured with server route. Are you using the correct address for the config.ini provider?"
+            raise Exception(f"{str(e)}\n\nError occured with server route. Are you using the correct address for the config.ini provider?") from e
         except Exception as e:
             raise e
         return thought
@@ -141,7 +141,7 @@ class Provider:
             raise Exception("\nOllama connection failed. provider should not be set to ollama if server address is not localhost") from e
         except ollama.ResponseError as e:
             if e.status_code == 404:
-                print(f"Downloading {self.model}...")
+                animate_thinking(f"Downloading {self.model}...")
                 ollama.pull(self.model)
             if "refused" in str(e).lower():
                 raise Exception("Ollama connection failed. is the server running ?") from e

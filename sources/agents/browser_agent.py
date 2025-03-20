@@ -16,7 +16,7 @@ class BrowserAgent(Agent):
         self.tools = {
             "web_search": searxSearch(),
         }
-        self.role = "web search, internet browsing, news"
+        self.role = "Web Research"
         self.browser = Browser()
         self.search_history = []
         self.navigable_links = []
@@ -101,7 +101,7 @@ class BrowserAgent(Agent):
 
         Current date: {self.date}
         Remember, the user asked: {user_prompt}
-        Do not exit until you found information the user seek or accomplished the task.
+        Do not explain your choice.
         """
     
     def llm_decide(self, prompt):
@@ -182,9 +182,10 @@ class BrowserAgent(Agent):
     def process(self, user_prompt, speech_module) -> str:
         complete = False
 
-        animate_thinking(f"Searching...", color="status")
+        animate_thinking(f"Thinking...", color="status")
         self.memory.push('user', self.search_prompt(user_prompt))
         ai_prompt, _ = self.llm_request()
+        animate_thinking(f"Searching...", color="status")
         search_result_raw = self.tools["web_search"].execute([ai_prompt], False)
         search_result = self.jsonify_search_results(search_result_raw)[:7] # until futher improvement
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
@@ -220,4 +221,4 @@ class BrowserAgent(Agent):
         return answer, reasoning
 
 if __name__ == "__main__":
-    browser = Browser()
+    pass

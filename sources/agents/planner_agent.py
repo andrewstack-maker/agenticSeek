@@ -21,7 +21,7 @@ class PlannerAgent(Agent):
             "file": FileAgent(model, name, prompt_path, provider),
             "web": BrowserAgent(model, name, prompt_path, provider)
         }
-        self.role = "Manage complex tasks"
+        self.role = "Research, setup and code"
         self.tag = "json"
 
     def parse_agent_tasks(self, text):
