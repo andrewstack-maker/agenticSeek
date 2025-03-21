@@ -350,28 +350,6 @@ And download the chromedriver version matching your OS.
 
 ![alt text](./media/chromedriver_readme.png)
 
-## Docker issues
-
-**Known error #1:** *chromedriver mismatch*
-
-```
-requests.exceptions.InvalidURL: Not supported URL scheme http+docker
-Error: Failed to start containers. Check Docker logs with 'docker compose logs'.
-Possible fixes: Run with sudo or ensure port 8080 is free.
-```
-
-**Solution:**
-
-Get the PID of program using port 8080:
-
-`lsof -i :8080`
-
-If a program appear and you are not using it, kill it with:
-
-`sudo kill -9 <PID>`
-
-Run with sudo: `sudo ./start_services.sh`
-
 ## FAQ
 
 **Q: What hardware do I need?**  
