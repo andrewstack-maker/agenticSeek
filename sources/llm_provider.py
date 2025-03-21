@@ -33,7 +33,7 @@ class Provider:
         if self.provider_name in self.unsafe_providers:
             pretty_print("Warning: you are using an API provider. You data will be sent to the cloud.", color="warning")
             self.api_key = self.get_api_key(self.provider_name)
-        elif self.server != "":
+        elif self.server != "ollama":
             pretty_print(f"Provider: {provider_name} initialized at {self.server}", color="success")
         self.check_address_format(self.server)
         if not self.is_ip_online(self.server.split(':')[0]):
@@ -54,6 +54,7 @@ class Provider:
         Validate if the address is valid IP.
         """
         try:
+            address = address.replace('http://', '')
             ip, port = address.rsplit(":", 1)
             if all(c.lower() in ".:abcdef0123456789" for c in ip):
                 ipaddress.ip_address(ip)
@@ -143,6 +144,7 @@ class Provider:
             if e.status_code == 404:
                 animate_thinking(f"Downloading {self.model}...")
                 ollama.pull(self.model)
+                self.ollama_fn(history, verbose)
             if "refused" in str(e).lower():
                 raise Exception("Ollama connection failed. is the server running ?") from e
             raise e
