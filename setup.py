@@ -8,7 +8,7 @@ setup(
     version="0.1.0",
     author="Fosowl",
     author_email="mlg.fcu@gmail.com",
-    description="A Python project for agentic search and processing",
+    description="The open, local alternative to ManusAI",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Fosowl/agenticSeek",
