@@ -37,7 +37,10 @@ class GenerationState:
 
 state = GenerationState()
 
-def generate_response(history):  # Only takes history as an argument
+def generate_response_vllm(history):
+    pass
+
+def generate_response_ollama(history):  # Only takes history as an argument
     global state
     try:
         with state.lock:
