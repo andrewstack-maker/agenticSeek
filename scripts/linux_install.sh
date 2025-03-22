@@ -7,6 +7,9 @@ sudo apt-get update
 
 pip install --upgrade pip
 
+# install wheel
+pip install --upgrade pip setuptools wheel
+
 # Install Python dependencies from requirements.txt
 pip3 install -r requirements.txt
 
