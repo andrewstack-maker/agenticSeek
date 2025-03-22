@@ -38,8 +38,7 @@
 
 - **Memory**: Remembers what’s useful, your preferences and past sessions conversation.
 
-- **Web Browsing**: Autonomous web navigation is underway.
-
+- **Web Browsing**: Autonomous web navigation.
 
 
 ### Searching the web with agenticSeek :
@@ -52,7 +51,7 @@
 
 ## **Installation**
 
-Make sure you have chrome driver and docker installed.
+Make sure you have chrome driver, docker and python3.10 (or newer) installed.
 
 For issues related to chrome driver, see the **Chromedriver** section.
 
@@ -125,7 +124,7 @@ provider_server_address = 127.0.0.1:11434
 start all services :
 
 ```sh
-./start_services.sh
+sudo ./start_services.sh
 ```
 
 Run the assistant:
@@ -150,7 +149,7 @@ Warning: currently the system that choose the best AI agent routing system will 
 Make sure the services are up and running with `./start_services.sh` and run the agenticSeek with `python3 main.py`
 
 ```sh
-./start_services.sh
+sudo ./start_services.sh
 python3 main.py
 ```
 
@@ -247,7 +246,7 @@ provider_server_address = x.x.x.x:5000
 Run the assistant:
 
 ```sh
-./start_services.sh
+sudo ./start_services.sh
 python3 main.py
 ```
 
@@ -268,7 +267,7 @@ provider_server_address = 127.0.0.1:5000 # can be set to anything, not used
 Run the assistant:
 
 ```sh
-./start_services.sh
+sudo ./start_services.sh
 python3 main.py
 ```
 
@@ -278,22 +277,25 @@ python3 main.py
 
 ## Speech to Text
 
-The speech to text is disabled by default, you can enable it by setting listen to true in the config.ini:
+The speech-to-text functionality is disabled by default. To enable it, set the listen option to True in the config.ini file:
 
 ```
 listen = True
 ```
 
-The speech to text will await for a AI name as a trigger keyword before it start listening, you can change the AI name by changing the agent_name in the config.ini:
+When enabled, the speech-to-text feature listens for a trigger keyword, which is the agent's name, before it begins processing your input. You can customize the agent's name by updating the `agent_name` value in the *config.ini* file:
 
 ```
 agent_name = Friday
 ```
 
-It will work better if you use a common english name like John or Emma.
+For optimal recognition, we recommend using a common English name like "John" or "Emma" as the agent name
 
-After hearing it's name agenticSeek will listen until it hear one of the following keyword for confirmation:
+Once you see the transcript start to appear, say the agent's name aloud to wake it up (e.g., "Friday").
 
+Speak your query clearly.
+
+End your request with a confirmation phrase to signal the system to proceed. Examples of confirmation phrases include:
 ```
 "do it", "go ahead", "execute", "run", "start", "thanks", "would ya", "please", "okay?", "proceed", "continue", "go on", "do that", "go it", "do you understand?"
 ```
@@ -321,7 +323,7 @@ provider_server_address = 127.0.0.1:5000
 ```
 `is_local`: should be True for any locally running LLM, otherwise False.
 
-`provider_name`: Select the provider to use by its name, see the provider list above.
+`provider_name`: Select the provider to use by it's name, see the provider list above.
 
 `provider_model`: Set the model to use by the agent.
 
@@ -351,6 +353,7 @@ And download the chromedriver version matching your OS.
 ![alt text](./media/chromedriver_readme.png)
 
 ## FAQ
+
 **Q: What hardware do I need?**  
 
 7B Model: GPU with 8GB VRAM.
@@ -364,10 +367,6 @@ Deepseek R1 excels at reasoning and tool use for its size. We think it’s a sol
 **Q: I get an error running `main.py`. What do I do?**  
 
 Ensure Ollama is running (`ollama serve`), your `config.ini` matches your provider, and dependencies are installed. If none work feel free to raise an issue.
-
-**Q: How to join the discord ?**
-
-Ask in the Community section for an invite.
 
 **Q: Can it really run 100% locally?**  
 

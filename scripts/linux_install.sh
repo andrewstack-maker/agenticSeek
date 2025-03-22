@@ -5,6 +5,8 @@ echo "Starting installation for Linux..."
 # Update package list
 sudo apt-get update
 
+pip install --upgrade pip
+
 # Install Python dependencies from requirements.txt
 pip3 install -r requirements.txt
 
