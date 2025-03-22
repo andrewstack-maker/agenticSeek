@@ -7,6 +7,8 @@ sudo apt-get update
 
 pip install --upgrade pip
 
+# install port audio
+sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio
 # install wheel
 pip install --upgrade pip setuptools wheel
 
