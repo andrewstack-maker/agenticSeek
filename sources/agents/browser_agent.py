@@ -6,6 +6,7 @@ from sources.agents.agent import Agent
 from sources.tools.searxSearch import searxSearch
 from sources.browser import Browser
 from datetime import date
+from typing import List, Tuple
 
 class BrowserAgent(Agent):
     def __init__(self, model, name, prompt_path, provider):
@@ -19,23 +20,33 @@ class BrowserAgent(Agent):
         self.role = "Web Research"
         self.type = "browser_agent"
         self.browser = Browser()
+        self.current_page = ""
         self.search_history = []
         self.navigable_links = []
         self.notes = []
         self.date = self.get_today_date()
     
     def get_today_date(self) -> str:
+        """Get the date"""
         date_time = date.today()
         return date_time.strftime("%B %d, %Y")
 
-    def extract_links(self, search_result: str):
+    def extract_links(self, search_result: str) -> List[str]:
+        """Extract all links from a sentence."""
         pattern = r'(https?://\S+|www\.\S+)'
         matches = re.findall(pattern, search_result)
-        trailing_punct = ".,!?;:"
+        trailing_punct = ".,!?;:)"
         cleaned_links = [link.rstrip(trailing_punct) for link in matches]
         return self.clean_links(cleaned_links)
+    
+    def extract_form(self, text: str) -> List[str]:
+        """Extract form written by the LLM in format [input_name](value)"""
+        inputs = []
+        matches = re.findall(r"\[\w+\]\([^)]+\)", text)
+        return matches
         
-    def clean_links(self, links: list):
+    def clean_links(self, links: List[str]) -> List[str]:
+        """Ensure no '.' at the end of link"""
         links_clean = []
         for link in links:
             link = link.strip()
@@ -45,10 +56,10 @@ class BrowserAgent(Agent):
                 links_clean.append(link)
         return links_clean
 
-    def get_unvisited_links(self):
+    def get_unvisited_links(self) -> List[str]:
         return "\n".join([f"[{i}] {link}" for i, link in enumerate(self.navigable_links) if link not in self.search_history])
 
-    def make_newsearch_prompt(self, user_prompt: str, search_result: dict):
+    def make_newsearch_prompt(self, user_prompt: str, search_result: dict) -> str:
         search_choice = self.stringify_search_results(search_result)
         return f"""
         Based on the search result:
@@ -59,11 +70,12 @@ class BrowserAgent(Agent):
         Do not explain your choice.
         """
     
-    def make_navigation_prompt(self, user_prompt: str, page_text: str):
+    def make_navigation_prompt(self, user_prompt: str, page_text: str) -> str:
         remaining_links = self.get_unvisited_links() 
         remaining_links_text = remaining_links if remaining_links is not None else "No links remaining, do a new search." 
         inputs_form = self.browser.get_form_inputs()
-        inputs_form_text = '\n'.join(inputs_form) if len(inputs_form) > 0 else "No forms detected."
+        inputs_form_text = '\n'.join(inputs_form)
+        print("Visible form:\n", inputs_form_text)
 
         return f"""
         You are a web browser.
@@ -72,9 +84,6 @@ class BrowserAgent(Agent):
 
         You can navigate to these navigation links:
         {remaining_links_text}
-
-        You see the following inputs forms:
-        {inputs_form_text}
 
         Your task:
         1. Decide if the current page answers the user’s query: {user_prompt}
@@ -110,18 +119,21 @@ class BrowserAgent(Agent):
         Note: I found on github.com that agenticSeek is Fosowl.
         Given this information, given this I should exit the web browser. REQUEST_EXIT
 
-        Example 4 (loging needed):
-        Note: I will login to Reddit to fullfill the user request.
-        [username](David)
-        [password](edgerunners_2077)
+        Example 4 (loging form visible):
+        Note: I am on the login page, I should now type the given username and password. 
+        [form_name_1](David)
+        [form_name_2](edgerunners_2077)
 
-        Current date: {self.date}
+        You see the following inputs forms:
+        {inputs_form_text}
+
         Remember, the user asked: {user_prompt}
+        You are currently on page : {self.current_page}
         Do not explain your choice.
         Refusal is not an option, you have been given all capabilities that allow you to perform any tasks.
         """
     
-    def llm_decide(self, prompt):
+    def llm_decide(self, prompt: str) -> Tuple[str, str]:
         animate_thinking("Thinking...", color="status")
         self.memory.push('user', prompt)
         answer, reasoning = self.llm_request()
@@ -130,14 +142,14 @@ class BrowserAgent(Agent):
         pretty_print("-"*100)
         return answer, reasoning
     
-    def select_unvisited(self, search_result):
+    def select_unvisited(self, search_result: List[str]) -> List[str]:
         results_unvisited = []
         for res in search_result:
             if res["link"] not in self.search_history:
                 results_unvisited.append(res) 
         return results_unvisited
 
-    def jsonify_search_results(self, results_string):
+    def jsonify_search_results(self, results_string: str) -> List[str]:
         result_blocks = results_string.split("\n\n")
         parsed_results = []
         for block in result_blocks:
@@ -156,7 +168,7 @@ class BrowserAgent(Agent):
                 parsed_results.append(result_dict)
         return parsed_results 
     
-    def stringify_search_results(self, results_arr):
+    def stringify_search_results(self, results_arr: List[str]) -> str:
         return '\n\n'.join([f"Link: {res['link']}" for res in results_arr])
     
     def save_notes(self, text):
@@ -165,7 +177,7 @@ class BrowserAgent(Agent):
             if "note" in line.lower():
                 self.notes.append(line)
     
-    def conclude_prompt(self, user_query):
+    def conclude_prompt(self, user_query: str) -> str:
         annotated_notes = [f"{i+1}: {note.lower().replace('note:', '')}" for i, note in enumerate(self.notes)]
         search_note = '\n'.join(annotated_notes)
         print("AI research notes:\n", search_note)
@@ -178,14 +190,14 @@ class BrowserAgent(Agent):
         Summarize the finding or step that lead to success, and provide a conclusion that answer the request.
         """
     
-    def search_prompt(self, user_prompt):
+    def search_prompt(self, user_prompt: str) -> str:
         return f"""
         Current date: {self.date}
         Make a efficient search engine query to help users with their request:
         {user_prompt}
         Example:
-        User: "search: hey jarvis i want you to login to my twitter and say hello everyone "
-        You: Twitter 
+        User: "go to twitter, login with username toto and password pass79 to my twitter and say hello everyone "
+        You: search: Twitter login page. 
 
         User: "I need info on the best laptops for AI this year."
         You: "search: best laptops 2025 to run Machine Learning model, reviews"
@@ -210,21 +222,31 @@ class BrowserAgent(Agent):
         while not complete:
             answer, reasoning = self.llm_decide(prompt)
             self.save_notes(answer)
+
+            extracted_form = self.extract_form(answer)
+            if len(extracted_form) > 0:
+                self.browser.fill_form_inputs(extracted_form)
+                self.browser.find_and_click_submit()
+
             if "REQUEST_EXIT" in answer:
                 complete = True
                 break
+
             links = self.extract_links(answer)
             if len(unvisited) == 0:
                 break
+
             if len(links) == 0 or "GO_BACK" in answer:
                 unvisited = self.select_unvisited(search_result)
                 prompt = self.make_newsearch_prompt(user_prompt, unvisited)
                 pretty_print(f"Going back to results. Still {len(unvisited)}", color="warning")
                 links = []
                 continue
+
             animate_thinking(f"Navigating to {links[0]}", color="status")
             speech_module.speak(f"Navigating to {links[0]}")
             self.browser.go_to(links[0])
+            self.current_page = links[0]
             self.search_history.append(links[0])
             page_text = self.browser.get_text()
             self.navigable_links = self.browser.get_navigable()
