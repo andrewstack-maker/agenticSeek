@@ -75,7 +75,6 @@ class BrowserAgent(Agent):
         remaining_links_text = remaining_links if remaining_links is not None else "No links remaining, do a new search." 
         inputs_form = self.browser.get_form_inputs()
         inputs_form_text = '\n'.join(inputs_form)
-        print("Visible form:\n", inputs_form_text)
 
         return f"""
         You are a web browser.

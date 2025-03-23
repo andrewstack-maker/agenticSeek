@@ -308,7 +308,6 @@ class Browser:
                 if not xpath:
                     continue
                 element = self.driver.find_element(By.XPATH, xpath)
-                print("found-->", element)
                 input_type = (element.get_attribute("type") or "text").lower()
                 if input_type in ["checkbox", "radio"]:
                     is_checked = element.is_selected()
