@@ -17,6 +17,7 @@ class BrowserAgent(Agent):
             "web_search": searxSearch(),
         }
         self.role = "Web Research"
+        self.type = "browser_agent"
         self.browser = Browser()
         self.search_history = []
         self.navigable_links = []
@@ -60,14 +61,20 @@ class BrowserAgent(Agent):
     
     def make_navigation_prompt(self, user_prompt: str, page_text: str):
         remaining_links = self.get_unvisited_links() 
-        remaining_links_text = remaining_links if remaining_links is not None else "No links remaining, proceed with a new search." 
+        remaining_links_text = remaining_links if remaining_links is not None else "No links remaining, do a new search." 
+        inputs_form = self.browser.get_form_inputs()
+        inputs_form_text = '\n'.join(inputs_form) if len(inputs_form) > 0 else "No forms detected."
+
         return f"""
         You are a web browser.
         You are currently on this webpage:
         {page_text}
 
         You can navigate to these navigation links:
-        {remaining_links}
+        {remaining_links_text}
+
+        You see the following inputs forms:
+        {inputs_form_text}
 
         Your task:
         1. Decide if the current page answers the user’s query: {user_prompt}
@@ -77,9 +84,13 @@ class BrowserAgent(Agent):
         2. Navigate by either: 
           - Navigate to a navigation links (write the full URL, e.g., www.example.com/cats).
           - If no link seems helpful, say: GO_BACK.
+        3. Fill forms on the page:
+          - If user give you informations that help you fill form, fill it.
+          - If you don't know how to fill a form, leave it empty.
+          - You can fill a form using [form_name](value).
         
         Recap of note taking:
-        If useful -> Note: [Briefly summarize the key information that answers the user’s query.]
+        If useful -> Note: [Briefly summarize the key information or task you conducted.]
         Do not write "The page talk about ...", write your finding on the page and how they contribute to an answer.
         If not useful -> Error: [Explain why the page doesn’t help.]
         
@@ -88,20 +99,26 @@ class BrowserAgent(Agent):
         No link seem useful to provide futher information. GO_BACK
 
         Example 2 (not useful, but related link):
-        Error: This forum reddit.com/welcome does not discuss anything related to the user’s query.
+        Error: reddit.com/welcome does not discuss anything related to the user’s query.
         There is a link that could lead to the information, I want to navigate to http://reddit.com/r/locallama
 
         Example 3 (not useful, no related links):
-        Error: x.com does not discuss anything related to the user’s query and no navigation link are usefull
+        Error: x.com does not discuss anything related to the user’s query and no navigation link are usefull.
         GO_BACK
 
         Example 3 (query answer found):
         Note: I found on github.com that agenticSeek is Fosowl.
         Given this information, given this I should exit the web browser. REQUEST_EXIT
 
+        Example 4 (loging needed):
+        Note: I will login to Reddit to fullfill the user request.
+        [username](David)
+        [password](edgerunners_2077)
+
         Current date: {self.date}
         Remember, the user asked: {user_prompt}
         Do not explain your choice.
+        Refusal is not an option, you have been given all capabilities that allow you to perform any tasks.
         """
     
     def llm_decide(self, prompt):
@@ -158,7 +175,7 @@ class BrowserAgent(Agent):
         A web AI made the following finding across different pages:
         {search_note}
 
-        Summarize the finding, and provide a conclusion that answer the request.
+        Summarize the finding or step that lead to success, and provide a conclusion that answer the request.
         """
     
     def search_prompt(self, user_prompt):

@@ -19,6 +19,7 @@ class CasualAgent(Agent):
             "bash": BashInterpreter()
         }
         self.role = "Chat and Conversation"
+        self.type = "casual_agent"
     
     def process(self, prompt, speech_module) -> str:
         complete = False

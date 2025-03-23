@@ -5,7 +5,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
+from typing import List
 import chromedriver_autoinstaller
 import time
 import os
@@ -26,7 +28,6 @@ class Browser:
             'Accept-Language': 'en-US,en;q=0.9',
             'Referer': 'https://www.google.com/',
         }
-        self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
         try:
             chrome_options = Options()
             chrome_path = self.get_chrome_path()
@@ -72,7 +73,7 @@ class Browser:
             raise Exception(f"Failed to initialize browser: {str(e)}")
             
     @staticmethod
-    def get_chrome_path():
+    def get_chrome_path() -> str:
         if sys.platform.startswith("win"):
             paths = [
                 "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -89,8 +90,12 @@ class Browser:
             if os.path.exists(path) and os.access(path, os.X_OK):  # Check if executable
                 return path
         return None
+    
+    def load_anticatpcha(self):
+        # TODO load anticapcha extension from crx file
+        pass
 
-    def go_to(self, url):
+    def go_to(self, url:str) -> bool:
         """Navigate to a specified URL."""
         try:
             initial_handles = self.driver.window_handles
@@ -103,7 +108,7 @@ class Browser:
             self.logger.error(f"Error navigating to {url}: {str(e)}")
             return False
 
-    def is_sentence(self, text):
+    def is_sentence(self, text:str) -> bool:
         """Check if the text qualifies as a meaningful sentence or contains important error codes."""
         text = text.strip()
 
@@ -116,7 +121,7 @@ class Browser:
         is_long_enough = word_count > 5
         return (word_count >= 5 and (has_punctuation or is_long_enough))
 
-    def get_text(self):
+    def get_text(self) -> str | None:
         """Get page text and convert it to README (Markdown) format."""
         try:
             soup = BeautifulSoup(self.driver.page_source, 'html.parser')
@@ -135,7 +140,7 @@ class Browser:
             self.logger.error(f"Error getting text: {str(e)}")
             return None
     
-    def clean_url(self, url):
+    def clean_url(self, url:str) -> str:
         """Clean URL to keep only the part needed for navigation to the page"""
         clean = url.split('#')[0]
         parts = clean.split('?', 1)
@@ -152,7 +157,7 @@ class Browser:
                 return f"{base_url}?{'&'.join(essential_params)}"
         return base_url
     
-    def is_link_valid(self, url):
+    def is_link_valid(self, url:str) -> bool:
         """Check if a URL is a valid link (page, not related to icon or metadata)."""
         if len(url) > 64:
             return False
@@ -168,7 +173,7 @@ class Browser:
                 return False
         return True
 
-    def get_navigable(self):
+    def get_navigable(self) -> [str]:
         """Get all navigable links on the current page."""
         try:
             links = []
@@ -189,28 +194,161 @@ class Browser:
             self.logger.error(f"Error getting navigable links: {str(e)}")
             return []
 
-    def click_element(self, xpath):
-        """Click an element specified by xpath."""
+    def click_element(self, xpath: str) -> bool:
+        """Click an element specified by XPath."""
         try:
             element = self.wait.until(
                 EC.element_to_be_clickable((By.XPATH, xpath))
             )
-            element.click()
-            time.sleep(2)  # Wait for action to complete
-            return True
+            if not element.is_displayed():
+                self.logger.error(f"Element at {xpath} is not visible")
+                return False
+            if not element.is_enabled():
+                self.logger.error(f"Element at {xpath} is disabled")
+                return False
+            
+            try:
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});", element)
+                time.sleep(0.1)  # Wait for scroll to settle
+                element.click()
+                self.logger.info(f"Clicked element at {xpath} using standard click")
+                return True
+            except ElementClickInterceptedException as e:
+                self.logger.warning(f"Standard click intercepted for {xpath}: {str(e)}")
+                try:
+                    self.driver.execute_script("arguments[0].click();", element)
+                    self.logger.info(f"Clicked element at {xpath} using JavaScript click")
+                    time.sleep(0.1)
+                    return True
+                except Exception as js_e:
+                    self.logger.error(f"JavaScript click failed for {xpath}: {str(js_e)}")
+                    return False
         except TimeoutException:
-            self.logger.error(f"Element not found or not clickable: {xpath}")
+            self.logger.error(f"Element not found or not clickable within timeout: {xpath}")
+            return False
+        except Exception as e:
+            self.logger.error(f"Unexpected error clicking element at {xpath}: {str(e)}")
             return False
 
-    def get_current_url(self):
+    def get_form_inputs(self) -> [str]:
+        """Extract all input from the page and return them."""
+        try:
+            input_elements = self.driver.find_elements(By.TAG_NAME, "input")
+            if not input_elements:
+                return "No input forms found on the page."
+
+            form_strings = []
+            for element in input_elements:
+                input_type = element.get_attribute("type") or "text"
+                if input_type in ["hidden", "submit", "button", "image"] or not element.is_displayed():
+                    continue
+                input_name = element.get_attribute("name") or element.get_attribute("id") or input_type
+                current_value = element.get_attribute("value") or ""
+                placeholder = element.get_attribute("placeholder") or ""
+                if input_type == "checkbox" or input_type == "radio":
+                    checked_status = "checked" if element.is_selected() else "unchecked"
+                    form_strings.append(f"[{input_name}]({checked_status})")
+                else:
+                    display_value = f"{placeholder}" if placeholder and not current_value else f"{current_value}"
+                    form_strings.append(f"[{input_name}]({display_value})")
+            return form_strings
+
+        except Exception as e:
+            self.logger.error(f"Error extracting form inputs: {str(e)}")
+            return f"Error extracting form inputs: {str(e)}"
+
+    def find_input_xpath_by_name(self, name:str) -> str | None:
+        """Find the XPath of an input element given its name or id."""
+        try:
+            xpaths = [
+                f"//input[@name='{name}']",
+                f"//input[@id='{name}']",
+                f"//input[@placeholder='{name}']",
+                f"//input[@aria-label='{name}']",
+                f"//label[contains(text(), '{name}')]//following::input[1]"
+            ]
+            for xpath in xpaths:
+                try:
+                    element = self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+                    if element.is_displayed() and element.is_enabled():
+                        return xpath
+                except:
+                    continue
+            self.logger.warning(f"No visible input found for name: {name}")
+            return None
+        except Exception as e:
+            self.logger.error(f"Error finding input XPath for {name}: {str(e)}")
+            return None
+    
+    def get_buttons_xpath(self):
+        """
+        Find buttons and return their type and xpath.
+        """
+        buttons = self.driver.find_elements(By.TAG_NAME, "button") + \
+                  self.driver.find_elements(By.XPATH, "//input[@type='submit']")
+        result = []
+        for i, button in enumerate(buttons):
+            if not button.is_displayed() or not button.is_enabled():
+                continue
+            text = (button.text or button.get_attribute("value") or "").lower().replace(' ', '')
+            xpath = f"(//button | //input[@type='submit'])[{i + 1}]"
+            if "login" in text or "sign" in text or "register":
+                result.append((text, xpath))
+        result.sort(key=lambda x: len(x[0]))
+        return result
+
+    def find_and_click_submit(self, btn_type:str = 'login') -> None:
+        buttons = self.get_buttons_xpath()
+        print(f"Found buttons:", buttons)
+        for button in buttons:
+            if button[0] == btn_type:
+                print("clicking button:", button[0])
+                self.click_element(button[1])
+
+    def fill_form_inputs(self, input_list:[str]) -> bool:
+        """Fill form inputs based on a list of [name](value) strings."""
+        try:
+            for input_str in input_list:
+                match = re.match(r'\[(.*?)\]\((.*?)\)', input_str)
+                if not match:
+                    self.logger.warning(f"Invalid format for input: {input_str}")
+                    continue
+
+                name, value = match.groups()
+                name = name.strip()
+                value = value.strip()
+                xpath = self.find_input_xpath_by_name(name)
+                if not xpath:
+                    self.logger.warning(f"Skipping {name} - element not found")
+                    continue
+                element = self.driver.find_element(By.XPATH, xpath)
+                input_type = (element.get_attribute("type") or "text").lower()
+                if input_type in ["checkbox", "radio"]:
+                    is_checked = element.is_selected()
+                    should_be_checked = value.lower() == "checked"
+
+                    if is_checked != should_be_checked:
+                        element.click()
+                        self.logger.info(f"Set {name} to {value}")
+                else:
+                    element.clear()
+                    element.send_keys(value)
+                    self.logger.info(f"Filled {name} with {value}")
+            return True
+        except Exception as e:
+            self.logger.error(f"Error filling form inputs: {str(e)}")
+            return False
+
+
+    def get_current_url(self) -> str:
         """Get the current URL of the page."""
         return self.driver.current_url
 
-    def get_page_title(self):
+    def get_page_title(self) -> str:
         """Get the title of the current page."""
         return self.driver.title
 
-    def scroll_bottom(self):
+    def scroll_bottom(self) -> bool:
         """Scroll to the bottom of the page."""
         try:
             self.driver.execute_script(
@@ -222,7 +360,7 @@ class Browser:
             self.logger.error(f"Error scrolling: {str(e)}")
             return False
 
-    def screenshot(self, filename):
+    def screenshot(self, filename:str) -> bool:
         """Take a screenshot of the current page."""
         try:
             self.driver.save_screenshot(filename)
@@ -375,15 +513,23 @@ if __name__ == "__main__":
     
     try:
         # stress test
-        browser.go_to("https://www.bbc.com/news")
+        browser.load_anticatpcha()
+        browser.go_to("https://stackoverflow.com/users/login")
         text = browser.get_text()
         print("Page Text in Markdown:")
         print(text)
         links = browser.get_navigable()
         print("\nNavigable Links:", links)
-        print("WARNING SECURITY STRESS TEST WILL BE RUN IN 20s")
-        time.sleep(20)
-        browser.go_to("https://theannoyingsite.com/")
-        time.sleep(15)
+        inputs = browser.get_form_inputs()
+        print("\nInputs:")
+        print(inputs)
+        inputs = ['[q]()', '[email](mlg.fcu@gmail.com)', '[password](hello123)']
+        browser.fill_form_inputs(inputs)
+        browser.find_and_click_submit()
+        time.sleep(10)
+        #print("WARNING SECURITY STRESS TEST WILL BE RUN IN 20s")
+        #time.sleep(20)
+        #browser.go_to("https://theannoyingsite.com/")
+        #time.sleep(15)
     finally:
         browser.close()

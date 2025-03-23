@@ -15,6 +15,7 @@ class FileAgent(Agent):
             "bash": BashInterpreter()
         }
         self.role = "find and read files"
+        self.type = "file_agent"
     
     def process(self, prompt, speech_module) -> str:
         complete = False

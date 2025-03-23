@@ -22,7 +22,7 @@ class PlannerAgent(Agent):
             "web": BrowserAgent(model, name, prompt_path, provider)
         }
         self.role = "Research, setup and code"
-        self.tag = "json"
+        self.type = "planner_agent"
 
     def parse_agent_tasks(self, text):
         tasks = []

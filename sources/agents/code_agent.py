@@ -21,6 +21,7 @@ class CoderAgent(Agent):
             "file_finder": FileFinder()
         }
         self.role = "Code Assistance"
+        self.type = "code_agent"
 
     def process(self, prompt, speech_module) -> str:
         answer = ""

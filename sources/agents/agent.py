@@ -37,6 +37,7 @@ class Agent():
                        recover_last_session=True) -> None:
         self.agent_name = name
         self.role = None
+        self.type = None
         self.current_directory = os.getcwd()
         self.model = model
         self.llm = provider 

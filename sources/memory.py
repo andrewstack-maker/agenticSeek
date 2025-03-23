@@ -38,20 +38,23 @@ class Memory():
     def get_filename(self) -> str:
         return f"memory_{self.session_time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
     
-    def save_memory(self) -> None:
+    def save_memory(self, agent_type: str = "casual_agent") -> None:
         """Save the session memory to a file."""
         if not os.path.exists(self.conversation_folder):
             os.makedirs(self.conversation_folder)
+        save_path = os.path.join(self.conversation_folder, agent_type)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
         filename = self.get_filename()
-        path = os.path.join(self.conversation_folder, filename)
+        path = os.path.join(save_path, filename)
         json_memory = json.dumps(self.memory)
         with open(path, 'w') as f:
             f.write(json_memory)
     
-    def find_last_session_path(self) -> str:
+    def find_last_session_path(self, path) -> str:
         """Find the last session path."""
         saved_sessions = []
-        for filename in os.listdir(self.conversation_folder):
+        for filename in os.listdir(path):
             if filename.startswith('memory_'):
                 date = filename.split('_')[1]
                 saved_sessions.append((filename, date))
@@ -60,14 +63,15 @@ class Memory():
             return saved_sessions[0][0]
         return None
 
-    def load_memory(self) -> None:
+    def load_memory(self, agent_type: str = "casual_agent") -> None:
         """Load the memory from the last session."""
-        if not os.path.exists(self.conversation_folder):
+        save_path = os.path.join(self.conversation_folder, agent_type)
+        if not os.path.exists(save_path):
             return
-        filename = self.find_last_session_path()
+        filename = self.find_last_session_path(save_path)
         if filename is None:
             return
-        path = os.path.join(self.conversation_folder, filename)
+        path = os.path.join(save_path, filename)
         with open(path, 'r') as f:
             self.memory = json.load(f)
     
