@@ -18,14 +18,13 @@ class CasualAgent(Agent):
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
         }
-        self.role = "talk, quick search"
+        self.role = "talk"
         self.type = "casual_agent"
     
     def process(self, prompt, speech_module) -> str:
         complete = False
         self.memory.push('user', prompt)
 
-        self.wait_message(speech_module)
         while not complete:
             animate_thinking("Thinking...", color="status")
             answer, reasoning = self.llm_request()
