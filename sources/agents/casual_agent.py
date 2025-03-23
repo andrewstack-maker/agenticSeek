@@ -18,7 +18,7 @@ class CasualAgent(Agent):
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
         }
-        self.role = "Chat and Conversation"
+        self.role = "talk, quick search"
         self.type = "casual_agent"
     
     def process(self, prompt, speech_module) -> str:

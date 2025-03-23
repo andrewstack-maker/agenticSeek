@@ -20,7 +20,7 @@ class CoderAgent(Agent):
             "go": GoInterpreter(),
             "file_finder": FileFinder()
         }
-        self.role = "Code Assistance"
+        self.role = "Coding task"
         self.type = "code_agent"
 
     def process(self, prompt, speech_module) -> str:

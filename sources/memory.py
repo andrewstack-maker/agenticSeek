@@ -80,10 +80,10 @@ class Memory():
     
     def push(self, role: str, content: str) -> None:
         """Push a message to the memory."""
-        self.memory.append({'role': role, 'content': content})
-        # EXPERIMENTAL
         if self.memory_compression and role == 'assistant':
             self.compress()
+        # we don't compress the last message
+        self.memory.append({'role': role, 'content': content})
     
     def clear(self) -> None:
         self.memory = []
@@ -133,9 +133,9 @@ class Memory():
         if not self.memory_compression:
             return
         for i in range(len(self.memory)):
-            if i <= 2:
+            if i < 3:
                 continue
-            if self.memory[i]['role'] == 'assistant':
+            if len(self.memory[i]['content']) > 1024:
                 self.memory[i]['content'] = self.summarize(self.memory[i]['content'])
 
 if __name__ == "__main__":

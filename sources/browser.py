@@ -28,7 +28,7 @@ class Browser:
             'Accept-Language': 'en-US,en;q=0.9',
             'Referer': 'https://www.google.com/',
         }
-        self.js_scripts_folder = "./web_scripts/"
+        self.js_scripts_folder = "./sources/web_scripts/"
         try:
             chrome_options = Options()
             chrome_path = self.get_chrome_path()
@@ -258,7 +258,7 @@ class Browser:
 
         except Exception as e:
             self.logger.error(f"Error extracting form inputs: {str(e)}")
-            return f"Error extracting form inputs."
+            return [f"Error extracting form inputs."]
 
     def get_buttons_xpath(self) -> List[str]:
         """

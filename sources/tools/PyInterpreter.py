@@ -35,6 +35,7 @@ class PyInterpreter(Tools):
         try:
             try:
                 buffer = exec(code, global_vars)
+                print(buffer)
                 if buffer is not None:
                     output = buffer + '\n'
             except Exception as e:
