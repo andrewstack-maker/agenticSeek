@@ -35,7 +35,7 @@ class Interaction:
         """Find the name of the default AI. It is required for STT as a trigger word."""
         ai_name = "jarvis"
         for agent in self.agents:
-            if agent.role == "talking":
+            if agent.type == "casual_agent":
                 ai_name = agent.agent_name
                 break
         return ai_name
@@ -43,12 +43,12 @@ class Interaction:
     def recover_last_session(self):
         """Recover the last session."""
         for agent in self.agents:
-            agent.memory.load_memory()
+            agent.memory.load_memory(agent.type)
     
     def save_session(self):
         """Save the current session."""
         for agent in self.agents:
-            agent.memory.save_memory()
+            agent.memory.save_memory(agent.type)
 
     def is_active(self) -> bool:
         return self.is_active

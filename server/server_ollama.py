@@ -1,47 +1,37 @@
+#!/usr/bin python3
+
+# NOTE this script is temporary and will be improved
+
 from flask import Flask, jsonify, request
 import threading
 import ollama
 import logging
-import json
+import argparse
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
+parser = argparse.ArgumentParser(description='AgenticSeek server script')
+parser.add_argument('--model', type=str, help='Model to use. eg: deepseek-r1:14b', required=True)
+args = parser.parse_args()
+
 app = Flask(__name__)
 
+model = args.model
+
 # Shared state with thread-safe locks
-class Config:
-    def __init__(self):
-        self.model = None
-        self.known_models = []
-        self.allowed_models = []
-        self.model_name = None
-
-    def load(self):
-        with open('config.json', 'r') as f:
-            data = json.load(f)
-            self.known_models = data['known_models']
-            self.model_name = data['model_name']
-
-    def validate_model(self, model):
-        if model not in self.known_models:
-            raise ValueError(f"Model {model} is not known")
-
 class GenerationState:
     def __init__(self):
         self.lock = threading.Lock()
         self.last_complete_sentence = ""
         self.current_buffer = ""
         self.is_generating = False
-        self.model = None
 
 state = GenerationState()
 
-def generate_response_vllm(history):
-    pass
-
-def generate_response_ollama(history):  # Only takes history as an argument
+def generate_response(history, model):
     global state
+    print("using model:::::::", model)
     try:
         with state.lock:
             state.is_generating = True
@@ -49,18 +39,21 @@ def generate_response_ollama(history):  # Only takes history as an argument
             state.current_buffer = ""
 
         stream = ollama.chat(
-            model=state.model,  # Access state.model directly
+            model=model,
             messages=history,
             stream=True,
         )
+
         for chunk in stream:
             content = chunk['message']['content']
             print(content, end='', flush=True)
+
             with state.lock:
                 state.current_buffer += content
+
     except ollama.ResponseError as e:
         if e.status_code == 404:
-            ollama.pull(state.model)
+            ollama.pull(model)
         with state.lock:
             state.is_generating = False
         print(f"Error: {e}")
@@ -78,8 +71,8 @@ def start_generation():
             return jsonify({"error": "Generation already in progress"}), 400
 
         history = data.get('messages', [])
-        # Pass only history to the thread
-        threading.Thread(target=generate_response, args=(history,)).start()  # Note the comma to make it a single-element tuple
+        # Start generation in background thread
+        threading.Thread(target=generate_response, args=(history, model)).start()
     return jsonify({"message": "Generation started"}), 202
 
 @app.route('/get_updated_sentence')
@@ -92,8 +85,4 @@ def get_updated_sentence():
         })
 
 if __name__ == '__main__':
-    config = Config()
-    config.load()
-    config.validate_model(config.model_name)
-    state.model = config.model_name
-    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+    app.run(host='0.0.0.0', threaded=True, debug=True, port=5000)
