@@ -17,7 +17,12 @@ class BrowserAgent(Agent):
         self.tools = {
             "web_search": searxSearch(),
         }
-        self.role = "Web search and navigation"
+        self.role = {
+            "en": "Web search and navigation",
+            "fr": "Recherche et navigation web",
+            "zh": "网络搜索和导航",
+            "es": "Búsqueda y navegación web"
+        }
         self.type = "browser_agent"
         self.browser = Browser()
         self.current_page = ""

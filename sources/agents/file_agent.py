@@ -14,7 +14,12 @@ class FileAgent(Agent):
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
         }
-        self.role = "find and read files"
+        self.role = {
+            "en": "find and read files",
+            "fr": "trouver et lire des fichiers",
+            "zh": "查找和读取文件",
+            "es": "encontrar y leer archivos"
+        }
         self.type = "file_agent"
     
     def process(self, prompt, speech_module) -> str:

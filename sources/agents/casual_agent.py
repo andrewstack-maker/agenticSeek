@@ -18,7 +18,12 @@ class CasualAgent(Agent):
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
         }
-        self.role = "talk"
+        self.role = {
+            "en": "talking",
+            "fr": "discuter",
+            "zh": "聊天",
+            "es": "discutir"
+        }
         self.type = "casual_agent"
     
     def process(self, prompt, speech_module) -> str:

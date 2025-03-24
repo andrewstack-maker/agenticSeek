@@ -10,18 +10,23 @@ from sources.agents.code_agent import CoderAgent
 from sources.agents.casual_agent import CasualAgent
 from sources.agents.planner_agent import PlannerAgent
 from sources.agents.browser_agent import BrowserAgent
+from sources.language import LanguageUtility
 from sources.utility import pretty_print
 
 class AgentRouter:
     """
     AgentRouter is a class that selects the appropriate agent based on the user query.
     """
-    def __init__(self, agents: list, model_name: str = "facebook/bart-large-mnli"):
+    def __init__(self, agents: list):
         self.model = model_name 
-        self.pipeline = pipeline("zero-shot-classification",
-                      model=self.model)
+        self.lang_analysis = LanguageUtility()
+        self.pipelines = {
+            "fr": pipeline("zero-shot-classification", model="facebook/bart-large-mnli"),
+            "zh": pipeline("zero-shot-classification", model="morit/chinese_xlm_xnli"),
+            "es": pipeline("zero-shot-classification", model="facebook/bart-large-mnli"),
+            "en": pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+        }
         self.agents = agents
-        self.labels = [agent.role for agent in agents]
 
     def get_device(self) -> str:
         if torch.backends.mps.is_available():
@@ -46,8 +51,23 @@ class AgentRouter:
             break
         if first_sentence is None:
             first_sentence = text
-        result = self.pipeline(first_sentence, self.labels, threshold=threshold)
-        return result
+        try:
+            lang = lang_analysis.detect_language(first_sentence)
+            assert lang in ["en", "fr", "zh", "es"]
+            labels = [agent.role[lang] for agent in agents]
+            if lang == "en":
+                result = self.pipelines['en'](first_sentence, labels, threshold=threshold)
+            elif lang == "fr":
+                result = self.pipelines['fr'](first_sentence, labels, threshold=threshold)
+            elif lang == "zh":
+                result = self.pipelines['zh'](first_sentence, labels, threshold=threshold)
+            elif lang == "es":
+                result = self.pipelines['es'](first_sentence, labels, threshold=threshold)
+            else:
+                result = None
+        except Exception as e:
+            return None, lang
+        return result, lang
     
     def select_agent(self, text: str) -> Agent:
         """
@@ -57,13 +77,14 @@ class AgentRouter:
         Returns:
             Agent: The selected agent
         """
-        if len(self.agents) == 0 or len(self.labels) == 0:
+        if len(self.agents) == 0:
             return self.agents[0]
-        result = self.classify_text(text)
+        result, lang = self.classify_text(text)
         for agent in self.agents:
-            if result["labels"][0] == agent.role:
-                pretty_print(f"Selected agent: {agent.agent_name} (roles: {agent.role})", color="warning")
+            if result["labels"][0] == agent.role[lang]:
+                pretty_print(f"Selected agent: {agent.agent_name} (roles: {agent.role[lang]})", color="warning")
                 return agent
+        pretty_print(f"Error choosing agent.", color="error")
         return None
 
 if __name__ == "__main__":

@@ -21,7 +21,12 @@ class PlannerAgent(Agent):
             "file": FileAgent(model, name, prompt_path, provider),
             "web": BrowserAgent(model, name, prompt_path, provider)
         }
-        self.role = "Research, setup and code"
+        self.role = {
+            "en": "Research, setup and code",
+            "fr": "Recherche, configuration et codage",
+            "zh": "研究，设置和编码",
+            "es": "Investigación, configuración y code"
+        }
         self.type = "planner_agent"
 
     def parse_agent_tasks(self, text):
