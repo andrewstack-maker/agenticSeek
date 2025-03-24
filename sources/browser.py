@@ -94,6 +94,7 @@ class Browser:
         return None
     
     def load_anticatpcha(self):
+        print("You might want to install the AntiCaptcha extension for captchas.")
         self.driver.get(self.anticaptcha)
 
     def go_to(self, url:str) -> bool:
