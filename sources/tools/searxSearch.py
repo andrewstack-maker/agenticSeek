@@ -75,7 +75,7 @@ class searxSearch(Tools):
             'Upgrade-Insecure-Requests': '1',
             'User-Agent': self.user_agent
         }
-        data = f"q={query}&categories=general&language=auto&time_range=&safesearch=0&theme=simple"
+        data = f"q={query}&categories=general&language=auto&time_range=&safesearch=0&theme=simple".encode('utf-8')
         try:
             response = requests.post(search_url, headers=headers, data=data, verify=False)
             response.raise_for_status()

@@ -212,6 +212,8 @@ If you have a powerful computer or a server that you can use, but you want to us
 
 ### 1️⃣  **Set up and start the server scripts** 
 
+You need to have ollama installed on the server (We will integrate VLLM and llama.cpp soon).
+
 On your "server" that will run the AI model, get the ip address
 
 ```sh
@@ -223,7 +225,7 @@ Note: For Windows or macOS, use ipconfig or ifconfig respectively to find the IP
 Clone the repository and then, run the script `stream_llm.py` in `server/`
 
 ```sh
-python3 server_ollama.py
+python3 server_ollama.py --model "deepseek-r1:32b"
 ```
 
 ### 2️⃣ **Run it** 

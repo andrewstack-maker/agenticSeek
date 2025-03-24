@@ -20,7 +20,7 @@ class Memory():
                  recover_last_session: bool = False,
                  memory_compression: bool = True):
         self.memory = []
-        self.memory = [{'role': 'user', 'content': system_prompt}]
+        self.memory = [{'role': 'system', 'content': system_prompt}]
         
         self.session_time = datetime.datetime.now()
         self.session_id = str(uuid.uuid4())
@@ -38,20 +38,23 @@ class Memory():
     def get_filename(self) -> str:
         return f"memory_{self.session_time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
     
-    def save_memory(self) -> None:
+    def save_memory(self, agent_type: str = "casual_agent") -> None:
         """Save the session memory to a file."""
         if not os.path.exists(self.conversation_folder):
             os.makedirs(self.conversation_folder)
+        save_path = os.path.join(self.conversation_folder, agent_type)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
         filename = self.get_filename()
-        path = os.path.join(self.conversation_folder, filename)
+        path = os.path.join(save_path, filename)
         json_memory = json.dumps(self.memory)
         with open(path, 'w') as f:
             f.write(json_memory)
     
-    def find_last_session_path(self) -> str:
+    def find_last_session_path(self, path) -> str:
         """Find the last session path."""
         saved_sessions = []
-        for filename in os.listdir(self.conversation_folder):
+        for filename in os.listdir(path):
             if filename.startswith('memory_'):
                 date = filename.split('_')[1]
                 saved_sessions.append((filename, date))
@@ -60,14 +63,15 @@ class Memory():
             return saved_sessions[0][0]
         return None
 
-    def load_memory(self) -> None:
+    def load_memory(self, agent_type: str = "casual_agent") -> None:
         """Load the memory from the last session."""
-        if not os.path.exists(self.conversation_folder):
+        save_path = os.path.join(self.conversation_folder, agent_type)
+        if not os.path.exists(save_path):
             return
-        filename = self.find_last_session_path()
+        filename = self.find_last_session_path(save_path)
         if filename is None:
             return
-        path = os.path.join(self.conversation_folder, filename)
+        path = os.path.join(save_path, filename)
         with open(path, 'r') as f:
             self.memory = json.load(f)
     
@@ -76,10 +80,10 @@ class Memory():
     
     def push(self, role: str, content: str) -> None:
         """Push a message to the memory."""
-        self.memory.append({'role': role, 'content': content})
-        # EXPERIMENTAL
         if self.memory_compression and role == 'assistant':
             self.compress()
+        # we don't compress the last message
+        self.memory.append({'role': role, 'content': content})
     
     def clear(self) -> None:
         self.memory = []
@@ -129,9 +133,9 @@ class Memory():
         if not self.memory_compression:
             return
         for i in range(len(self.memory)):
-            if i <= 2:
+            if i < 3:
                 continue
-            if self.memory[i]['role'] == 'assistant':
+            if len(self.memory[i]['content']) > 1024:
                 self.memory[i]['content'] = self.summarize(self.memory[i]['content'])
 
 if __name__ == "__main__":

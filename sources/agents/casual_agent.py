@@ -7,24 +7,24 @@ from sources.tools.fileFinder import FileFinder
 from sources.tools.BashInterpreter import BashInterpreter
 
 class CasualAgent(Agent):
-    def __init__(self, model, name, prompt_path, provider):
+    def __init__(self, name, prompt_path, provider, verbose=False):
         """
         The casual agent is a special for casual talk to the user without specific tasks.
         """
-        super().__init__(model, name, prompt_path, provider)
+        super().__init__(name, prompt_path, provider, verbose)
         self.tools = {
             "web_search": searxSearch(),
             "flight_search": FlightSearch(),
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
         }
-        self.role = "Chat and Conversation"
+        self.role = "talk"
+        self.type = "casual_agent"
     
     def process(self, prompt, speech_module) -> str:
         complete = False
         self.memory.push('user', prompt)
 
-        self.wait_message(speech_module)
         while not complete:
             animate_thinking("Thinking...", color="status")
             answer, reasoning = self.llm_request()

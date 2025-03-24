@@ -29,22 +29,18 @@ def main():
                                    server_address=config["MAIN"]["provider_server_address"])
 
     agents = [
-        CasualAgent(model=config["MAIN"]["provider_model"],
-                       name=config["MAIN"]["agent_name"],
-                       prompt_path="prompts/casual_agent.txt",
-                       provider=provider),
-        CoderAgent(model=config["MAIN"]["provider_model"],
-                       name="coder",
-                       prompt_path="prompts/coder_agent.txt",
-                       provider=provider),
-        FileAgent(model=config["MAIN"]["provider_model"],
-                       name="File Agent",
-                       prompt_path="prompts/file_agent.txt",
-                       provider=provider),
-        BrowserAgent(model=config["MAIN"]["provider_model"],
-                       name="Browser",
-                       prompt_path="prompts/browser_agent.txt",
-                       provider=provider)
+        CasualAgent(name=config["MAIN"]["agent_name"],
+                    prompt_path="prompts/casual_agent.txt",
+                    provider=provider, verbose=False),
+        CoderAgent(name="coder",
+                   prompt_path="prompts/coder_agent.txt",
+                   provider=provider, verbose=False),
+        FileAgent(name="File Agent",
+                  prompt_path="prompts/file_agent.txt",
+                  provider=provider, verbose=False),
+        BrowserAgent(name="Browser",
+                     prompt_path="prompts/browser_agent.txt",
+                     provider=provider, verbose=False)
     ]
 
     interaction = Interaction(agents, tts_enabled=config.getboolean('MAIN', 'speak'),
