@@ -7,11 +7,11 @@ from sources.agents.browser_agent import BrowserAgent
 from sources.tools.tools import Tools
 
 class PlannerAgent(Agent):
-    def __init__(self, model, name, prompt_path, provider):
+    def __init__(self, name, prompt_path, provider, verbose=False):
         """
         The planner agent is a special agent that divides and conquers the task.
         """
-        super().__init__(model, name, prompt_path, provider)
+        super().__init__(name, prompt_path, provider, verbose)
         self.tools = {
             "json": Tools()
         }

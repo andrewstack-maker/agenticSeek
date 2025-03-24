@@ -11,8 +11,8 @@ class CoderAgent(Agent):
     """
     The code agent is an agent that can write and execute code.
     """
-    def __init__(self, model, name, prompt_path, provider):
-        super().__init__(model, name, prompt_path, provider)
+    def __init__(self, name, prompt_path, provider, verbose=False):
+        super().__init__(name, prompt_path, provider, verbose)
         self.tools = {
             "bash": BashInterpreter(),
             "python": PyInterpreter(),

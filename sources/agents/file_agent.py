@@ -5,11 +5,11 @@ from sources.tools.fileFinder import FileFinder
 from sources.tools.BashInterpreter import BashInterpreter
 
 class FileAgent(Agent):
-    def __init__(self, model, name, prompt_path, provider):
+    def __init__(self, name, prompt_path, provider, verbose=False):
         """
         The file agent is a special agent for file operations.
         """
-        super().__init__(model, name, prompt_path, provider)
+        super().__init__(name, prompt_path, provider, verbose)
         self.tools = {
             "file_finder": FileFinder(),
             "bash": BashInterpreter()

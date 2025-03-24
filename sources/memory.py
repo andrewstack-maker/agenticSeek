@@ -20,7 +20,7 @@ class Memory():
                  recover_last_session: bool = False,
                  memory_compression: bool = True):
         self.memory = []
-        self.memory = [{'role': 'user', 'content': system_prompt}]
+        self.memory = [{'role': 'system', 'content': system_prompt}]
         
         self.session_time = datetime.datetime.now()
         self.session_id = str(uuid.uuid4())

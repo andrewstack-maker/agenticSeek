@@ -9,11 +9,11 @@ from datetime import date
 from typing import List, Tuple
 
 class BrowserAgent(Agent):
-    def __init__(self, model, name, prompt_path, provider):
+    def __init__(self, name, prompt_path, provider, verbose=False):
         """
         The Browser agent is an agent that navigate the web autonomously in search of answer
         """
-        super().__init__(model, name, prompt_path, provider)
+        super().__init__(name, prompt_path, provider, verbose)
         self.tools = {
             "web_search": searxSearch(),
         }

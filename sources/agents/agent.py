@@ -30,16 +30,24 @@ class Agent():
     """
     An abstract class for all agents.
     """
-    def __init__(self, model: str,
-                       name: str,
+    def __init__(self, name: str,
                        prompt_path:str,
                        provider,
-                       recover_last_session=True) -> None:
+                       recover_last_session=True,
+                       verbose=False) -> None:
+        """
+        Args:
+            name (str): Name of the agent.
+            prompt_path (str): Path to the prompt file for the agent.
+            provider: The provider for the LLM.
+            recover_last_session (bool, optional): Whether to recover the last conversation. 
+            verbose (bool, optional): Enable verbose logging if True. Defaults to False.
+        """
+            
         self.agent_name = name
         self.role = None
         self.type = None
         self.current_directory = os.getcwd()
-        self.model = model
         self.llm = provider 
         self.memory = Memory(self.load_prompt(prompt_path),
                                 recover_last_session=recover_last_session,
@@ -47,6 +55,7 @@ class Agent():
         self.tools = {}
         self.blocks_result = []
         self.last_answer = ""
+        self.verbose = verbose
     
     @property
     def get_tools(self) -> dict:
@@ -94,12 +103,12 @@ class Agent():
         end_idx = text.rfind(end_tag)+8
         return text[start_idx:end_idx]
     
-    def llm_request(self, verbose = False) -> Tuple[str, str]:
+    def llm_request(self) -> Tuple[str, str]:
         """
         Ask the LLM to process the prompt and return the answer and the reasoning.
         """
         memory = self.memory.get()
-        thought = self.llm.respond(memory, verbose)
+        thought = self.llm.respond(memory, self.verbose)
 
         reasoning = self.extract_reasoning_text(thought)
         answer = self.remove_reasoning_text(thought)

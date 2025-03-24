@@ -7,11 +7,11 @@ from sources.tools.fileFinder import FileFinder
 from sources.tools.BashInterpreter import BashInterpreter
 
 class CasualAgent(Agent):
-    def __init__(self, model, name, prompt_path, provider):
+    def __init__(self, name, prompt_path, provider, verbose=False):
         """
         The casual agent is a special for casual talk to the user without specific tasks.
         """
-        super().__init__(model, name, prompt_path, provider)
+        super().__init__(name, prompt_path, provider, verbose)
         self.tools = {
             "web_search": searxSearch(),
             "flight_search": FlightSearch(),
