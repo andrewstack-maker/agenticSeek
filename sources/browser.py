@@ -390,7 +390,8 @@ if __name__ == "__main__":
         inputs = browser.get_form_inputs()
         print("\nInputs:")
         print(inputs)
-        inputs = ['[username](mlg.fcu@gmail.com)', '[password]()', '[appOtp]()', '[backupOtp]()']
+        password = input("Enter field password: ")
+        inputs = ['[username](mlg.fcu@gmail.com)', f'[password]({password})', '[appOtp]()', '[backupOtp]()']
         browser.fill_form_inputs(inputs)
         browser.find_and_click_submit()
         time.sleep(10)
