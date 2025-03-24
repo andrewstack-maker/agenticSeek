@@ -28,7 +28,7 @@ class Browser:
             'Accept-Language': 'en-US,en;q=0.9',
             'Referer': 'https://www.google.com/',
         }
-        self.js_scripts_folder = "./sources/web_scripts/"
+        self.js_scripts_folder = "./sources/web_scripts/" if not __name__ == "__main__" else "./web_scripts/"
         self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
         try:
             chrome_options = Options()
@@ -52,7 +52,6 @@ class Browser:
                 "profile.default_content_setting_values.notifications": 2,  # Block notifications
                 "profile.default_content_setting_values.popups": 2,  # Block pop-ups
                 "profile.default_content_setting_values.geolocation": 2,  # Block geolocation
-                "download_restrictions": 3,  # Block all downloads
                 "safebrowsing.enabled": True,  # Enable safe browsing
             }
             chrome_options.add_experimental_option("prefs", security_prefs)
@@ -95,7 +94,7 @@ class Browser:
         return None
     
     def load_anticatpcha(self):
-        pass
+        self.driver.get(self.anticaptcha)
 
     def go_to(self, url:str) -> bool:
         """Navigate to a specified URL."""
@@ -378,22 +377,19 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     
     browser = Browser(headless=False)
+    time.sleep(8)
     
     try:
-        # stress test
+        print("AntiCaptcha Test")
         browser.go_to("https://www.google.com/recaptcha/api2/demo")
-        text = browser.get_text()
-        print("Page Text in Markdown:")
-        print(text)
-        links = browser.get_navigable()
-        print("\nNavigable Links:", links)
+        time.sleep(5)
+        print("Form Test:")
+        browser.go_to("https://practicetestautomation.com/practice-test-login/")
         inputs = browser.get_form_inputs()
-        print("\nInputs:")
-        print(inputs)
-        password = input("Enter field password: ")
-        inputs = ['[username](mlg.fcu@gmail.com)', f'[password]({password})', '[appOtp]()', '[backupOtp]()']
+        inputs = ['[username](student)', f'[password](Password123)', '[appOtp]()', '[backupOtp]()']
         browser.fill_form_inputs(inputs)
         browser.find_and_click_submit()
-        time.sleep(10)
+        print("Stress test")
+        browser.go_to("https://theannoyingsite.com/")
     finally:
         browser.close()
