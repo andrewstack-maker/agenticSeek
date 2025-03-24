@@ -29,6 +29,7 @@ class Browser:
             'Referer': 'https://www.google.com/',
         }
         self.js_scripts_folder = "./sources/web_scripts/"
+        self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
         try:
             chrome_options = Options()
             chrome_path = self.get_chrome_path()
@@ -72,6 +73,7 @@ class Browser:
             self.logger.info("Browser initialized successfully")
         except Exception as e:
             raise Exception(f"Failed to initialize browser: {str(e)}")
+        self.load_anticatpcha()
             
     @staticmethod
     def get_chrome_path() -> str:
@@ -93,7 +95,6 @@ class Browser:
         return None
     
     def load_anticatpcha(self):
-        # TODO load anticapcha extension from crx file
         pass
 
     def go_to(self, url:str) -> bool:
@@ -380,8 +381,7 @@ if __name__ == "__main__":
     
     try:
         # stress test
-        browser.load_anticatpcha()
-        browser.go_to("https://www.reddit.com/login/")
+        browser.go_to("https://www.google.com/recaptcha/api2/demo")
         text = browser.get_text()
         print("Page Text in Markdown:")
         print(text)
@@ -390,7 +390,7 @@ if __name__ == "__main__":
         inputs = browser.get_form_inputs()
         print("\nInputs:")
         print(inputs)
-        inputs = ['[username](mlg.fcu@gmail.com)', '[password](#Mart1%reddit%)', '[appOtp]()', '[backupOtp]()']
+        inputs = ['[username](mlg.fcu@gmail.com)', '[password]()', '[appOtp]()', '[backupOtp]()']
         browser.fill_form_inputs(inputs)
         browser.find_and_click_submit()
         time.sleep(10)
