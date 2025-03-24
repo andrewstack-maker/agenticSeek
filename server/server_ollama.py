@@ -6,13 +6,18 @@ from flask import Flask, jsonify, request
 import threading
 import ollama
 import logging
+import argparse
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
+parser = argparse.ArgumentParser(description='AgenticSeek server script')
+parser.add_argument('--model', type=str, help='Model to use. eg: deepseek-r1:14b', required=True)
+args = parser.parse_args()
+
 app = Flask(__name__)
 
-model = 'deepseek-r1:14b'
+model = args.model
 
 # Shared state with thread-safe locks
 class GenerationState:
