@@ -19,6 +19,8 @@ import sys
 import re
 from urllib.parse import urlparse
 
+from sources.utility import pretty_print
+
 class Browser:
     def __init__(self, headless=False, anticaptcha_install=False):
         """Initialize the browser with optional headless mode."""
@@ -368,7 +370,7 @@ class Browser:
             self.driver.quit()
             self.logger.info("Browser closed")
         except Exception as e:
-            raise e
+            self.logger.error(f"Error closing browser: {str(e)}")
 
     def __del__(self):
         """Destructor to ensure browser is closed."""

@@ -15,10 +15,10 @@ class FileAgent(Agent):
             "bash": BashInterpreter()
         }
         self.role = {
-            "en": "find and read files",
-            "fr": "trouver et lire des fichiers",
-            "zh": "查找和读取文件",
-            "es": "encontrar y leer archivos"
+            "en": "files",
+            "fr": "fichiers",
+            "zh": "文件",
+            "es": "archivos",
         }
         self.type = "file_agent"
     

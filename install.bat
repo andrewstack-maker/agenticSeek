@@ -1,6 +1,6 @@
 @echo off
 set SCRIPTS_DIR=scripts
-set LLM_ROUTER_DIR=llm-router
+set LLM_ROUTER_DIR=llm_router
 
 if exist "%SCRIPTS_DIR%\windows_install.bat" (
     echo Running Windows installation script...

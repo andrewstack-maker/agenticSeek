@@ -21,10 +21,10 @@ class CoderAgent(Agent):
             "file_finder": FileFinder()
         }
         self.role = {
-            "en": "Coding task",
-            "fr": "Tâche de codage",
-            "zh": "编码任务",
-            "es": "Tarea de codificación"
+            "en": "code",
+            "fr": "codage",
+            "zh": "编码",
+            "es": "codificación",
         }
         self.type = "code_agent"
 

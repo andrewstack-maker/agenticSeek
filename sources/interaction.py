@@ -110,6 +110,6 @@ class Interaction:
         if self.last_query is None:
             return
         self.current_agent.show_answer()
-        if self.tts_enabled:
+        if self.tts_enabled and self.last_answer:
             self.speech.speak(self.last_answer)
 

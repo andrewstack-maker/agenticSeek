@@ -19,7 +19,7 @@ class CasualAgent(Agent):
             "bash": BashInterpreter()
         }
         self.role = {
-            "en": "talking",
+            "en": "talk",
             "fr": "discuter",
             "zh": "聊天",
             "es": "discutir"

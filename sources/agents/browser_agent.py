@@ -18,10 +18,10 @@ class BrowserAgent(Agent):
             "web_search": searxSearch(),
         }
         self.role = {
-            "en": "Web search and navigation",
-            "fr": "Recherche et navigation web",
-            "zh": "网络搜索和导航",
-            "es": "Búsqueda y navegación web"
+            "en": "web",
+            "fr": "web",
+            "zh": "网络",
+            "es": "web"
         }
         self.type = "browser_agent"
         self.browser = Browser()

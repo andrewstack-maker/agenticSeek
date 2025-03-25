@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPTS_DIR="scripts"
-LLM_ROUTER_DIR="llm-router"
+LLM_ROUTER_DIR="llm_router"
 
 echo "Detecting operating system..."
 
@@ -27,17 +27,6 @@ case "$OS_TYPE" in
             bash -c "cd $LLM_ROUTER_DIR && ./dl_safetensors.sh"
         else
             echo "Error: $SCRIPTS_DIR/macos_install.sh not found!"
-            exit 1
-        fi
-        ;;
-    "MINGW"* | "MSYS"* | "CYGWIN"*)
-        echo "Detected Windows (via Bash-like environment)"
-        if [ -f "$SCRIPTS_DIR/windows_install.sh" ]; then
-            echo "Running Windows installation script..."
-            bash "$SCRIPTS_DIR/windows_install.sh"
-            bash "cd $LLM_ROUTER_DIR && dl_safetensors.sh"
-        else
-            echo "Error: $SCRIPTS_DIR/windows_install.sh not found!"
             exit 1
         fi
         ;;

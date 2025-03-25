@@ -1,0 +1,33 @@
+{
+  "config": {
+    "batch_size": 32,
+    "device_map": "auto",
+    "early_stopping_patience": 3,
+    "epochs": 10,
+    "ewc_lambda": 100.0,
+    "gradient_checkpointing": false,
+    "learning_rate": 0.0005,
+    "max_examples_per_class": 500,
+    "max_length": 512,
+    "min_confidence": 0.1,
+    "min_examples_per_class": 3,
+    "neural_weight": 0.2,
+    "num_representative_examples": 5,
+    "prototype_update_frequency": 50,
+    "prototype_weight": 0.8,
+    "quantization": null,
+    "similarity_threshold": 0.7,
+    "warmup_steps": 0
+  },
+  "embedding_dim": 768,
+  "id_to_label": {
+    "0": "HIGH",
+    "1": "LOW"
+  },
+  "label_to_id": {
+    "HIGH": 0,
+    "LOW": 1
+  },
+  "model_name": "distilbert/distilbert-base-cased",
+  "train_steps": 20
+}
