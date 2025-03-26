@@ -313,10 +313,10 @@ class AgentRouter:
         if first_sentence is None:
             first_sentence = text
         try:
-            #lang = self.lang_analysis.detect_language(first_sentence)
-            lang = "en" # NOTE only use english role labels for now, we don't have a multilingual router yet
-            labels = [agent.role[lang] for agent in self.agents]
-            result = self.router_vote(first_sentence, labels, log_confidence=True)
+            lang = self.lang_analysis.detect_language(first_sentence)
+            # no multilanguage support yet
+            labels = [agent.role["en"] for agent in self.agents]
+            result = self.router_vote(first_sentence, labels, log_confidence=False)
         except Exception as e:
             raise e
         return result, lang
@@ -357,6 +357,12 @@ class AgentRouter:
         pretty_print(f"Error finding planner agent. Please add a planner agent to the list of agents.", color="failure")
         return None
     
+    def multi_language_message(self, text: str):
+        pretty_print(f"选择代理时出错。路由系统尚不支持多语言", color="failure")
+        pretty_print(f"エージェントの選択エラー。ルーティングシステムはまだ多言語に対応していません", color="failure")
+        pretty_print(f"Erreur lors du choix de l'agent. Le système de routage n'est pas encore multilingue.", color="failure")
+        pretty_print(f"Error al elegir agente. El sistema de enrutamiento aún no es multilingüe.", color="failure")
+    
     def select_agent(self, text: str) -> Agent:
         """
         Select the appropriate agent based on the text.
@@ -368,22 +374,20 @@ class AgentRouter:
         if len(self.agents) == 0:
             return self.agents[0]
         complexity = self.estimate_complexity(text)
+        best_agent, lang = self.classify_text(text)
+        if lang != "en":
+            self.multi_language_message(text)
         if complexity == None:
             pretty_print(f"Humm, the task seem complex but you gave very little information. can you clarify?", color="info")
             return None
-        if complexity == "HIGH":
+        if complexity == "HIGH" and lang == "en":
             pretty_print(f"Complex task detected, routing to planner agent.", color="info")
             return self.find_planner_agent()
-        best_agent, lang = self.classify_text(text)
         for agent in self.agents:
             if best_agent == agent.role[lang]:
                 pretty_print(f"Selected agent: {agent.agent_name} (roles: {agent.role[lang]})", color="warning")
                 return agent
-        pretty_print(f"Error choosing agent. Routing system is not multilingual yet.", color="failure")
-        pretty_print(f"选择代理时出错。路由系统尚不支持多语言", color="failure")
-        pretty_print(f"エージェントの選択エラー。ルーティングシステムはまだ多言語に対応していません", color="failure")
-        pretty_print(f"Erreur lors du choix de l'agent. Le système de routage n'est pas encore multilingue.", color="failure")
-        pretty_print(f"Error al elegir agente. El sistema de enrutamiento aún no es multilingüe.", color="failure")
+        pretty_print(f"Error choosing agent.", color="failure")
         return None
 
 if __name__ == "__main__":
