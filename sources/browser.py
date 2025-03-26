@@ -58,8 +58,6 @@ def create_driver(headless=False):
     chrome_options.add_argument("--disable-notifications")
     security_prefs = {
         "profile.default_content_setting_values.media_stream": 2,
-        "profile.default_content_setting_values.notifications": 2,
-        "profile.default_content_setting_values.popups": 2,
         "profile.default_content_setting_values.geolocation": 2,
         "safebrowsing.enabled": True,
     }
