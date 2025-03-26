@@ -99,11 +99,11 @@ class Interaction:
         if agent is None:
             return
         if self.current_agent != agent and self.last_answer is not None:
-            ## get history from previous agent, good ?
+            ## get last history from previous agent
             self.current_agent.memory.push('user', self.last_query)
             self.current_agent.memory.push('assistant', self.last_answer)
         self.current_agent = agent
-        self.last_answer, _ = agent.process(self.last_query, self.speech)
+        #self.last_answer, _ = agent.process(self.last_query, self.speech)
     
     def show_answer(self) -> None:
         """Show the answer to the user."""
