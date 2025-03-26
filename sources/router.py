@@ -142,6 +142,7 @@ class AgentRouter:
             ("i would like to setup a new AI project, index as mark2", "files"),
             ("Hey, can you find the old_project.zip file somewhere on my drive?", "files"),
             ("Tell me a funny story", "talk"),
+            ("can you make a snake game in python", "code"),
             ("Can you locate the backup folder I created last month on my system?", "files"),
             ("Share a random fun fact about space.", "talk"),
             ("Write a script to rename all files in a directory to lowercase.", "files"),

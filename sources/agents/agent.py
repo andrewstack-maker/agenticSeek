@@ -34,7 +34,8 @@ class Agent():
                        prompt_path:str,
                        provider,
                        recover_last_session=True,
-                       verbose=False) -> None:
+                       verbose=False,
+                       browser=None) -> None:
         """
         Args:
             name (str): Name of the agent.
@@ -42,9 +43,11 @@ class Agent():
             provider: The provider for the LLM.
             recover_last_session (bool, optional): Whether to recover the last conversation. 
             verbose (bool, optional): Enable verbose logging if True. Defaults to False.
+            browser: The browser class for web navigation (only for browser agent).
         """
             
         self.agent_name = name
+        self.browser = browser
         self.role = None
         self.type = None
         self.current_directory = os.getcwd()

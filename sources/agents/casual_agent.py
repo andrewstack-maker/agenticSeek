@@ -11,7 +11,7 @@ class CasualAgent(Agent):
         """
         The casual agent is a special for casual talk to the user without specific tasks.
         """
-        super().__init__(name, prompt_path, provider, verbose)
+        super().__init__(name, prompt_path, provider, verbose, None)
         self.tools = {
         } # No tools for the casual agent
         self.role = {

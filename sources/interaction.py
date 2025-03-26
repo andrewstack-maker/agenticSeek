@@ -12,7 +12,6 @@ class Interaction:
                  tts_enabled: bool = True,
                  stt_enabled: bool = True,
                  recover_last_session: bool = False):
-        self.tts_enabled = tts_enabled
         self.agents = agents
         self.current_agent = None
         self.router = AgentRouter(self.agents)

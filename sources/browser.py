@@ -21,80 +21,75 @@ from urllib.parse import urlparse
 
 from sources.utility import pretty_print
 
+def get_chrome_path() -> str:
+    if sys.platform.startswith("win"):
+        paths = [
+            "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+            "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+            os.path.join(os.environ.get("LOCALAPPDATA", ""), "Google\\Chrome\\Application\\chrome.exe")  # User install
+        ]
+    elif sys.platform.startswith("darwin"):  # macOS
+        paths = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+                 "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta"]
+    else:  # Linux
+        paths = ["/usr/bin/google-chrome", "/usr/bin/chromium-browser", "/usr/bin/chromium"]
+
+    for path in paths:
+        if os.path.exists(path) and os.access(path, os.X_OK):  # Check if executable
+            return path
+    return None
+
+def create_driver(headless=False):
+    chrome_options = Options()
+    chrome_path = get_chrome_path()
+    
+    if not chrome_path:
+        raise FileNotFoundError("Google Chrome not found. Please install it.")
+    chrome_options.binary_location = chrome_path
+    
+    if headless:
+        chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--autoplay-policy=user-gesture-required")
+    chrome_options.add_argument("--mute-audio")
+    chrome_options.add_argument("--disable-webgl")
+    chrome_options.add_argument("--disable-notifications")
+    security_prefs = {
+        "profile.default_content_setting_values.media_stream": 2,
+        "profile.default_content_setting_values.notifications": 2,
+        "profile.default_content_setting_values.popups": 2,
+        "profile.default_content_setting_values.geolocation": 2,
+        "safebrowsing.enabled": True,
+    }
+    chrome_options.add_experimental_option("prefs", security_prefs)
+    
+    chromedriver_path = shutil.which("chromedriver")
+    if not chromedriver_path:
+        chromedriver_path = chromedriver_autoinstaller.install()
+    
+    if not chromedriver_path:
+        raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
+    
+    service = Service(chromedriver_path)
+    return webdriver.Chrome(service=service, options=chrome_options)
+
 class Browser:
-    def __init__(self, headless=False, anticaptcha_install=False):
+    def __init__(self, driver, headless=False, anticaptcha_install=True):
         """Initialize the browser with optional headless mode."""
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Referer': 'https://www.google.com/',
-        }
         self.js_scripts_folder = "./sources/web_scripts/" if not __name__ == "__main__" else "./web_scripts/"
         self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
         try:
-            chrome_options = Options()
-            chrome_path = self.get_chrome_path()
-            
-            if not chrome_path:
-                raise FileNotFoundError("Google Chrome not found. Please install it.")
-            chrome_options.binary_location = chrome_path
-            
-            if headless:
-                chrome_options.add_argument("--headless")
-            chrome_options.add_argument("--disable-gpu")
-            chrome_options.add_argument("--no-sandbox")
-            chrome_options.add_argument("--disable-dev-shm-usage")
-            chrome_options.add_argument("--autoplay-policy=user-gesture-required")
-            chrome_options.add_argument("--mute-audio")
-            chrome_options.add_argument("--disable-webgl")
-            chrome_options.add_argument("--disable-notifications")
-            security_prefs = {
-                "profile.default_content_setting_values.media_stream": 2,  # Block webcam/mic
-                "profile.default_content_setting_values.notifications": 2,  # Block notifications
-                "profile.default_content_setting_values.popups": 2,  # Block pop-ups
-                "profile.default_content_setting_values.geolocation": 2,  # Block geolocation
-                "safebrowsing.enabled": True,  # Enable safe browsing
-            }
-            chrome_options.add_experimental_option("prefs", security_prefs)
-            
-            chromedriver_path = shutil.which("chromedriver") # system installed driver.
-            
-            #If not found, try auto-installing the correct version
-            if not chromedriver_path:
-                chromedriver_path = chromedriver_autoinstaller.install()
-          
-            if not chromedriver_path:
-                raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
-                
-            service = Service(chromedriver_path)
-            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+            self.driver = driver
             self.wait = WebDriverWait(self.driver, 10)
             self.logger = logging.getLogger(__name__)
             self.logger.info("Browser initialized successfully")
         except Exception as e:
             raise Exception(f"Failed to initialize browser: {str(e)}")
-        self.load_anticatpcha()
+        if anticaptcha_install:
+            self.load_anticatpcha()
             
-    @staticmethod
-    def get_chrome_path() -> str:
-        if sys.platform.startswith("win"):
-            paths = [
-                "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-                "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-                os.path.join(os.environ.get("LOCALAPPDATA", ""), "Google\\Chrome\\Application\\chrome.exe")  # User install
-            ]
-        elif sys.platform.startswith("darwin"):  # macOS
-            paths = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-                     "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta"]
-        else:  # Linux
-            paths = ["/usr/bin/google-chrome", "/usr/bin/chromium-browser", "/usr/bin/chromium"]
-
-        for path in paths:
-            if os.path.exists(path) and os.access(path, os.X_OK):  # Check if executable
-                return path
-        return None
-    
     def load_anticatpcha(self):
         print("You might want to install the AntiCaptcha extension for captchas.")
         self.driver.get(self.anticaptcha)

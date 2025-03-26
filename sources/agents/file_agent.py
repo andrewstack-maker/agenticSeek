@@ -9,7 +9,7 @@ class FileAgent(Agent):
         """
         The file agent is a special agent for file operations.
         """
-        super().__init__(name, prompt_path, provider, verbose)
+        super().__init__(name, prompt_path, provider, verbose, None)
         self.tools = {
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
