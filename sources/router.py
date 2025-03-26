@@ -118,6 +118,9 @@ class AgentRouter:
             ("Write a Python script to count words in a text file", "LOW"),
             ("Find a public API for sports scores and build a web app to show live updates", "HIGH"),
             ("Create a simple HTML page with CSS styling", "LOW"),
+            ("hi", "LOW"),
+            ("Bonjour", "LOW"),
+            ("What's up ?", "LOW"),
         ]
         texts = [text for text, _ in few_shots]
         labels = [label for _, label in few_shots]

@@ -36,6 +36,7 @@ setup(
         "text2emotion>=0.0.5",
         "python-dotenv>=1.0.0",
         "langid>=1.1.6",
+        "adaptive-classifier>=0.0.10",
         "httpx>=0.27,<0.29",
         "anyio>=3.5.0,<5",
         "distro>=1.7.0,<2",
