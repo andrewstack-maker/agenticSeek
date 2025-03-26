@@ -29,7 +29,7 @@ def main():
                                    model=config["MAIN"]["provider_model"],
                                    server_address=config["MAIN"]["provider_server_address"])
 
-    browser = Browser(create_driver(), headless=config.getboolean('MAIN', 'headless'))
+    browser = Browser(create_driver(), headless=config.getboolean('MAIN', 'headless_browser'))
 
     agents = [
         CasualAgent(name=config["MAIN"]["agent_name"],
