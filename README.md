@@ -25,7 +25,7 @@
 
 ![alt text](./media/exemples/matmul_golang.png)
 
-### Divide and conqueer (Experimental)
+### Plan and execute with agents (Experimental)
 
 ![alt text](./media/exemples/plan_weather_app.png)
 
