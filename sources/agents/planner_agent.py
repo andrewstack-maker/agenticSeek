@@ -63,6 +63,8 @@ class PlannerAgent(Agent):
         return zip(tasks_names, tasks)
     
     def make_prompt(self, task, needed_infos):
+        if needed_infos is None:
+            needed_infos = "No needed informations."
         prompt = f"""
         You are given the following informations:
         {needed_infos}
@@ -96,20 +98,21 @@ class PlannerAgent(Agent):
         agents_tasks = self.parse_agent_tasks(answer)
         if agents_tasks == (None, None):
             return "Failed to parse the tasks", reasoning
+        prev_agent_answer = None
         for task_name, task in agents_tasks:
             pretty_print(f"I will {task_name}.", color="info")
-            agent_prompt = self.make_prompt(task['task'], task['need'])
+            agent_prompt = self.make_prompt(task['task'], prev_agent_answer)
             pretty_print(f"Assigned agent {task['agent']} to {task_name}", color="info")
             if speech_module: speech_module.speak(f"I will {task_name}. I assigned the {task['agent']} agent to the task.")
             try:
-                self.agents[task['agent'].lower()].process(agent_prompt, speech_module)
+                prev_agent_answer, _ = self.agents[task['agent'].lower()].process(agent_prompt, speech_module)
                 pretty_print(f"-- Agent answer ---\n\n", color="output")
                 self.agents[task['agent'].lower()].show_answer()
                 pretty_print(f"\n\n", color="output")
             except Exception as e:
                 raise e
-        self.last_answer = answer
-        return answer, reasoning
+        self.last_answer = prev_agent_answer
+        return prev_agent_answer, reasoning
 
 if __name__ == "__main__":
     from llm_provider import Provider
