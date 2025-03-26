@@ -20,6 +20,7 @@ librosa>=0.10.2.post1
 selenium>=4.27.1
 markdownify>=1.1.0
 text2emotion>=0.0.5
+adaptive-classifier>=0.0.10
 langid>=1.1.6
 chromedriver-autoinstaller>=0.6.4
 httpx>=0.27,<0.29

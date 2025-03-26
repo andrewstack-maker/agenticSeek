@@ -12,7 +12,7 @@ class CoderAgent(Agent):
     The code agent is an agent that can write and execute code.
     """
     def __init__(self, name, prompt_path, provider, verbose=False):
-        super().__init__(name, prompt_path, provider, verbose)
+        super().__init__(name, prompt_path, provider, verbose, None)
         self.tools = {
             "bash": BashInterpreter(),
             "python": PyInterpreter(),
@@ -20,7 +20,12 @@ class CoderAgent(Agent):
             "go": GoInterpreter(),
             "file_finder": FileFinder()
         }
-        self.role = "Coding task"
+        self.role = {
+            "en": "code",
+            "fr": "codage",
+            "zh": "编码",
+            "es": "codificación",
+        }
         self.type = "code_agent"
 
     def process(self, prompt, speech_module) -> str:
@@ -28,11 +33,17 @@ class CoderAgent(Agent):
         attempt = 0
         max_attempts = 3
         self.memory.push('user', prompt)
+        clarify_trigger = "REQUEST_CLARIFICATION"
 
         while attempt < max_attempts:
             animate_thinking("Thinking...", color="status")
             self.wait_message(speech_module)
             answer, reasoning = self.llm_request()
+            if clarify_trigger in answer:
+                return answer.replace(clarify_trigger, ""), reasoning
+            if not "```" in answer:
+                self.last_answer = answer
+                break
             animate_thinking("Executing code...", color="status")
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)

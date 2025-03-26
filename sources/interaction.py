@@ -12,7 +12,6 @@ class Interaction:
                  tts_enabled: bool = True,
                  stt_enabled: bool = True,
                  recover_last_session: bool = False):
-        self.tts_enabled = tts_enabled
         self.agents = agents
         self.current_agent = None
         self.router = AgentRouter(self.agents)
@@ -99,17 +98,21 @@ class Interaction:
         if agent is None:
             return
         if self.current_agent != agent and self.last_answer is not None:
-            ## get history from previous agent, good ?
+            ## get last history from previous agent
             self.current_agent.memory.push('user', self.last_query)
             self.current_agent.memory.push('assistant', self.last_answer)
         self.current_agent = agent
+        tmp = self.last_answer
         self.last_answer, _ = agent.process(self.last_query, self.speech)
+        if self.last_answer == tmp:
+            self.last_answer = None
     
     def show_answer(self) -> None:
         """Show the answer to the user."""
         if self.last_query is None:
             return
-        self.current_agent.show_answer()
-        if self.tts_enabled:
+        if self.current_agent is not None:
+            self.current_agent.show_answer()
+        if self.tts_enabled and self.last_answer:
             self.speech.speak(self.last_answer)
 

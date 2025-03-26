@@ -12,40 +12,40 @@
 
 > *Do a web search to find tech startup in Japan working on cutting edge AI research*
 
-> *Make a snake game in Python*
+> *Can you make a tetris game in C ?*
 
-> *Scan my network with nmap, find out who is connected?*
+> *Can you find where is contract.pdf*?
 
-> *Hey can you find where is contract.pdf*?
+
+### Browse the web
+
+![alt text](./media/exemples/search_startup.png)
+
+### Code hand free
+
+![alt text](./media/exemples/matmul_golang.png)
+
+### Plan and execute with agents (Experimental)
+
+![alt text](./media/exemples/plan_weather_app.png)
+
+*See media/examples for other use case screenshots.*
 
 ## Features:
 
 - **100% Local**: No cloud, runs on your hardware. Your data stays yours.
 
-- **Voice interaction**: Voice-enabled natural interaction.
-
 - **Filesystem interaction**: Use bash to navigate and manipulate your files effortlessly.
 
-- **Code what you ask**: Can write, debug, and run code in Python, C, Golang and more languages on the way.
-
-- **Autonomous**: If a command flops or code breaks, it retries and fixes it by itself.
+- **Autonomous Coding**: Can write, debug, and run code in Python, C, Golang and more languages on the way.
 
 - **Agent routing**: Automatically picks the right agent for the job.
 
-- **Divide and Conquer**: For big tasks, spins up multiple agents to plan and execute.
+- **Planning**: For complex tasks, spins up multiple agents to plan and execute.
 
-- **Tool-Equipped**: From basic search to flight APIs and file exploration, every agent has it's own tools.
+- **Autonomous Web Browsing**: Autonomous web navigation.
 
-- **Memory**: Remembers what’s useful, your preferences and past sessions conversation.
-
-- **Web Browsing**: Autonomous web navigation.
-
-
-### Searching the web with agenticSeek :
-
-![alt text](./media/exemples/search_startup.png)
-
-*See media/examples for other use case screenshots.*
+- **Memory**: Efficient memory and sessions management. 
 
 ---
 
@@ -185,11 +185,11 @@ Here are some example usage:
 
 ### Casual
 
-> *Tell me a joke*
+> *Tell me about France*
 
-> *Where is flight ABC777 ? my mom is on that plane*
+> *What is the meaning of life ?*
 
-> *what is the meaning of life ?*
+> *Should I take creatine before or after workout?*
 
 
 After you type your query, agenticSeek will allocate the best agent for the task.

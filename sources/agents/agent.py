@@ -34,7 +34,8 @@ class Agent():
                        prompt_path:str,
                        provider,
                        recover_last_session=True,
-                       verbose=False) -> None:
+                       verbose=False,
+                       browser=None) -> None:
         """
         Args:
             name (str): Name of the agent.
@@ -42,9 +43,11 @@ class Agent():
             provider: The provider for the LLM.
             recover_last_session (bool, optional): Whether to recover the last conversation. 
             verbose (bool, optional): Enable verbose logging if True. Defaults to False.
+            browser: The browser class for web navigation (only for browser agent).
         """
             
         self.agent_name = name
+        self.browser = browser
         self.role = None
         self.type = None
         self.current_directory = os.getcwd()
@@ -122,7 +125,7 @@ class Agent():
                     "Computing... I recommand you have a coffee while I work.",
                     "Hold on, I’m crunching numbers.",
                     "Working on it, please let me think."]
-        speech_module.speak(messages[random.randint(0, len(messages)-1)])
+        if speech_module: speech_module.speak(messages[random.randint(0, len(messages)-1)])
     
     def get_blocks_result(self) -> list:
         return self.blocks_result
@@ -176,7 +179,6 @@ class Agent():
             blocks, save_path = tool.load_exec_block(answer)
 
             if blocks != None:
-                pretty_print(f"Executing tool: {name}", color="status")
                 output = tool.execute(blocks)
                 feedback = tool.interpreter_feedback(output) # tool interpreter feedback
                 success = not tool.execution_failure_check(output)

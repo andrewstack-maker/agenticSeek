@@ -9,24 +9,31 @@ class FileAgent(Agent):
         """
         The file agent is a special agent for file operations.
         """
-        super().__init__(name, prompt_path, provider, verbose)
+        super().__init__(name, prompt_path, provider, verbose, None)
         self.tools = {
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
         }
-        self.role = "find and read files"
+        self.work_dir = self.tools["file_finder"].get_work_dir()
+        self.role = {
+            "en": "files",
+            "fr": "fichiers",
+            "zh": "文件",
+            "es": "archivos",
+        }
         self.type = "file_agent"
     
     def process(self, prompt, speech_module) -> str:
         exec_success = False
+        prompt += f"\nWork directory: {self.work_dir}"
         self.memory.push('user', prompt)
-
-        self.wait_message(speech_module)
-        animate_thinking("Thinking...", color="status")
-        answer, reasoning = self.llm_request()
-        exec_success, _ = self.execute_modules(answer)
-        answer = self.remove_blocks(answer)
-        self.last_answer = answer
+        while exec_success is False:
+            self.wait_message(speech_module)
+            animate_thinking("Thinking...", color="status")
+            answer, reasoning = self.llm_request()
+            exec_success, _ = self.execute_modules(answer)
+            answer = self.remove_blocks(answer)
+            self.last_answer = answer
         return answer, reasoning
 
 if __name__ == "__main__":

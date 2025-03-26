@@ -8,6 +8,7 @@ import configparser
 from sources.llm_provider import Provider
 from sources.interaction import Interaction
 from sources.agents import Agent, CoderAgent, CasualAgent, FileAgent, PlannerAgent, BrowserAgent
+from sources.browser import Browser, create_driver
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -28,6 +29,8 @@ def main():
                                    model=config["MAIN"]["provider_model"],
                                    server_address=config["MAIN"]["provider_server_address"])
 
+    browser = Browser(create_driver(), headless=config.getboolean('MAIN', 'headless_browser'))
+
     agents = [
         CasualAgent(name=config["MAIN"]["agent_name"],
                     prompt_path="prompts/casual_agent.txt",
@@ -40,12 +43,17 @@ def main():
                   provider=provider, verbose=False),
         BrowserAgent(name="Browser",
                      prompt_path="prompts/browser_agent.txt",
-                     provider=provider, verbose=False)
+                     provider=provider, verbose=False, browser=browser),
+        # Planner agent is experimental, might work poorly, especially with model < 32b
+        PlannerAgent(name="Planner",
+                     prompt_path="prompts/planner_agent.txt",
+                     provider=provider, verbose=False, browser=browser)
     ]
 
-    interaction = Interaction(agents, tts_enabled=config.getboolean('MAIN', 'speak'),
-                                      stt_enabled=config.getboolean('MAIN', 'listen'),
-                                      recover_last_session=config.getboolean('MAIN', 'recover_last_session'))
+    interaction = Interaction(agents,
+                              tts_enabled=config.getboolean('MAIN', 'speak'),
+                              stt_enabled=config.getboolean('MAIN', 'listen'),
+                              recover_last_session=config.getboolean('MAIN', 'recover_last_session'))
     try:
         while interaction.is_active:
             interaction.get_user()

@@ -9,17 +9,22 @@ from datetime import date
 from typing import List, Tuple
 
 class BrowserAgent(Agent):
-    def __init__(self, name, prompt_path, provider, verbose=False):
+    def __init__(self, name, prompt_path, provider, verbose=False, browser=None):
         """
         The Browser agent is an agent that navigate the web autonomously in search of answer
         """
-        super().__init__(name, prompt_path, provider, verbose)
+        super().__init__(name, prompt_path, provider, verbose, browser)
         self.tools = {
             "web_search": searxSearch(),
         }
-        self.role = "Web search and navigation"
+        self.role = {
+            "en": "web",
+            "fr": "web",
+            "zh": "网络",
+            "es": "web"
+        }
         self.type = "browser_agent"
-        self.browser = Browser()
+        self.browser = browser
         self.current_page = ""
         self.search_history = []
         self.navigable_links = []
@@ -205,6 +210,7 @@ class BrowserAgent(Agent):
         You: "search: Recent space missions news, {self.date}"
 
         Do not explain, do not write anything beside the search query.
+        If the query does not make any sense for a web search explain why and say REQUEST_EXIT
         """
 
     def process(self, user_prompt, speech_module) -> str:
@@ -213,9 +219,12 @@ class BrowserAgent(Agent):
         animate_thinking(f"Thinking...", color="status")
         self.memory.push('user', self.search_prompt(user_prompt))
         ai_prompt, _ = self.llm_request()
+        if "REQUEST_EXIT" in ai_prompt:
+            # request make no sense, maybe wrong agent was allocated?
+            return ai_prompt, "" 
         animate_thinking(f"Searching...", color="status")
         search_result_raw = self.tools["web_search"].execute([ai_prompt], False)
-        search_result = self.jsonify_search_results(search_result_raw)[:7] # until futher improvement
+        search_result = self.jsonify_search_results(search_result_raw)[:12] # until futher improvement
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
         while not complete:
@@ -243,7 +252,7 @@ class BrowserAgent(Agent):
                 continue
 
             animate_thinking(f"Navigating to {links[0]}", color="status")
-            speech_module.speak(f"Navigating to {links[0]}")
+            if speech_module: speech_module.speak(f"Navigating to {links[0]}")
             self.browser.go_to(links[0])
             self.current_page = links[0]
             self.search_history.append(links[0])

@@ -1,4 +1,5 @@
 *.wav
+*.safetensors
 config.ini
 *.egg-info
 experimental/

@@ -35,6 +35,9 @@ class Tools():
         self.current_dir = self.create_work_dir()
         self.excutable_blocks_found = False
     
+    def get_work_dir(self):
+        return self.current_dir
+    
     def check_config_dir_validity(self):
         """
         Check if the config directory is valid.

@@ -19,7 +19,7 @@ class LanguageUtility:
             text: string to analyze
         Returns: ISO639-1 language code
         """
-        langid.set_languages(['fr', 'en', 'zh', 'es'])  # ISO 639-1 codes
+        langid.set_languages(['fr', 'en', 'zh', 'es'])
         lang, score = langid.classify(text)
         return lang
 
