@@ -255,7 +255,6 @@ class Browser:
             return form_strings
 
         except Exception as e:
-            self.logger.error(f"Error extracting form inputs: {str(e)}")
             return [f"Error extracting form inputs."]
 
     def get_buttons_xpath(self) -> List[str]:
