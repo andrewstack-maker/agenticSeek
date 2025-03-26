@@ -14,6 +14,7 @@ class FileAgent(Agent):
             "file_finder": FileFinder(),
             "bash": BashInterpreter()
         }
+        self.work_dir = self.tools["file_finder"].get_work_dir()
         self.role = {
             "en": "files",
             "fr": "fichiers",
@@ -24,6 +25,7 @@ class FileAgent(Agent):
     
     def process(self, prompt, speech_module) -> str:
         exec_success = False
+        prompt += f"\nWork directory: {self.work_dir}"
         self.memory.push('user', prompt)
 
         self.wait_message(speech_module)

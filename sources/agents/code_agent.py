@@ -33,11 +33,17 @@ class CoderAgent(Agent):
         attempt = 0
         max_attempts = 3
         self.memory.push('user', prompt)
+        clarify_trigger = "REQUEST_CLARIFICATION"
 
         while attempt < max_attempts:
             animate_thinking("Thinking...", color="status")
             self.wait_message(speech_module)
             answer, reasoning = self.llm_request()
+            if clarify_trigger in answer:
+                return answer.replace(clarify_trigger, ""), reasoning
+            if not "```" in answer:
+                self.last_answer = answer
+                break
             animate_thinking("Executing code...", color="status")
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)

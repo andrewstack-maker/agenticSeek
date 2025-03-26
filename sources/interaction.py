@@ -103,7 +103,10 @@ class Interaction:
             self.current_agent.memory.push('user', self.last_query)
             self.current_agent.memory.push('assistant', self.last_answer)
         self.current_agent = agent
+        tmp = self.last_answer
         self.last_answer, _ = agent.process(self.last_query, self.speech)
+        if self.last_answer == tmp:
+            self.last_answer = None
     
     def show_answer(self) -> None:
         """Show the answer to the user."""

@@ -176,7 +176,6 @@ class Agent():
             blocks, save_path = tool.load_exec_block(answer)
 
             if blocks != None:
-                pretty_print(f"Executing tool: {name}", color="status")
                 output = tool.execute(blocks)
                 feedback = tool.interpreter_feedback(output) # tool interpreter feedback
                 success = not tool.execution_failure_check(output)

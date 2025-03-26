@@ -263,6 +263,8 @@ class AgentRouter:
             ("What are some good netflix show like Altered Carbon ?", "web"),
             ("can you find the latest research paper on AI", "web"),
             ("can you find research.pdf in my drive", "files"),
+            ("hi", "talk"),
+            ("hello", "talk"),
         ]
         texts = [text for text, _ in few_shots]
         labels = [label for _, label in few_shots]
