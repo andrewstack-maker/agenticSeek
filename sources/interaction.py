@@ -109,7 +109,7 @@ class Interaction:
         """Show the answer to the user."""
         if self.last_query is None:
             return
-        if self.current_agent is None:
+        if self.current_agent is not None:
             self.current_agent.show_answer()
         if self.tts_enabled and self.last_answer:
             self.speech.speak(self.last_answer)
