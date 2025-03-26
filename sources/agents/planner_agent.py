@@ -17,9 +17,9 @@ class PlannerAgent(Agent):
         }
         self.tools['json'].tag = "json"
         self.agents = {
-            "coder": CoderAgent(model, name, prompt_path, provider),
-            "file": FileAgent(model, name, prompt_path, provider),
-            "web": BrowserAgent(model, name, prompt_path, provider)
+            "coder": CoderAgent(name, "prompts/coder_agent.txt", provider, verbose=False),
+            "file": FileAgent(name, "prompts/file_agent.txt", provider, verbose=False),
+            "web": BrowserAgent(name, "prompts/browser_agent.txt", provider, verbose=False)
         }
         self.role = {
             "en": "Research, setup and code",
@@ -70,12 +70,28 @@ class PlannerAgent(Agent):
         """
         return prompt
     
+    def show_plan(self, json_plan):
+        agents_tasks = self.parse_agent_tasks(json_plan)
+        pretty_print(f"--- Plan ---", color="output")
+        for task_name, task in agents_tasks:
+            pretty_print(f"{task}", color="output")
+        pretty_print(f"--- End of Plan ---", color="output")
+    
     def process(self, prompt, speech_module) -> str:
-        self.memory.push('user', prompt)
-        self.wait_message(speech_module)
-        animate_thinking("Thinking...", color="status")
+        ok = False
         agents_tasks = (None, None)
-        answer, reasoning = self.llm_request()
+        while not ok:
+            self.wait_message(speech_module)
+            animate_thinking("Thinking...", color="status")
+            self.memory.push('user', prompt)
+            answer, _ = self.llm_request()
+            self.show_plan(answer)
+            ok_str = input("Is the plan ok? (y/n): ")
+            if ok_str == 'y':
+                ok = True
+            else:
+                prompt = input("Please reformulate: ")
+
         agents_tasks = self.parse_agent_tasks(answer)
         if agents_tasks == (None, None):
             return "Failed to parse the tasks", reasoning
@@ -83,16 +99,14 @@ class PlannerAgent(Agent):
             pretty_print(f"I will {task_name}.", color="info")
             agent_prompt = self.make_prompt(task['task'], task['need'])
             pretty_print(f"Assigned agent {task['agent']} to {task_name}", color="info")
-            speech_module.speak(f"I will {task_name}. I assigned the {task['agent']} agent to the task.")
+            if speech_module: speech_module.speak(f"I will {task_name}. I assigned the {task['agent']} agent to the task.")
             try:
-                self.agents[task['agent'].lower()].process(agent_prompt, None)
+                self.agents[task['agent'].lower()].process(agent_prompt, speech_module)
                 pretty_print(f"-- Agent answer ---\n\n", color="output")
                 self.agents[task['agent'].lower()].show_answer()
                 pretty_print(f"\n\n", color="output")
             except Exception as e:
-                pretty_print(f"Error: {e}", color="failure")
-                speech_module.speak(f"I encountered an error: {e}")
-                break
+                raise e
         self.last_answer = answer
         return answer, reasoning
 

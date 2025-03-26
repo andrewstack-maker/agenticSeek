@@ -252,7 +252,7 @@ class BrowserAgent(Agent):
                 continue
 
             animate_thinking(f"Navigating to {links[0]}", color="status")
-            speech_module.speak(f"Navigating to {links[0]}")
+            if speech_module: speech_module.speak(f"Navigating to {links[0]}")
             self.browser.go_to(links[0])
             self.current_page = links[0]
             self.search_history.append(links[0])

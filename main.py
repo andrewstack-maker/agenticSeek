@@ -40,6 +40,10 @@ def main():
                   provider=provider, verbose=False),
         BrowserAgent(name="Browser",
                      prompt_path="prompts/browser_agent.txt",
+                     provider=provider, verbose=False),
+        # Planner agent is experimental, might work poorly, especially with model < 32b
+        PlannerAgent(name="Planner",
+                     prompt_path="prompts/planner_agent.txt",
                      provider=provider, verbose=False)
     ]
 

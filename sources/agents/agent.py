@@ -122,7 +122,7 @@ class Agent():
                     "Computing... I recommand you have a coffee while I work.",
                     "Hold on, I’m crunching numbers.",
                     "Working on it, please let me think."]
-        speech_module.speak(messages[random.randint(0, len(messages)-1)])
+        if speech_module: speech_module.speak(messages[random.randint(0, len(messages)-1)])
     
     def get_blocks_result(self) -> list:
         return self.blocks_result

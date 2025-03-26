@@ -34,7 +34,7 @@
 
 - **Divide and Conquer**: For big tasks, spins up multiple agents to plan and execute.
 
-- **Tool-Equipped**: From basic search to flight APIs and file exploration, every agent has it's own tools.
+- **Tool-Equipped**: From basic search to api and file exploration, every agent has it's own tools.
 
 - **Memory**: Remembers what’s useful, your preferences and past sessions conversation.
 
@@ -185,11 +185,11 @@ Here are some example usage:
 
 ### Casual
 
-> *Tell me a joke*
+> *Tell me about France*
 
-> *Where is flight ABC777 ? my mom is on that plane*
+> *What is the meaning of life ?*
 
-> *what is the meaning of life ?*
+> *Should I take creatine before or after workout?*
 
 
 After you type your query, agenticSeek will allocate the best agent for the task.
