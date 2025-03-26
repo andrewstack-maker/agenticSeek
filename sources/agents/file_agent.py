@@ -27,13 +27,13 @@ class FileAgent(Agent):
         exec_success = False
         prompt += f"\nWork directory: {self.work_dir}"
         self.memory.push('user', prompt)
-
-        self.wait_message(speech_module)
-        animate_thinking("Thinking...", color="status")
-        answer, reasoning = self.llm_request()
-        exec_success, _ = self.execute_modules(answer)
-        answer = self.remove_blocks(answer)
-        self.last_answer = answer
+        while exec_success is False:
+            self.wait_message(speech_module)
+            animate_thinking("Thinking...", color="status")
+            answer, reasoning = self.llm_request()
+            exec_success, _ = self.execute_modules(answer)
+            answer = self.remove_blocks(answer)
+            self.last_answer = answer
         return answer, reasoning
 
 if __name__ == "__main__":
