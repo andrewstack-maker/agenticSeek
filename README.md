@@ -12,7 +12,7 @@
 
 > *Do a web search to find tech startup in Japan working on cutting edge AI research*
 
-> *Make a tetris game in C ?*
+> *Can you make a tetris game in C ?*
 
 > *Can you find where is contract.pdf*?
 
