@@ -171,11 +171,10 @@ class Provider:
         Use openai to generate text.
         """
         if self.is_local:
-            print("Using local OpenAI server")
             client = OpenAI(api_key=self.api_key, base_url=base_url)
         else:
-            print("Using OpenAI API")
             client = OpenAI(api_key=self.api_key)
+
         try:
             response = client.chat.completions.create(
                 model=self.model,

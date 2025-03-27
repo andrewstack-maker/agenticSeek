@@ -262,9 +262,11 @@ Set the desired provider in the `config.ini`
 [MAIN]
 is_local = False
 provider_name = openai
-provider_model = gpt4o
+provider_model = gpt-4o
 provider_server_address = 127.0.0.1:5000
 ```
+
+WARNING: Make sure there is not trailing space in the config.
 
 Set `is_local` to True if using a local openai-based api.
 
