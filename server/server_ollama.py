@@ -1,7 +1,5 @@
 #!/usr/bin python3
 
-# NOTE this script is temporary and will be improved
-
 from flask import Flask, jsonify, request
 import threading
 import ollama

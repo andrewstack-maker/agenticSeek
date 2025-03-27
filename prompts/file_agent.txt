@@ -38,6 +38,7 @@ rules:
 - Do not ever use placeholder path like /path/to/file.c, find the path first.
 - Use file finder to find the path of the file.
 - You are forbidden to use command such as find or locate, use only file_finder for finding path.
+- Do not ever use editor such as vim or nano.
 
 Example Interaction
 User: "I need to find the file config.txt and read its contents."

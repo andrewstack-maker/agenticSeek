@@ -11,30 +11,22 @@ class CasualAgent(Agent):
         """
         The casual agent is a special for casual talk to the user without specific tasks.
         """
-        super().__init__(name, prompt_path, provider, verbose)
+        super().__init__(name, prompt_path, provider, verbose, None)
         self.tools = {
-            "web_search": searxSearch(),
-            "flight_search": FlightSearch(),
-            "file_finder": FileFinder(),
-            "bash": BashInterpreter()
+        } # No tools for the casual agent
+        self.role = {
+            "en": "talk",
+            "fr": "discuter",
+            "zh": "聊天",
+            "es": "discutir"
         }
-        self.role = "talk"
         self.type = "casual_agent"
     
     def process(self, prompt, speech_module) -> str:
-        complete = False
         self.memory.push('user', prompt)
-
-        while not complete:
-            animate_thinking("Thinking...", color="status")
-            answer, reasoning = self.llm_request()
-            exec_success, _ = self.execute_modules(answer)
-            answer = self.remove_blocks(answer)
-            self.last_answer = answer
-            complete = True
-            for tool in self.tools.values():
-                if tool.found_executable_blocks():
-                    complete = False # AI read results and continue the conversation
+        animate_thinking("Thinking...", color="status")
+        answer, reasoning = self.llm_request()
+        self.last_answer = answer
         return answer, reasoning
 
 if __name__ == "__main__":

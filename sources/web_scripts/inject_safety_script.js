@@ -16,15 +16,6 @@ Element.prototype.requestFullscreen = function() {
 Element.prototype.requestPointerLock = function() {
     console.log('Blocked pointer lock');
 };
-// Block iframe creation (optional, since browser already blocks these)
-const originalCreateElement = document.createElement;
-document.createElement = function(tagName) {
-    if (tagName.toLowerCase() === 'iframe') {
-        console.log('Blocked iframe creation');
-        return null;
-    }
-    return originalCreateElement.apply(this, arguments);
-};
 //block fetch
 window.fetch = function() {
     console.log('Blocked fetch request');
