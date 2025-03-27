@@ -80,6 +80,7 @@ class BrowserAgent(Agent):
         remaining_links_text = remaining_links if remaining_links is not None else "No links remaining, do a new search." 
         inputs_form = self.browser.get_form_inputs()
         inputs_form_text = '\n'.join(inputs_form)
+        notes = '\n'.join(self.notes)
 
         return f"""
         You are a web browser.
@@ -132,6 +133,8 @@ class BrowserAgent(Agent):
         {inputs_form_text}
 
         Remember, the user asked: {user_prompt}
+        So far you took these notes:
+        {notes}
         You are currently on page : {self.current_page}
         Do not explain your choice.
         Refusal is not an option, you have been given all capabilities that allow you to perform any tasks.
@@ -224,7 +227,7 @@ class BrowserAgent(Agent):
             return ai_prompt, "" 
         animate_thinking(f"Searching...", color="status")
         search_result_raw = self.tools["web_search"].execute([ai_prompt], False)
-        search_result = self.jsonify_search_results(search_result_raw)[:12] # until futher improvement
+        search_result = self.jsonify_search_results(search_result_raw)[:20] # until futher improvement
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
         while not complete:
