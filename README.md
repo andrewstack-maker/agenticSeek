@@ -222,7 +222,11 @@ ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
 
 Note: For Windows or macOS, use ipconfig or ifconfig respectively to find the IP address.
 
-Clone the repository and then, run the script `stream_llm.py` in `server/`
+**If you wish to use openai based provider follow the *Run with an API*  section. vLLM**
+
+Make sure ollama is installed (Currently our script only support ollama)
+
+Run our server script.
 
 ```sh
 python3 server_ollama.py --model "deepseek-r1:32b"
@@ -231,8 +235,6 @@ python3 server_ollama.py --model "deepseek-r1:32b"
 ### 2️⃣ **Run it** 
 
 Now on your personal computer:
-
-Clone the repository.
 
 Change the `config.ini` file to set the `provider_name` to `server` and `provider_model` to `deepseek-r1:14b`.
 Set the `provider_server_address` to the ip address of the machine that will run the model.
@@ -254,17 +256,19 @@ python3 main.py
 
 ## **Run with an API**  
 
-Clone the repository.
-
 Set the desired provider in the `config.ini`
 
 ```sh
 [MAIN]
 is_local = False
 provider_name = openai
-provider_model = gpt4-o
-provider_server_address = 127.0.0.1:5000 # can be set to anything, not used
+provider_model = gpt4o
+provider_server_address = 127.0.0.1:5000
 ```
+
+Set `is_local` to True if using a local openai-based api.
+
+Change the IP address if your openai-based api run on your own server.
 
 Run the assistant:
 
