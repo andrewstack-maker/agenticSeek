@@ -10,22 +10,18 @@
 
 ![alt text](./media/whale_readme.jpg)
 
-> *Do a web search to find tech startup in Japan working on cutting edge AI research*
+> *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
 > *Can you make a tetris game in C ?*
 
-> *Can you find where is contract.pdf*?
+> *I would like to setup a new project file index as mark2.*
 
 
-### Browse the web
+### Do a deep web search
 
-![alt text](./media/exemples/search_startup.png)
+![alt text](./media/exemples/startup_search.png)
 
-### Code hand free
-
-![alt text](./media/exemples/matmul_golang.png)
-
-### Plan and execute with agents (Experimental)
+### Make a weather app
 
 ![alt text](./media/exemples/plan_weather_app.png)
 
