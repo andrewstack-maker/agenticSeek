@@ -306,12 +306,12 @@ The table below show the available providers:
 
 | Provider  | Local? | Description                                               |
 |-----------|--------|-----------------------------------------------------------|
-| Ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
+| ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
 | Server    | Yes    | Host the model on another machine, run your local machine |
-| LM studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
-| OpenAI    | No     | Use ChatGPT API (non-private)                             |
-| Deepseek  | No     | Deepseek API (non-private)                                |
-| HuggingFace| No    | Hugging-Face API (non-private)                            |
+| lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
+| openai    | No     | Use ChatGPT API (non-private)                             |
+| deepseek-api  | No     | Deepseek API (non-private)                                |
+| huggingface| No    | Hugging-Face API (non-private)                            |
 
 
 To select a provider change the config.ini:
