@@ -15,9 +15,10 @@ import httpx
 from sources.utility import pretty_print, animate_thinking
 
 class Provider:
-    def __init__(self, provider_name, model, server_address = "127.0.0.1:5000"):
+    def __init__(self, provider_name, model, server_address = "127.0.0.1:5000", is_local=False):
         self.provider_name = provider_name.lower()
         self.model = model
+        self.is_local = is_local
         self.server = self.check_address_format(server_address)
         self.available_providers = {
             "ollama": self.ollama_fn,
@@ -169,11 +170,15 @@ class Provider:
         """
         Use openai to generate text.
         """
-        client = OpenAI(api_key=self.api_key)
+        if self.is_local:
+            client = OpenAI(api_key=self.api_key, base_url=base_url)
+        else:
+            client = OpenAI(api_key=self.api_key)
+
         try:
             response = client.chat.completions.create(
                 model=self.model,
-                messages=history
+                messages=history,
             )
             thought = response.choices[0].message.content
             if verbose:

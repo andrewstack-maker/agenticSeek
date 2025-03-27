@@ -356,18 +356,6 @@ class Browser:
         script = self.load_js("inject_safety_script.js")
         input_elements = self.driver.execute_script(script)
 
-    def close(self):
-        """Close the browser."""
-        try:
-            self.driver.quit()
-            self.logger.info("Browser closed")
-        except Exception as e:
-            self.logger.error(f"Error closing browser: {str(e)}")
-
-    def __del__(self):
-        """Destructor to ensure browser is closed."""
-        self.close()
-
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     

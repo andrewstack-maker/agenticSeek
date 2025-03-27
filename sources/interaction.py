@@ -28,7 +28,7 @@ class Interaction:
         if tts_enabled:
             self.speech.speak("Hello, we are online and ready. What can I do for you ?")
         if recover_last_session:
-            self.recover_last_session()
+            self.load_last_session()
     
     def find_ai_name(self) -> str:
         """Find the name of the default AI. It is required for STT as a trigger word."""
@@ -39,7 +39,7 @@ class Interaction:
                 break
         return ai_name
     
-    def recover_last_session(self):
+    def load_last_session(self):
         """Recover the last session."""
         for agent in self.agents:
             agent.memory.load_memory(agent.type)

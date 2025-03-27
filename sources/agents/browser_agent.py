@@ -80,6 +80,7 @@ class BrowserAgent(Agent):
         remaining_links_text = remaining_links if remaining_links is not None else "No links remaining, do a new search." 
         inputs_form = self.browser.get_form_inputs()
         inputs_form_text = '\n'.join(inputs_form)
+        notes = '\n'.join(self.notes)
 
         return f"""
         You are a web browser.
@@ -132,6 +133,8 @@ class BrowserAgent(Agent):
         {inputs_form_text}
 
         Remember, the user asked: {user_prompt}
+        So far you took these notes:
+        {notes}
         You are currently on page : {self.current_page}
         Do not explain your choice.
         Refusal is not an option, you have been given all capabilities that allow you to perform any tasks.
@@ -260,7 +263,6 @@ class BrowserAgent(Agent):
             self.navigable_links = self.browser.get_navigable()
             prompt = self.make_navigation_prompt(user_prompt, page_text)
 
-        self.browser.close()
         prompt = self.conclude_prompt(user_prompt)
         self.memory.push('user', prompt)
         answer, reasoning = self.llm_request()

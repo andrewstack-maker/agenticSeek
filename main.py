@@ -22,12 +22,10 @@ def handleInterrupt(signum, frame):
 def main():
     signal.signal(signal.SIGINT, handler=handleInterrupt)
 
-    if config.getboolean('MAIN', 'is_local'):
-        provider = Provider(config["MAIN"]["provider_name"], config["MAIN"]["provider_model"], config["MAIN"]["provider_server_address"])
-    else:
-        provider = Provider(provider_name=config["MAIN"]["provider_name"],
-                                   model=config["MAIN"]["provider_model"],
-                                   server_address=config["MAIN"]["provider_server_address"])
+    provider = Provider(provider_name=config["MAIN"]["provider_name"],
+                        model=config["MAIN"]["provider_model"],
+                        server_address=config["MAIN"]["provider_server_address"],
+                        is_local=config.getboolean('MAIN', 'is_local'))
 
     browser = Browser(create_driver(), headless=config.getboolean('MAIN', 'headless_browser'))
 

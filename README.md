@@ -10,24 +10,16 @@
 
 ![alt text](./media/whale_readme.jpg)
 
-> *Do a web search to find tech startup in Japan working on cutting edge AI research*
+> *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
 > *Can you make a tetris game in C ?*
 
-> *Can you find where is contract.pdf*?
+> *I would like to setup a new project file index as mark2.*
 
 
-### Browse the web
+### Plan & Execute tasks
 
-![alt text](./media/exemples/search_startup.png)
-
-### Code hand free
-
-![alt text](./media/exemples/matmul_golang.png)
-
-### Plan and execute with agents (Experimental)
-
-![alt text](./media/exemples/plan_weather_app.png)
+![alt text](./media/exemples/startup_search.png)
 
 *See media/examples for other use case screenshots.*
 
@@ -222,7 +214,11 @@ ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
 
 Note: For Windows or macOS, use ipconfig or ifconfig respectively to find the IP address.
 
-Clone the repository and then, run the script `stream_llm.py` in `server/`
+**If you wish to use openai based provider follow the *Run with an API*  section.**
+
+Make sure ollama is installed (Currently our script only support ollama)
+
+Run our server script.
 
 ```sh
 python3 server_ollama.py --model "deepseek-r1:32b"
@@ -231,8 +227,6 @@ python3 server_ollama.py --model "deepseek-r1:32b"
 ### 2️⃣ **Run it** 
 
 Now on your personal computer:
-
-Clone the repository.
 
 Change the `config.ini` file to set the `provider_name` to `server` and `provider_model` to `deepseek-r1:14b`.
 Set the `provider_server_address` to the ip address of the machine that will run the model.
@@ -254,17 +248,21 @@ python3 main.py
 
 ## **Run with an API**  
 
-Clone the repository.
-
 Set the desired provider in the `config.ini`
 
 ```sh
 [MAIN]
 is_local = False
 provider_name = openai
-provider_model = gpt4-o
-provider_server_address = 127.0.0.1:5000 # can be set to anything, not used
+provider_model = gpt-4o
+provider_server_address = 127.0.0.1:5000
 ```
+
+WARNING: Make sure there is not trailing space in the config.
+
+Set `is_local` to True if using a local openai-based api.
+
+Change the IP address if your openai-based api run on your own server.
 
 Run the assistant:
 
