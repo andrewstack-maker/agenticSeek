@@ -25,8 +25,10 @@ class Memory():
         self.session_time = datetime.datetime.now()
         self.session_id = str(uuid.uuid4())
         self.conversation_folder = f"conversations/"
+        self.session_recovered = False
         if recover_last_session:
             self.load_memory()
+            self.session_recovered = True
         # memory compression system
         self.model = "pszemraj/led-base-book-summary"
         self.device = self.get_cuda_device()
@@ -65,6 +67,8 @@ class Memory():
 
     def load_memory(self, agent_type: str = "casual_agent") -> None:
         """Load the memory from the last session."""
+        if self.session_recovered == True:
+            return
         save_path = os.path.join(self.conversation_folder, agent_type)
         if not os.path.exists(save_path):
             return
