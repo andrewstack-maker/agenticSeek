@@ -17,13 +17,9 @@
 > *I would like to setup a new project file index as mark2.*
 
 
-### Do a deep web search
+### Plan & Execute tasks
 
 ![alt text](./media/exemples/startup_search.png)
-
-### Make a weather app
-
-![alt text](./media/exemples/plan_weather_app.png)
 
 *See media/examples for other use case screenshots.*
 
