@@ -260,7 +260,6 @@ class BrowserAgent(Agent):
             self.navigable_links = self.browser.get_navigable()
             prompt = self.make_navigation_prompt(user_prompt, page_text)
 
-        self.browser.close()
         prompt = self.conclude_prompt(user_prompt)
         self.memory.push('user', prompt)
         answer, reasoning = self.llm_request()
