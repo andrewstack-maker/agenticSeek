@@ -112,7 +112,7 @@ class PlannerAgent(Agent):
             except Exception as e:
                 raise e
         self.last_answer = prev_agent_answer
-        return prev_agent_answer, reasoning
+        return prev_agent_answer, ""
 
 if __name__ == "__main__":
     from llm_provider import Provider
