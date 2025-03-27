@@ -26,10 +26,10 @@ class Provider:
             "openai": self.openai_fn,
             "lm-studio": self.lm_studio_fn,
             "huggingface": self.huggingface_fn,
-            "deepseek-api": self.deepseek_fn
+            "deepseek": self.deepseek_fn
         }
         self.api_key = None
-        self.unsafe_providers = ["openai", "deepseek-api"]
+        self.unsafe_providers = ["openai", "deepseek"]
         if self.provider_name not in self.available_providers:
             raise ValueError(f"Unknown provider: {provider_name}")
         if self.provider_name in self.unsafe_providers:

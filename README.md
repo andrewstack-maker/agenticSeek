@@ -307,7 +307,7 @@ The table below show the available providers:
 | Provider  | Local? | Description                                               |
 |-----------|--------|-----------------------------------------------------------|
 | ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
-| Server    | Yes    | Host the model on another machine, run your local machine |
+| server    | Yes    | Host the model on another machine, run your local machine |
 | lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
 | openai    | No     | Use ChatGPT API (non-private)                             |
 | deepseek-api  | No     | Deepseek API (non-private)                                |
