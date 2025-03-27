@@ -222,7 +222,7 @@ ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
 
 Note: For Windows or macOS, use ipconfig or ifconfig respectively to find the IP address.
 
-**If you wish to use openai based provider follow the *Run with an API*  section. vLLM**
+**If you wish to use openai based provider follow the *Run with an API*  section.**
 
 Make sure ollama is installed (Currently our script only support ollama)
 
