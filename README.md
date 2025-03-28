@@ -17,7 +17,7 @@
 > *I would like to setup a new project file index as mark2.*
 
 
-### Plan & Execute tasks
+### agenticSeek can now plan tasks!
 
 ![alt text](./media/exemples/demo_image.png)
 
