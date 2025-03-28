@@ -87,6 +87,7 @@ class PlannerAgent(Agent):
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', prompt)
             answer, _ = self.llm_request()
+            pretty_print(answer.split('\n')[0], color="output")
             self.show_plan(answer)
             ok_str = input("Is the plan ok? (y/n): ")
             if ok_str == 'y':

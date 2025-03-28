@@ -40,7 +40,7 @@ class CInterpreter(Tools):
                     compile_command,
                     capture_output=True,
                     text=True,
-                    timeout=10
+                    timeout=60
                 )
 
                 if compile_result.returncode != 0:
