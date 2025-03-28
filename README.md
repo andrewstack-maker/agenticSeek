@@ -19,7 +19,7 @@
 
 ### Plan & Execute tasks
 
-![alt text](./media/exemples/startup_search.png)
+![alt text](./media/exemples/demo_image.png)
 
 *See media/examples for other use case screenshots.*
 
