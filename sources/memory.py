@@ -9,7 +9,7 @@ import json
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sources.utility import timer_decorator
+from sources.utility import timer_decorator, pretty_print
 
 class Memory():
     """
@@ -33,9 +33,8 @@ class Memory():
         self.model = "pszemraj/led-base-book-summary"
         self.device = self.get_cuda_device()
         self.memory_compression = memory_compression
-        if memory_compression:
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model)
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model)
+        self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model)
     
     def get_filename(self) -> str:
         return f"memory_{self.session_time.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
@@ -67,17 +66,24 @@ class Memory():
 
     def load_memory(self, agent_type: str = "casual_agent") -> None:
         """Load the memory from the last session."""
+        pretty_print(f"Loading {agent_type} past memories... ", color="status")
         if self.session_recovered == True:
             return
         save_path = os.path.join(self.conversation_folder, agent_type)
         if not os.path.exists(save_path):
+            pretty_print("No memory to load.", color="success")
             return
         filename = self.find_last_session_path(save_path)
         if filename is None:
+            pretty_print("Last session memory not found.", color="warning")
             return
         path = os.path.join(save_path, filename)
         with open(path, 'r') as f:
             self.memory = json.load(f)
+        if self.memory[-1]['role'] == 'user':
+            self.memory.pop()
+        self.compress()
+        pretty_print("Session recovered successfully", color="success")
     
     def reset(self, memory: list) -> None:
         self.memory = memory
@@ -86,7 +92,9 @@ class Memory():
         """Push a message to the memory."""
         if self.memory_compression and role == 'assistant':
             self.compress()
-        # we don't compress the last message
+        curr_idx = len(self.memory)
+        if self.memory[curr_idx-1]['content'] == content:
+            pretty_print("Warning: same message have been pushed twice to memory", color="error")
         self.memory.append({'role': role, 'content': content})
     
     def clear(self) -> None:
@@ -114,6 +122,8 @@ class Memory():
         """
         if self.tokenizer is None or self.model is None:
             return text
+        if len(text) < min_length*1.5:
+            return text
         max_length = len(text) // 2 if len(text) > min_length*2 else min_length*2
         input_text = "summarize: " + text
         inputs = self.tokenizer(input_text, return_tensors="pt", max_length=512, truncation=True)
@@ -134,12 +144,12 @@ class Memory():
         """
         Compress the memory using the AI model.
         """
-        if not self.memory_compression:
-            return
         for i in range(len(self.memory)):
             if i < 3:
                 continue
-            if len(self.memory[i]['content']) > 1024:
+            if self.memory[i]['role'] == 'system':
+                continue
+            if len(self.memory[i]['content']) > 128:
                 self.memory[i]['content'] = self.summarize(self.memory[i]['content'])
 
 if __name__ == "__main__":

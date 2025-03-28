@@ -28,23 +28,23 @@ def main():
                         is_local=config.getboolean('MAIN', 'is_local'))
 
     browser = Browser(create_driver(), headless=config.getboolean('MAIN', 'headless_browser'))
+    personality_folder = "jarvis" if config.getboolean('MAIN', 'jarvis_personality') else "base"
 
     agents = [
         CasualAgent(name=config["MAIN"]["agent_name"],
-                    prompt_path="prompts/casual_agent.txt",
+                    prompt_path=f"prompts/{personality_folder}/casual_agent.txt",
                     provider=provider, verbose=False),
         CoderAgent(name="coder",
-                   prompt_path="prompts/coder_agent.txt",
+                   prompt_path=f"prompts/{personality_folder}/coder_agent.txt",
                    provider=provider, verbose=False),
         FileAgent(name="File Agent",
-                  prompt_path="prompts/file_agent.txt",
+                  prompt_path=f"prompts/{personality_folder}/file_agent.txt",
                   provider=provider, verbose=False),
         BrowserAgent(name="Browser",
-                     prompt_path="prompts/browser_agent.txt",
+                     prompt_path=f"prompts/{personality_folder}/browser_agent.txt",
                      provider=provider, verbose=False, browser=browser),
-        # Planner agent is experimental, might work poorly, especially with model < 32b
         PlannerAgent(name="Planner",
-                     prompt_path="prompts/planner_agent.txt",
+                     prompt_path=f"prompts/{personality_folder}/planner_agent.txt",
                      provider=provider, verbose=False, browser=browser)
     ]
 
@@ -55,8 +55,8 @@ def main():
     try:
         while interaction.is_active:
             interaction.get_user()
-            interaction.think()
-            interaction.show_answer()
+            if interaction.think():
+                interaction.show_answer()
     except Exception as e:
         if config.getboolean('MAIN', 'save_session'):
             interaction.save_session()

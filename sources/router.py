@@ -384,7 +384,7 @@ class AgentRouter:
             pretty_print(f"Complex task detected, routing to planner agent.", color="info")
             return self.find_planner_agent()
         for agent in self.agents:
-            if best_agent == agent.role[lang]:
+            if best_agent == agent.role["en"]:
                 pretty_print(f"Selected agent: {agent.agent_name} (roles: {agent.role[lang]})", color="warning")
                 return agent
         pretty_print(f"Error choosing agent.", color="failure")

@@ -21,7 +21,6 @@ class BrowserAgent(Agent):
             "en": "web",
             "fr": "web",
             "zh": "网络",
-            "es": "web"
         }
         self.type = "browser_agent"
         self.browser = browser

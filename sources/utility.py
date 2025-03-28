@@ -53,13 +53,6 @@ def pretty_print(text, color = "info"):
         print(colored(text, color_map[color]))
 
 def animate_thinking(text, color="status", duration=2):
-    """
-    Display an animated "thinking..." indicator in a separate thread.
-    Args:
-        text (str): Text to display
-        color (str): Color for the text
-        duration (float): How long to animate in seconds
-    """
     def _animate():
         color_map = {
             "success": (Fore.GREEN, "green"),
@@ -71,22 +64,21 @@ def animate_thinking(text, color="status", duration=2):
             "default": (Fore.RESET, "black"),
             "info": (Fore.CYAN, "cyan")
         }
-
-        fore_color, term_color = color_map[color]
+        fore_color, term_color = color_map.get(color, color_map["default"])
         spinner = itertools.cycle(['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'])
         end_time = time.time() + duration
 
         while time.time() < end_time:
             symbol = next(spinner)
             if platform.system().lower() != "windows":
-                print(f"\r{fore_color}{symbol} {text}{Fore.RESET}", end="", flush=True)
+                print(f"{fore_color}{symbol} {text}{Fore.RESET}", flush=True)
             else:
-                print(colored(f"\r{symbol} {text}", term_color), end="", flush=True)
+                print(colored(f"{symbol} {text}", term_color), flush=True)
             time.sleep(0.1)
-        print()
+            print("\033[1A\033[K", end="", flush=True)
     animation_thread = threading.Thread(target=_animate)
-    animation_thread.daemon = True
     animation_thread.start()
+    animation_thread.join()
 
 def timer_decorator(func):
     """
@@ -101,6 +93,6 @@ def timer_decorator(func):
         start_time = time()
         result = func(*args, **kwargs)
         end_time = time()
-        print(f"{func.__name__} took {end_time - start_time:.2f} seconds to execute")
+        pretty_print(f"{func.__name__} took {end_time - start_time:.2f} seconds to execute", "status")
         return result
     return wrapper

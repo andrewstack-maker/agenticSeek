@@ -34,6 +34,7 @@ class Tools():
         self.config = configparser.ConfigParser()
         self.current_dir = self.create_work_dir()
         self.excutable_blocks_found = False
+        self.safe_mode = True
     
     def get_work_dir(self):
         return self.current_dir
@@ -186,7 +187,7 @@ class Tools():
             code_blocks.append(content)
             start_index = end_pos + len(end_tag)
         return code_blocks, save_path
-
+    
 if __name__ == "__main__":
     tool = Tools()
     tool.tag = "python"

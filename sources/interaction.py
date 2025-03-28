@@ -90,13 +90,13 @@ class Interaction:
         self.last_query = query
         return query
     
-    def think(self) -> None:
+    def think(self) -> bool:
         """Request AI agents to process the user input."""
         if self.last_query is None or len(self.last_query) == 0:
-            return
+            return False
         agent = self.router.select_agent(self.last_query)
         if agent is None:
-            return
+            return False
         if self.current_agent != agent and self.last_answer is not None:
             ## get last history from previous agent
             self.current_agent.memory.push('user', self.last_query)
@@ -106,6 +106,7 @@ class Interaction:
         self.last_answer, _ = agent.process(self.last_query, self.speech)
         if self.last_answer == tmp:
             self.last_answer = None
+        return True
     
     def show_answer(self) -> None:
         """Show the answer to the user."""
