@@ -66,13 +66,16 @@ class Memory():
 
     def load_memory(self, agent_type: str = "casual_agent") -> None:
         """Load the memory from the last session."""
+        pretty_print(f"Loading {agent_type} past memories... ", color="status")
         if self.session_recovered == True:
             return
         save_path = os.path.join(self.conversation_folder, agent_type)
         if not os.path.exists(save_path):
+            pretty_print("No memory to load.", color="success")
             return
         filename = self.find_last_session_path(save_path)
         if filename is None:
+            pretty_print("Last session memory not found.", color="warning")
             return
         path = os.path.join(save_path, filename)
         with open(path, 'r') as f:
@@ -80,6 +83,7 @@ class Memory():
         if self.memory[-1]['role'] == 'user':
             self.memory.pop()
         self.compress()
+        pretty_print("Session recovered successfully", color="success")
     
     def reset(self, memory: list) -> None:
         self.memory = memory
@@ -118,6 +122,8 @@ class Memory():
         """
         if self.tokenizer is None or self.model is None:
             return text
+        if len(text) < min_length*1.5:
+            return text
         max_length = len(text) // 2 if len(text) > min_length*2 else min_length*2
         input_text = "summarize: " + text
         inputs = self.tokenizer(input_text, return_tensors="pt", max_length=512, truncation=True)
@@ -141,7 +147,9 @@ class Memory():
         for i in range(len(self.memory)):
             if i < 3:
                 continue
-            if len(self.memory[i]['content']) > 1024:
+            if self.memory[i]['role'] == 'system':
+                continue
+            if len(self.memory[i]['content']) > 128:
                 self.memory[i]['content'] = self.summarize(self.memory[i]['content'])
 
 if __name__ == "__main__":

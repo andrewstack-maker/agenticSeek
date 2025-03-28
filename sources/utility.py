@@ -76,7 +76,6 @@ def animate_thinking(text, color="status", duration=2):
                 print(colored(f"{symbol} {text}", term_color), flush=True)
             time.sleep(0.1)
             print("\033[1A\033[K", end="", flush=True)
-        print()
     animation_thread = threading.Thread(target=_animate)
     animation_thread.start()
     animation_thread.join()
@@ -94,6 +93,6 @@ def timer_decorator(func):
         start_time = time()
         result = func(*args, **kwargs)
         end_time = time()
-        print(f"{func.__name__} took {end_time - start_time:.2f} seconds to execute")
+        pretty_print(f"{func.__name__} took {end_time - start_time:.2f} seconds to execute", "status")
         return result
     return wrapper
