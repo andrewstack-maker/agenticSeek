@@ -10,22 +10,13 @@ unsafe_commands_unix = [
     "shutdown",     # System shutdown
     "reboot",       # System reboot
     "halt",         # System halt
-    "init",         # System runlevel changes
     "sysctl",       # Kernel parameter changes
     "kill",         # Process termination
     "pkill",        # Kill by process name
     "killall",      # Kill all matching processes
-    "wget",         # Web file downloading
-    "curl",         # Data transfer
-    "scp",          # Secure copy
-    "ftp",          # File transfer protocol
-    "bash",         # Bash shell execution
     "exec",         # Replace process with command
     "tee",          # Write to files with privileges
     "umount",       # Unmount filesystems
-    "fsck",         # Filesystem repair
-    "iptables",     # Firewall rules
-    "ufw",          # Uncomplicated firewall
     "passwd",       # Password changes
     "useradd",      # Add users
     "userdel",      # Delete users
@@ -56,11 +47,8 @@ unsafe_commands_windows = [
     "takeown",      # Takes ownership of files
     "reg delete",   # Deletes registry keys/values
     "regedit /s",   # Silently imports registry changes
-    "sc",      # can Stops services
-    "net",     # can Stops/break services
     "shutdown",     # Shuts down or restarts the system
     "schtasks",     # Schedules tasks, can run malicious commands
-    "at",           # Older task scheduler (pre-Vista)
     "taskkill",     # Kills processes
     "wmic",  # Deletes processes via WMI
     "bcdedit",      # Modifies boot configuration
@@ -85,3 +73,10 @@ def is_unsafe(cmd):
         if any(c in cmd for c in unsafe_commands_unix):
             return True
     return False
+
+if __name__ == "__main__":
+    cmd = input("Enter a command: ")
+    if is_unsafe(cmd):
+        print("Unsafe command detected!")
+    else:
+        print("Command is safe to execute.")
