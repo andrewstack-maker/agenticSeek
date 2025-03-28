@@ -15,7 +15,7 @@ class Interaction:
         self.agents = agents
         self.current_agent = None
         self.router = AgentRouter(self.agents)
-        self.speech = Speech()
+        self.speech = Speech(enable=tts_enabled)
         self.is_active = True
         self.last_query = None
         self.last_answer = None

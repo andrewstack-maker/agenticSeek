@@ -10,7 +10,7 @@ class Speech():
     """
     Speech is a class for generating speech from text.
     """
-    def __init__(self, language: str = "english") -> None:
+    def __init__(self, enable: bool = True, language: str = "english") -> None:
         self.lang_map = {
             "english": 'a',
             "chinese": 'z',
@@ -21,7 +21,9 @@ class Speech():
             "chinese": ['zf_xiaobei', 'zf_xiaoni', 'zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'],
             "french": ['ff_siwis']
         }
-        self.pipeline = KPipeline(lang_code=self.lang_map[language])
+        self.pipeline = None
+        if enable:
+            self.pipeline = KPipeline(lang_code=self.lang_map[language])
         self.voice = self.voice_map[language][2]
         self.speed = 1.2
 
@@ -33,6 +35,8 @@ class Speech():
             sentence (str): The text to convert to speech. Will be pre-processed.
             voice_number (int, optional): Index of the voice to use from the voice map.
         """
+        if not self.pipeline:
+            return
         sentence = self.clean_sentence(sentence)
         self.voice = self.voice_map["english"][voice_number]
         generator = self.pipeline(

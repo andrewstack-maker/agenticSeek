@@ -171,6 +171,8 @@ class Agent():
         feedback = ""
         success = False
         blocks = None
+        if answer.startswith("```"):
+            answer = "I will execute:\n" + answer # there should always be a text before blocks for the function that display answer
 
         for name, tool in self.tools.items():
             feedback = ""

@@ -243,30 +243,22 @@ class Provider:
         This function is used to conduct tests.
         """
         thought = """
-        This is a test response from the test provider.
-        Change provider to 'ollama' or 'server' to get real responses.
+hello!
+```python
+print("Hello world from python")
+```
 
-        This is python saying hello.
-        ```python
-        print("Hello world from python")
-        ```
+This is ls -la from bash.
+```bash
+ls -la
+```
 
-        This is ls -la from bash.
-        ```bash
-        ls -la
-        ```
+This is pwd from bash. 
+```bash
+pwd
+```
 
-        This is pwd from bash. 
-        ```bash
-        pwd
-        ```
-
-        This is unsafe command. 
-        ```bash
-        rm does_not_exist.txt
-        ```
-
-        goodbye
+goodbye!
         """
         return thought
 
