@@ -18,7 +18,6 @@ class CasualAgent(Agent):
             "en": "talk",
             "fr": "discuter",
             "zh": "聊天",
-            "es": "discutir"
         }
         self.type = "casual_agent"
     

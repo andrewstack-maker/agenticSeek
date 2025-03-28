@@ -6,8 +6,10 @@ import subprocess
 
 if __name__ == "__main__":
     from tools import Tools
+    from safety import is_unsafe
 else:
     from sources.tools.tools import Tools
+    from sources.tools.safety import is_unsafe
 
 class BashInterpreter(Tools):
     """
@@ -19,16 +21,16 @@ class BashInterpreter(Tools):
     
     def language_bash_attempt(self, command: str):
         """
-        detect if AI attempt to run the code using bash.
-        if so, return True, otherwise return False.
-        The philosophy is that code written by the AI will be executed, so it should not use bash to run it.
+        Detect if AI attempt to run the code using bash.
+        If so, return True, otherwise return False.
+        Code written by the AI will be executed automatically, so it should not use bash to run it.
         """
         lang_interpreter = ["python3", "gcc", "g++", "go", "javac", "rustc", "clang", "clang++", "rustc", "rustc++", "rustc++"]
         for word in command.split():
             if word in lang_interpreter:
                 return True
         return False
-
+    
     def execute(self, commands: str, safety=False, timeout=1000):
         """
         Execute bash commands and display output in real-time.
@@ -38,6 +40,9 @@ class BashInterpreter(Tools):
     
         concat_output = ""
         for command in commands:
+            command = command.replace('\n', '')
+            if self.safe_mode and is_unsafe(commands):
+                return "Unsafe command detected, execution aborted."
             if self.language_bash_attempt(command):
                 continue
             try:
@@ -50,12 +55,11 @@ class BashInterpreter(Tools):
                 )
                 command_output = ""
                 for line in process.stdout:
-                    print(line, end="")
                     command_output += line
                 return_code = process.wait(timeout=timeout)
                 if return_code != 0:
                     return f"Command {command} failed with return code {return_code}:\n{command_output}"
-                concat_output += f"Output of {command}:\n{command_output.strip()}\n\n"
+                concat_output += f"Output of {command}:\n{command_output.strip()}\n"
             except subprocess.TimeoutExpired:
                 process.kill()  # Kill the process if it times out
                 return f"Command {command} timed out. Output:\n{command_output}"

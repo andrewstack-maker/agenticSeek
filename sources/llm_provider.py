@@ -26,7 +26,8 @@ class Provider:
             "openai": self.openai_fn,
             "lm-studio": self.lm_studio_fn,
             "huggingface": self.huggingface_fn,
-            "deepseek": self.deepseek_fn
+            "deepseek": self.deepseek_fn,
+            "test": self.test_fn
         }
         self.api_key = None
         self.unsafe_providers = ["openai", "deepseek"]
@@ -245,13 +246,27 @@ class Provider:
         This is a test response from the test provider.
         Change provider to 'ollama' or 'server' to get real responses.
 
+        This is python saying hello.
         ```python
         print("Hello world from python")
         ```
 
+        This is ls -la from bash.
         ```bash
-        echo "Hello world from bash"
+        ls -la
         ```
+
+        This is pwd from bash. 
+        ```bash
+        pwd
+        ```
+
+        This is unsafe command. 
+        ```bash
+        rm does_not_exist.txt
+        ```
+
+        goodbye
         """
         return thought
 
