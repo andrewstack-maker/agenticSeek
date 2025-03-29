@@ -13,12 +13,12 @@ class LlamacppLLM(GeneratorLLM):
     
     def generate(self, history):
         if self.llm is None:
+            self.logger.info(f"Loading {self.model}...")
             self.llm = Llama.from_pretrained(
                 repo_id=self.model,
                 filename="*Q8_0.gguf",
                 verbose=True
             )
-            return
         self.logger.info(f"Using {self.model} for generation with Llama.cpp")
         try:
             with self.state.lock:
