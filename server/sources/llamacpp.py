@@ -12,7 +12,7 @@ class LlamacppLLM(GeneratorLLM):
         self.llm = None
     
     def generate(self, history):
-        if self.model is None:
+        if self.llm is None:
             self.llm = Llama.from_pretrained(
                 repo_id=self.model,
                 filename="*q8_0.gguf",
