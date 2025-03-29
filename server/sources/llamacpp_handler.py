@@ -29,7 +29,7 @@ class LlamacppLLM(GeneratorLLM):
                   messages = history
             )
             with self.state.lock:
-                self.state.current_buffer = output['choices'][0]['content']
+                self.state.current_buffer = output['choices'][0]['message']['content']
         except Exception as e:
             self.logger.error(f"Error: {e}")
         finally:
