@@ -33,6 +33,7 @@ def start_generation():
 
 @app.route('/setup', methods=['POST'])
 def setup():
+    global generator
     data = request.get_json()
     model = data.get('model', None)
     provider = args.provider
@@ -49,6 +50,7 @@ def setup():
 
 @app.route('/get_updated_sentence')
 def get_updated_sentence():
+    global generator
     if not generator:
         return jsonify({"error": "Generator not initialized"}), 400
     return generator.get_status()
