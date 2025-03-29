@@ -2,9 +2,9 @@
 from .generator import GeneratorLLM
 
 class LlamacppLLM(GeneratorLLM):
-    from llama_cpp import Llama
 
     def __init__(self):
+        from llama_cpp import Llama
         """
         Handle generation using llama.cpp
         """

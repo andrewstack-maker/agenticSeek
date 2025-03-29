@@ -2,9 +2,9 @@
 from .generator import GeneratorLLM
 
 class OllamaLLM(GeneratorLLM):
-    import ollama
 
     def __init__(self):
+        import ollama
         """
         Handle generation using Ollama.
         """
