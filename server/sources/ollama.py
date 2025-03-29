@@ -18,6 +18,7 @@ class OllamaLLM(GeneratorLLM):
                 self.state.last_complete_sentence = ""
                 self.state.current_buffer = ""
 
+            self.logger.info("Starting generation...")
             stream = ollama.chat(
                 model=self.model,
                 messages=history,
@@ -26,7 +27,8 @@ class OllamaLLM(GeneratorLLM):
 
             for chunk in stream:
                 content = chunk['message']['content']
-                print(content, end='', flush=True)
+                if '\n' in content:
+                    self.logger.info(content)
 
                 with self.state.lock:
                     self.state.current_buffer += content
