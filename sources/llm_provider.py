@@ -107,13 +107,15 @@ class Provider:
         Use a remote server with LLM to generate text.
         """
         thought = ""
-        route_start = f"http://{self.server_ip}/generate"
+        route_setup = f"http://{self.server_ip}/setup"
+        route_gen = f"http://{self.server_ip}/generate"
 
         if not self.is_ip_online(self.server_ip.split(":")[0]):
             raise Exception(f"Server is offline at {self.server_ip}")
 
         try:
-            requests.post(route_start, json={"messages": history})
+            requests.post(route_setup, json={"model": self.model, "provider": self.provider_name})
+            requests.post(route_gen, json={"messages": history})
             is_complete = False
             while not is_complete:
                 response = requests.get(f"http://{self.server_ip}/get_updated_sentence")

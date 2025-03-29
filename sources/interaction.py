@@ -25,10 +25,10 @@ class Interaction:
         if stt_enabled:
             self.transcriber = AudioTranscriber(self.ai_name, verbose=False)
             self.recorder = AudioRecorder()
-        if tts_enabled:
-            self.speech.speak("Hello, we are online and ready. What can I do for you ?")
         if recover_last_session:
             self.load_last_session()
+        if tts_enabled:
+            self.speech.speak("Hello, we are online and ready. What can I do for you ?")
     
     def find_ai_name(self) -> str:
         """Find the name of the default AI. It is required for STT as a trigger word."""

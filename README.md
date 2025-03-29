@@ -149,6 +149,8 @@ You will be prompted with `>>> `
 This indicate agenticSeek await you type for instructions.
 You can also use speech to text by setting `listen = True` in the config.
 
+To exit, simply say `goodbye`.
+
 Here are some example usage:
 
 ### Coding/Bash
