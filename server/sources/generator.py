@@ -1,5 +1,4 @@
 
-from flask import jsonify
 import threading
 import logging
 from abc import abstractmethod
@@ -47,7 +46,7 @@ class GeneratorLLM():
     
     def get_status(self) -> dict:
         with self.state.lock:
-            return jsonify(self.state.status())
+            return self.state.status()
 
     @abstractmethod
     def generate(self, history: list) -> None:
@@ -59,3 +58,7 @@ class GeneratorLLM():
             None
         """
         pass
+
+if __name__ == "__main__":
+    generator = GeneratorLLM()
+    generator.get_status()
