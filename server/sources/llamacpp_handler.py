@@ -17,6 +17,7 @@ class LlamacppLLM(GeneratorLLM):
             self.llm = Llama.from_pretrained(
                 repo_id=self.model,
                 filename="*Q8_0.gguf",
+                n_ctx=4096,
                 verbose=True
             )
         self.logger.info(f"Using {self.model} for generation with Llama.cpp")
