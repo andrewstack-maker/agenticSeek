@@ -55,7 +55,7 @@ def pretty_print(text, color="info"):
         color = "info"
     print(colored(text, color_map[color]))
 
-def animate_thinking(text, color="status", duration=2):
+def animate_thinking(text, color="status", duration=120):
     """
     Animate a thinking spinner while a task is being executed.
     It use a daemon thread to run the animation. This will not block the main thread.
@@ -77,9 +77,10 @@ def animate_thinking(text, color="status", duration=2):
         }
         fore_color, term_color = color_map.get(color, color_map["default"])
         spinner = itertools.cycle([
-            '█▒▒▒▒▒', '██▒▒▒▒', '███▒▒▒', '████▒▒', '█████▒', '██████',  
-            '█████▒', '████▒▒', '███▒▒▒', '██▒▒▒▒', '█▒▒▒▒▒', '▒█▒▒▒█',
-            '▒▒█▒█▒', '▒▒▒██▒', '▒█▒█▒▒', '█▒▒▒▒▒'
+            '▉▁▁▁▁▁', '▉▉▂▁▁▁', '▉▉▉▃▁▁', '▉▉▉▉▅▁', '▉▉▉▉▉▇', '▉▉▉▉▉▉',
+            '▉▉▉▉▇▅', '▉▉▉▆▃▁', '▉▉▅▃▁▁', '▉▇▃▁▁▁', '▇▃▁▁▁▁', '▃▁▁▁▁▁',
+            '▁▃▅▃▁▁', '▁▅▉▅▁▁', '▃▉▉▉▃▁', '▅▉▁▉▅▃', '▇▃▁▃▇▅', '▉▁▁▁▉▇',
+            '▉▅▃▁▃▅', '▇▉▅▃▅▇', '▅▉▇▅▇▉', '▃▇▉▇▉▅', '▁▅▇▉▇▃', '▁▃▅▇▅▁' 
         ])
         end_time = time.time() + duration
 

@@ -49,19 +49,22 @@ def create_driver(headless=False):
     
     if headless:
         chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--disable-webgl")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--autoplay-policy=user-gesture-required")
     chrome_options.add_argument("--mute-audio")
-    chrome_options.add_argument("--disable-webgl")
     chrome_options.add_argument("--disable-notifications")
+    chrome_options.add_argument('--window-size=1080,560')
     security_prefs = {
         "profile.default_content_setting_values.media_stream": 2,
         "profile.default_content_setting_values.geolocation": 2,
         "safebrowsing.enabled": True,
     }
     chrome_options.add_experimental_option("prefs", security_prefs)
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
     
     chromedriver_path = shutil.which("chromedriver")
     if not chromedriver_path:
@@ -74,7 +77,7 @@ def create_driver(headless=False):
     return webdriver.Chrome(service=service, options=chrome_options)
 
 class Browser:
-    def __init__(self, driver, headless=False, anticaptcha_install=True):
+    def __init__(self, driver, anticaptcha_install=True):
         """Initialize the browser with optional headless mode."""
         self.js_scripts_folder = "./sources/web_scripts/" if not __name__ == "__main__" else "./web_scripts/"
         self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
