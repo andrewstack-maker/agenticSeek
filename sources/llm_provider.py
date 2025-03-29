@@ -115,6 +115,8 @@ class Provider:
 
         try:
             requests.post(route_setup, json={"model": self.model})
+            pretty_print("Setting up server...", color="status")
+            time.sleep(5)
             requests.post(route_gen, json={"messages": history})
             is_complete = False
             while not is_complete:
