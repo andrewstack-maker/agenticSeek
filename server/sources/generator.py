@@ -24,6 +24,12 @@ class GeneratorLLM():
         self.model = None
         self.state = GenerationState()
         self.logger = logging.getLogger(__name__)
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
+        self.logger.setLevel(logging.INFO)
     
     def set_model(self, model: str) -> None:
         self.logger.info(f"Model set to {model}")

@@ -1,14 +1,10 @@
 #!/usr/bin python3
 
-import logging
 import argparse
 from flask import Flask, jsonify, request
 
 from sources.llamacpp import LlamacppLLM
 from sources.ollama import OllamaLLM
-
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
 
 parser = argparse.ArgumentParser(description='AgenticSeek server script')
 parser.add_argument('--provider', type=str, help='LLM backend library to use. set to [ollama] or [llamacpp]', required=True)

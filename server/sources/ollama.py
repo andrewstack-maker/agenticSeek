@@ -1,10 +1,10 @@
 
 from .generator import GeneratorLLM
+import ollama
 
 class OllamaLLM(GeneratorLLM):
 
     def __init__(self):
-        import ollama
         """
         Handle generation using Ollama.
         """

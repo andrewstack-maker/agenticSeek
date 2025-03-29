@@ -116,11 +116,13 @@ class Provider:
         try:
             requests.post(route_setup, json={"model": self.model})
             pretty_print("Setting up server...", color="status")
-            time.sleep(5)
             requests.post(route_gen, json={"messages": history})
             is_complete = False
             while not is_complete:
                 response = requests.get(f"http://{self.server_ip}/get_updated_sentence")
+                print("raw response", response.json())
+                if "error" in response.json():
+                    continue
                 thought = response.json()["sentence"]
                 is_complete = bool(response.json()["is_complete"])
                 time.sleep(2)
