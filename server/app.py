@@ -49,7 +49,7 @@ def setup():
 
 @app.route('/get_updated_sentence')
 def get_updated_sentence():
-    return generator.get_status()
+    return jsonify(generator.get_status())
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded=True, debug=True, port=args.port)
