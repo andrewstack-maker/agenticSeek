@@ -12,11 +12,14 @@ log.setLevel(logging.ERROR)
 
 parser = argparse.ArgumentParser(description='AgenticSeek server script')
 parser.add_argument('--provider', type=str, help='LLM backend library to use. set to [ollama] or [llamacpp]', required=True)
+parser.add_argument('--port', type=int, help='port to use', required=True)
 args = parser.parse_args()
 
 app = Flask(__name__)
 
 generator = None
+
+assert args.provider in ["ollama", "llamacpp"], f"Provider {args.provider} does not exists. see --help for more information"
 
 @app.route('/generate', methods=['POST'])
 def start_generation():
@@ -49,4 +52,4 @@ def get_updated_sentence():
     return generator.get_status()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', threaded=True, debug=True, port=3333)
+    app.run(host='0.0.0.0', threaded=True, debug=True, port=args.port)
