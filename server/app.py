@@ -13,9 +13,9 @@ args = parser.parse_args()
 
 app = Flask(__name__)
 
-generator = None
-
 assert args.provider in ["ollama", "llamacpp"], f"Provider {args.provider} does not exists. see --help for more information"
+
+generator = OllamaLLM if args.provider == "ollama" else LlamacppLLM 
 
 @app.route('/generate', methods=['POST'])
 def start_generation():
@@ -32,13 +32,6 @@ def setup():
     global generator
     data = request.get_json()
     model = data.get('model', None)
-    provider = args.provider
-    if provider == "ollama":
-        generator = OllamaLLM()
-    elif provider == "llamacpp":
-        generator = LlamacppLLM()
-    else:
-        raise ValueError(f"Provider {provider} does not exists. see --help for more information")
     if model is None:
         return jsonify({"error": "Model not provided"}), 400
     generator.set_model(model)

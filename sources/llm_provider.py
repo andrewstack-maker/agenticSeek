@@ -120,14 +120,14 @@ class Provider:
             is_complete = False
             while not is_complete:
                 response = requests.get(f"http://{self.server_ip}/get_updated_sentence")
-                print("raw response", response.json())
                 if "error" in response.json():
-                    continue
+                    pretty_print(response.json()["error"], color="failure")
+                    break
                 thought = response.json()["sentence"]
                 is_complete = bool(response.json()["is_complete"])
                 time.sleep(2)
         except KeyError as e:
-            raise Exception(f"{str(e)}\n\nError occured with server route. Are you using the correct address for the config.ini provider?") from e
+            raise Exception(f"{str(e)}\nError occured with server route. Are you using the correct address for the config.ini provider?") from e
         except Exception as e:
             raise e
         return thought
