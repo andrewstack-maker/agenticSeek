@@ -15,7 +15,7 @@ class LlamacppLLM(GeneratorLLM):
         if self.llm is None:
             self.llm = Llama.from_pretrained(
                 repo_id=self.model,
-                filename="*q8_0.gguf",
+                filename="*Q8_0.gguf",
                 verbose=True
             )
             return
