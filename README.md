@@ -206,8 +206,6 @@ If you have a powerful computer or a server that you can use, but you want to us
 
 ### 1️⃣  **Set up and start the server scripts** 
 
-You need to have ollama installed on the server (We will integrate VLLM and llama.cpp soon).
-
 On your "server" that will run the AI model, get the ip address
 
 ```sh

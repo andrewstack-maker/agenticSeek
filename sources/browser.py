@@ -78,7 +78,7 @@ def create_driver(headless=False):
 
 class Browser:
     def __init__(self, driver, anticaptcha_install=True):
-        """Initialize the browser with optional headless mode."""
+        """Initialize the browser with optional AntiCaptcha installation."""
         self.js_scripts_folder = "./sources/web_scripts/" if not __name__ == "__main__" else "./web_scripts/"
         self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
         try:

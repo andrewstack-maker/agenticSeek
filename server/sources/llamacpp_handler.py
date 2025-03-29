@@ -1,6 +1,7 @@
 
 from .generator import GeneratorLLM
 from llama_cpp import Llama
+from decorator import timer_decorator
 
 class LlamacppLLM(GeneratorLLM):
 
@@ -11,6 +12,7 @@ class LlamacppLLM(GeneratorLLM):
         super().__init__()
         self.llm = None
     
+    @timer_decorator
     def generate(self, history):
         if self.llm is None:
             self.logger.info(f"Loading {self.model}...")
