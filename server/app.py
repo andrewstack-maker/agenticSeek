@@ -1,6 +1,7 @@
 #!/usr/bin python3
 
 import argparse
+import time
 from flask import Flask, jsonify, request
 
 from sources.llamacpp_handler import LlamacppLLM
@@ -35,16 +36,6 @@ def setup():
         return jsonify({"error": "Model not provided"}), 403
     generator.set_model(model)
     return jsonify({"message": "Model set"}), 200
-
-@app.route('/get_complete_sentence', methods=['GET'])
-def get_complete_sentence():
-    if not generator:
-        return jsonify({"error": "Generator not initialized"}), 404
-    while True:
-        status = generator.get_status()
-        if status["is_complete"]:
-            return jsonify(status)
-    return None
 
 @app.route('/get_updated_sentence')
 def get_updated_sentence():
