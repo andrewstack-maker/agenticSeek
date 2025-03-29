@@ -28,7 +28,8 @@ class LlamacppLLM(GeneratorLLM):
             output = self.llm.create_chat_completion(
                   messages = history
             )
-            self.state.current_buffer = output
+            with self.state.lock:
+                self.state.current_buffer = output
         except Exception as e:
             self.logger.error(f"Error: {e}")
         finally:
