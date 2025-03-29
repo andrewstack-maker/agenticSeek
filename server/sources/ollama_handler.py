@@ -1,4 +1,5 @@
 
+import time
 from .generator import GeneratorLLM
 import ollama
 
@@ -31,17 +32,28 @@ class OllamaLLM(GeneratorLLM):
 
                 with self.state.lock:
                     self.state.current_buffer += content
-
-        except ollama.ResponseError as e:
-            if e.status_code == 404:
+        except Exception as e:
+            if "404" in str(e):
                 self.logger.info(f"Downloading {self.model}...")
                 ollama.pull(self.model)
-            with self.state.lock:
-                self.state.is_generating = False
-            print(f"Error: {e}")
-        except Exception as e:
             if "refused" in str(e).lower():
                 raise Exception("Ollama connection failed. is the server running ?") from e
+            raise e
         finally:
+            self.logger.info("Generation complete")
             with self.state.lock:
                 self.state.is_generating = False
+
+if __name__ == "__main__":
+    generator = OllamaLLM()
+    history = [
+        {
+            "role": "user",
+            "content": "Hello, how are you ?"
+        }
+    ]
+    generator.set_model("deepseek-r1:1.5b")
+    generator.start(history)
+    while True:
+        print(generator.get_status())
+        time.sleep(1)
