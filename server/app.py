@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 assert args.provider in ["ollama", "llamacpp"], f"Provider {args.provider} does not exists. see --help for more information"
 
-generator = OllamaLLM if args.provider == "ollama" else LlamacppLLM 
+generator = OllamaLLM() if args.provider == "ollama" else LlamacppLLM() 
 
 @app.route('/generate', methods=['POST'])
 def start_generation():
