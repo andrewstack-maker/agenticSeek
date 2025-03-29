@@ -11,6 +11,7 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
 parser = argparse.ArgumentParser(description='AgenticSeek server script')
+parser.add_argument('--provider', type=str, help='LLM backend library to use. set to [ollama] or [llamacpp]', required=True)
 args = parser.parse_args()
 
 app = Flask(__name__)
@@ -31,14 +32,13 @@ def start_generation():
 def setup():
     data = request.get_json()
     model = data.get('model', None)
-    provider = data.get('provider', None)
-    if provider is not None and generator is None:
-        if provider == "ollama":
-            generator = OllamaLLM()
-        elif provider == "llamacpp":
-            generator = LlamacppLLM()
-        else:
-            return jsonify({"error": "Provider not supported
+    provider = args.provider
+    if provider == "ollama":
+        generator = OllamaLLM()
+    elif provider == "llamacpp":
+        generator = LlamacppLLM()
+    else:
+        raise ValueError(f"Provider {provider} does not exists. see --help for more information")
     if model is None:
         return jsonify({"error": "Model not provided"}), 400
     generator.set_model(model)

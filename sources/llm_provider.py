@@ -114,7 +114,7 @@ class Provider:
             raise Exception(f"Server is offline at {self.server_ip}")
 
         try:
-            requests.post(route_setup, json={"model": self.model, "provider": self.provider_name})
+            requests.post(route_setup, json={"model": self.model})
             requests.post(route_gen, json={"messages": history})
             is_complete = False
             while not is_complete:
