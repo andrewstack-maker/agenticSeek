@@ -118,7 +118,7 @@ class Provider:
             requests.post(route_gen, json={"messages": history})
             is_complete = False
             while not is_complete:
-                response = requests.get(f"http://{self.server_ip}/get_updated_sentence")
+                response = requests.get(f"http://{self.server_ip}/get_complete_sentence")
                 if "error" in response.json():
                     pretty_print(response.json()["error"], color="failure")
                     break
