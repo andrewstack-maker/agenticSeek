@@ -90,11 +90,12 @@ def animate_thinking(text, color="status", duration=120):
                 break
             symbol = next(spinner)
             if platform.system().lower() != "windows":
-                print(f"{fore_color}{symbol} {text}{Fore.RESET}", flush=True)
+                print(f"\r{fore_color}{symbol} {text}{Fore.RESET}", end="", flush=True)
             else:
-                print(colored(f"{symbol} {text}", term_color), flush=True)
-            time.sleep(0.1)
-            print("\033[1A\033[K", end="", flush=True)
+                print(f"\r{colored(f'{symbol} {text}', term_color)}", end="", flush=True)
+            time.sleep(0.2)
+        print("\r" + " " * (len(text) + 7) + "\r", end="", flush=True)
+        print()
     animation_thread = threading.Thread(target=_animate, daemon=True)
     animation_thread.start()
 
