@@ -18,7 +18,6 @@ class OllamaLLM(GeneratorLLM):
                 self.state.last_complete_sentence = ""
                 self.state.current_buffer = ""
 
-            self.logger.info("Starting generation...")
             stream = ollama.chat(
                 model=self.model,
                 messages=history,

@@ -20,6 +20,17 @@ class LlamacppLLM(GeneratorLLM):
             )
             return
         self.logger.info(f"Using {self.model} for generation with Llama.cpp")
-        self.llm.create_chat_completion(
-              messages = history
-        )
+        try:
+            with self.state.lock:
+                self.state.is_generating = True
+                self.state.last_complete_sentence = ""
+                self.state.current_buffer = ""
+            output = self.llm.create_chat_completion(
+                  messages = history
+            )
+            self.state.current_buffer = output
+        except Exception as e:
+            self.logger.error(f"Error: {e}")
+        finally:
+            with self.state.lock:
+                self.state.is_generating = False
