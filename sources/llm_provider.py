@@ -121,6 +121,7 @@ class Provider:
             is_complete = False
             while not is_complete:
                 response = requests.get(f"http://{self.server_ip}/get_updated_sentence")
+                print("raw:", response.json())
                 thought = response.json()["sentence"]
                 is_complete = bool(response.json()["is_complete"])
                 time.sleep(2)

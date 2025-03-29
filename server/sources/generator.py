@@ -41,6 +41,7 @@ class GeneratorLLM():
     
     def get_status(self) -> dict:
         with self.state.lock:
+            print("Returning status:\n", self.state.status())
             return jsonify(self.state.status())
 
     @abstractmethod
