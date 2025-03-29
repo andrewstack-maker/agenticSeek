@@ -79,6 +79,8 @@ class Provider:
         except AttributeError as e:
             raise NotImplementedError(f"{str(e)}\nIs {self.provider_name} implemented ?")
         except Exception as e:
+            if "RemoteDisconnected" in str(e):
+                return f"{self.server_ip} seem offline. RemoteDisconnected error."
             raise Exception(f"Provider {self.provider_name} failed: {str(e)}") from e
         return thought
 
@@ -107,21 +109,26 @@ class Provider:
         Use a remote server with LLM to generate text.
         """
         thought = ""
-        route_start = f"http://{self.server_ip}/generate"
+        route_setup = f"http://{self.server_ip}/setup"
+        route_gen = f"http://{self.server_ip}/generate"
 
         if not self.is_ip_online(self.server_ip.split(":")[0]):
             raise Exception(f"Server is offline at {self.server_ip}")
 
         try:
-            requests.post(route_start, json={"messages": history})
+            requests.post(route_setup, json={"model": self.model})
+            requests.post(route_gen, json={"messages": history})
             is_complete = False
             while not is_complete:
                 response = requests.get(f"http://{self.server_ip}/get_updated_sentence")
+                if "error" in response.json():
+                    pretty_print(response.json()["error"], color="failure")
+                    break
                 thought = response.json()["sentence"]
                 is_complete = bool(response.json()["is_complete"])
                 time.sleep(2)
         except KeyError as e:
-            raise Exception(f"{str(e)}\n\nError occured with server route. Are you using the correct address for the config.ini provider?") from e
+            raise Exception(f"{str(e)}\nError occured with server route. Are you using the correct address for the config.ini provider?") from e
         except Exception as e:
             raise e
         return thought
@@ -263,5 +270,6 @@ goodbye!
         return thought
 
 if __name__ == "__main__":
-    provider = Provider("openai", "gpt-4o-mini")
-    print(provider.respond(["user", "Hello, how are you?"]))
+    provider = Provider("server", "deepseek-r1:1.5b", "192.168.1.20:3333")
+    res = provider.respond(["user", "Hello, how are you?"])
+    print("Response:", res)

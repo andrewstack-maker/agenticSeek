@@ -1,4 +1,5 @@
 *.wav
+*.DS_Store
 *.safetensors
 config.ini
 *.egg-info

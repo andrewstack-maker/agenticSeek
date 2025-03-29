@@ -149,6 +149,8 @@ You will be prompted with `>>> `
 This indicate agenticSeek await you type for instructions.
 You can also use speech to text by setting `listen = True` in the config.
 
+To exit, simply say `goodbye`.
+
 Here are some example usage:
 
 ### Coding/Bash
@@ -216,13 +218,27 @@ Note: For Windows or macOS, use ipconfig or ifconfig respectively to find the IP
 
 **If you wish to use openai based provider follow the *Run with an API*  section.**
 
-Make sure ollama is installed (Currently our script only support ollama)
+Clone the repository and enter the `server/`folder.
 
-Run our server script.
 
 ```sh
-python3 server_ollama.py --model "deepseek-r1:32b"
+git clone --depth 1 https://github.com/Fosowl/agenticSeek.git
+cd agenticSeek/server/
 ```
+
+Install server specific requirements:
+
+```sh
+pip3 install -r requirements.txt
+```
+
+Run the server script.
+
+```sh
+python3 app.py --provider ollama --port 3333
+```
+
+You have the choice between using `ollama` and `llamacpp` as a LLM service.
 
 ### 2️⃣ **Run it** 
 
@@ -236,7 +252,7 @@ Set the `provider_server_address` to the ip address of the machine that will run
 is_local = False
 provider_name = server
 provider_model = deepseek-r1:14b
-provider_server_address = x.x.x.x:5000
+provider_server_address = x.x.x.x:3333
 ```
 
 Run the assistant:

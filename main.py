@@ -27,7 +27,7 @@ def main():
                         server_address=config["MAIN"]["provider_server_address"],
                         is_local=config.getboolean('MAIN', 'is_local'))
 
-    browser = Browser(create_driver(), headless=config.getboolean('MAIN', 'headless_browser'))
+    browser = Browser(create_driver(headless=config.getboolean('MAIN', 'headless_browser')))
     personality_folder = "jarvis" if config.getboolean('MAIN', 'jarvis_personality') else "base"
 
     agents = [
