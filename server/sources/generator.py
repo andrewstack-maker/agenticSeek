@@ -40,6 +40,7 @@ class GeneratorLLM():
         with self.state.lock:
             if self.state.is_generating:
                 return False
+            self.state.is_generating = True
             self.logger.info("Starting generation")
             threading.Thread(target=self.generate, args=(history,)).start()
         return True

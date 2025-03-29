@@ -6,8 +6,7 @@ import threading
 import itertools
 import time
 
-
-def pretty_print(text, color = "info"):
+def pretty_print(text, color="info"):
     """
     Print text with color formatting.
 
@@ -37,7 +36,8 @@ def pretty_print(text, color = "info"):
             print(text)
             pretty_print(f"Invalid color {color} in pretty_print", "warning")
             return
-        print(color_map[color], text, Fore.RESET)
+        print(f"{color_map[color]}{text}{Fore.RESET}")
+        print(' ' * 10) # prevent cut-off
     else:
         color_map = {
             "success": "green",
@@ -51,6 +51,7 @@ def pretty_print(text, color = "info"):
         if color not in color_map:
             color = "default"
         print(colored(text, color_map[color]))
+        print(' ' * 10) # prevent cut-off
 
 def animate_thinking(text, color="status", duration=2):
     def _animate():

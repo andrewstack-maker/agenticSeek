@@ -20,29 +20,28 @@ generator = OllamaLLM() if args.provider == "ollama" else LlamacppLLM()
 @app.route('/generate', methods=['POST'])
 def start_generation():
     if generator is None:
-        return jsonify({"error": "Generator not initialized"}), 400
+        return jsonify({"error": "Generator not initialized"}), 401
     data = request.get_json()
     history = data.get('messages', [])
     if generator.start(history):
         return jsonify({"message": "Generation started"}), 202
-    return jsonify({"error": "Generation already in progress"}), 400
+    return jsonify({"error": "Generation already in progress"}), 402
 
 @app.route('/setup', methods=['POST'])
 def setup():
     data = request.get_json()
     model = data.get('model', None)
     if model is None:
-        return jsonify({"error": "Model not provided"}), 400
+        return jsonify({"error": "Model not provided"}), 403
     generator.set_model(model)
     return jsonify({"message": "Model set"}), 200
 
 @app.route('/get_complete_sentence', methods=['GET'])
 def get_complete_sentence():
     if not generator:
-        return jsonify({"error": "Generator not initialized"}), 400
+        return jsonify({"error": "Generator not initialized"}), 404
     while True:
         status = generator.get_status()
-        print(status)
         if status["is_complete"]:
             return jsonify(status)
     return None
@@ -50,7 +49,7 @@ def get_complete_sentence():
 @app.route('/get_updated_sentence')
 def get_updated_sentence():
     if not generator:
-        return jsonify({"error": "Generator not initialized"}), 400
+        return jsonify({"error": "Generator not initialized"}), 405
     return generator.get_status()
 
 if __name__ == '__main__':
