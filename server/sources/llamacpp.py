@@ -18,6 +18,7 @@ class LlamacppLLM(GeneratorLLM):
                 filename="*q8_0.gguf",
                 verbose=True
             )
+            return
         self.logger.info(f"Using {self.model} for generation with Llama.cpp")
         self.llm.create_chat_completion(
               messages = history
