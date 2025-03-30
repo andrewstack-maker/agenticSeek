@@ -65,10 +65,12 @@ def create_driver(headless=False, stealth_mode=True) -> webdriver.Chrome:
     chrome_options.add_argument("--mute-audio")
     chrome_options.add_argument("--disable-notifications")
     chrome_options.add_argument('--window-size=1080,560')
-    try:
-        chrome_options.add_extension("./crx/nopecha.crx")
-    except Exception as e:
-        print(f"Failed to load AntiCaptcha extension: {str(e)}")
+    if not stealth_mode:
+        # crx file can't be installed in stealth mode
+        crx_path = "./crx/nopecha.crx"
+        if not os.path.exists(crx_path):
+            raise FileNotFoundError(f"Extension file not found at: {crx_path}")
+        chrome_options.add_extension(crx_path)
     
     chromedriver_path = shutil.which("chromedriver")
     if not chromedriver_path:

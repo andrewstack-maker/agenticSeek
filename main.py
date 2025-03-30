@@ -29,7 +29,11 @@ def main():
                         server_address=config["MAIN"]["provider_server_address"],
                         is_local=config.getboolean('MAIN', 'is_local'))
 
-    browser = Browser(create_driver(headless=config.getboolean('MAIN', 'headless_browser')))
+    stealth_mode = config.getboolean('BROWSER', 'stealth_mode')
+    browser = Browser(
+        create_driver(headless=config.getboolean('BROWSER', 'headless_browser'), stealth_mode=stealth_mode),
+        anticaptcha_manual_install=stealth_mode
+    )
     personality_folder = "jarvis" if config.getboolean('MAIN', 'jarvis_personality') else "base"
 
     agents = [
