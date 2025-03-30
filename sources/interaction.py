@@ -1,6 +1,6 @@
 
 from sources.text_to_speech import Speech
-from sources.utility import pretty_print
+from sources.utility import pretty_print, animate_thinking
 from sources.router import AgentRouter
 from sources.speech_to_text import AudioTranscriber, AudioRecorder
 
@@ -12,23 +12,37 @@ class Interaction:
                  tts_enabled: bool = True,
                  stt_enabled: bool = True,
                  recover_last_session: bool = False):
-        self.agents = agents
-        self.current_agent = None
-        self.router = AgentRouter(self.agents)
-        self.speech = Speech(enable=tts_enabled)
         self.is_active = True
+        self.current_agent = None
         self.last_query = None
         self.last_answer = None
-        self.ai_name = self.find_ai_name()
+        self.speech = None
+        self.agents = agents
         self.tts_enabled = tts_enabled
         self.stt_enabled = stt_enabled
+        self.recover_last_session = recover_last_session
+        self.router = AgentRouter(self.agents)
+        if tts_enabled:
+            animate_thinking("Initializing text-to-speech...", color="status")
+            self.speech = Speech(enable=tts_enabled)
+        self.ai_name = self.find_ai_name()
+        self.transcriber = None
+        self.recorder = None
         if stt_enabled:
+            animate_thinking("Initializing speech recognition...", color="status")
             self.transcriber = AudioTranscriber(self.ai_name, verbose=False)
             self.recorder = AudioRecorder()
         if recover_last_session:
             self.load_last_session()
-        if tts_enabled:
+        self.emit_status()
+    
+    def emit_status(self):
+        """Print the current status of agenticSeek."""
+        if self.stt_enabled:
+            pretty_print(f"Text-to-speech trigger is {self.ai_name}", color="status")
+        if self.tts_enabled:
             self.speech.speak("Hello, we are online and ready. What can I do for you ?")
+        pretty_print("AgenticSeek is ready.", color="status")
     
     def find_ai_name(self) -> str:
         """Find the name of the default AI. It is required for STT as a trigger word."""

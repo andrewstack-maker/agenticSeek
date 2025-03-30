@@ -19,7 +19,7 @@ import sys
 import re
 from urllib.parse import urlparse
 
-from sources.utility import pretty_print
+from sources.utility import pretty_print, animate_thinking
 
 def get_chrome_path() -> str:
     if sys.platform.startswith("win"):

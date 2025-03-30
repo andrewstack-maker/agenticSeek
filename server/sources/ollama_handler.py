@@ -22,13 +22,14 @@ class OllamaLLM(GeneratorLLM):
             stream = ollama.chat(
                 model=self.model,
                 messages=history,
-                stream=True,
+                stream=False,
             )
 
             for chunk in stream:
                 content = chunk['message']['content']
-                if '\n' in content:
-                    self.logger.info(content)
+                if '.' in content:
+                    self.logger.info(self.state.current_buffer)
+                    self.state.last_complete_sentence = self.state.current_buffer
 
                 with self.state.lock:
                     self.state.current_buffer += content
