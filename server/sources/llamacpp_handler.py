@@ -1,7 +1,7 @@
 
 from .generator import GeneratorLLM
 from llama_cpp import Llama
-from decorator import timer_decorator
+from .decorator import timer_decorator
 
 class LlamacppLLM(GeneratorLLM):
 
