@@ -26,6 +26,9 @@ class OllamaLLM(GeneratorLLM):
             )
 
             for chunk in stream:
+                if type(chunk) != dict:
+                    self.logger.error(f"Error: chunk not a dict")
+                    continue
                 content = chunk['message']['content']
                 if '.' in content:
                     self.logger.info(self.state.current_buffer)
