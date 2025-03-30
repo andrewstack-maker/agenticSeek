@@ -24,7 +24,6 @@ class OllamaLLM(GeneratorLLM):
                 messages=history,
                 stream=True,
             )
-
             for chunk in stream:
                 content = chunk['message']['content']
                 if '\n' in content:
@@ -32,6 +31,7 @@ class OllamaLLM(GeneratorLLM):
 
                 with self.state.lock:
                     self.state.current_buffer += content
+
         except Exception as e:
             if "404" in str(e):
                 self.logger.info(f"Downloading {self.model}...")

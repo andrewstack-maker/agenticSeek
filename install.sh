@@ -7,6 +7,7 @@ echo "Detecting operating system..."
 
 OS_TYPE=$(uname -s)
 
+
 case "$OS_TYPE" in
     "Linux"*)
         echo "Detected Linux OS"

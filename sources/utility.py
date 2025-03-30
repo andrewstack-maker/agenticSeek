@@ -6,8 +6,8 @@ import threading
 import itertools
 import time
 
-global thinking_toggle
-thinking_toggle = False
+thinking_event = threading.Event()
+current_animation_thread = None
 
 def get_color_map():
     if platform.system().lower() != "windows":
@@ -48,8 +48,11 @@ def pretty_print(text, color="info"):
             - "output": Cyan
             - "default": Black (Windows only)
     """
-    global thinking_toggle
-    thinking_toggle = False
+    thinking_event.set()
+    if current_animation_thread and current_animation_thread.is_alive():
+        current_animation_thread.join()
+    thinking_event.clear()
+    
     color_map = get_color_map()
     if color not in color_map:
         color = "info"
@@ -61,10 +64,14 @@ def animate_thinking(text, color="status", duration=120):
     It use a daemon thread to run the animation. This will not block the main thread.
     Color are the same as pretty_print.
     """
-    global thinking_toggle
-    thinking_toggle = True
+    global current_animation_thread
+    
+    thinking_event.set()
+    if current_animation_thread and current_animation_thread.is_alive():
+        current_animation_thread.join()
+    thinking_event.clear()
+    
     def _animate():
-        global thinking_toggle
         color_map = {
             "success": (Fore.GREEN, "green"),
             "failure": (Fore.RED, "red"),
@@ -84,10 +91,7 @@ def animate_thinking(text, color="status", duration=120):
         ])
         end_time = time.time() + duration
 
-        while time.time() < end_time:
-            if not thinking_toggle:
-                # stop if another text is printed
-                break
+        while not thinking_event.is_set() and time.time() < end_time:
             symbol = next(spinner)
             if platform.system().lower() != "windows":
                 print(f"\r{fore_color}{symbol} {text}{Fore.RESET}", end="", flush=True)
@@ -95,9 +99,8 @@ def animate_thinking(text, color="status", duration=120):
                 print(f"\r{colored(f'{symbol} {text}', term_color)}", end="", flush=True)
             time.sleep(0.2)
         print("\r" + " " * (len(text) + 7) + "\r", end="", flush=True)
-        print()
-    animation_thread = threading.Thread(target=_animate, daemon=True)
-    animation_thread.start()
+    current_animation_thread = threading.Thread(target=_animate, daemon=True)
+    current_animation_thread.start()
 
 def timer_decorator(func):
     """
