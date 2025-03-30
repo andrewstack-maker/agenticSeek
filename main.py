@@ -9,6 +9,7 @@ from sources.llm_provider import Provider
 from sources.interaction import Interaction
 from sources.agents import Agent, CoderAgent, CasualAgent, FileAgent, PlannerAgent, BrowserAgent
 from sources.browser import Browser, create_driver
+from sources.utility import pretty_print
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -22,6 +23,7 @@ def handleInterrupt(signum, frame):
 def main():
     signal.signal(signal.SIGINT, handler=handleInterrupt)
 
+    pretty_print("Initializing...", color="status")
     provider = Provider(provider_name=config["MAIN"]["provider_name"],
                         model=config["MAIN"]["provider_model"],
                         server_address=config["MAIN"]["provider_server_address"],
