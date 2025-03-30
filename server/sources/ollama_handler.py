@@ -24,18 +24,14 @@ class OllamaLLM(GeneratorLLM):
                 messages=history,
                 stream=True,
             )
-
             for chunk in stream:
-                if type(chunk) != dict:
-                    self.logger.error(f"Error: chunk not a dict")
-                    continue
                 content = chunk['message']['content']
-                if '.' in content:
-                    self.logger.info(self.state.current_buffer)
-                    self.state.last_complete_sentence = self.state.current_buffer
+                if '\n' in content:
+                    self.logger.info(content)
 
                 with self.state.lock:
                     self.state.current_buffer += content
+
         except Exception as e:
             if "404" in str(e):
                 self.logger.info(f"Downloading {self.model}...")
