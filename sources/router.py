@@ -2,7 +2,6 @@ import os
 import sys
 import torch
 from transformers import pipeline
-# adaptive-classifier==0.0.10
 from adaptive_classifier import AdaptiveClassifier
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

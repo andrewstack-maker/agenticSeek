@@ -74,6 +74,8 @@ class PlannerAgent(Agent):
     
     def show_plan(self, json_plan):
         agents_tasks = self.parse_agent_tasks(json_plan)
+        if agents_tasks == (None, None):
+            return
         pretty_print(f"--- Plan ---", color="output")
         for task_name, task in agents_tasks:
             pretty_print(f"{task}", color="output")

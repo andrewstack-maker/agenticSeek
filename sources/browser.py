@@ -155,7 +155,6 @@ class Browser:
             for element in soup(['script', 'style']):
                 element.decompose()
             
-            
             text = soup.get_text()
             lines = (line.strip() for line in text.splitlines())
             chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
