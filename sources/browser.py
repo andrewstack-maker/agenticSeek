@@ -66,7 +66,7 @@ def create_driver(headless=False, stealth_mode=True) -> webdriver.Chrome:
     chrome_options.add_argument("--disable-notifications")
     chrome_options.add_argument('--window-size=1080,560')
     try:
-        chrome_options.add_extension("./anticaptcha.crx")
+        chrome_options.add_extension("./crx/nopecha.crx")
     except Exception as e:
         print(f"Failed to load AntiCaptcha extension: {str(e)}")
     
@@ -386,20 +386,16 @@ class Browser:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     
-    browser = Browser(headless=False)
-    time.sleep(8)
+    driver = create_driver()
+    browser = Browser(driver)
+    time.sleep(10)
     
-    try:
-        print("AntiCaptcha Test")
-        browser.go_to("https://www.google.com/recaptcha/api2/demo")
-        time.sleep(5)
-        print("Form Test:")
-        browser.go_to("https://practicetestautomation.com/practice-test-login/")
-        inputs = browser.get_form_inputs()
-        inputs = ['[username](student)', f'[password](Password123)', '[appOtp]()', '[backupOtp]()']
-        browser.fill_form_inputs(inputs)
-        browser.find_and_click_submit()
-        print("Stress test")
-        browser.go_to("https://theannoyingsite.com/")
-    finally:
-        browser.close()
+    print("AntiCaptcha Test")
+    browser.go_to("https://www.google.com/recaptcha/api2/demo")
+    time.sleep(10)
+    print("Form Test:")
+    browser.go_to("https://practicetestautomation.com/practice-test-login/")
+    inputs = browser.get_form_inputs()
+    inputs = ['[username](student)', f'[password](Password123)', '[appOtp]()', '[backupOtp]()']
+    browser.fill_form_inputs(inputs)
+    browser.find_and_click_submit()
