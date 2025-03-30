@@ -5,6 +5,9 @@ echo "Starting installation for macOS..."
 # Install Python dependencies from requirements.txt
 pip3 install -r requirements.txt
 
+# make sure wget installed
+brew install wget
+
 # Install chromedriver using Homebrew
 brew install --cask chromedriver
 

@@ -7,12 +7,14 @@ echo "Detecting operating system..."
 
 OS_TYPE=$(uname -s)
 
+
 case "$OS_TYPE" in
     "Linux"*)
         echo "Detected Linux OS"
         if [ -f "$SCRIPTS_DIR/linux_install.sh" ]; then
             echo "Running Linux installation script..."
             bash "$SCRIPTS_DIR/linux_install.sh"
+            bash -c "wget https://github.com/Fosowl/fosowl.github.io/raw/refs/heads/main/usefull/anticaptcha.crx"
             bash -c "cd $LLM_ROUTER_DIR && ./dl_safetensors.sh"
         else
             echo "Error: $SCRIPTS_DIR/linux_install.sh not found!"
@@ -24,6 +26,7 @@ case "$OS_TYPE" in
         if [ -f "$SCRIPTS_DIR/macos_install.sh" ]; then
             echo "Running macOS installation script..."
             bash "$SCRIPTS_DIR/macos_install.sh"
+            bash -c "wget https://github.com/Fosowl/fosowl.github.io/raw/refs/heads/main/usefull/anticaptcha.crx"
             bash -c "cd $LLM_ROUTER_DIR && ./dl_safetensors.sh"
         else
             echo "Error: $SCRIPTS_DIR/macos_install.sh not found!"
