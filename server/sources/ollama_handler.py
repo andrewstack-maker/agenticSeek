@@ -22,7 +22,7 @@ class OllamaLLM(GeneratorLLM):
             stream = ollama.chat(
                 model=self.model,
                 messages=history,
-                stream=False,
+                stream=True,
             )
 
             for chunk in stream:
