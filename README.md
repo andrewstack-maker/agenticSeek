@@ -348,6 +348,8 @@ stealth_mode = False
 - listen -> listen to voice input (True) or not (False).
 - work_dir -> Folder the AI will have access to. eg: /Users/user/Documents/.
 - jarvis_personality -> Uses a JARVIS-like personality (True) or not (False). This simply change the prompt file.
+- headless_browser -> Runs browser without a visible window (True) or not (False).
+- stealth_mode -> Make bot detector time harder. Only downside is you have to manually install the anticaptcha extension.
 
 ## Providers
 
