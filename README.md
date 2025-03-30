@@ -131,6 +131,8 @@ python3 main.py
 
 *See the **Run with an API** section if your hardware can't run deepseek locally*
 
+*See the **Config** section for detailled config file explanation.*
+
 ---
 
 ## Usage
@@ -287,8 +289,6 @@ python3 main.py
 
 ---
 
-
-
 ## Speech to Text
 
 The speech-to-text functionality is disabled by default. To enable it, set the listen option to True in the config.ini file:
@@ -314,6 +314,41 @@ End your request with a confirmation phrase to signal the system to proceed. Exa
 "do it", "go ahead", "execute", "run", "start", "thanks", "would ya", "please", "okay?", "proceed", "continue", "go on", "do that", "go it", "do you understand?"
 ```
 
+## Config
+
+Example config:
+```
+[MAIN]
+is_local = True
+provider_name = ollama
+provider_model = deepseek-r1:1.5b
+provider_server_address = 127.0.0.1:11434
+agent_name = Friday
+recover_last_session = False
+save_session = False
+speak = False
+listen = False
+work_dir =  /Users/mlg/Documents/ai_folder
+jarvis_personality = False
+[BROWSER]
+headless_browser = False
+stealth_mode = False
+```
+
+**Explanation**:
+
+- is_local -> Runs the agent locally (True) or on a remote server (False).
+- provider_name -> The provider to use (one of: `ollama`, `server`, `lm-studio`, `deepseek-api`)
+- provider_model -> The model used, e.g., deepseek-r1:1.5b.
+- provider_server_address -> Server address, e.g., 127.0.0.1:11434 for local. Set to anything for non-local API.
+- agent_name -> Name of the agent, e.g., Friday. Used as a trigger word for TTS.
+- recover_last_session -> Restarts from last session (True) or not (False).
+- save_session -> Saves session data (True) or not (False).
+- speak -> Enables voice output (True) or not (False).
+- listen -> listen to voice input (True) or not (False).
+- work_dir -> Folder the AI will have access to. eg: /Users/user/Documents/.
+- jarvis_personality -> Uses a JARVIS-like personality (True) or not (False). This simply change the prompt file.
+
 ## Providers
 
 The table below show the available providers:
@@ -326,7 +361,6 @@ The table below show the available providers:
 | openai    | No     | Use ChatGPT API (non-private)                             |
 | deepseek-api  | No     | Deepseek API (non-private)                                |
 | huggingface| No    | Hugging-Face API (non-private)                            |
-
 
 To select a provider change the config.ini:
 
@@ -366,6 +400,8 @@ https://googlechromelabs.github.io/chrome-for-testing/
 And download the chromedriver version matching your OS.
 
 ![alt text](./media/chromedriver_readme.png)
+
+If this section is incomplete please raise an issue.
 
 ## FAQ
 
