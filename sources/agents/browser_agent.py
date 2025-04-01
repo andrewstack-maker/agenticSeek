@@ -6,8 +6,7 @@ from sources.agents.agent import Agent
 from sources.tools.searxSearch import searxSearch
 from sources.browser import Browser
 from datetime import date
-from typing import List, Tuple, Type, Dict, Tuple
-
+from typing import List, Tuple, Type, Dict
 
 class BrowserAgent(Agent):
     def __init__(self, name, prompt_path, provider, verbose=False, browser=None):
