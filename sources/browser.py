@@ -313,16 +313,6 @@ class Browser:
         result.sort(key=lambda x: len(x[0]))
         return result
 
-    """
-    def find_and_click_submission(self, btn_type:str = 'login') -> None:
-        buttons = self.get_buttons_xpath()
-        if len(buttons) == 0:
-            self.logger.warning(f"No visible buttons found")
-        for button in buttons:
-            if button[0] == btn_type:
-                self.click_element(button[1])
-    """
-
     def find_and_click_submission(self, timeout: int = 10) -> bool:
         possible_submissions = ["login", "submit", "register"]
         for submission in possible_submissions:
@@ -335,8 +325,8 @@ class Browser:
         """
         Find and click a submit button matching the specified type.
         Args:
-            btn_type: The type of button to find (e.g., 'login', 'submit'), matched against button text.
-            timeout: Maximum time (in seconds) to wait for the button to appear.
+            btn_type: The type of button to find.
+            timeout: time to wait for button to appear.
         Returns:
             bool: True if the button was found and clicked, False otherwise.
         """
