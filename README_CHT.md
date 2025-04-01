@@ -1,3 +1,10 @@
+<p align="center">
+<img align="center" src="./media/whale_readme.jpg">
+<p>
+
+--------------------------------------------------------------------------------
+[English](./README.md) | 繁體中文
+
 # AgenticSeek: 類似 Manus 但基於 Deepseek R1 Agents 的本地模型。
 
 
@@ -7,7 +14,6 @@
 
 > 🛠️ **目前還在開發階段** – 歡迎任何貢獻者加入我們！
 
-![alt text](./media/whale_readme.jpg)
 
 > *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
@@ -115,8 +121,10 @@ provider_server_address = 127.0.0.1:11434
 開始所有服務:
 
 ```sh
-sudo ./start_services.sh
+sudo ./start_services.sh # MacOS
+start ./start_services.cmd # Window
 ```
+
 
 運行 AgenticSeek:
 
@@ -188,7 +196,7 @@ python3 main.py
 > *Should I take creatine before or after workout?*
 
 
-當你把指令送出後，AgenticSeek 會自動調用最能提供幫助的助理，去完成擬交辦的工作和指令。
+當你把指令送出後，AgenticSeek 會自動調用最能提供幫助的助理，去完成你交辦的工作和指令。
 
 但也有可能出現怪怪的情況，或是你要找飛機機票，他跑去教你如何一步步做出一台飛機（開玩笑的，但真的可能出現），因為這是一個早期專案，我們會努力教導他、完善他的！
 

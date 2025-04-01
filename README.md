@@ -1,3 +1,9 @@
+<p align="center">
+<img align="center" src="./media/whale_readme.jpg">
+<p>
+
+--------------------------------------------------------------------------------
+English | [繁體中文](./README_CHT.md)
 
 # AgenticSeek: Manus-like AI powered by Deepseek R1 Agents.
 
@@ -7,8 +13,6 @@
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj)
 
 > 🛠️ **Work in Progress** – Looking for contributors!
-
-![alt text](./media/whale_readme.jpg)
 
 > *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
@@ -116,7 +120,8 @@ provider_server_address = 127.0.0.1:11434
 start all services :
 
 ```sh
-sudo ./start_services.sh
+sudo ./start_services.sh # MacOS
+start ./start_services.cmd # Window
 ```
 
 Run the assistant:
