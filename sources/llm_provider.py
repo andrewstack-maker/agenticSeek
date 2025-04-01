@@ -11,8 +11,7 @@ import platform
 from dotenv import load_dotenv, set_key
 from openai import OpenAI
 from huggingface_hub import InferenceClient
-from typing import List, Tuple, Type, Dict, Tuple
-
+from typing import List, Tuple, Type, Dict
 from sources.utility import pretty_print, animate_thinking
 
 class Provider:
