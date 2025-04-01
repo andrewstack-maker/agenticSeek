@@ -1,9 +1,9 @@
 
 
 
-# AgenticSeek: Une IA comme Manus qui utilise des agents DeepSeek R1.
+# AgenticSeek: Une IA comme Manus mais à base d'agents DeepSeek R1 fonctionnant en local.
 
-Une alternative **entièrement** locale à Manus AI, un assistant vocal IA qui code, explore votre système de fichiers, navigue sur le web et corrige ses erreurs, tout cela sans envoyer la moindre donnée dans le cloud. Construit avec des modèles de raisonnement comme DeepSeek R1, cet agent autonome fonctionne entièrement sur votre matériel, garantissant la confidentialité de vos données.
+Une alternative **entièrement locale** à Manus AI, un assistant vocal IA qui code, explore votre système de fichiers, navigue sur le web et corrige ses erreurs, tout cela sans envoyer la moindre donnée dans le cloud. Construit avec des modèles de raisonnement comme DeepSeek R1, cet agent autonome fonctionne entièrement sur votre hardware, garantissant la confidentialité de vos données.
 
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj)
 
@@ -91,7 +91,7 @@ Télécharger `deepseek-r1:14b` de [DeepSeek](https://deepseek.com/models)
 ollama pull deepseek-r1:14b
 ```
 
-### 2️ **Démarrage**  
+### 2️ **Démarrage d'ollama**  
 
 ```sh
 ollama serve
@@ -140,7 +140,7 @@ sudo ./start_services.sh
 python3 main.py
 ```
 
-Vous verrez >>> 
+Vous verrez un prompt: ">>> "
 Cela indique qu’AgenticSeek attend que vous saisissiez des instructions.
 Vous pouvez également utiliser la reconnaissance vocale en définissant listen = True dans la configuration.
 
@@ -183,21 +183,21 @@ Voici quelques exemples d’utilisation :
 
 Après avoir saisi votre requête, AgenticSeek attribuera le meilleur agent pour la tâche.
 
-Comme il s’agit d’un prototype précoce, le système de routage des agents pourrait ne pas toujours attribuer le bon agent en fonction de votre requête.
+Comme il s’agit d’un prototype, le système de routage des agents pourrait ne pas toujours attribuer le bon agent en fonction de votre requête.
 
-Par conséquent, vous devriez être très explicite sur ce que vous voulez et sur la manière dont l’IA doit procéder. Par exemple, si vous voulez qu’elle effectue une recherche sur le web, ne dites pas :
+Par conséquent, vous devez être explicite sur ce que vous voulez et sur la manière dont l’IA doit procéder. Par exemple, si vous voulez qu’elle effectue une recherche sur le web, ne dites pas :
 
-Connaissez-vous de bons pays pour voyager seul ?
+Connait-tu de bons pays pour voyager seul ?
 
 Dites plutôt :
 
-Faites une recherche sur le web et découvrez quels sont les meilleurs pays pour voyager seul
+Fait une recherche sur le web, quels sont les meilleurs pays pour voyager seul?
 
 ---
 
 ## **Exécuter le LLM sur votre propre serveur**  
 
-Si vous disposez d’un ordinateur puissant ou d’un serveur que vous pouvez utiliser, mais que vous souhaitez y accéder depuis votre ordinateur portable, vous avez la possibilité d’exécuter le LLM sur un serveur distant.
+Si vous disposez d’un ordinateur puissant ou d’un serveur que vous voulez utiliser, mais que vous souhaitez y accéder depuis votre ordinateur portable, vous avez la possibilité d’exécuter le LLM sur un serveur distant.
 
 ### 1️⃣  **Configurer et démarrer les scripts du serveur** 
 
