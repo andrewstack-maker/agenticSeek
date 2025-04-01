@@ -41,6 +41,9 @@ setup(
         "anyio>=3.5.0,<5",
         "distro>=1.7.0,<2",
         "jiter>=0.4.0,<1",
+        "fake_useragent>=2.1.0",
+        "selenium_stealth>=1.0.6",
+        "undetected-chromedriver>=3.5.5",
         "sniffio",
         "tqdm>4"
     ],

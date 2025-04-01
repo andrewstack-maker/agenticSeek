@@ -34,6 +34,7 @@ class Tools():
         self.config = configparser.ConfigParser()
         self.current_dir = self.create_work_dir()
         self.excutable_blocks_found = False
+        self.safe_mode = True
     
     def get_work_dir(self):
         return self.current_dir
@@ -160,9 +161,7 @@ class Tools():
             if start_pos == -1:
                 break
 
-            line_start = llm_text.rfind('\n', 0, start_pos) + 1
-            if line_start == 0:
-                line_start = 0
+            line_start = llm_text.rfind('\n', 0, start_pos)+1
             leading_whitespace = llm_text[line_start:start_pos]
 
             end_pos = llm_text.find(end_tag, start_pos + len(start_tag))
@@ -186,19 +185,17 @@ class Tools():
             code_blocks.append(content)
             start_index = end_pos + len(end_tag)
         return code_blocks, save_path
-
+    
 if __name__ == "__main__":
     tool = Tools()
     tool.tag = "python"
-    rt = tool.load_exec_block("""
-Got it, let me show you the Python files in the current directory using Python:
-
-```python
+    rt = tool.load_exec_block("""```python
 import os
 
 for file in os.listdir():
     if file.endswith('.py'):
         print(file)
 ```
+goodbye!
     """)
     print(rt)

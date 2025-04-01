@@ -6,8 +6,33 @@ import threading
 import itertools
 import time
 
+thinking_event = threading.Event()
+current_animation_thread = None
 
-def pretty_print(text, color = "info"):
+def get_color_map():
+    if platform.system().lower() != "windows":
+        color_map = {
+            "success": "green",
+            "failure": "red",
+            "status": "light_green",
+            "code": "light_blue",
+            "warning": "yellow",
+            "output": "cyan",
+            "info": "cyan"
+        }
+    else:
+        color_map = {
+            "success": "green",
+            "failure": "red",
+            "status": "light_green",
+            "code": "light_blue",
+            "warning": "yellow",
+            "output": "cyan",
+            "info": "black"
+        }
+    return color_map
+
+def pretty_print(text, color="info"):
     """
     Print text with color formatting.
 
@@ -23,43 +48,29 @@ def pretty_print(text, color = "info"):
             - "output": Cyan
             - "default": Black (Windows only)
     """
-    if platform.system().lower() != "windows":
-        color_map = {
-            "success": Fore.GREEN,
-            "failure": Fore.RED,
-            "status": Fore.LIGHTGREEN_EX,
-            "code": Fore.LIGHTBLUE_EX,
-            "warning": Fore.YELLOW,
-            "output": Fore.LIGHTCYAN_EX,
-            "info": Fore.CYAN
-        }
-        if color not in color_map:
-            print(text)
-            pretty_print(f"Invalid color {color} in pretty_print", "warning")
-            return
-        print(color_map[color], text, Fore.RESET)
-    else:
-        color_map = {
-            "success": "green",
-            "failure": "red",
-            "status": "light_green",
-            "code": "light_blue",
-            "warning": "yellow",
-            "output": "cyan",
-            "default": "black"
-        }
-        if color not in color_map:
-            color = "default"
-        print(colored(text, color_map[color]))
+    thinking_event.set()
+    if current_animation_thread and current_animation_thread.is_alive():
+        current_animation_thread.join()
+    thinking_event.clear()
+    
+    color_map = get_color_map()
+    if color not in color_map:
+        color = "info"
+    print(colored(text, color_map[color]))
 
-def animate_thinking(text, color="status", duration=2):
+def animate_thinking(text, color="status", duration=120):
     """
-    Display an animated "thinking..." indicator in a separate thread.
-    Args:
-        text (str): Text to display
-        color (str): Color for the text
-        duration (float): How long to animate in seconds
+    Animate a thinking spinner while a task is being executed.
+    It use a daemon thread to run the animation. This will not block the main thread.
+    Color are the same as pretty_print.
     """
+    global current_animation_thread
+    
+    thinking_event.set()
+    if current_animation_thread and current_animation_thread.is_alive():
+        current_animation_thread.join()
+    thinking_event.clear()
+    
     def _animate():
         color_map = {
             "success": (Fore.GREEN, "green"),
@@ -71,22 +82,25 @@ def animate_thinking(text, color="status", duration=2):
             "default": (Fore.RESET, "black"),
             "info": (Fore.CYAN, "cyan")
         }
-
-        fore_color, term_color = color_map[color]
-        spinner = itertools.cycle(['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'])
+        fore_color, term_color = color_map.get(color, color_map["default"])
+        spinner = itertools.cycle([
+            '▉▁▁▁▁▁', '▉▉▂▁▁▁', '▉▉▉▃▁▁', '▉▉▉▉▅▁', '▉▉▉▉▉▇', '▉▉▉▉▉▉',
+            '▉▉▉▉▇▅', '▉▉▉▆▃▁', '▉▉▅▃▁▁', '▉▇▃▁▁▁', '▇▃▁▁▁▁', '▃▁▁▁▁▁',
+            '▁▃▅▃▁▁', '▁▅▉▅▁▁', '▃▉▉▉▃▁', '▅▉▁▉▅▃', '▇▃▁▃▇▅', '▉▁▁▁▉▇',
+            '▉▅▃▁▃▅', '▇▉▅▃▅▇', '▅▉▇▅▇▉', '▃▇▉▇▉▅', '▁▅▇▉▇▃', '▁▃▅▇▅▁' 
+        ])
         end_time = time.time() + duration
 
-        while time.time() < end_time:
+        while not thinking_event.is_set() and time.time() < end_time:
             symbol = next(spinner)
             if platform.system().lower() != "windows":
                 print(f"\r{fore_color}{symbol} {text}{Fore.RESET}", end="", flush=True)
             else:
-                print(colored(f"\r{symbol} {text}", term_color), end="", flush=True)
-            time.sleep(0.1)
-        print()
-    animation_thread = threading.Thread(target=_animate)
-    animation_thread.daemon = True
-    animation_thread.start()
+                print(f"\r{colored(f'{symbol} {text}', term_color)}", end="", flush=True)
+            time.sleep(0.2)
+        print("\r" + " " * (len(text) + 7) + "\r", end="", flush=True)
+    current_animation_thread = threading.Thread(target=_animate, daemon=True)
+    current_animation_thread.start()
 
 def timer_decorator(func):
     """
@@ -101,6 +115,19 @@ def timer_decorator(func):
         start_time = time()
         result = func(*args, **kwargs)
         end_time = time()
-        print(f"{func.__name__} took {end_time - start_time:.2f} seconds to execute")
+        pretty_print(f"{func.__name__} took {end_time - start_time:.2f} seconds to execute", "status")
         return result
     return wrapper
+
+if __name__ == "__main__":
+    import time
+    pretty_print("starting imaginary task", "success")
+    animate_thinking("Thinking...", "status")
+    time.sleep(4)
+    pretty_print("starting another task", "failure")
+    animate_thinking("Thinking...", "status")
+    time.sleep(4)
+    pretty_print("yet another task", "info")
+    animate_thinking("Thinking...", "status")
+    time.sleep(4)
+    pretty_print("This is an info message", "info")

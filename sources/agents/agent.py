@@ -14,17 +14,16 @@ class executorResult:
     """
     A class to store the result of a tool execution.
     """
-    def __init__(self, blocks, feedback, success):
-        self.blocks = blocks
+    def __init__(self, block, feedback, success):
+        self.block = block
         self.feedback = feedback
         self.success = success
     
     def show(self):
-        for block in self.blocks:
-            pretty_print("-"*100, color="output")
-            pretty_print(block, color="code" if self.success else "failure")
-            pretty_print("-"*100, color="output")
-            pretty_print(self.feedback, color="success" if self.success else "failure")
+        pretty_print("-"*100, color="output")
+        pretty_print(self.block, color="code" if self.success else "failure")
+        pretty_print("-"*100, color="output")
+        pretty_print(self.feedback, color="success" if self.success else "failure")
 
 class Agent():
     """
@@ -33,7 +32,6 @@ class Agent():
     def __init__(self, name: str,
                        prompt_path:str,
                        provider,
-                       recover_last_session=True,
                        verbose=False,
                        browser=None) -> None:
         """
@@ -53,7 +51,7 @@ class Agent():
         self.current_directory = os.getcwd()
         self.llm = provider 
         self.memory = Memory(self.load_prompt(prompt_path),
-                                recover_last_session=recover_last_session,
+                                recover_last_session=False, # session recovery in handled by the interaction class
                                 memory_compression=False)
         self.tools = {}
         self.blocks_result = []
@@ -173,20 +171,24 @@ class Agent():
         feedback = ""
         success = False
         blocks = None
+        if answer.startswith("```"):
+            answer = "I will execute:\n" + answer # there should always be a text before blocks for the function that display answer
 
         for name, tool in self.tools.items():
             feedback = ""
             blocks, save_path = tool.load_exec_block(answer)
 
             if blocks != None:
-                output = tool.execute(blocks)
-                feedback = tool.interpreter_feedback(output) # tool interpreter feedback
-                success = not tool.execution_failure_check(output)
-                pretty_print(feedback, color="success" if success else "failure")
+                for block in blocks:
+                    output = tool.execute([block])
+                    feedback = tool.interpreter_feedback(output) # tool interpreter feedback
+                    success = not tool.execution_failure_check(output)
+                    self.blocks_result.append(executorResult(block, feedback, success))
+                    if not success:
+                        self.memory.push('user', feedback)
+                        return False, feedback
                 self.memory.push('user', feedback)
-                self.blocks_result.append(executorResult(blocks, feedback, success))
-                if not success:
-                    return False, feedback
                 if save_path != None:
                     tool.save_block(blocks, save_path)
+        self.blocks_result = list(reversed(self.blocks_result))
         return True, feedback

@@ -7,19 +7,23 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 from typing import List, Tuple
+from fake_useragent import UserAgent
+from selenium_stealth import stealth
+import undetected_chromedriver as uc
 import chromedriver_autoinstaller
 import time
+import random
 import os
 import shutil
-from bs4 import BeautifulSoup
 import markdownify
 import logging
 import sys
 import re
-from urllib.parse import urlparse
 
-from sources.utility import pretty_print
+from sources.utility import pretty_print, animate_thinking
 
 def get_chrome_path() -> str:
     if sys.platform.startswith("win"):
@@ -39,7 +43,8 @@ def get_chrome_path() -> str:
             return path
     return None
 
-def create_driver(headless=False):
+def create_driver(headless=False, stealth_mode=True) -> webdriver.Chrome:
+    """Create a Chrome WebDriver with specified options."""
     chrome_options = Options()
     chrome_path = get_chrome_path()
     
@@ -49,19 +54,23 @@ def create_driver(headless=False):
     
     if headless:
         chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--disable-webgl")
+    #ua = UserAgent()
+    #user_agent = ua.random # NOTE sometime return wrong user agent, investigate
+    #chrome_options.add_argument(f'user-agent={user_agent}')
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--autoplay-policy=user-gesture-required")
     chrome_options.add_argument("--mute-audio")
-    chrome_options.add_argument("--disable-webgl")
     chrome_options.add_argument("--disable-notifications")
-    security_prefs = {
-        "profile.default_content_setting_values.media_stream": 2,
-        "profile.default_content_setting_values.geolocation": 2,
-        "safebrowsing.enabled": True,
-    }
-    chrome_options.add_experimental_option("prefs", security_prefs)
+    chrome_options.add_argument('--window-size=1080,560')
+    if not stealth_mode:
+        # crx file can't be installed in stealth mode
+        crx_path = "./crx/nopecha.crx"
+        if not os.path.exists(crx_path):
+            raise FileNotFoundError(f"Extension file not found at: {crx_path}")
+        chrome_options.add_extension(crx_path)
     
     chromedriver_path = shutil.which("chromedriver")
     if not chromedriver_path:
@@ -71,11 +80,30 @@ def create_driver(headless=False):
         raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
     
     service = Service(chromedriver_path)
+    if stealth_mode:
+        driver = uc.Chrome(service=service, options=chrome_options)
+        stealth(driver,
+            languages=["en-US", "en"],
+            vendor="Google Inc.",
+            platform="Win32",
+            webgl_vendor="Intel Inc.",
+            renderer="Intel Iris OpenGL Engine",
+            fix_hairline=True,
+        )
+        return driver
+    security_prefs = {
+        "profile.default_content_setting_values.media_stream": 2,
+        "profile.default_content_setting_values.geolocation": 2,
+        "safebrowsing.enabled": True,
+    }
+    chrome_options.add_experimental_option("prefs", security_prefs)
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
     return webdriver.Chrome(service=service, options=chrome_options)
 
 class Browser:
-    def __init__(self, driver, headless=False, anticaptcha_install=True):
-        """Initialize the browser with optional headless mode."""
+    def __init__(self, driver, anticaptcha_manual_install=False):
+        """Initialize the browser with optional AntiCaptcha installation."""
         self.js_scripts_folder = "./sources/web_scripts/" if not __name__ == "__main__" else "./web_scripts/"
         self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
         try:
@@ -85,10 +113,11 @@ class Browser:
             self.logger.info("Browser initialized successfully")
         except Exception as e:
             raise Exception(f"Failed to initialize browser: {str(e)}")
-        if anticaptcha_install:
-            self.load_anticatpcha()
+        self.driver.get("https://www.google.com")
+        if anticaptcha_manual_install:
+            self.load_anticatpcha_manually()
             
-    def load_anticatpcha(self):
+    def load_anticatpcha_manually(self):
         print("You might want to install the AntiCaptcha extension for captchas.")
         self.driver.get(self.anticaptcha)
 
@@ -127,10 +156,10 @@ class Browser:
                 element.decompose()
             
             text = soup.get_text()
-            
             lines = (line.strip() for line in text.splitlines())
             chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
             text = "\n".join(chunk for chunk in chunks if chunk and self.is_sentence(chunk))
+            text = text[:4096]
             #markdown_text = markdownify.markdownify(text, heading_style="ATX")
             return "[Start of page]\n" + text + "\n[End of page]"
         except Exception as e:
@@ -356,35 +385,19 @@ class Browser:
         script = self.load_js("inject_safety_script.js")
         input_elements = self.driver.execute_script(script)
 
-    def close(self):
-        """Close the browser."""
-        try:
-            self.driver.quit()
-            self.logger.info("Browser closed")
-        except Exception as e:
-            self.logger.error(f"Error closing browser: {str(e)}")
-
-    def __del__(self):
-        """Destructor to ensure browser is closed."""
-        self.close()
-
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     
-    browser = Browser(headless=False)
-    time.sleep(8)
+    driver = create_driver()
+    browser = Browser(driver)
+    time.sleep(10)
     
-    try:
-        print("AntiCaptcha Test")
-        browser.go_to("https://www.google.com/recaptcha/api2/demo")
-        time.sleep(5)
-        print("Form Test:")
-        browser.go_to("https://practicetestautomation.com/practice-test-login/")
-        inputs = browser.get_form_inputs()
-        inputs = ['[username](student)', f'[password](Password123)', '[appOtp]()', '[backupOtp]()']
-        browser.fill_form_inputs(inputs)
-        browser.find_and_click_submit()
-        print("Stress test")
-        browser.go_to("https://theannoyingsite.com/")
-    finally:
-        browser.close()
+    print("AntiCaptcha Test")
+    browser.go_to("https://www.google.com/recaptcha/api2/demo")
+    time.sleep(10)
+    print("Form Test:")
+    browser.go_to("https://practicetestautomation.com/practice-test-login/")
+    inputs = browser.get_form_inputs()
+    inputs = ['[username](student)', f'[password](Password123)', '[appOtp]()', '[backupOtp]()']
+    browser.fill_form_inputs(inputs)
+    browser.find_and_click_submit()

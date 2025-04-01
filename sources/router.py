@@ -2,7 +2,6 @@ import os
 import sys
 import torch
 from transformers import pipeline
-# adaptive-classifier==0.0.10
 from adaptive_classifier import AdaptiveClassifier
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -384,7 +383,7 @@ class AgentRouter:
             pretty_print(f"Complex task detected, routing to planner agent.", color="info")
             return self.find_planner_agent()
         for agent in self.agents:
-            if best_agent == agent.role[lang]:
+            if best_agent == agent.role["en"]:
                 pretty_print(f"Selected agent: {agent.agent_name} (roles: {agent.role[lang]})", color="warning")
                 return agent
         pretty_print(f"Error choosing agent.", color="failure")

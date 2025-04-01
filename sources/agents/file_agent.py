@@ -19,13 +19,12 @@ class FileAgent(Agent):
             "en": "files",
             "fr": "fichiers",
             "zh": "文件",
-            "es": "archivos",
         }
         self.type = "file_agent"
     
     def process(self, prompt, speech_module) -> str:
         exec_success = False
-        prompt += f"\nWork directory: {self.work_dir}"
+        prompt += f"\nYou must work in directory: {self.work_dir}"
         self.memory.push('user', prompt)
         while exec_success is False:
             self.wait_message(speech_module)

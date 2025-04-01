@@ -18,15 +18,14 @@ class PlannerAgent(Agent):
         self.tools['json'].tag = "json"
         self.browser = browser
         self.agents = {
-            "coder": CoderAgent(name, "prompts/coder_agent.txt", provider, verbose=False),
-            "file": FileAgent(name, "prompts/file_agent.txt", provider, verbose=False),
-            "web": BrowserAgent(name, "prompts/browser_agent.txt", provider, verbose=False, browser=browser)
+            "coder": CoderAgent(name, "prompts/base/coder_agent.txt", provider, verbose=False),
+            "file": FileAgent(name, "prompts/base/file_agent.txt", provider, verbose=False),
+            "web": BrowserAgent(name, "prompts/base/browser_agent.txt", provider, verbose=False, browser=browser)
         }
         self.role = {
             "en": "Research, setup and code",
             "fr": "Recherche, configuration et codage",
             "zh": "研究，设置和编码",
-            "es": "Investigación, configuración y code"
         }
         self.type = "planner_agent"
 
@@ -75,6 +74,8 @@ class PlannerAgent(Agent):
     
     def show_plan(self, json_plan):
         agents_tasks = self.parse_agent_tasks(json_plan)
+        if agents_tasks == (None, None):
+            return
         pretty_print(f"--- Plan ---", color="output")
         for task_name, task in agents_tasks:
             pretty_print(f"{task}", color="output")
@@ -88,6 +89,7 @@ class PlannerAgent(Agent):
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', prompt)
             answer, _ = self.llm_request()
+            pretty_print(answer.split('\n')[0], color="output")
             self.show_plan(answer)
             ok_str = input("Is the plan ok? (y/n): ")
             if ok_str == 'y':
@@ -112,7 +114,7 @@ class PlannerAgent(Agent):
             except Exception as e:
                 raise e
         self.last_answer = prev_agent_answer
-        return prev_agent_answer, reasoning
+        return prev_agent_answer, ""
 
 if __name__ == "__main__":
     from llm_provider import Provider

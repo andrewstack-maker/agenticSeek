@@ -24,7 +24,6 @@ class CoderAgent(Agent):
             "en": "code",
             "fr": "codage",
             "zh": "编码",
-            "es": "codificación",
         }
         self.type = "code_agent"
 
