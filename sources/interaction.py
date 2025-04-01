@@ -114,7 +114,6 @@ class Interaction:
         if agent is None:
             return False
         if self.current_agent != agent and self.last_answer is not None:
-            ## get last history from previous agent
             self.current_agent.memory.push('user', self.last_query)
             self.current_agent.memory.push('assistant', self.last_answer)
         self.current_agent = agent
