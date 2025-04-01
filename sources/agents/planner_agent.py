@@ -76,10 +76,10 @@ class PlannerAgent(Agent):
         agents_tasks = self.parse_agent_tasks(json_plan)
         if agents_tasks == (None, None):
             return
-        pretty_print(f"--- Plan ---", color="output")
+        pretty_print("▂▘ P L A N ▝▂", color="output")
         for task_name, task in agents_tasks:
-            pretty_print(f"{task}", color="output")
-        pretty_print(f"--- End of Plan ---", color="output")
+                    pretty_print(f"{task['agent']} -> {task['task']}", color="info")
+        pretty_print("▔▗ E N D ▖▔", color="output")
     
     def process(self, prompt, speech_module) -> str:
         ok = False

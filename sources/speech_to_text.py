@@ -1,4 +1,5 @@
 from colorama import Fore
+from typing import List, Tuple, Type, Dict
 import queue
 import threading
 import numpy as np

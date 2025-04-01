@@ -1,30 +1,33 @@
+import re
+import platform
+import subprocess
+from sys import modules
+from typing import List, Tuple, Type, Dict, Tuple
+
 from kokoro import KPipeline
 from IPython.display import display, Audio
 import soundfile as sf
-import subprocess
-import re
-import platform
-from sys import modules
 
 class Speech():
     """
     Speech is a class for generating speech from text.
     """
-    def __init__(self, enable: bool = True, language: str = "english") -> None:
+    def __init__(self, enable: bool = True, language: str = "en", voice_idx: int = 0) -> None:
         self.lang_map = {
-            "english": 'a',
-            "chinese": 'z',
-            "french": 'f'
+            "en": 'a',
+            "zh": 'z',
+            "fr": 'f'
         }
         self.voice_map = {
-            "english": ['af_alloy', 'af_bella', 'af_kore', 'af_nicole', 'af_nova', 'af_sky', 'am_echo', 'am_michael', 'am_puck'],
-            "chinese": ['zf_xiaobei', 'zf_xiaoni', 'zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'],
-            "french": ['ff_siwis']
+            "en": ['af_kore', 'af_bella', 'af_alloy', 'af_nicole', 'af_nova', 'af_sky', 'am_echo', 'am_michael', 'am_puck'],
+            "zh": ['zf_xiaobei', 'zf_xiaoni', 'zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'],
+            "fr": ['ff_siwis']
         }
         self.pipeline = None
+        self.language = language
         if enable:
             self.pipeline = KPipeline(lang_code=self.lang_map[language])
-        self.voice = self.voice_map[language][2]
+        self.voice = self.voice_map[language][voice_idx]
         self.speed = 1.2
 
     def speak(self, sentence: str, voice_number: int = 1 , audio_file: str = 'sample.wav'):
@@ -38,7 +41,7 @@ class Speech():
         if not self.pipeline:
             return
         sentence = self.clean_sentence(sentence)
-        self.voice = self.voice_map["english"][voice_number]
+        self.voice = self.voice_map[self.language][voice_number]
         generator = self.pipeline(
             sentence, voice=self.voice,
             speed=self.speed, split_pattern=r'\n+'

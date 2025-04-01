@@ -6,7 +6,7 @@ from sources.agents.agent import Agent
 from sources.tools.searxSearch import searxSearch
 from sources.browser import Browser
 from datetime import date
-from typing import List, Tuple
+from typing import List, Tuple, Type, Dict
 
 class BrowserAgent(Agent):
     def __init__(self, name, prompt_path, provider, verbose=False, browser=None):
@@ -92,7 +92,7 @@ class BrowserAgent(Agent):
         Your task:
         1. Decide if the current page answers the user’s query: {user_prompt}
           - If it does, take notes of the useful information, write down source, link or reference, then move to a new page.
-          - If it does and you are 100% certain that it provide a definive answer, say REQUEST_EXIT
+          - If it does and you completed user request, say REQUEST_EXIT
           - If it doesn’t, say: Error: This page does not answer the user’s query then go back or navigate to another link.
         2. Navigate by either: 
           - Navigate to a navigation links (write the full URL, e.g., www.example.com/cats).
@@ -100,7 +100,7 @@ class BrowserAgent(Agent):
         3. Fill forms on the page:
           - If user give you informations that help you fill form, fill it.
           - If you don't know how to fill a form, leave it empty.
-          - You can fill a form using [form_name](value).
+          - You can fill a form using [form_name](value). Do not go back when you fill a form.
         
         Recap of note taking:
         If useful -> Note: [Briefly summarize the key information or task you conducted.]
@@ -125,8 +125,8 @@ class BrowserAgent(Agent):
 
         Example 4 (loging form visible):
         Note: I am on the login page, I should now type the given username and password. 
-        [form_name_1](David)
-        [form_name_2](edgerunners_2077)
+        [username_field](David)
+        [password_field](edgerunners77)
 
         You see the following inputs forms:
         {inputs_form_text}
@@ -143,9 +143,10 @@ class BrowserAgent(Agent):
         animate_thinking("Thinking...", color="status")
         self.memory.push('user', prompt)
         answer, reasoning = self.llm_request()
-        pretty_print("-"*100)
-        pretty_print(answer, color="output")
-        pretty_print("-"*100)
+        output = answer if len(answer) > 16 else f"Action: {answer}\nReasoning: {reasoning}"
+        print()
+        pretty_print(output, color="output")
+        print()
         return answer, reasoning
     
     def select_unvisited(self, search_result: List[str]) -> List[str]:
@@ -175,7 +176,7 @@ class BrowserAgent(Agent):
         return parsed_results 
     
     def stringify_search_results(self, results_arr: List[str]) -> str:
-        return '\n\n'.join([f"Link: {res['link']}" for res in results_arr])
+        return '\n\n'.join([f"Link: {res['link']}\nPreview: {res['snippet']}" for res in results_arr])
     
     def save_notes(self, text):
         lines = text.split('\n')
@@ -214,19 +215,51 @@ class BrowserAgent(Agent):
         Do not explain, do not write anything beside the search query.
         If the query does not make any sense for a web search explain why and say REQUEST_EXIT
         """
+    
+    def handle_update_prompt(self, user_prompt: str, page_text: str) -> str:
+        return f"""
+        You are a web browser.
+        You just filled a form on the page.
+        Now you should see the result of the form submission on the page:
+        Page text:
+        {page_text}
+        The user asked: {user_prompt}
+        Does the page answer the user’s query now?
+        If it does, take notes of the useful information, write down result and say FORM_FILLED.
+        If you were previously on a login form, no need to explain.
+        If it does and you completed user request, say REQUEST_EXIT
+        if it doesn’t, say: Error: This page does not answer the user’s query then GO_BACK.
+        """
+    
+    def show_search_results(self, search_result: List[str]):
+        pretty_print("\nSearch results:", color="output")
+        for res in search_result:
+            pretty_print(f"Title: {res['title']} - ", color="info", no_newline=True)
+            pretty_print(f"Link: {res['link']}", color="status")
 
-    def process(self, user_prompt, speech_module) -> str:
+    def process(self, user_prompt: str, speech_module: type) -> Tuple[str, str]:
+        """
+        Process the user prompt to conduct an autonomous web search.
+        Start with a google search with searxng using web_search tool.
+        Then enter a navigation logic to find the answer or conduct required actions.
+        Args:
+          user_prompt: The user's input query
+          speech_module: Optional speech output module
+        Returns:
+            tuple containing the final answer and reasoning
+        """
         complete = False
 
         animate_thinking(f"Thinking...", color="status")
         self.memory.push('user', self.search_prompt(user_prompt))
         ai_prompt, _ = self.llm_request()
         if "REQUEST_EXIT" in ai_prompt:
-            # request make no sense, maybe wrong agent was allocated?
+            pretty_print(f"{reasoning}\n{ai_prompt}", color="output")
             return ai_prompt, "" 
         animate_thinking(f"Searching...", color="status")
         search_result_raw = self.tools["web_search"].execute([ai_prompt], False)
         search_result = self.jsonify_search_results(search_result_raw)[:12] # until futher improvement
+        self.show_search_results(search_result)
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
         while not complete:
@@ -236,7 +269,10 @@ class BrowserAgent(Agent):
             extracted_form = self.extract_form(answer)
             if len(extracted_form) > 0:
                 self.browser.fill_form_inputs(extracted_form)
-                self.browser.find_and_click_submit()
+                self.browser.find_and_click_submission()
+                page_text = self.browser.get_text()
+                answer = self.handle_update_prompt(user_prompt, page_text)
+                answer, reasoning = self.llm_decide(prompt)
 
             if "REQUEST_EXIT" in answer:
                 complete = True
@@ -245,6 +281,12 @@ class BrowserAgent(Agent):
             links = self.extract_links(answer)
             if len(unvisited) == 0:
                 break
+
+            if "FORM_FILLED" in answer:
+                page_text = self.browser.get_text()
+                self.navigable_links = self.browser.get_navigable()
+                prompt = self.make_navigation_prompt(user_prompt, page_text)
+                continue
 
             if len(links) == 0 or "GO_BACK" in answer:
                 unvisited = self.select_unvisited(search_result)

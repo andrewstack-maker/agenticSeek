@@ -1,3 +1,4 @@
+from typing import List, Tuple, Type, Dict, Tuple
 
 from sources.text_to_speech import Speech
 from sources.utility import pretty_print, animate_thinking
@@ -11,7 +12,8 @@ class Interaction:
     def __init__(self, agents,
                  tts_enabled: bool = True,
                  stt_enabled: bool = True,
-                 recover_last_session: bool = False):
+                 recover_last_session: bool = False,
+                ):
         self.is_active = True
         self.current_agent = None
         self.last_query = None
@@ -99,7 +101,7 @@ class Interaction:
             query = self.read_stdin()
         if query is None:
             self.is_active = False
-            self.last_query = "Goodbye (exit requested by user, dont think, make answer very short)"
+            self.last_query = None
             return None
         self.last_query = query
         return query
@@ -112,7 +114,6 @@ class Interaction:
         if agent is None:
             return False
         if self.current_agent != agent and self.last_answer is not None:
-            ## get last history from previous agent
             self.current_agent.memory.push('user', self.last_query)
             self.current_agent.memory.push('assistant', self.last_answer)
         self.current_agent = agent

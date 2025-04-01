@@ -1,17 +1,17 @@
 
+import os
 import time
 import ollama
 from ollama import chat
 import requests
 import subprocess
 import ipaddress
+import httpx
 import platform
 from dotenv import load_dotenv, set_key
 from openai import OpenAI
 from huggingface_hub import InferenceClient
-import os
-import httpx
-
+from typing import List, Tuple, Type, Dict
 from sources.utility import pretty_print, animate_thinking
 
 class Provider:
