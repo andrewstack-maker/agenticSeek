@@ -42,6 +42,7 @@ rules:
 - Use file finder to find the path of the file.
 - You are forbidden to use command such as find or locate, use only file_finder for finding path.
 - Do not ever use editor such as vim or nano.
+- Make sure to always cd your work folder before executing commands, like cd <work dir> && <your command>
 
 Example Interaction
 User: "I need to find the file config.txt and read its contents."

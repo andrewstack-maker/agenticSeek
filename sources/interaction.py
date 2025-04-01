@@ -101,7 +101,7 @@ class Interaction:
             query = self.read_stdin()
         if query is None:
             self.is_active = False
-            self.last_query = "Goodbye (exit requested by user, dont think, make answer very short)"
+            self.last_query = None
             return None
         self.last_query = query
         return query
