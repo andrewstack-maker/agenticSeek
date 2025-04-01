@@ -1,3 +1,4 @@
+from typing import List, Tuple, Type, Dict, Tuple
 import langid
 import re
 import nltk

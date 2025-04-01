@@ -1,3 +1,4 @@
+from typing import List, Tuple, Type, Dict, Tuple
 
 from sources.text_to_speech import Speech
 from sources.utility import pretty_print, animate_thinking
@@ -11,7 +12,8 @@ class Interaction:
     def __init__(self, agents,
                  tts_enabled: bool = True,
                  stt_enabled: bool = True,
-                 recover_last_session: bool = False):
+                 recover_last_session: bool = False,
+                ):
         self.is_active = True
         self.current_agent = None
         self.last_query = None
