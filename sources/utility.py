@@ -32,7 +32,7 @@ def get_color_map():
         }
     return color_map
 
-def pretty_print(text, color="info"):
+def pretty_print(text, color="info", no_newline=False):
     """
     Print text with color formatting.
 
@@ -56,7 +56,7 @@ def pretty_print(text, color="info"):
     color_map = get_color_map()
     if color not in color_map:
         color = "info"
-    print(colored(text, color_map[color]))
+    print(colored(text, color_map[color]), end='' if no_newline else "\n")
 
 def animate_thinking(text, color="status", duration=120):
     """

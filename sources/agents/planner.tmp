@@ -1,10 +1,12 @@
 import json
+from typing import List, Tuple, Type, Dict, Tuple
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
 from sources.agents.code_agent import CoderAgent
 from sources.agents.file_agent import FileAgent
 from sources.agents.browser_agent import BrowserAgent
 from sources.tools.tools import Tools
+
 
 class PlannerAgent(Agent):
     def __init__(self, name, prompt_path, provider, verbose=False, browser=None):
@@ -29,7 +31,10 @@ class PlannerAgent(Agent):
         }
         self.type = "planner_agent"
 
-    def parse_agent_tasks(self, text):
+    def parse_agent_tasks(self, text: str) -> Tuple[list | None, list | None]:
+        """
+        Parse the agent tasks from the given text into json.
+        """
         tasks = []
         tasks_names = []
 
@@ -61,7 +66,10 @@ class PlannerAgent(Agent):
             return zip(names, tasks)
         return zip(tasks_names, tasks)
     
-    def make_prompt(self, task, needed_infos):
+    def make_prompt(self, task: str, needed_infos: str) -> str:
+        """
+        Make a prompt for the agent.
+        """
         if needed_infos is None:
             needed_infos = "No needed informations."
         prompt = f"""
@@ -72,8 +80,7 @@ class PlannerAgent(Agent):
         """
         return prompt
     
-    def show_plan(self, json_plan):
-        agents_tasks = self.parse_agent_tasks(json_plan)
+    def show_plan(self, agents_tasks):
         if agents_tasks == (None, None):
             return
         pretty_print("▂▘ P L A N ▝▂", color="output")
@@ -81,7 +88,15 @@ class PlannerAgent(Agent):
                     pretty_print(f"{task['agent']} -> {task['task']}", color="info")
         pretty_print("▔▗ E N D ▖▔", color="output")
     
-    def process(self, prompt, speech_module) -> str:
+    def process(self, prompt: str, speech_module: type) -> str:
+        """
+        Process the prompt and divide the task between the agents.
+        Args:
+            prompt (str): The prompt to process.
+            speech_module (type): The speech module to use.
+        Returns:
+            str: The final answer resulting from successive task.
+        """
         ok = False
         agents_tasks = (None, None)
         while not ok:
@@ -90,14 +105,18 @@ class PlannerAgent(Agent):
             self.memory.push('user', prompt)
             answer, _ = self.llm_request()
             pretty_print(answer.split('\n')[0], color="output")
-            self.show_plan(answer)
+            agents_tasks = self.parse_agent_tasks(answer)
+            if agents_tasks == (None, None):
+                pretty_print("Failed to parse the tasks, retrying", color="failure")
+                prompt = "Task parsing failed. Please retry with proper json."
+                continue
+            self.show_plan(agents_tasks)
             ok_str = input("Is the plan ok? (y/n): ")
             if ok_str == 'y':
                 ok = True
             else:
                 prompt = input("Please reformulate: ")
 
-        agents_tasks = self.parse_agent_tasks(answer)
         if agents_tasks == (None, None):
             return "Failed to parse the tasks", reasoning
         prev_agent_answer = None
@@ -120,4 +139,4 @@ if __name__ == "__main__":
     from llm_provider import Provider
     server_provider = Provider("server", "deepseek-r1:14b", "192.168.1.100:5000")
     agent = PlannerAgent("deepseek-r1:14b", "jarvis", "prompts/planner_agent.txt", server_provider)
-    ans = agent.process("Make a cool game to illustrate the current relation between USA and europe")
+    ans = agent.process("Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file")

@@ -93,7 +93,7 @@ class BrowserAgent(Agent):
         Your task:
         1. Decide if the current page answers the user’s query: {user_prompt}
           - If it does, take notes of the useful information, write down source, link or reference, then move to a new page.
-          - If it does and you completed use request, say REQUEST_EXIT
+          - If it does and you completed user request, say REQUEST_EXIT
           - If it doesn’t, say: Error: This page does not answer the user’s query then go back or navigate to another link.
         2. Navigate by either: 
           - Navigate to a navigation links (write the full URL, e.g., www.example.com/cats).
@@ -144,10 +144,10 @@ class BrowserAgent(Agent):
         animate_thinking("Thinking...", color="status")
         self.memory.push('user', prompt)
         answer, reasoning = self.llm_request()
-        output = f"Answer: {answer}" if len(answer) > 16 else f"Action: {answer}\nReasoning: {reasoning}"
-        pretty_print("-"*100)
+        output = answer if len(answer) > 16 else f"Action: {answer}\nReasoning: {reasoning}"
+        print()
         pretty_print(output, color="output")
-        pretty_print("-"*100)
+        print()
         return answer, reasoning
     
     def select_unvisited(self, search_result: List[str]) -> List[str]:
@@ -235,7 +235,8 @@ class BrowserAgent(Agent):
     def show_search_results(self, search_result: List[str]):
         pretty_print("\nSearch results:", color="output")
         for res in search_result:
-            pretty_print(f"Title: {res['title']} - Link: {res['link']}", color="output")
+            pretty_print(f"Title: {res['title']} - ", color="info", no_newline=True)
+            pretty_print(f"Link: {res['link']}", color="status")
 
     def process(self, user_prompt: str, speech_module: type) -> Tuple[str, str]:
         """

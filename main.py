@@ -57,7 +57,8 @@ def main():
     interaction = Interaction(agents,
                               tts_enabled=config.getboolean('MAIN', 'speak'),
                               stt_enabled=config.getboolean('MAIN', 'listen'),
-                              recover_last_session=config.getboolean('MAIN', 'recover_last_session'))
+                              recover_last_session=config.getboolean('MAIN', 'recover_last_session'),
+                            )
     try:
         while interaction.is_active:
             interaction.get_user()

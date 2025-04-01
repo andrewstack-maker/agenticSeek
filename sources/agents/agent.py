@@ -133,6 +133,8 @@ class Agent():
         Show the answer in a pretty way.
         Show code blocks and their respective feedback by inserting them in the ressponse.
         """
+        if self.last_answer is None:
+            return
         lines = self.last_answer.split("\n")
         for line in lines:
             if "block:" in line:
@@ -190,5 +192,5 @@ class Agent():
                 self.memory.push('user', feedback)
                 if save_path != None:
                     tool.save_block(blocks, save_path)
-        self.blocks_result = list(reversed(self.blocks_result))
+        self.blocks_result = self.blocks_result
         return True, feedback

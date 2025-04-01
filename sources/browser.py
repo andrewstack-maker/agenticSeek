@@ -6,9 +6,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
+from typing import List, Tuple, Type, Dict, Tuple
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from typing import List, Tuple, Type, Dict, Tuple
 from fake_useragent import UserAgent
 from selenium_stealth import stealth
 import undetected_chromedriver as uc
@@ -137,8 +137,8 @@ class Browser:
             self.logger.info(f"Navigated to: {url}")
             return True
         except TimeoutException as e:
-                self.logger.error(f"Timeout waiting for {url} to load: {str(e)}")
-                return False
+            self.logger.error(f"Timeout waiting for {url} to load: {str(e)}")
+            return False
         except WebDriverException as e:
             self.logger.error(f"Error navigating to {url}: {str(e)}")
             return False
