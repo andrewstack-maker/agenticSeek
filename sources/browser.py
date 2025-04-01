@@ -6,10 +6,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from typing import List, Tuple
+from typing import List, Tuple, Type, Dict, Tuple
 from fake_useragent import UserAgent
 from selenium_stealth import stealth
 import undetected_chromedriver as uc
@@ -126,13 +125,26 @@ class Browser:
         try:
             initial_handles = self.driver.window_handles
             self.driver.get(url)
-            time.sleep(1)
+            wait = WebDriverWait(self.driver, timeout=30)
+            wait.until(
+                lambda driver: (
+                    driver.execute_script("return document.readyState") == "complete" and
+                    not any(keyword in driver.page_source.lower() for keyword in ["checking your browser", "verifying", "captcha"])
+                ),
+                message="stuck on 'checking browser' or verification screen"
+            )
             self.apply_web_safety()
             self.logger.info(f"Navigated to: {url}")
             return True
+        except TimeoutException as e:
+                self.logger.error(f"Timeout waiting for {url} to load: {str(e)}")
+                return False
         except WebDriverException as e:
             self.logger.error(f"Error navigating to {url}: {str(e)}")
             return False
+        except Exception as e:
+            self.logger.error(f"Fatal error with go_to method on {url}:\n{str(e)}")
+            raise e
 
     def is_sentence(self, text:str) -> bool:
         """Check if the text qualifies as a meaningful sentence or contains important error codes."""
@@ -199,7 +211,7 @@ class Browser:
                 return False
         return True
 
-    def get_navigable(self) -> [str]:
+    def get_navigable(self) -> List[str]:
         """Get all navigable links on the current page."""
         try:
             links = []
@@ -301,13 +313,55 @@ class Browser:
         result.sort(key=lambda x: len(x[0]))
         return result
 
-    def find_and_click_submit(self, btn_type:str = 'login') -> None:
+    """
+    def find_and_click_submission(self, btn_type:str = 'login') -> None:
         buttons = self.get_buttons_xpath()
         if len(buttons) == 0:
             self.logger.warning(f"No visible buttons found")
         for button in buttons:
             if button[0] == btn_type:
                 self.click_element(button[1])
+    """
+
+    def find_and_click_submission(self, timeout: int = 10) -> bool:
+        possible_submissions = ["login", "submit", "register"]
+        for submission in possible_submissions:
+            if self.find_and_click_btn(submission, timeout):
+                return True
+        self.logger.warning("No submission button found")
+        return False
+
+    def find_and_click_btn(self, btn_type: str = 'login', timeout: int = 10) -> bool:
+        """
+        Find and click a submit button matching the specified type.
+        Args:
+            btn_type: The type of button to find (e.g., 'login', 'submit'), matched against button text.
+            timeout: Maximum time (in seconds) to wait for the button to appear.
+        Returns:
+            bool: True if the button was found and clicked, False otherwise.
+        """
+        buttons = self.get_buttons_xpath()
+        if not buttons:
+            self.logger.warning("No visible buttons found")
+            return False
+
+        for button_text, xpath in buttons:
+            if btn_type.lower() in button_text.lower():
+                try:
+                    wait = WebDriverWait(self.driver, timeout)
+                    element = wait.until(
+                        EC.element_to_be_clickable((By.XPATH, xpath)),
+                        message=f"Button with XPath '{xpath}' not clickable within {timeout} seconds"
+                    )
+                    if self.click_element(xpath):
+                        return True
+                    else:
+                        return False
+                except TimeoutException:
+                    self.logger.warning(f"Timeout waiting for '{button_text}' button at XPath: {xpath}")
+                    return False
+        self.logger.warning(f"No button matching '{btn_type}' found")
+        return False
     
     def find_input_xpath_by_name(self, inputs, name: str) -> str | None:
         for field in inputs:
@@ -315,8 +369,11 @@ class Browser:
                 return field["xpath"]
         return None
 
-    def fill_form_inputs(self, input_list:[str]) -> bool:
+    def fill_form_inputs(self, input_list: List[str]) -> bool:
         """Fill form inputs based on a list of [name](value) strings."""
+        if not isinstance(input_list, list):
+            self.logger.error("input_list must be a list")
+            return False
         inputs = self.find_all_inputs()
         try:
             for input_str in input_list:
@@ -389,7 +446,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     
     driver = create_driver()
-    browser = Browser(driver)
+    browser = Browser(driver, anticaptcha_manual_install=True)
     time.sleep(10)
     
     print("AntiCaptcha Test")
@@ -400,4 +457,5 @@ if __name__ == "__main__":
     inputs = browser.get_form_inputs()
     inputs = ['[username](student)', f'[password](Password123)', '[appOtp]()', '[backupOtp]()']
     browser.fill_form_inputs(inputs)
-    browser.find_and_click_submit()
+    browser.find_and_click_submission()
+    time.sleep(30)
