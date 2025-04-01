@@ -1,5 +1,9 @@
+<p align="center">
+<img align="center" src="./media/whale_readme.jpg">
+<p>
 
-
+--------------------------------------------------------------------------------
+[English](./README.md) | [繁體中文](./README_CHT.md) | Français
 
 # AgenticSeek: Une IA comme Manus mais à base d'agents DeepSeek R1 fonctionnant en local.
 
@@ -387,38 +391,39 @@ Si cette section est incomplète, veuillez signaler un problème.
 
 ## FAQ
 
-**Q: What hardware do I need?**  
+**Q: J'ai besoin d'un gros PC?**  
 
-Modèle 7B : GPU avec 8 Go de VRAM.
-Modèle 14B : GPU 12 Go (par exemple, RTX 3060).
-Modèle 32B : 24 Go+ de VRAM.
+ça dépend du modèle!
+Pour un modèle 7B : GPU avec 8 Go de VRAM.
+Pour un modèle 14B : GPU 12 Go (par exemple, RTX 3060).
+Et un modèle 32B : 24 Go+ de VRAM.
 
-**Q: Why Deepseek R1 over other models?**  
+**Q: Pourquoi deepseek et pas un autre modèle**  
 
-DeepSeek R1 excelle dans le raisonnement et l’utilisation d’outils pour sa taille. Nous pensons que c’est un choix solide pour nos besoins, bien que d’autres modèles fonctionnent également bien, DeepSeek est notre choix principal.
+DeepSeek R1 excelle dans le raisonnement et l’utilisation d’outils pour sa taille. Nous pensons que c’est un choix solide pour nos besoins, bien que d’autres modèles fonctionnent également (bien que moins bien pour un nombre identique de paramètre).
 
-**Q: I get an error running `main.py`. What do I do?**  
+**Q: J'ai une erreur quand je lance le programme, je fait quoi?**  
 
 Assurez-vous qu’Ollama est en cours d’exécution (ollama serve), que votre config.ini correspond à votre fournisseur, et que les dépendances sont installées. Si cela ne fonctionne pas, n’hésitez pas à signaler un problème.
 
-**Q: Can it really run 100% locally?**  
+**Q: C'est vraiment 100% local?**  
 
 Oui, avec les fournisseurs Ollama ou Server, toute la reconnaissance vocale, le LLM et la synthèse vocale fonctionnent localement. Les options non locales (OpenAI ou autres API) sont facultatives.
 
-**Q: How come it is older than manus ?**
+**Q: Pourquoi le projet est plus vieux que la date de sortie de Manus?**
 
 Nous avons commencé cela comme un projet amusant pour créer une IA locale de type Jarvis. Cependant, avec l’émergence de Manus, nous avons vu l’opportunité de réorienter certaines tâches pour en faire une autre alternative.
 
-**Q: How is it better than manus  ?**
+**Q: En quoi c'est supérieur à Manus**
 
-Il ne l’est pas, mais nous privilégions l’exécution locale et la confidentialité par rapport à une approche basée sur le cloud. C’est une alternative amusante et accessible !
+Il ne l'est pas mais nous privilégions l’exécution locale et la confidentialité par rapport à une approche basée sur le cloud. C’est une alternative plus accessible et surtout moins cher !
 
 ## Contribute
 
-Nous recherchons des développeurs pour améliorer AgenticSeek ! Consultez les problèmes ouverts ou les discussions.
+Nous recherchons des développeurs pour améliorer AgenticSeek ! Consultez la section "issues" github ou les discussions.
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
 
 ## Auteurs:
- > [Fosowl](https://github.com/Fosowl)
- > [steveh8758](https://github.com/steveh8758) 
+ > [Fosowl](https://github.com/Fosowl) - Epitech 2024, France
+ > [steveh8758](https://github.com/steveh8758) - Université Feng Chia, Taiwan
