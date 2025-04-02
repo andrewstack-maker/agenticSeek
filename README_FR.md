@@ -26,6 +26,7 @@ Une alternative **entièrement locale** à Manus AI, un assistant vocal IA qui c
 
 ![alt text](./media/examples/planner.png)
 
+
 ## Fonctionnalités:
 
 - **100% Local**: Fonctionne en local sur votre PC. Vos données restent les vôtres. 

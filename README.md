@@ -25,7 +25,6 @@ English | [繁體中文](./README_CHT.md) | [Français](./README_FR.md)
 
 ![alt text](./media/examples/planner.png)
 
-*See media/examples for other use case screenshots.*
 
 ## Features:
 
