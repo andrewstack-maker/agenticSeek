@@ -12,7 +12,6 @@ English | [繁體中文](./README_CHT.md) | [Français](./README_FR.md)
 
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj)
 
-> 🛠️ **Work in Progress** – Looking for contributors!
 
 > *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
@@ -20,11 +19,11 @@ English | [繁體中文](./README_CHT.md) | [Français](./README_FR.md)
 
 > *I would like to setup a new project file index as mark2.*
 
-
-### agenticSeek can now plan tasks!
+### Divide and conqueer complex tasks with multiple agents!
 
 ![alt text](./media/examples/planner.png)
 
+> 🛠️ **Work in Progress** – Looking for contributors!
 
 ## Features:
 
