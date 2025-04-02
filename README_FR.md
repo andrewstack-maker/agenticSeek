@@ -22,7 +22,7 @@ Une alternative **entièrement locale** à Manus AI, un assistant vocal IA qui c
 > *J'aimerais que tu trouve une api météo et que tu me code un application qui affiche la météo à Toulouse*
 
 
-### agenticSeek peut planifier des taches!
+### agenticSeek peut désormais planifier des taches!
 
 ![alt text](./media/examples/planner.png)
 
