@@ -8,14 +8,13 @@ from adaptive_classifier import AdaptiveClassifier
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 from sources.agents.agent import Agent
 from sources.agents.code_agent import CoderAgent
 from sources.agents.casual_agent import CasualAgent
 from sources.agents.planner_agent import FileAgent
 from sources.agents.browser_agent import BrowserAgent
 from sources.language import LanguageUtility
-from sources.utility import pretty_print
+from sources.utility import pretty_print, animate_thinking, timer_decorator
 
 class AgentRouter:
     """
@@ -24,13 +23,22 @@ class AgentRouter:
     def __init__(self, agents: list):
         self.agents = agents
         self.lang_analysis = LanguageUtility()
-        self.pipelines = {
-            "bart": pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
-        }
+        self.pipelines = self.load_pipelines()
         self.talk_classifier = self.load_llm_router()
         self.complexity_classifier = self.load_llm_router()
         self.learn_few_shots_tasks()
         self.learn_few_shots_complexity()
+    
+    def load_pipelines(self) -> Dict[str, Type[pipeline]]:
+        """
+        Load the pipelines for the text classification used for routing.
+        returns:
+            Dict[str, Type[pipeline]]: The loaded pipelines
+        """
+        animate_thinking("Loading zero-shot pipeline...", color="status")
+        return {
+            "bart": pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+        }
 
     def load_llm_router(self) -> AdaptiveClassifier:
         """
@@ -42,6 +50,7 @@ class AgentRouter:
         """
         path = "../llm_router" if __name__ == "__main__" else "./llm_router"
         try:
+            animate_thinking("Loading LLM router model...", color="status")
             talk_classifier = AdaptiveClassifier.from_pretrained(path)
         except Exception as e:
             raise Exception("Failed to load the routing model. Please run the dl_safetensors.sh script inside llm_router/ directory to download the model.")
@@ -302,25 +311,14 @@ class AgentRouter:
             pretty_print(f"Agent choice -> BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
         return bart if final_score_bart > final_score_llm else llm_router
     
-    def classify_text(self, text: str, threshold: float = 0.4) -> list:
-        """
-        Classify the text using the LLM router and BART model.
-        """
+    def find_first_sentence(self, text: str) -> str:
         first_sentence = None
-        lang = "en"
         for line in text.split("\n"):
             first_sentence = line.strip()
             break
         if first_sentence is None:
             first_sentence = text
-        try:
-            lang = self.lang_analysis.detect_language(first_sentence)
-            # no multilanguage support yet
-            labels = [agent.role["en"] for agent in self.agents]
-            result = self.router_vote(first_sentence, labels, log_confidence=False)
-        except Exception as e:
-            raise e
-        return result, lang
+        return first_sentence
     
     def estimate_complexity(self, text: str) -> str:
         """
@@ -328,7 +326,7 @@ class AgentRouter:
         Args:
             text: The input text
         Returns:
-            str: The estimated complexity
+        str: The estimated complexity
         """
         predictions = self.complexity_classifier.predict(text)
         predictions = sorted(predictions, key=lambda x: x[1], reverse=True)
@@ -358,12 +356,6 @@ class AgentRouter:
         pretty_print(f"Error finding planner agent. Please add a planner agent to the list of agents.", color="failure")
         return None
     
-    def multi_language_message(self, text: str):
-        pretty_print(f"选择代理时出错。路由系统尚不支持多语言", color="failure")
-        pretty_print(f"エージェントの選択エラー。ルーティングシステムはまだ多言語に対応していません", color="failure")
-        pretty_print(f"Erreur lors du choix de l'agent. Le système de routage n'est pas encore multilingue.", color="failure")
-        pretty_print(f"Error al elegir agente. El sistema de enrutamiento aún no es multilingüe.", color="failure")
-    
     def select_agent(self, text: str) -> Agent:
         """
         Select the appropriate agent based on the text.
@@ -374,16 +366,21 @@ class AgentRouter:
         """
         if len(self.agents) == 0:
             return self.agents[0]
+        lang = self.lang_analysis.detect_language(text)
+        text = self.find_first_sentence(text)
+        text = self.lang_analysis.translate(text, lang)
+        labels = [agent.role["en"] for agent in self.agents]
         complexity = self.estimate_complexity(text)
-        best_agent, lang = self.classify_text(text)
-        if lang != "en":
-            self.multi_language_message(text)
         if complexity == None:
             pretty_print(f"Humm, the task seem complex but you gave very little information. can you clarify?", color="info")
             return None
-        if complexity == "HIGH" and lang == "en":
+        if complexity == "HIGH":
             pretty_print(f"Complex task detected, routing to planner agent.", color="info")
             return self.find_planner_agent()
+        try:
+            best_agent = self.router_vote(text, labels, log_confidence=False)
+        except Exception as e:
+            raise e
         for agent in self.agents:
             if best_agent == agent.role["en"]:
                 pretty_print(f"Selected agent: {agent.agent_name} (roles: {agent.role[lang]})", color="warning")
@@ -393,52 +390,52 @@ class AgentRouter:
 
 if __name__ == "__main__":
     agents = [
-        CasualAgent("jarvis", "../prompts/casual_agent.txt", None),
-        BrowserAgent("browser", "../prompts/planner_agent.txt", None),
-        CoderAgent("coder", "../prompts/coder_agent.txt", None),
-        FileAgent("file", "../prompts/coder_agent.txt", None)
+        CasualAgent("jarvis", "../prompts/base/casual_agent.txt", None),
+        BrowserAgent("browser", "../prompts/base/planner_agent.txt", None),
+        CoderAgent("coder", "../prompts/base/coder_agent.txt", None),
+        FileAgent("file", "../prompts/base/coder_agent.txt", None)
     ]
     router = AgentRouter(agents)
     texts = [
         "hi",
-        #"你好",
-        #"Bonjour",
+        "你好",
+        "Bonjour",
         "Write a python script to check if the device on my network is connected to the internet",
-        # "Peut tu écrire un script python qui vérifie si l'appareil sur mon réseau est connecté à internet?",
-        # "写一个Python脚本，检查我网络上的设备是否连接到互联网",
+         "Peut tu écrire un script python qui vérifie si l'appareil sur mon réseau est connecté à internet?",
+         "写一个Python脚本，检查我网络上的设备是否连接到互联网",
         "Hey could you search the web for the latest news on the tesla stock market ?",
-        # "嘿，你能搜索网页上关于股票市场的最新新闻吗？",
-        # "Yo, cherche sur internet comment va tesla en bourse.",
+         "嘿，你能搜索网页上关于股票市场的最新新闻吗？",
+         "Yo, cherche sur internet comment va tesla en bourse.",
         "I would like you to search for weather api and then make an app using this API",
-        # "我想让你搜索天气API，然后用这个API做一个应用程序",
-        # "J'aimerais que tu cherche une api météo et que l'utilise pour faire une application",
+         "我想让你搜索天气API，然后用这个API做一个应用程序",
+         "J'aimerais que tu cherche une api météo et que l'utilise pour faire une application",
         "Plan a 3-day trip to New York, including flights and hotels.",
-        # "计划一次为期3天的纽约之旅，包括机票和酒店。",
-        # "Planifie un trip de 3 jours à Paris, y compris les vols et hotels.",
+         "计划一次为期3天的纽约之旅，包括机票和酒店。",
+         "Planifie un trip de 3 jours à Paris, y compris les vols et hotels.",
         "Find on the web the latest research papers on AI.",
-        # "在网上找到最新的人工智能研究论文。",
-        # "Trouve moi les derniers articles de recherche sur l'IA sur internet",
+         "在网上找到最新的人工智能研究论文。",
+         "Trouve moi les derniers articles de recherche sur l'IA sur internet",
         "Help me write a C++ program to sort an array",
         "Tell me what France been up to lately",
-        # "告诉我法国最近在做什么",
-        # "Dis moi ce que la France a fait récemment",
+         "告诉我法国最近在做什么",
+         "Dis moi ce que la France a fait récemment",
         "Who is Sergio Pesto ?",
-        # "谁是Sergio Pesto？",
-        # "Qui est Sergio Pesto ?",
-        # "帮我写一个C++程序来排序数组",
-        # "Aide moi à faire un programme c++ pour trier une array.",
+         "谁是Sergio Pesto？",
+         "Qui est Sergio Pesto ?",
+         "帮我写一个C++程序来排序数组",
+         "Aide moi à faire un programme c++ pour trier une array.",
         "What’s the weather like today? Oh, and can you find a good weather app?",
-        # "今天天气怎么样？哦，你还能找到一个好的天气应用程序吗？",
-        # "La météo est comment aujourd'hui ? oh et trouve moi une bonne appli météo tant que tu y est.",
+         "今天天气怎么样？哦，你还能找到一个好的天气应用程序吗？",
+         "La météo est comment aujourd'hui ? oh et trouve moi une bonne appli météo tant que tu y est.",
         "Can you debug this Java code? It’s not working.",
-        # "你能调试这段Java代码吗？它不起作用。",
-        # "Peut tu m'aider à debugger ce code java, ça marche pas",
-        #"Can you browse the web and find me a 4090 for cheap?",
-        #"你能浏览网页，为我找一个便宜的4090吗？",
-        #"Peut tu chercher sur internet et me trouver une 4090 pas cher ?",
-        #"Hey, can you find the old_project.zip file somewhere on my drive?",
-        #"嘿，你能在我驱动器上找到old_project.zip文件吗？",
-        #"Hé trouve moi le old_project.zip, il est quelque part sur mon disque.",
+         "你能调试这段Java代码吗？它不起作用。",
+         "Peut tu m'aider à debugger ce code java, ça marche pas",
+        "Can you browse the web and find me a 4090 for cheap?",
+        "你能浏览网页，为我找一个便宜的4090吗？",
+        "Peut tu chercher sur internet et me trouver une 4090 pas cher ?",
+        "Hey, can you find the old_project.zip file somewhere on my drive?",
+        "嘿，你能在我驱动器上找到old_project.zip文件吗？",
+        "Hé trouve moi le old_project.zip, il est quelque part sur mon disque.",
         "Tell me a funny story",
         "给我讲一个有趣的故事",
         "Raconte moi une histoire drole"

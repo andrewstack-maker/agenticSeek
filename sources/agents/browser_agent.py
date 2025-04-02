@@ -187,7 +187,7 @@ class BrowserAgent(Agent):
     def conclude_prompt(self, user_query: str) -> str:
         annotated_notes = [f"{i+1}: {note.lower().replace('note:', '')}" for i, note in enumerate(self.notes)]
         search_note = '\n'.join(annotated_notes)
-        print("AI research notes:\n", search_note)
+        pretty_print(f"AI notes:\n{search_note}", color="success")
         return f"""
         Following a human request:
         {user_query}

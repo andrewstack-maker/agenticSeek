@@ -28,6 +28,9 @@ unsafe_commands_unix = [
     "parted",       # Disk partitioning
     "chroot",       # Change root directory
     "route"         # Routing table management
+    "--force",     # Force flag for many commands
+    "rebase",     # Rebase git repository
+    "git ." # Git commands, feel free to remove it but i dont want to risk agenticSeek pushing to its own repo lol (see 56b5db7)
 ]
 
 unsafe_commands_windows = [

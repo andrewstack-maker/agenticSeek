@@ -1,17 +1,35 @@
 from typing import List, Tuple, Type, Dict, Tuple
-import langid
 import re
+import langid
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from transformers import MarianMTModel, MarianTokenizer
+
+from sources.utility import pretty_print, animate_thinking
 
 class LanguageUtility:
     """LanguageUtility for language, or emotion identification"""
     def __init__(self):
+        self.sid = None 
+        self.translators_tokenizer = None 
+        self.translators_model = None
+        self.load_model()
+    
+    def load_model(self) -> None:
+        animate_thinking("Loading language utility...", color="status")
         try:
             nltk.data.find('vader_lexicon')
         except LookupError:
             nltk.download('vader_lexicon')
         self.sid = SentimentIntensityAnalyzer()
+        self.translators_tokenizer = {
+            "fr": MarianTokenizer.from_pretrained("Helsinki-NLP/opus-mt-fr-en"),
+            "zh": MarianTokenizer.from_pretrained("Helsinki-NLP/opus-mt-zh-en")
+        }
+        self.translators_model = {
+            "fr": MarianMTModel.from_pretrained("Helsinki-NLP/opus-mt-fr-en"),
+            "zh": MarianMTModel.from_pretrained("Helsinki-NLP/opus-mt-zh-en")
+        }
     
     def detect_language(self, text: str) -> str:
         """
@@ -23,6 +41,25 @@ class LanguageUtility:
         langid.set_languages(['fr', 'en', 'zh'])
         lang, score = langid.classify(text)
         return lang
+
+    def translate(self, text: str, origin_lang: str) -> str:
+        """
+        Translate the given text to English
+        Args:
+            text: string to translate
+            origin_lang: ISO language code
+        Returns: translated str
+        """
+        if origin_lang == "en":
+            return text
+        if origin_lang not in self.translators_tokenizer:
+            pretty_print(f"Language {origin_lang} not supported for translation", color="error")
+            return text
+        tokenizer = self.translators_tokenizer[origin_lang]
+        inputs = tokenizer(text, return_tensors="pt", padding=True)
+        model = self.translators_model[origin_lang]
+        translation = model.generate(**inputs)
+        return tokenizer.decode(translation[0], skip_special_tokens=True)
 
     def detect_emotion(self, text: str) -> str:
         """
@@ -75,11 +112,12 @@ if __name__ == "__main__":
     
     test_texts = [
         "I am so happy today!",
-        "Qué tristeza siento ahora",
         "我不要去巴黎",
         "La vie c'est cool"
     ]
     for text in test_texts:
-        print(f"\nAnalyzing: {text}")
+        pretty_print("Analyzing...", color="status")
+        pretty_print(f"Language: {detector.detect_language(text)}", color="status")
         result = detector.analyze(text)
-        print(result)
+        trans = detector.translate(text, result['language'])
+        pretty_print(f"Translation: {trans} - from: {result['language']} - Emotion: {result['emotions']}")

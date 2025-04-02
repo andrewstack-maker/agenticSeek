@@ -275,7 +275,6 @@ class Browser:
     def get_form_inputs(self) -> List[str]:
         """Extract all input from the page and return them."""
         try:
-            #input_elements = self.driver.find_elements(By.TAG_NAME, "input")
             input_elements = self.find_all_inputs()
             if not input_elements:
                 return ["No input forms found on the page."]
@@ -409,7 +408,7 @@ class Browser:
             self.driver.execute_script(
                 "window.scrollTo(0, document.body.scrollHeight);"
             )
-            time.sleep(1)  # Wait for scroll to complete
+            time.sleep(1)
             return True
         except Exception as e:
             self.logger.error(f"Error scrolling: {str(e)}")

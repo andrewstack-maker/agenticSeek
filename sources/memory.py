@@ -67,9 +67,9 @@ class Memory():
 
     def load_memory(self, agent_type: str = "casual_agent") -> None:
         """Load the memory from the last session."""
-        pretty_print(f"Loading {agent_type} past memories... ", color="status")
         if self.session_recovered == True:
             return
+        pretty_print(f"Loading {agent_type} past memories... ", color="status")
         save_path = os.path.join(self.conversation_folder, agent_type)
         if not os.path.exists(save_path):
             pretty_print("No memory to load.", color="success")
