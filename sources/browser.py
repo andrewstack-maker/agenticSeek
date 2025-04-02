@@ -122,7 +122,7 @@ class Browser:
             self.load_anticatpcha_manually()
             
     def load_anticatpcha_manually(self):
-        print("You might want to install the AntiCaptcha extension for captchas.")
+        pretty_print("You might want to install the AntiCaptcha extension for captchas.", color="warning")
         self.driver.get(self.anticaptcha)
 
     def go_to(self, url:str) -> bool:
@@ -286,10 +286,10 @@ class Browser:
 
             form_strings = []
             for element in input_elements:
-                input_type = element["type"] or "text"
+                input_type = element.get("type") or "text"
                 if input_type in ["hidden", "submit", "button", "image"] or not element["displayed"]:
                     continue
-                input_name = element["text"] or element["id"] or input_type
+                input_name = element.get("text") or element.get("id") or input_type
                 if input_type == "checkbox" or input_type == "radio":
                     try:
                         checked_status = "checked" if element.is_selected() else "unchecked"
