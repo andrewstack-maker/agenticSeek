@@ -24,9 +24,7 @@
 
 ### AgenticSeek 可以進行任務規劃！
 
-![alt text](./media/exemples/demo_image.png)
-
-*可以查看我們的圖片集和範例了解他到底可以做些甚麼。*
+![alt text](./media/examples/planner.png)
 
 ## Features:
 
@@ -144,9 +142,6 @@ python3 main.py
 ---
 
 ## Usage （使用方法）
-
-警告：目前 AgenticSeek 選擇助理的方式，暫且只支援英文，因為選擇助理的方式是使用英文文本訓練，所以使用非英文方式會出現挺多問題的。但放心，我們正在努力解決這個問題，還請體諒 QAQ
-
 
 確定所有的核心檔案都啟用了，也就是執行過這條命令 `./start_services.sh` 然後你就可以使用 `python3 main.py` 來啟動 AgenticSeek 了！
 

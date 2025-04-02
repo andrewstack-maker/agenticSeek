@@ -14,18 +14,16 @@ English | [繁體中文](./README_CHT.md) | [Français](./README_FR.md)
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
+## Task planning with multiple agents 
+
+![alt text](./media/examples/planner.png)
+
 > *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
 > *Can you make a tetris game in C ?*
 
 > *I would like to setup a new project file index as mark2.*
 
-
-### agenticSeek can now plan tasks!
-
-![alt text](./media/exemples/demo_image.png)
-
-*See media/examples for other use case screenshots.*
 
 ## Features:
 
@@ -142,8 +140,7 @@ python3 main.py
 
 ## Usage
 
-Warning: currently the system that choose the best AI agent routing system will work poorly with non-english text. This is because the agent routing currently use a model that was trained on english text. We are working hard to fix this. Please use english for now.
-
+Warning: We only support French, English and Chinese, prompt in other language would work but might not be routed to the proper agent.
 
 Make sure the services are up and running with `./start_services.sh` and run the agenticSeek with `python3 main.py`
 
@@ -162,9 +159,9 @@ Here are some example usage:
 
 ### Coding/Bash
 
-> *Help me with matrix multiplication in Golang*
+> *Show me how to multiply matrice in C*
 
-> *Scan my network with nmap, find if any suspicious devices is connected*
+> *Can you install follow the readme and install project at /home/path/project*
 
 > *Make a snake game in python*
 
@@ -174,7 +171,7 @@ Here are some example usage:
 
 > *Can you find on the internet who created agenticSeek?*
 
-> *Can you find on which website I can buy a rtx 4090 for cheap*
+> *Can you use a fuel calculator online to estimate the cost of a Nice - Milan trip*
 
 ### File system
 
@@ -186,11 +183,11 @@ Here are some example usage:
 
 ### Casual
 
-> *Tell me about France*
+> *Tell me about Rennes, France*
 
-> *What is the meaning of life ?*
+> *Should I pursue a phd ?*
 
-> *Should I take creatine before or after workout?*
+> *What's the best workout routine ?*
 
 
 After you type your query, agenticSeek will allocate the best agent for the task.
@@ -430,9 +427,11 @@ Ensure Ollama is running (`ollama serve`), your `config.ini` matches your provid
 
 Yes with Ollama or Server providers, all speech to text, LLM and text to speech model run locally. Non-local options (OpenAI or others API) are optional.
 
-**Q: How come it is older than manus ?**
+**Q: Why should I use AgenticSeek when I have Manus?**
 
-we started this a fun side project to make a fully local, Jarvis-like AI. However, with the rise of Manus, we saw the opportunity to redirected some tasks to make yet another alternative.
+This started as Side-Project we did out of interest about AI agents. What’s special about it is that we want to use local model and avoid APIs.
+We draw inspiration from Jarvis and Friday (Iron man movies) to make it "cool" but for functionnality we take more inspiration from Manus, because that's what people want in the first place: a local manus alternative.
+Unlike Manus, AgenticSeek prioritizes independence from external systems, giving you more control, privacy and avoid cost. 
 
 **Q: How is it better than manus  ?**
 

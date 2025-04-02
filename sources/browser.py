@@ -24,6 +24,9 @@ import re
 
 from sources.utility import pretty_print, animate_thinking
 
+logging.basicConfig(filename='browser.log', level=logging.ERROR, 
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 def get_chrome_path() -> str:
     if sys.platform.startswith("win"):
         paths = [
@@ -111,13 +114,15 @@ class Browser:
             self.logger = logging.getLogger(__name__)
             self.logger.info("Browser initialized successfully")
         except Exception as e:
+            logging.basicConfig(filename='browser.log', level=logging.ERROR, 
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             raise Exception(f"Failed to initialize browser: {str(e)}")
         self.driver.get("https://www.google.com")
         if anticaptcha_manual_install:
             self.load_anticatpcha_manually()
             
     def load_anticatpcha_manually(self):
-        print("You might want to install the AntiCaptcha extension for captchas.")
+        pretty_print("You might want to install the AntiCaptcha extension for captchas.", color="warning")
         self.driver.get(self.anticaptcha)
 
     def go_to(self, url:str) -> bool:
@@ -263,7 +268,7 @@ class Browser:
         except Exception as e:
             raise e
 
-    def find_all_inputs(self, timeout=4):
+    def find_all_inputs(self, timeout=3):
         WebDriverWait(self.driver, timeout).until(
             EC.presence_of_element_located((By.TAG_NAME, "body"))
         )
@@ -275,26 +280,28 @@ class Browser:
     def get_form_inputs(self) -> List[str]:
         """Extract all input from the page and return them."""
         try:
-            #input_elements = self.driver.find_elements(By.TAG_NAME, "input")
             input_elements = self.find_all_inputs()
             if not input_elements:
                 return ["No input forms found on the page."]
 
             form_strings = []
             for element in input_elements:
-                input_type = element["type"] or "text"
+                input_type = element.get("type") or "text"
                 if input_type in ["hidden", "submit", "button", "image"] or not element["displayed"]:
                     continue
-                input_name = element["text"] or element["id"] or input_type
+                input_name = element.get("text") or element.get("id") or input_type
                 if input_type == "checkbox" or input_type == "radio":
-                    checked_status = "checked" if element.is_selected() else "unchecked"
+                    try:
+                        checked_status = "checked" if element.is_selected() else "unchecked"
+                    except Exception as e:
+                        continue
                     form_strings.append(f"[{input_name}]({checked_status})")
                 else:
                     form_strings.append(f"[{input_name}]("")")
             return form_strings
 
         except Exception as e:
-            return [f"Error extracting form inputs."]
+            raise e
 
     def get_buttons_xpath(self) -> List[str]:
         """
@@ -308,13 +315,14 @@ class Browser:
                 continue
             text = (button.text or button.get_attribute("value") or "").lower().replace(' ', '')
             xpath = f"(//button | //input[@type='submit'])[{i + 1}]"
-            if "login" in text or "sign" in text or "register":
-                result.append((text, xpath))
+            result.append((text, xpath))
         result.sort(key=lambda x: len(x[0]))
         return result
 
     def find_and_click_submission(self, timeout: int = 10) -> bool:
-        possible_submissions = ["login", "submit", "register"]
+        possible_submissions = ["login", "submit", "register", "calculate", "login", "submit", "register", "calculate", "save", "send",
+                                "continue", "apply", "ok", "confirm", "next", "proceed", "accept", "agree", "yes", "no", "cancel",
+                                "close", "done", "finish", "start", "calculate"]
         for submission in possible_submissions:
             if self.find_and_click_btn(submission, timeout):
                 return True
@@ -388,6 +396,7 @@ class Browser:
                         element.click()
                         self.logger.info(f"Set {name} to {value}")
                 else:
+                    element.clear()
                     element.send_keys(value)
                     self.logger.info(f"Filled {name} with {value}")
             return True
@@ -409,7 +418,7 @@ class Browser:
             self.driver.execute_script(
                 "window.scrollTo(0, document.body.scrollHeight);"
             )
-            time.sleep(1)  # Wait for scroll to complete
+            time.sleep(1)
             return True
         except Exception as e:
             self.logger.error(f"Error scrolling: {str(e)}")
@@ -439,13 +448,12 @@ if __name__ == "__main__":
     browser = Browser(driver, anticaptcha_manual_install=True)
     time.sleep(10)
     
-    print("AntiCaptcha Test")
+    print("AntiCaptcha / Form Test")
     browser.go_to("https://www.google.com/recaptcha/api2/demo")
+    #browser.go_to("https://practicetestautomation.com/practice-test-login/")
     time.sleep(10)
-    print("Form Test:")
-    browser.go_to("https://practicetestautomation.com/practice-test-login/")
     inputs = browser.get_form_inputs()
-    inputs = ['[username](student)', f'[password](Password123)', '[appOtp]()', '[backupOtp]()']
+    inputs = ['[input1](Martin)', f'[input2](Test)', '[input3](test@gmail.com)']
     browser.fill_form_inputs(inputs)
     browser.find_and_click_submission()
     time.sleep(30)

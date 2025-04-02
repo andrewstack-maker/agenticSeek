@@ -187,7 +187,7 @@ class BrowserAgent(Agent):
     def conclude_prompt(self, user_query: str) -> str:
         annotated_notes = [f"{i+1}: {note.lower().replace('note:', '')}" for i, note in enumerate(self.notes)]
         search_note = '\n'.join(annotated_notes)
-        print("AI research notes:\n", search_note)
+        pretty_print(f"AI notes:\n{search_note}", color="success")
         return f"""
         Following a human request:
         {user_query}
@@ -251,7 +251,7 @@ class BrowserAgent(Agent):
         complete = False
 
         animate_thinking(f"Thinking...", color="status")
-        self.memory.push('user', self.search_prompt(user_prompt))
+        mem_begin_idx = self.memory.push('user', self.search_prompt(user_prompt))
         ai_prompt, _ = self.llm_request()
         if "REQUEST_EXIT" in ai_prompt:
             pretty_print(f"{reasoning}\n{ai_prompt}", color="output")
@@ -305,9 +305,10 @@ class BrowserAgent(Agent):
             prompt = self.make_navigation_prompt(user_prompt, page_text)
 
         prompt = self.conclude_prompt(user_prompt)
-        self.memory.push('user', prompt)
+        mem_last_idx = self.memory.push('assistant', prompt)
         answer, reasoning = self.llm_request()
         pretty_print(answer, color="output")
+        self.memory.clear_section(mem_begin_idx, mem_last_idx)
         return answer, reasoning
 
 if __name__ == "__main__":

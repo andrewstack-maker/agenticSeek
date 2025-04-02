@@ -44,6 +44,7 @@ setup(
         "fake_useragent>=2.1.0",
         "selenium_stealth>=1.0.6",
         "undetected-chromedriver>=3.5.5",
+        "sentencepiece>=0.2.0",
         "sniffio",
         "tqdm>4"
     ],

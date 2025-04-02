@@ -1,3 +1,4 @@
+import platform, os
 
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent, executorResult
@@ -20,6 +21,7 @@ class CoderAgent(Agent):
             "go": GoInterpreter(),
             "file_finder": FileFinder()
         }
+        self.work_dir = self.tools["file_finder"].get_work_dir()
         self.role = {
             "en": "code",
             "fr": "codage",
@@ -27,10 +29,20 @@ class CoderAgent(Agent):
         }
         self.type = "code_agent"
 
+    
+    def add_sys_info_prompt(self, prompt):
+        """Add system information to the prompt."""
+        info = f"System Info:\n" \
+               f"OS: {platform.system()} {platform.release()}\n" \
+               f"Python Version: {platform.python_version()}\n" \
+               f"\nYou must work in directory: {self.work_dir}"
+        return f"{prompt}\n\n{info}"
+
     def process(self, prompt, speech_module) -> str:
         answer = ""
         attempt = 0
-        max_attempts = 3
+        max_attempts = 4
+        prompt = self.add_sys_info_prompt(prompt)
         self.memory.push('user', prompt)
         clarify_trigger = "REQUEST_CLARIFICATION"
 

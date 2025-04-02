@@ -67,9 +67,9 @@ class Memory():
 
     def load_memory(self, agent_type: str = "casual_agent") -> None:
         """Load the memory from the last session."""
-        pretty_print(f"Loading {agent_type} past memories... ", color="status")
         if self.session_recovered == True:
             return
+        pretty_print(f"Loading {agent_type} past memories... ", color="status")
         save_path = os.path.join(self.conversation_folder, agent_type)
         if not os.path.exists(save_path):
             pretty_print("No memory to load.", color="success")
@@ -89,7 +89,7 @@ class Memory():
     def reset(self, memory: list) -> None:
         self.memory = memory
     
-    def push(self, role: str, content: str) -> None:
+    def push(self, role: str, content: str) -> int:
         """Push a message to the memory."""
         if self.memory_compression and role == 'assistant':
             self.compress()
@@ -97,9 +97,13 @@ class Memory():
         if self.memory[curr_idx-1]['content'] == content:
             pretty_print("Warning: same message have been pushed twice to memory", color="error")
         self.memory.append({'role': role, 'content': content})
+        return curr_idx-1
     
     def clear(self) -> None:
         self.memory = []
+    
+    def clear_section(self, start: int, end: int) -> None:
+        self.memory = self.memory[:start] + self.memory[end:]
     
     def get(self) -> list:
         return self.memory
