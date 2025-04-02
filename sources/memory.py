@@ -89,7 +89,7 @@ class Memory():
     def reset(self, memory: list) -> None:
         self.memory = memory
     
-    def push(self, role: str, content: str) -> None:
+    def push(self, role: str, content: str) -> int:
         """Push a message to the memory."""
         if self.memory_compression and role == 'assistant':
             self.compress()
@@ -97,9 +97,13 @@ class Memory():
         if self.memory[curr_idx-1]['content'] == content:
             pretty_print("Warning: same message have been pushed twice to memory", color="error")
         self.memory.append({'role': role, 'content': content})
+        return curr_idx-1
     
     def clear(self) -> None:
         self.memory = []
+    
+    def clear_section(self, start: int, end: int) -> None:
+        self.memory = self.memory[:start] + self.memory[end:]
     
     def get(self) -> list:
         return self.memory

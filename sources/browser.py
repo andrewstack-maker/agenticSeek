@@ -24,6 +24,9 @@ import re
 
 from sources.utility import pretty_print, animate_thinking
 
+logging.basicConfig(filename='browser.log', level=logging.ERROR, 
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 def get_chrome_path() -> str:
     if sys.platform.startswith("win"):
         paths = [
@@ -111,6 +114,8 @@ class Browser:
             self.logger = logging.getLogger(__name__)
             self.logger.info("Browser initialized successfully")
         except Exception as e:
+            logging.basicConfig(filename='browser.log', level=logging.ERROR, 
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             raise Exception(f"Failed to initialize browser: {str(e)}")
         self.driver.get("https://www.google.com")
         if anticaptcha_manual_install:
