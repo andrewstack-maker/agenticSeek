@@ -24,7 +24,7 @@ Une alternative **entièrement locale** à Manus AI, un assistant vocal IA qui c
 
 ### agenticSeek peut planifier des taches!
 
-![alt text](./media/exemples/demo_image.png)
+![alt text](./media/examples/planner.png)
 
 ## Fonctionnalités:
 

@@ -24,7 +24,7 @@
 
 ### AgenticSeek 可以進行任務規劃！
 
-![alt text](./media/exemples/demo_image.png)
+![alt text](./media/examples/planner.png)
 
 *可以查看我們的圖片集和範例了解他到底可以做些甚麼。*
 
