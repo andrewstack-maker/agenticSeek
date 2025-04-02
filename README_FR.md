@@ -15,11 +15,11 @@ Une alternative **entièrement locale** à Manus AI, un assistant vocal IA qui c
 
 ![alt text](./media/whale_readme.jpg)
 
-> *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
+> *Recherche sur le web des activités à faire à Paris*
 
-> *Can you make a tetris game in C ?*
+> *Code le jeu snake en python*
 
-> *I would like to setup a new project file index as mark2.*
+> *J'aimerais que tu trouve une api météo et que tu me code un application qui affiche la météo à Toulouse*
 
 
 ### agenticSeek peut planifier des taches!
@@ -135,8 +135,6 @@ Voir la section **Configuration** pour une explication détaillée du fichier de
 
 ## Utilisation
 
-Avertissement : actuellement, le système qui choisit le meilleur agent IA fonctionnera mal avec du texte non anglophone. Cela est dû au fait que le routage des agents utilise un modèle entraîné sur du texte en anglais. Nous travaillons dur pour corriger cela. Veuillez utiliser l’anglais pour le moment.
-
 Assurez-vous que les services sont en cours d’exécution avec ./start_services.sh et lancez AgenticSeek avec python3 main.py
 
 ```sh
@@ -154,42 +152,41 @@ Voici quelques exemples d’utilisation :
 
 ### Programmation
 
-> *Help me with matrix multiplication in Golang*
+> *Aide-moi avec la multiplication de matrices en Golang*
 
-> *Scan my network with nmap, find if any suspicious devices is connected*
+> *Initalize un nouveau project python, setup le readme, gitignore et tout le bordel et fait un premier commit*
 
-> *Make a snake game in python*
+> *Fais un jeu snake en Python*
 
 ### Recherche web
 
-> *Do a web search to find cool tech startup in Japan working on cutting edge AI research*
+> *Fais une recherche sur le web pour trouver des startups technologiques au Japon qui travaillent sur des recherches avancées en IA*
 
-> *Can you find on the internet who created agenticSeek?*
+> *Peux-tu trouver sur internet qui a créé agenticSeek ?*
 
-> *Can you find on which website I can buy a rtx 4090 for cheap*
+> *Peux-tu trouver sur quel site je peux acheter une RTX 4090 à bas prix ?*
 
 ### Fichier
 
-> *Hey can you find where is million_dollars_contract.pdf i lost it*
+> *Hé, peux-tu trouver où est million_dollars_contract.pdf ? Je l’ai perdu*
 
-> *Show me how much space I have left on my disk*
+> *Montre-moi combien d’espace il me reste sur mon disque*
 
-> *Find and read the README.md and follow the install instruction*
+> *Trouve et lis le fichier README.md et suis les instructions d’installation*
 
 ### Conversation
 
-> *Tell me about France*
+> *Parle-moi de la France*
 
-> *What is the meaning of life ?*
+> *Quel est le sens de la vie ?*
 
-> *Should I take creatine before or after workout?*
-
+> *Donne moi une recette avec les ingrédients suivant de mon frigo...*
 
 Après avoir saisi votre requête, AgenticSeek attribuera le meilleur agent pour la tâche.
 
-Comme il s’agit d’un prototype, le système de routage des agents pourrait ne pas toujours attribuer le bon agent en fonction de votre requête.
+Le système de routage des agents peut parfois ne pas toujours attribuer le bon agent en fonction de votre requête.
 
-Par conséquent, vous devez être explicite sur ce que vous voulez et sur la manière dont l’IA doit procéder. Par exemple, si vous voulez qu’elle effectue une recherche sur le web, ne dites pas :
+Par conséquent, vous devez être assez explicite sur ce que vous voulez et sur la manière dont l’IA doit procéder. Par exemple, si vous voulez qu’elle effectue une recherche sur le web, ne dites pas :
 
 Connait-tu de bons pays pour voyager seul ?
 
@@ -336,7 +333,7 @@ stealth_mode = False
 
 ## Providers
 
-Le tableau ci-dessous montre les fournisseurs disponibles :
+Le tableau ci-dessous montre les LLM providers disponibles :
 
 | Provider  | Local? | Description                                               |
 |-----------|--------|-----------------------------------------------------------|
@@ -347,7 +344,7 @@ Le tableau ci-dessous montre les fournisseurs disponibles :
 | deepseek-api  | No     | Deepseek API (pas privé) |
 | huggingface| No    | Hugging-Face API (pas privé) |
 
-Pour sélectionner un fournisseur, modifiez le config.ini :
+Pour sélectionner un provider LLM, modifiez le config.ini :
 
 ```
 is_local = False
@@ -387,7 +384,7 @@ Et téléchargez la version de chromedriver correspondant à votre système d’
 
 ![alt text](./media/chromedriver_readme.png)
 
-Si cette section est incomplète, veuillez signaler un problème.
+Si cette section est incomplète, merci de faire une nouvelle issue github.
 
 ## FAQ
 
@@ -408,15 +405,11 @@ Assurez-vous qu’Ollama est en cours d’exécution (ollama serve), que votre c
 
 **Q: C'est vraiment 100% local?**  
 
-Oui, avec les fournisseurs Ollama ou Server, toute la reconnaissance vocale, le LLM et la synthèse vocale fonctionnent localement. Les options non locales (OpenAI ou autres API) sont facultatives.
-
-**Q: Pourquoi le projet est plus vieux que la date de sortie de Manus?**
-
-Nous avons commencé cela comme un projet amusant pour créer une IA locale de type Jarvis. Cependant, avec l’émergence de Manus, nous avons vu l’opportunité de réorienter certaines tâches pour en faire une autre alternative.
+Oui, avec les fournisseurs Ollama, lm-studio ou Server, toute la reconnaissance vocale, le LLM et la synthèse vocale fonctionnent localement. Les options non locales (OpenAI ou autres API) sont facultatives.
 
 **Q: En quoi c'est supérieur à Manus**
 
-Il ne l'est pas mais nous privilégions l’exécution locale et la confidentialité par rapport à une approche basée sur le cloud. C’est une alternative plus accessible et surtout moins cher !
+Il ne l'est pas, mais nous privilégions l’exécution locale et la confidentialité par rapport à une approche basée sur le cloud. C’est une alternative plus accessible et surtout moins cher !
 
 ## Contribute
 
