@@ -14,7 +14,7 @@ English | [繁體中文](./README_CHT.md) | [Français](./README_FR.md)
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
-### Task planning with multiple agents 
+## Task planning with multiple agents 
 
 ![alt text](./media/examples/planner.png)
 
