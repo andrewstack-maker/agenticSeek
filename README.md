@@ -3,8 +3,7 @@
 <p>
 
 --------------------------------------------------------------------------------
-English | [繁體中文](./README_CHT.md) | [Français](./README_FR.md)
-
+English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Français](./README_FR.md)
 # AgenticSeek: Manus-like AI powered by Deepseek R1 Agents.
 
 
