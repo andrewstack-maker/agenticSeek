@@ -159,11 +159,11 @@ Here are some example usage:
 
 ### Coding/Bash
 
+> *Make a snake game in python*
+
 > *Show me how to multiply matrice in C*
 
-> *Can you install follow the readme and install project at /home/path/project*
-
-> *Make a snake game in python*
+> *Make a blackjack in golang*
 
 ### Web search
 
@@ -175,11 +175,11 @@ Here are some example usage:
 
 ### File system
 
-> *Hey can you find where is million_dollars_contract.pdf i lost it*
+> *Hey can you find where is contract.pdf i lost it*
 
 > *Show me how much space I have left on my disk*
 
-> *Find and read the README.md and follow the install instruction*
+> *Can you install follow the readme and install project at /home/path/project*
 
 ### Casual
 
@@ -260,7 +260,7 @@ provider_server_address = x.x.x.x:3333
 Run the assistant:
 
 ```sh
-sudo ./start_services.sh
+sudo ./start_services.sh # start_services.cmd on windows
 python3 main.py
 ```
 
@@ -285,7 +285,7 @@ Change the IP address if your openai-based api run on your own server.
 Run the assistant:
 
 ```sh
-sudo ./start_services.sh
+sudo ./start_services.sh # start_services.cmd on windows
 python3 main.py
 ```
 
@@ -431,11 +431,7 @@ Yes with Ollama or Server providers, all speech to text, LLM and text to speech 
 
 This started as Side-Project we did out of interest about AI agents. What’s special about it is that we want to use local model and avoid APIs.
 We draw inspiration from Jarvis and Friday (Iron man movies) to make it "cool" but for functionnality we take more inspiration from Manus, because that's what people want in the first place: a local manus alternative.
-Unlike Manus, AgenticSeek prioritizes independence from external systems, giving you more control, privacy and avoid cost. 
-
-**Q: How is it better than manus  ?**
-
-It's not but we prioritizes local execution and privacy over cloud based approach. It’s a fun, accessible alternative!
+Unlike Manus, AgenticSeek prioritizes independence from external systems, giving you more control, privacy and avoid api cost. 
 
 ## Contribute
 

@@ -7,7 +7,7 @@
 
 # AgenticSeek: Une IA comme Manus mais à base d'agents DeepSeek R1 fonctionnant en local.
 
-Une alternative **entièrement locale** à Manus AI, un assistant vocal IA qui code, explore votre système de fichiers, navigue sur le web et corrige ses erreurs, tout cela sans envoyer la moindre donnée dans le cloud. Construit avec des modèles de raisonnement comme DeepSeek R1, cet agent autonome fonctionne entièrement sur votre hardware, garantissant la confidentialité de vos données.
+Une alternative **entièrement locale** à Manus AI, un assistant IA qui code, explore votre système de fichiers, navigue sur le web et corrige ses erreurs, tout cela sans envoyer la moindre donnée dans le cloud. Cet agent autonome fonctionne entièrement sur votre hardware, garantissant la confidentialité de vos données.
 
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj)
 
@@ -19,7 +19,7 @@ Une alternative **entièrement locale** à Manus AI, un assistant vocal IA qui c
 
 > *Code le jeu snake en python*
 
-> *J'aimerais que tu trouve une api météo et que tu me code un application qui affiche la météo à Toulouse*
+> *J'aimerais que tu trouve une api météo et que tu me code une application qui affiche la météo à Toulouse*
 
 
 ### agenticSeek peut désormais planifier des taches!
@@ -51,7 +51,7 @@ Assurez-vous d’avoir installé le pilote Chrome, Docker et Python 3.10 (ou une
 
 Pour les problèmes liés au pilote Chrome, consultez la section Chromedriver.
 
-### 1️⃣ Cloner le dépôt et configurer
+### 1️⃣ Cloner le repo et configurer
 
 ```sh
 git clone https://github.com/Fosowl/agenticSeek.git
@@ -64,7 +64,7 @@ mv .env.example .env
 ```sh
 python3 -m venv agentic_seek_env
 source agentic_seek_env/bin/activate     
-# On Windows: agentic_seek_env\Scripts\activate
+# Sur Windows: agentic_seek_env\Scripts\activate
 ```
 
 ### 3️⃣ **Installation**
@@ -90,7 +90,7 @@ pip3 install -r requirements.txt
 
 Assurer vous d'avoir [Ollama](https://ollama.com/) installé.
 
-Télécharger `deepseek-r1:14b` de [DeepSeek](https://deepseek.com/models)
+Télécharger `deepseek-r1:14b` de [DeepSeek](https://deepseek.com/models) (ou autre en fonction de votre hardware, voir section FAQ)
 
 ```sh
 ollama pull deepseek-r1:14b
@@ -118,19 +118,19 @@ démarrer tous les services :
 sudo ./start_services.sh
 ```
 
-Lancer l'assitant:
+Lancer agenticSeek:
 
 ```sh
 python3 main.py
 ```
 
-Voir la section **Utilisation** si vous ne comprenez pas comment l’utiliser
+Voyez la section **Utilisation** si vous ne comprenez pas comment l’utiliser
 
-Voir la section **Problèmes** connus si vous rencontrez des problèmes
+Voyez la section **Problèmes** connus si vous rencontrez des problèmes
 
-Voir la section **Exécuter** avec une API si votre matériel ne peut pas exécuter DeepSeek localement
+Voyez la section **Exécuter** avec une API si votre matériel ne peut pas exécuter DeepSeek localement
 
-Voir la section **Configuration** pour une explication détaillée du fichier de configuration.
+Voyez la section **Configuration** pour une explication détaillée du fichier de configuration.
 
 ---
 
@@ -169,7 +169,7 @@ Voici quelques exemples d’utilisation :
 
 ### Fichier
 
-> *Hé, peux-tu trouver où est million_dollars_contract.pdf ? Je l’ai perdu*
+> *Hé, peux-tu trouver où est contrat.pdf ? Je l’ai perdu*
 
 > *Montre-moi combien d’espace il me reste sur mon disque*
 
@@ -181,7 +181,7 @@ Voici quelques exemples d’utilisation :
 
 > *Quel est le sens de la vie ?*
 
-> *Donne moi une recette avec les ingrédients suivant de mon frigo...*
+> *Donne moi une recette simple pour ce midi j'ai pas d'inspi*
 
 Après avoir saisi votre requête, AgenticSeek attribuera le meilleur agent pour la tâche.
 
@@ -302,7 +302,7 @@ headless_browser = False
 stealth_mode = False
 ```
 
-**Explanation**:
+**Explication du fichier config.ini**:
 
 `is_local` -> Exécute l’agent localement (True) ou sur un serveur distant (False).
 
@@ -324,12 +324,11 @@ stealth_mode = False
 
 `work_dir` -> Dossier auquel l’IA aura accès, par exemple : /Users/user/Documents/.
 
-`jarvis_personality` -> Utilise une personnalité de type JARVIS (True) ou non (False). Cela modifie simplement le fichier de prompt.
+`jarvis_personality` -> Utilise une personnalité inspiré de Jarvis (True) ou non (False). Cela utilise simplement une prompt alternative. Marche moins bien en français.
 
 `headless_browser` -> Exécute le navigateur sans fenêtre visible (True) ou non (False).
 
 `stealth_mode` -> Rend la détection des bots plus difficile. Le seul inconvénient est que vous devez installer manuellement l’extension anticaptcha.
-
 
 
 ## Providers
@@ -385,7 +384,7 @@ Et téléchargez la version de chromedriver correspondant à votre système d’
 
 ![alt text](./media/chromedriver_readme.png)
 
-Si cette section est incomplète, merci de faire une nouvelle issue github.
+Si cette section est incomplète, merci de faire une nouvelle issue sur github.
 
 ## FAQ
 
@@ -398,7 +397,7 @@ Et un modèle 32B : 24 Go+ de VRAM.
 
 **Q: Pourquoi deepseek et pas un autre modèle**  
 
-DeepSeek R1 excelle dans le raisonnement et l’utilisation d’outils pour sa taille. Nous pensons que c’est un choix solide pour nos besoins, bien que d’autres modèles fonctionnent également (bien que moins bien pour un nombre identique de paramètre).
+DeepSeek R1 excelle dans le raisonnement et l’utilisation d’outils pour sa taille. Nous pensons que c’est un choix solide pour nos besoins, bien que d’autres modèles fonctionnent également (bien que moins bien pour un nombre équivalent de paramètres).
 
 **Q: J'ai une erreur quand je lance le programme, je fait quoi?**  
 
@@ -410,9 +409,9 @@ Oui, avec les fournisseurs Ollama, lm-studio ou Server, toute la reconnaissance 
 
 **Q: En quoi c'est supérieur à Manus**
 
-Il ne l'est pas, mais nous privilégions l’exécution locale et la confidentialité par rapport à une approche basée sur le cloud. C’est une alternative plus accessible et surtout moins cher !
+Il ne l'est certainement pas, mais nous privilégions l’exécution locale et la confidentialité par rapport à une approche basée sur le cloud. C’est une alternative plus accessible et surtout moins cher !
 
-## Contribute
+## Contribution
 
 Nous recherchons des développeurs pour améliorer AgenticSeek ! Consultez la section "issues" github ou les discussions.
 
