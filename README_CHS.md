@@ -342,43 +342,43 @@ stealth_mode = False
 
 **说明**:
 - is_local
-- True：在本地运行。
-- False：在远端伺服器运行。
+    - True：在本地運行。
+    - False：在遠端伺服器運行。
 - provider_name
-- 框架类型
-- `ollama`, `server`, `lm-studio`, `deepseek-api`
+    - 框架類型
+        - `ollama`, `server`, `lm-studio`, `deepseek-api`
 - provider_model
-- 运行的模型
-- `deepseek-r1:1.5b`, `deepseek-r1:14b`
+    - 運行的模型
+        - `deepseek-r1:1.5b`, `deepseek-r1:14b`
 - provider_server_address
-- 伺服器 IP
-- `127.0.0.1:11434`
+    - 伺服器 IP
+        - `127.0.0.1:11434`
 - agent_name
-- AgenticSeek 的名字，用作TTS的触发单词。
-- `Friday`
+    - AgenticSeek 的名字，用作TTS的觸發單詞。
+        - `Friday`
 - recover_last_session
-- True：从上个对话继续。
-- False：重启对话。
+    - True：從上個對話繼續。
+    - False：重啟對話。
 - save_session
-- True：储存对话纪录。
-- False：不保存。
+    - True：儲存對話紀錄。
+    - False：不保存。
 - speak
-- True：启用语音输出。
-- False：关闭语音输出。
+    - True：啟用語音輸出。
+    - False：關閉語音輸出。
 - listen
-- True：启用语音输入。
-- False：关闭语音输入。
+    - True：啟用語音輸入。
+    - False：關閉語音輸入。
 - work_dir
-- AgenticSeek 拥有能存取与交互的工作目录。
+    - AgenticSeek 擁有能存取與交互的工作目錄。
 - jarvis_personality
-> 就是那个钢铁人的 JARVIS
-- True：启用 JARVIS 个性。
-- False：关闭 JARVIS 个性。
+    > 就是那個鋼鐵人的 JARVIS 
+    - True：啟用 JARVIS 個性。
+    - False：關閉 JARVIS 個性。
 - headless_browser
-- True：前景浏览器。（很酷，推荐使用他 XD）
-- False：背景执行浏览器。
+    - True：前景瀏覽器。（很酷，推薦使用他 XD）
+    - False：背景執行瀏覽器。
 - stealth_mode
-- 隐私模式，但需要你自己安装反爬虫扩充功能。
+    -  隱私模式，但需要你自己安裝反爬蟲擴充功能。
 
 ## 框架
 
