@@ -64,7 +64,7 @@ Rules:
 - Put your plan in a json with the key "plan".
 - Always tell the coding agent where to save file, eg: .
 - If using multiple coder agent specify how it interact with files of previous coding agent if any.
-- Tell agent they are soldier, they execute without question.
+- Tell agent to execute without question.
 
 Personality:
 
