@@ -8,6 +8,11 @@ from kokoro import KPipeline
 from IPython.display import display, Audio
 import soundfile as sf
 
+if __name__ == "__main__":
+    from utility import pretty_print, animate_thinking
+else:
+    from sources.utility import pretty_print, animate_thinking
+
 class Speech():
     """
     Speech is a class for generating speech from text.
@@ -41,6 +46,10 @@ class Speech():
         if not self.pipeline:
             return
         sentence = self.clean_sentence(sentence)
+        print("using voice: ", self.voice)
+        if voice_number >= len(self.voice_map[self.language]) or voice_number < 0:
+            pretty_print("Invalid voice number, using default voice", color="error")
+            voice_number = 0
         self.voice = self.voice_map[self.language][voice_number]
         generator = self.pipeline(
             sentence, voice=self.voice,
@@ -123,12 +132,18 @@ class Speech():
 
 if __name__ == "__main__":
     speech = Speech()
-    tosay = """
+    tosay_en = """
     I looked up recent news using the website https://www.theguardian.com/world
-    Here is how to list files:
-    ls -l -a -h
-    the ip address of the server is 192.168.1.1
     """
-    for voice_idx in range (len(speech.voice_map["english"])):
-        print(f"Voice {voice_idx}")
-        speech.speak(tosay, voice_idx)
+    tosay_zh = """
+    我使用网站 https://www.theguardian.com/world 查阅了最近的新闻。
+    """
+    tosay_fr = """
+    J'ai consulté les dernières nouvelles sur le site https://www.theguardian.com/world
+    """
+    spk = Speech(enable=True, language="en", voice_idx=0)
+    spk.speak(tosay_en)
+    spk = Speech(enable=True, language="fr", voice_idx=0)
+    spk.speak(tosay_fr)
+    spk = Speech(enable=True, language="zh", voice_idx=0)
+    spk.speak(tosay_zh)
