@@ -97,7 +97,7 @@ class Transcript:
             return "cuda:0"
         else:
             return "cpu"
-    
+        
     def remove_hallucinations(self, text: str) -> str:
         """Remove model hallucinations from the text."""
         # TODO find a better way to do this

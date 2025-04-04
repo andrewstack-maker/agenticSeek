@@ -22,7 +22,10 @@ import logging
 import sys
 import re
 
-from sources.utility import pretty_print, animate_thinking
+if __name__ == "__main__":
+    from utility import pretty_print, animate_thinking
+else:
+    from sources.utility import pretty_print, animate_thinking
 
 logging.basicConfig(filename='browser.log', level=logging.ERROR, 
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -155,13 +158,12 @@ class Browser:
         """Check if the text qualifies as a meaningful sentence or contains important error codes."""
         text = text.strip()
 
-        error_codes = ["404", "403", "500", "502", "503"]
-        if any(code in text for code in error_codes):
+        if any(c.isdigit() for c in text):
             return True
         words = re.findall(r'\w+', text, re.UNICODE)
         word_count = len(words)
         has_punctuation = any(text.endswith(p) for p in ['.', '，', ',', '!', '?', '。', '！', '？', '।', '۔'])
-        is_long_enough = word_count > 5
+        is_long_enough = word_count > 4
         return (word_count >= 5 and (has_punctuation or is_long_enough))
 
     def get_text(self) -> str | None:
@@ -173,9 +175,8 @@ class Browser:
                 element.decompose()
             
             text = soup.get_text()
-            lines = (line.strip() for line in text.splitlines())
-            chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-            text = "\n".join(chunk for chunk in chunks if chunk and self.is_sentence(chunk))
+            lines = (f"{line.strip()}\n" for line in text.splitlines())
+            text = "\n".join(chunk for chunk in lines if chunk and self.is_sentence(chunk))
             text = text[:4096]
             #markdown_text = markdownify.markdownify(text, heading_style="ATX")
             return "[Start of page]\n" + text + "\n[End of page]"
@@ -269,9 +270,13 @@ class Browser:
             raise e
 
     def find_all_inputs(self, timeout=3):
-        WebDriverWait(self.driver, timeout).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
-        )
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
+        except Exception as e:
+            self.logger.error(f"Error waiting for input element: {str(e)}")
+            return []
         time.sleep(0.5)
         script = self.load_js("find_inputs.js")
         input_elements = self.driver.execute_script(script)
@@ -357,6 +362,9 @@ class Browser:
                         return False
                 except TimeoutException:
                     self.logger.warning(f"Timeout waiting for '{button_text}' button at XPath: {xpath}")
+                    return False
+                except Exception as e:
+                    self.logger.error(f"Error clicking button '{button_text}' at XPath: {xpath} - {str(e)}")
                     return False
         self.logger.warning(f"No button matching '{btn_type}' found")
         return False
@@ -448,6 +456,9 @@ if __name__ == "__main__":
     browser = Browser(driver, anticaptcha_manual_install=True)
     time.sleep(10)
     
+    #browser.go_to("https://coinmarketcap.com/")
+    #txt = browser.get_text()
+    #print(txt)
     print("AntiCaptcha / Form Test")
     browser.go_to("https://www.google.com/recaptcha/api2/demo")
     #browser.go_to("https://practicetestautomation.com/practice-test-login/")
@@ -456,4 +467,4 @@ if __name__ == "__main__":
     inputs = ['[input1](Martin)', f'[input2](Test)', '[input3](test@gmail.com)']
     browser.fill_form_inputs(inputs)
     browser.find_and_click_submission()
-    time.sleep(30)
+    time.sleep(10)

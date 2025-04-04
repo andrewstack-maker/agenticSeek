@@ -27,10 +27,11 @@ class Provider:
             "lm-studio": self.lm_studio_fn,
             "huggingface": self.huggingface_fn,
             "deepseek": self.deepseek_fn,
+            "dsk_deepseek": self.dsk_deepseek,
             "test": self.test_fn
         }
         self.api_key = None
-        self.unsafe_providers = ["openai", "deepseek"]
+        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek"]
         if self.provider_name not in self.available_providers:
             raise ValueError(f"Unknown provider: {provider_name}")
         if self.provider_name in self.unsafe_providers:
@@ -245,6 +246,42 @@ class Provider:
             raise Exception(f"An error occurred: {str(e)}") from e
         return thought
 
+    def dsk_deepseek(self, history, verbose = False):
+        """
+        Use: xtekky/deepseek4free
+        For free api. Api key should be set to DSK_DEEPSEEK_API_KEY
+        This is an unofficial provider, you'll have to find how to set it up yourself.
+        """
+        from dsk.api import (
+            DeepSeekAPI, 
+            AuthenticationError,
+            RateLimitError,
+            NetworkError,
+            CloudflareError,
+            APIError
+        )
+        thought = ""
+        message = '\n---\n'.join([f"{msg['role']}: {msg['content']}" for msg in history])
+
+        try:
+            api = DeepSeekAPI(self.api_key)
+            chat_id = api.create_chat_session()
+            for chunk in api.chat_completion(chat_id, message):
+                if chunk['type'] == 'text':
+                    thought += chunk['content']
+            return thought
+        except AuthenticationError:
+            raise AuthenticationError("Authentication failed. Please check your token.") from e
+        except RateLimitError:
+            raise RateLimitError("Rate limit exceeded. Please wait before making more requests.") from e
+        except CloudflareError as e:
+            raise CloudflareError(f"Cloudflare protection encountered: {str(e)}") from e
+        except NetworkError:
+            raise NetworkError("Network error occurred. Check your internet connection.") from e
+        except APIError as e:
+            raise APIError(f"API error occurred: {str(e)}") from e
+        return None
+
     def test_fn(self, history, verbose = True):
         """
         This function is used to conduct tests.
@@ -270,6 +307,6 @@ goodbye!
         return thought
 
 if __name__ == "__main__":
-    provider = Provider("server", "deepseek-r1:1.5b", "192.168.1.20:3333")
+    provider = Provider("ollama", "deepseek-r1:1.5b", "127.0.0.1:11434")
     res = provider.respond(["user", "Hello, how are you?"])
     print("Response:", res)
