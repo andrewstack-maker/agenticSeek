@@ -93,6 +93,8 @@ class Interaction:
         self.recorder.join()
         self.transcriber.join()
         query = self.transcriber.get_transcript()
+        if query == "exit" or query == "goodbye":
+            return None
         return query
 
     def get_user(self) -> str:

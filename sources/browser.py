@@ -270,9 +270,13 @@ class Browser:
             raise e
 
     def find_all_inputs(self, timeout=3):
-        WebDriverWait(self.driver, timeout).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
-        )
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
+        except Exception as e:
+            self.logger.error(f"Error waiting for input element: {str(e)}")
+            return []
         time.sleep(0.5)
         script = self.load_js("find_inputs.js")
         input_elements = self.driver.execute_script(script)
@@ -358,6 +362,9 @@ class Browser:
                         return False
                 except TimeoutException:
                     self.logger.warning(f"Timeout waiting for '{button_text}' button at XPath: {xpath}")
+                    return False
+                except Exception as e:
+                    self.logger.error(f"Error clicking button '{button_text}' at XPath: {xpath} - {str(e)}")
                     return False
         self.logger.warning(f"No button matching '{btn_type}' found")
         return False
