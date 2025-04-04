@@ -58,6 +58,8 @@ class Interaction:
     def load_last_session(self):
         """Recover the last session."""
         for agent in self.agents:
+            if agent.type == "planner_agent":
+                continue
             agent.memory.load_memory(agent.type)
     
     def save_session(self):

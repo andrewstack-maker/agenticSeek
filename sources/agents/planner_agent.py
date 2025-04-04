@@ -23,9 +23,9 @@ class PlannerAgent(Agent):
             "web": BrowserAgent(name, "prompts/base/browser_agent.txt", provider, verbose=False, browser=browser)
         }
         self.role = {
-            "en": "Research, setup and code",
-            "fr": "Recherche, configuration et codage",
-            "zh": "研究，设置和编码",
+            "en": "Complex Task",
+            "fr": "Tache complexe",
+            "zh": "复杂任务",
         }
         self.type = "planner_agent"
 
