@@ -1,5 +1,7 @@
 *.wav
 *.DS_Store
+*.log
+*.tmp
 *.safetensors
 config.ini
 *.egg-info
@@ -8,6 +10,7 @@ conversations/
 agentic_env/*
 .env
 */.env
+dsk/
 
 
 # Byte-compiled / optimized / DLL files
