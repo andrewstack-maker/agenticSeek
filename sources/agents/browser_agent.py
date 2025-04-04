@@ -90,7 +90,7 @@ class BrowserAgent(Agent):
         {remaining_links_text}
 
         Your task:
-        1. Decide if the current page answers the user’s query: {user_prompt}
+        1. Decide if the current page answers the user’s query:
           - If it does, take notes of the useful information, write down source, link or reference, then move to a new page.
           - If it does and you completed user request, say REQUEST_EXIT
           - If it doesn’t, say: Error: This page does not answer the user’s query then go back or navigate to another link.
@@ -120,7 +120,7 @@ class BrowserAgent(Agent):
         GO_BACK
 
         Example 3 (query answer found):
-        Note: I found on github.com that agenticSeek is Fosowl.
+        Note: I found on github.com that agenticSeek is made by Fosowl.
         Given this information, given this I should exit the web browser. REQUEST_EXIT
 
         Example 4 (loging form visible):
@@ -131,7 +131,8 @@ class BrowserAgent(Agent):
         You see the following inputs forms:
         {inputs_form_text}
 
-        Remember, the user asked: {user_prompt}
+        Remember, the user asked:
+        {user_prompt}
         So far you took these notes:
         {notes}
         You are currently on page : {self.current_page}
