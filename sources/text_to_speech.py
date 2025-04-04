@@ -1,3 +1,4 @@
+import os
 import re
 import platform
 import subprocess
@@ -34,8 +35,19 @@ class Speech():
             self.pipeline = KPipeline(lang_code=self.lang_map[language])
         self.voice = self.voice_map[language][voice_idx]
         self.speed = 1.2
+        self.voice_folder = ".voices"
+        self.create_voice_folder(self.voice_folder)
+    
+    def create_voice_folder(self, path: str = ".voices") -> None:
+        """
+        Create a folder to store the voices.
+        Args:
+            path (str): The path to the folder.
+        """
+        if not os.path.exists(path):
+            os.makedirs(path)
 
-    def speak(self, sentence: str, voice_number: int = 1 , audio_file: str = 'sample.wav'):
+    def speak(self, sentence: str, voice_number: int = 1):
         """
         Convert text to speech using an AI model and play the audio.
 
@@ -45,11 +57,11 @@ class Speech():
         """
         if not self.pipeline:
             return
-        sentence = self.clean_sentence(sentence)
-        print("using voice: ", self.voice)
         if voice_number >= len(self.voice_map[self.language]) or voice_number < 0:
             pretty_print("Invalid voice number, using default voice", color="error")
             voice_number = 0
+        sentence = self.clean_sentence(sentence)
+        audio_file = f"{self.voice_folder}/sample_{self.voice_map[self.language][voice_number]}.wav"
         self.voice = self.voice_map[self.language][voice_number]
         generator = self.pipeline(
             sentence, voice=self.voice,

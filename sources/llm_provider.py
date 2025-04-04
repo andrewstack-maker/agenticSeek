@@ -307,6 +307,6 @@ goodbye!
         return thought
 
 if __name__ == "__main__":
-    provider = Provider("server", "deepseek-r1:1.5b", "192.168.1.20:3333")
+    provider = Provider("ollama", "deepseek-r1:1.5b", "127.0.0.1:11434")
     res = provider.respond(["user", "Hello, how are you?"])
     print("Response:", res)
