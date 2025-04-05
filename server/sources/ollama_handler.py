@@ -13,8 +13,8 @@ class OllamaLLM(GeneratorLLM):
 
     def generate(self, history):
         self.logger.info(f"Using {self.model} for generation with Ollama")
-        if cache.is_cached(history[-1]['content']):
-            self.state.current_buffer = cache.get_cached_response(history[-1]['content'])
+        if self.cache.is_cached(history[-1]['content']):
+            self.state.current_buffer = self.cache.get_cached_response(history[-1]['content'])
             self.state.is_generating = False
             return
         try:
