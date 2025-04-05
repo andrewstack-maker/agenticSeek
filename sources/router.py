@@ -1,7 +1,7 @@
 import os
 import sys
 import torch
-from typing import List, Tuple, Type, Dict, Tuple
+from typing import List, Tuple, Type, Dict
 
 from transformers import pipeline
 from adaptive_classifier import AdaptiveClassifier

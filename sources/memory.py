@@ -4,7 +4,7 @@ import uuid
 import os
 import sys
 import json
-from typing import List, Tuple, Type, Dict, Tuple
+from typing import List, Tuple, Type, Dict
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 

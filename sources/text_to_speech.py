@@ -3,7 +3,7 @@ import re
 import platform
 import subprocess
 from sys import modules
-from typing import List, Tuple, Type, Dict, Tuple
+from typing import List, Tuple, Type, Dict
 
 from kokoro import KPipeline
 from IPython.display import display, Audio

@@ -1,4 +1,4 @@
-from typing import List, Tuple, Type, Dict, Tuple
+from typing import List, Tuple, Type, Dict
 import re
 import langid
 import nltk
