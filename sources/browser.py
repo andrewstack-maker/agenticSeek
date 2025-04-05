@@ -18,19 +18,18 @@ import random
 import os
 import shutil
 import markdownify
-import logging
 import sys
 import re
 
 if __name__ == "__main__":
     from utility import pretty_print, animate_thinking
+    from logger import Logger
 else:
     from sources.utility import pretty_print, animate_thinking
-
-logging.basicConfig(filename='browser.log', level=logging.ERROR, 
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    from sources.logger import Logger
 
 def get_chrome_path() -> str:
+    """Get the path to the Chrome executable."""
     if sys.platform.startswith("win"):
         paths = [
             "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -111,14 +110,11 @@ class Browser:
         """Initialize the browser with optional AntiCaptcha installation."""
         self.js_scripts_folder = "./sources/web_scripts/" if not __name__ == "__main__" else "./web_scripts/"
         self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
+        self.logger = Logger("browser.log")
         try:
             self.driver = driver
             self.wait = WebDriverWait(self.driver, 10)
-            self.logger = logging.getLogger(__name__)
-            self.logger.info("Browser initialized successfully")
         except Exception as e:
-            logging.basicConfig(filename='browser.log', level=logging.ERROR, 
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             raise Exception(f"Failed to initialize browser: {str(e)}")
         self.driver.get("https://www.google.com")
         if anticaptcha_manual_install:
@@ -142,7 +138,7 @@ class Browser:
                 message="stuck on 'checking browser' or verification screen"
             )
             self.apply_web_safety()
-            self.logger.info(f"Navigated to: {url}")
+            self.logger.log(f"Navigated to: {url}")
             return True
         except TimeoutException as e:
             self.logger.error(f"Timeout waiting for {url} to load: {str(e)}")
@@ -167,7 +163,7 @@ class Browser:
         return (word_count >= 5 and (has_punctuation or is_long_enough))
 
     def get_text(self) -> str | None:
-        """Get page text and convert it to README (Markdown) format."""
+        """Get page text."""
         try:
             soup = BeautifulSoup(self.driver.page_source, 'html.parser')
             
@@ -450,8 +446,6 @@ class Browser:
         input_elements = self.driver.execute_script(script)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    
     driver = create_driver()
     browser = Browser(driver, anticaptcha_manual_install=True)
     time.sleep(10)
