@@ -6,6 +6,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from transformers import MarianMTModel, MarianTokenizer
 
 from sources.utility import pretty_print, animate_thinking
+from sources.logger import Logger
 
 class LanguageUtility:
     """LanguageUtility for language, or emotion identification"""
@@ -14,6 +15,7 @@ class LanguageUtility:
         self.translators_tokenizer = None 
         self.translators_model = None
         self.load_model()
+        self.logger = Logger("language.log")
     
     def load_model(self) -> None:
         animate_thinking("Loading language utility...", color="status")
@@ -40,6 +42,7 @@ class LanguageUtility:
         """
         langid.set_languages(['fr', 'en', 'zh'])
         lang, score = langid.classify(text)
+        self.logger.info(f"Identified: {text} as {lang} with conf {score}")
         return lang
 
     def translate(self, text: str, origin_lang: str) -> str:
@@ -86,6 +89,7 @@ class LanguageUtility:
             dominant_emotion = max(emotions, key=emotions.get)
             if emotions[dominant_emotion] == 0:
                 return 'Neutral'
+            self.logger.info(f"Emotion: {dominant_emotion} for text: {text}")
             return dominant_emotion
         except Exception as e:
             raise e

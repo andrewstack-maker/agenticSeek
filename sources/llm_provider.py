@@ -13,6 +13,7 @@ from openai import OpenAI
 from huggingface_hub import InferenceClient
 from typing import List, Tuple, Type, Dict
 from sources.utility import pretty_print, animate_thinking
+from sources.logger import Logger
 
 class Provider:
     def __init__(self, provider_name, model, server_address = "127.0.0.1:5000", is_local=False):
@@ -42,6 +43,7 @@ class Provider:
         self.check_address_format(self.server_ip)
         if not self.is_ip_online(self.server_ip.split(':')[0]):
             raise Exception(f"Server at {self.server_ip} is offline.")
+        self.logger = Logger("provider.log")
 
     def get_api_key(self, provider):
         load_dotenv()
@@ -50,6 +52,7 @@ class Provider:
         if not api_key:
             api_key = input(f"Please enter your {provider} API key: ")
             set_key(".env", api_key_var, api_key)
+            self.logger.info("Set API key in env.")
             load_dotenv()
         return api_key
 
@@ -73,6 +76,7 @@ class Provider:
         Use the choosen provider to generate text.
         """
         llm = self.available_providers[self.provider_name]
+        self.logger.info(f"Using provider: {self.provider_name} at {self.server_ip}")
         try:
             thought = llm(history, verbose)
         except ConnectionError as e:
@@ -98,11 +102,14 @@ class Provider:
             if output.returncode == 0:
                 return True
             else:
+                self.logger.error(f"Ping command returned code: {output.returncode}")
                 return False
         except subprocess.TimeoutExpired:
+            self.logger.error("Ping subprocess timeout.")
             return False
         except Exception as e:
             pretty_print(f"Error with ping request {str(e)}", color="failure")
+            self.logger.error(f"Ping error: {str(e)}")
             return False
 
     def server_fn(self, history, verbose = False):

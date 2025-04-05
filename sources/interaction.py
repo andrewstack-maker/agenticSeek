@@ -112,17 +112,20 @@ class Interaction:
     
     def think(self) -> bool:
         """Request AI agents to process the user input."""
+        push_last_agent_memory = False
         if self.last_query is None or len(self.last_query) == 0:
             return False
         agent = self.router.select_agent(self.last_query)
         if agent is None:
             return False
         if self.current_agent != agent and self.last_answer is not None:
+            push_last_agent_memory = True
+        tmp = self.last_answer
+        self.current_agent = agent
+        self.last_answer, _ = agent.process(self.last_query, self.speech)
+        if push_last_agent_memory:
             self.current_agent.memory.push('user', self.last_query)
             self.current_agent.memory.push('assistant', self.last_answer)
-        self.current_agent = agent
-        tmp = self.last_answer
-        self.last_answer, _ = agent.process(self.last_query, self.speech)
         if self.last_answer == tmp:
             self.last_answer = None
         return True

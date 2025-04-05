@@ -6,8 +6,6 @@ from typing import List, Tuple, Type, Dict, Tuple
 from transformers import pipeline
 from adaptive_classifier import AdaptiveClassifier
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from sources.agents.agent import Agent
 from sources.agents.code_agent import CoderAgent
 from sources.agents.casual_agent import CasualAgent
@@ -15,6 +13,7 @@ from sources.agents.planner_agent import FileAgent
 from sources.agents.browser_agent import BrowserAgent
 from sources.language import LanguageUtility
 from sources.utility import pretty_print, animate_thinking, timer_decorator
+from sources.logger import Logger
 
 class AgentRouter:
     """
@@ -28,6 +27,7 @@ class AgentRouter:
         self.complexity_classifier = self.load_llm_router()
         self.learn_few_shots_tasks()
         self.learn_few_shots_complexity()
+        self.logger = Logger("router.log")
     
     def load_pipelines(self) -> Dict[str, Type[pipeline]]:
         """
@@ -307,6 +307,7 @@ class AgentRouter:
         llm_router, confidence_llm_router = result_llm_router[0], result_llm_router[1]
         final_score_bart = confidence_bart / (confidence_bart + confidence_llm_router)
         final_score_llm = confidence_llm_router / (confidence_bart + confidence_llm_router)
+        self.logger.info(f"Routing Vote: BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
         if log_confidence:
             pretty_print(f"Agent choice -> BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
         return bart if final_score_bart > final_score_llm else llm_router
@@ -334,6 +335,7 @@ class AgentRouter:
             return "LOW"
         complexity, confidence = predictions[0][0], predictions[0][1]
         if confidence < 0.4:
+            self.logger.info(f"Low confidence in complexity estimation: {confidence}")
             return "LOW"
         if complexity == "HIGH" and len(text) < 64:
             return None # ask for more info
@@ -354,6 +356,7 @@ class AgentRouter:
             if agent.type == "planner_agent":
                 return agent
         pretty_print(f"Error finding planner agent. Please add a planner agent to the list of agents.", color="failure")
+        self.logger.error("Planner agent not found.")
         return None
     
     def select_agent(self, text: str) -> Agent:
@@ -380,15 +383,18 @@ class AgentRouter:
         try:
             best_agent = self.router_vote(text, labels, log_confidence=False)
         except Exception as e:
+            self.logger.error(f"Router failure: {str(e)}")
             raise e
         for agent in self.agents:
             if best_agent == agent.role["en"]:
                 pretty_print(f"Selected agent: {agent.agent_name} (roles: {agent.role[lang]})", color="warning")
                 return agent
         pretty_print(f"Error choosing agent.", color="failure")
+        self.logger.error("No agent selected.")
         return None
 
 if __name__ == "__main__":
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     agents = [
         CasualAgent("jarvis", "../prompts/base/casual_agent.txt", None),
         BrowserAgent("browser", "../prompts/base/planner_agent.txt", None),

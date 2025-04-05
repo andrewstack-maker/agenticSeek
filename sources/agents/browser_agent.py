@@ -192,10 +192,10 @@ class BrowserAgent(Agent):
         return f"""
         Following a human request:
         {user_query}
-        A web AI made the following finding across different pages:
+        A web browsing AI made the following finding across different pages:
         {search_note}
 
-        Summarize the finding or step that lead to success, and provide a conclusion that answer the request.
+        Expand on the finding or step that lead to success, and provide a conclusion that answer the request. Include link when possible.
         """
     
     def search_prompt(self, user_prompt: str) -> str:
@@ -306,7 +306,7 @@ class BrowserAgent(Agent):
             prompt = self.make_navigation_prompt(user_prompt, page_text)
 
         prompt = self.conclude_prompt(user_prompt)
-        mem_last_idx = self.memory.push('assistant', prompt)
+        mem_last_idx = self.memory.push('user', prompt)
         answer, reasoning = self.llm_request()
         pretty_print(answer, color="output")
         self.memory.clear_section(mem_begin_idx, mem_last_idx)

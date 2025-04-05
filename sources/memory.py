@@ -8,9 +8,8 @@ from typing import List, Tuple, Type, Dict, Tuple
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from sources.utility import timer_decorator, pretty_print
+from sources.logger import Logger
 
 class Memory():
     """
@@ -36,6 +35,7 @@ class Memory():
         self.memory_compression = memory_compression
         self.tokenizer = AutoTokenizer.from_pretrained(self.model)
         self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model)
+        self.logger = Logger("memory.log")
     
     def get_filename(self) -> str:
         """Get the filename for the save file."""
@@ -44,6 +44,7 @@ class Memory():
     def save_memory(self, agent_type: str = "casual_agent") -> None:
         """Save the session memory to a file."""
         if not os.path.exists(self.conversation_folder):
+            self.logger.info(f"Created folder {self.conversation_folder}.")
             os.makedirs(self.conversation_folder)
         save_path = os.path.join(self.conversation_folder, agent_type)
         if not os.path.exists(save_path):
@@ -52,6 +53,7 @@ class Memory():
         path = os.path.join(save_path, filename)
         json_memory = json.dumps(self.memory)
         with open(path, 'w') as f:
+            self.logger.info(f"Saved memory json at {path}")
             f.write(json_memory)
     
     def find_last_session_path(self, path) -> str:
@@ -63,6 +65,7 @@ class Memory():
                 saved_sessions.append((filename, date))
         saved_sessions.sort(key=lambda x: x[1], reverse=True)
         if len(saved_sessions) > 0:
+            self.logger.info(f"Last session found at {saved_sessions[0][0]}")
             return saved_sessions[0][0]
         return None
 
@@ -87,12 +90,14 @@ class Memory():
         self.compress()
         pretty_print("Session recovered successfully", color="success")
     
-    def reset(self, memory: list) -> None:
+    def reset(self, memory: list = []) -> None:
+        self.logger.info("Memory reset performed.")
         self.memory = memory
     
     def push(self, role: str, content: str) -> int:
         """Push a message to the memory."""
         if self.memory_compression and role == 'assistant':
+            self.logger.info("Compressing memories on message push.")
             self.compress()
         curr_idx = len(self.memory)
         if self.memory[curr_idx-1]['content'] == content:
@@ -101,10 +106,12 @@ class Memory():
         return curr_idx-1
     
     def clear(self) -> None:
+        self.logger.info("Memory clear performed.")
         self.memory = []
     
     def clear_section(self, start: int, end: int) -> None:
         """Clear a section of the memory."""
+        self.logger.info(f"Memory section {start} to {end} cleared.")
         self.memory = self.memory[:start] + self.memory[end:]
     
     def get(self) -> list:
@@ -128,6 +135,7 @@ class Memory():
             str: The summarized text
         """
         if self.tokenizer is None or self.model is None:
+            self.logger.warning("No tokenizer or model to perform summarization.")
             return text
         if len(text) < min_length*1.5:
             return text
@@ -144,6 +152,7 @@ class Memory():
         )
         summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         summary.replace('summary:', '')
+        self.logger.info(f"Memory summarization success from len {len(text)} to {len(summary)}.")
         return summary
     
     #@timer_decorator
@@ -160,6 +169,7 @@ class Memory():
                 self.memory[i]['content'] = self.summarize(self.memory[i]['content'])
 
 if __name__ == "__main__":
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     memory = Memory("You are a helpful assistant.",
                     recover_last_session=False, memory_compression=True)
     
