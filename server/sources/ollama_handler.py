@@ -15,10 +15,6 @@ class OllamaLLM(GeneratorLLM):
 
     def generate(self, history):
         self.logger.info(f"Using {self.model} for generation with Ollama")
-        if self.cache.is_cached(history[-1]['content']):
-            self.state.current_buffer = self.cache.get_cached_response(history[-1]['content'])
-            self.state.is_generating = False
-            return
         try:
             with self.state.lock:
                 self.state.is_generating = True
@@ -49,7 +45,6 @@ class OllamaLLM(GeneratorLLM):
             self.logger.info("Generation complete")
             with self.state.lock:
                 self.state.is_generating = False
-                self.cache.add_message_pair(history[-1]['content'], self.state.current_buffer)
 
 if __name__ == "__main__":
     generator = OllamaLLM()
