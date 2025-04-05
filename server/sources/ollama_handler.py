@@ -1,6 +1,7 @@
 
 import time
 from .generator import GeneratorLLM
+from .cache import Cache
 import ollama
 
 class OllamaLLM(GeneratorLLM):
@@ -10,6 +11,7 @@ class OllamaLLM(GeneratorLLM):
         Handle generation using Ollama.
         """
         super().__init__()
+        self.cache = Cache()
 
     def generate(self, history):
         self.logger.info(f"Using {self.model} for generation with Ollama")
