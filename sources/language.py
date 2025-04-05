@@ -14,8 +14,8 @@ class LanguageUtility:
         self.sid = None 
         self.translators_tokenizer = None 
         self.translators_model = None
-        self.load_model()
         self.logger = Logger("language.log")
+        self.load_model()
     
     def load_model(self) -> None:
         animate_thinking("Loading language utility...", color="status")

@@ -31,6 +31,7 @@ class Provider:
             "dsk_deepseek": self.dsk_deepseek,
             "test": self.test_fn
         }
+        self.logger = Logger("provider.log")
         self.api_key = None
         self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek"]
         if self.provider_name not in self.available_providers:
@@ -43,7 +44,6 @@ class Provider:
         self.check_address_format(self.server_ip)
         if not self.is_ip_online(self.server_ip.split(':')[0]):
             raise Exception(f"Server at {self.server_ip} is offline.")
-        self.logger = Logger("provider.log")
 
     def get_api_key(self, provider):
         load_dotenv()
@@ -79,6 +79,9 @@ class Provider:
         self.logger.info(f"Using provider: {self.provider_name} at {self.server_ip}")
         try:
             thought = llm(history, verbose)
+        except KeyboardInterrupt:
+            self.logger.warning("User interrupted the operation with Ctrl+C")
+            return "Operation interrupted by user. REQUEST_EXIT"
         except ConnectionError as e:
             raise ConnectionError(f"{str(e)}\nConnection to {self.server_ip} failed.")
         except AttributeError as e:
@@ -105,11 +108,9 @@ class Provider:
                 self.logger.error(f"Ping command returned code: {output.returncode}")
                 return False
         except subprocess.TimeoutExpired:
-            self.logger.error("Ping subprocess timeout.")
             return False
         except Exception as e:
             pretty_print(f"Error with ping request {str(e)}", color="failure")
-            self.logger.error(f"Ping error: {str(e)}")
             return False
 
     def server_fn(self, history, verbose = False):
@@ -299,6 +300,6 @@ class Provider:
         return thought
 
 if __name__ == "__main__":
-    provider = Provider("ollama", "deepseek-r1:1.5b", "127.0.0.1:11434")
+    provider = Provider("server", "deepseek-r1:14b", "192.168.1.20:3333")
     res = provider.respond(["user", "Hello, how are you?"])
     print("Response:", res)

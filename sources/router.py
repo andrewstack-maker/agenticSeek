@@ -21,13 +21,13 @@ class AgentRouter:
     """
     def __init__(self, agents: list):
         self.agents = agents
+        self.logger = Logger("router.log")
         self.lang_analysis = LanguageUtility()
         self.pipelines = self.load_pipelines()
         self.talk_classifier = self.load_llm_router()
         self.complexity_classifier = self.load_llm_router()
         self.learn_few_shots_tasks()
         self.learn_few_shots_complexity()
-        self.logger = Logger("router.log")
     
     def load_pipelines(self) -> Dict[str, Type[pipeline]]:
         """
@@ -82,6 +82,7 @@ class AgentRouter:
             ("search my drive for a file called vacation_photos_2023.jpg.", "LOW"),
             ("help me organize my desktop files into folders by type.", "LOW"),
             ("write a Python function to sort a list of dictionaries by key", "LOW"),
+            ("can you search for startup in tokyo?", "LOW"),
             ("find the latest updates on quantum computing on the web", "LOW"),
             ("check if the folder ‘Work_Projects’ exists on my desktop", "LOW"),
             ("create a bash script to monitor CPU usage", "LOW"),
@@ -383,7 +384,6 @@ class AgentRouter:
         try:
             best_agent = self.router_vote(text, labels, log_confidence=False)
         except Exception as e:
-            self.logger.error(f"Router failure: {str(e)}")
             raise e
         for agent in self.agents:
             if best_agent == agent.role["en"]:

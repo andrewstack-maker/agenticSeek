@@ -5,6 +5,7 @@ from sources.utility import pretty_print, animate_thinking
 from sources.router import AgentRouter
 from sources.speech_to_text import AudioTranscriber, AudioRecorder
 
+
 class Interaction:
     """
     Interaction is a class that handles the interaction between the user and the agents.

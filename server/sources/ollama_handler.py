@@ -28,10 +28,10 @@ class OllamaLLM(GeneratorLLM):
             )
             for chunk in stream:
                 content = chunk['message']['content']
-                if '\n' in content:
-                    self.logger.info(content)
 
                 with self.state.lock:
+                    if '.' in content:
+                        self.logger.info(self.state.current_buffer)
                     self.state.current_buffer += content
 
         except Exception as e:

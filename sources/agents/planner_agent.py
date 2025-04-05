@@ -68,7 +68,7 @@ class PlannerAgent(Agent):
         if agent_infos_dict is None or len(agent_infos_dict) == 0:
             infos = "No needed informations."
         else:
-            for agent_id, info in agent_infos_dict:
+            for agent_id, info in agent_infos_dict.items():
                 infos += f"\t- According to agent {agent_id}:\n{info}\n\n"
         prompt = f"""
         You are given informations from your AI friends work:
@@ -116,7 +116,6 @@ class PlannerAgent(Agent):
 
     def process(self, prompt: str, speech_module: Speech) -> str:
         agents_tasks = (None, None)
-        required_infos = None
         agents_work_result = dict()
 
         answer = self.make_plan(prompt)

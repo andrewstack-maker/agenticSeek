@@ -82,36 +82,47 @@ class BrowserAgent(Agent):
         notes = '\n'.join(self.notes)
 
         return f"""
-        You are a web browser.
-        You are currently on this webpage:
+        You are navigating the web.
+
+        **Current Context**
+
+        Webpage ({self.current_page}) content:
         {page_text}
 
-        You can navigate to these navigation links:
+        Allowed Navigation Links:
         {remaining_links_text}
 
-        Your task:
-        1. Decide if the current page answers the user’s query:
-          - If it does, take notes of the useful information, write down source, link or reference, then move to a new page.
-          - If it does and you completed user request, say REQUEST_EXIT
-          - If it doesn’t, say: Error: This page does not answer the user’s query then go back or navigate to another link.
-        2. Navigate by either: 
-          - Navigate to a navigation links (write the full URL, e.g., www.example.com/cats).
-          - If no link seems helpful, say: GO_BACK.
-        3. Fill forms on the page:
-          - If user give you informations that help you fill form, fill it.
-          - If you don't know how to fill a form, leave it empty.
-          - You can fill a form using [form_name](value). Do not go back when you fill a form.
+        Inputs forms:
+        {inputs_form_text}
+
+        End of webpage ({self.current_page}.
+
+        # Instruction
+
+        1. **Decide if the page answers the user’s query:**
+          - If it does, take notes of useful information (Note: ...), include relevant link in note, then move to a new page.
+          - If it does and you completed user request, say REQUEST_EXIT.
+          - If it doesn’t, say: Error: <why page don't help> then go back or navigate to another link.
+        2. **Navigate to a link by either: **
+          - Saying I want to navigate to <url>: (write down the full URL, e.g., www.example.com/cats).
+          - Going back: If no link seems helpful, say: GO_BACK.
+        3. **Fill forms on the page:**
+          - Fill form only on relevant page with given informations. You might use form to conduct search on a page.
+          - You can fill a form using [form_name](value). Don't GO_BACK when filling form.
+          - If a form is irrelevant or you lack informations leave it empty.
         
-        Recap of note taking:
-        If useful -> Note: [Briefly summarize the key information or task you conducted.]
-        Do not write "The page talk about ...", write your finding on the page and how they contribute to an answer.
-        If not useful -> Error: [Explain why the page doesn’t help.]
+        **Rules:**
+        - Do not write "The page talk about ...", write your finding on the page and how they contribute to an answer.
+        - Put note in a single paragraph.
+        - When you exit, explain why.
         
-        Example 1 (useful page, no need of going futher):
-        Note: According to karpathy site (https://karpathy.github.io/) LeCun net is the earliest real-world application of a neural net"
+        # Example:
+        
+        Example 1 (useful page, no need go futher):
+        Note: According to karpathy site (<link>) LeCun net is ...<expand on page content>..."
         No link seem useful to provide futher information. GO_BACK
 
-        Example 2 (not useful, but related link):
+        Example 2 (not useful, see useful link on page):
         Error: reddit.com/welcome does not discuss anything related to the user’s query.
         There is a link that could lead to the information, I want to navigate to http://reddit.com/r/locallama
 
@@ -119,35 +130,29 @@ class BrowserAgent(Agent):
         Error: x.com does not discuss anything related to the user’s query and no navigation link are usefull.
         GO_BACK
 
-        Example 3 (query answer found):
-        Note: I found on github.com that agenticSeek is made by Fosowl.
-        Given this information, given this I should exit the web browser. REQUEST_EXIT
+        Example 3 (query answer found, enought notes taken):
+        Note: I found on <link> that ...<expand on information found>...
+        Given this answer the user query I should exit the web browser. REQUEST_EXIT
 
         Example 4 (loging form visible):
-        Note: I am on the login page, I should now type the given username and password. 
+        Note: I am on the login page, I will type the given username and password. 
         [username_field](David)
         [password_field](edgerunners77)
 
-        You see the following inputs forms:
-        {inputs_form_text}
-
-        Remember, the user asked:
+        Remember, user asked:
         {user_prompt}
-        So far you took these notes:
+        You previously took these notes:
         {notes}
-        You are currently on page : {self.current_page}
-        Do not explain your choice.
-        Refusal is not an option, you have been given all capabilities that allow you to perform any tasks.
+        Do not Step-by-Step explanation. Instead write simple explanation sentence following by your notes and actions.
         """
     
-    def llm_decide(self, prompt: str) -> Tuple[str, str]:
+    def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:
         animate_thinking("Thinking...", color="status")
         self.memory.push('user', prompt)
         answer, reasoning = self.llm_request()
-        output = answer if len(answer) > 16 else f"Action: {answer}\nReasoning: {reasoning}"
-        print()
-        pretty_print(output, color="output")
-        print()
+        if show_reasoning:
+            pretty_print(reasoning, color="failure")
+        pretty_print(answer, color="output")
         return answer, reasoning
     
     def select_unvisited(self, search_result: List[str]) -> List[str]:
@@ -179,11 +184,29 @@ class BrowserAgent(Agent):
     def stringify_search_results(self, results_arr: List[str]) -> str:
         return '\n\n'.join([f"Link: {res['link']}\nPreview: {res['snippet']}" for res in results_arr])
     
-    def save_notes(self, text):
+    def parse_answer(self, text):
         lines = text.split('\n')
+        saving = False
+        buffer = []
+        links = []
         for line in lines:
+            if "exit" in line:
+                saving = False
             if "note" in line.lower():
-                self.notes.append(line)
+                saving = True
+            if saving:
+                buffer.append(line)
+            else:
+                links.extend(self.extract_links(line))
+        self.notes.append('. '.join(buffer))
+        return links
+    
+    def select_link(self, links: List[str]) -> str | None:
+        for lk in links:
+            if lk == self.current_page:
+                continue
+            return lk
+        return None
     
     def conclude_prompt(self, user_query: str) -> str:
         annotated_notes = [f"{i+1}: {note.lower().replace('note:', '')}" for i, note in enumerate(self.notes)]
@@ -196,6 +219,7 @@ class BrowserAgent(Agent):
         {search_note}
 
         Expand on the finding or step that lead to success, and provide a conclusion that answer the request. Include link when possible.
+        Do not give advices or try to answer the human. Just structure the AI finding in a structured and clear way.
         """
     
     def search_prompt(self, user_prompt: str) -> str:
@@ -214,7 +238,8 @@ class BrowserAgent(Agent):
         You: "search: Recent space missions news, {self.date}"
 
         Do not explain, do not write anything beside the search query.
-        If the query does not make any sense for a web search explain why and say REQUEST_EXIT
+        Except if query does not make any sense for a web search then explain why and say REQUEST_EXIT
+        Do not try to answer query. you can only formulate search term or exit.
         """
     
     def handle_update_prompt(self, user_prompt: str, page_text: str) -> str:
@@ -255,17 +280,16 @@ class BrowserAgent(Agent):
         mem_begin_idx = self.memory.push('user', self.search_prompt(user_prompt))
         ai_prompt, _ = self.llm_request()
         if "REQUEST_EXIT" in ai_prompt:
-            pretty_print(f"{reasoning}\n{ai_prompt}", color="output")
+            pretty_print(f"Web agent requested exit.\n{reasoning}\n\n{ai_prompt}", color="failure")
             return ai_prompt, "" 
         animate_thinking(f"Searching...", color="status")
         search_result_raw = self.tools["web_search"].execute([ai_prompt], False)
-        search_result = self.jsonify_search_results(search_result_raw)[:12] # until futher improvement
+        search_result = self.jsonify_search_results(search_result_raw)[:12]
         self.show_search_results(search_result)
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
         while not complete:
-            answer, reasoning = self.llm_decide(prompt)
-            self.save_notes(answer)
+            answer, reasoning = self.llm_decide(prompt, show_reasoning = True)
 
             extracted_form = self.extract_form(answer)
             if len(extracted_form) > 0:
@@ -275,11 +299,13 @@ class BrowserAgent(Agent):
                 answer = self.handle_update_prompt(user_prompt, page_text)
                 answer, reasoning = self.llm_decide(prompt)
 
+            links = self.parse_answer(answer)
+            link = self.select_link(links)
+
             if "REQUEST_EXIT" in answer:
                 complete = True
                 break
 
-            links = self.extract_links(answer)
             if len(unvisited) == 0:
                 break
 
@@ -289,21 +315,21 @@ class BrowserAgent(Agent):
                 prompt = self.make_navigation_prompt(user_prompt, page_text)
                 continue
 
-            if len(links) == 0 or "GO_BACK" in answer:
+            if link == None or "GO_BACK" in answer:
                 unvisited = self.select_unvisited(search_result)
                 prompt = self.make_newsearch_prompt(user_prompt, unvisited)
                 pretty_print(f"Going back to results. Still {len(unvisited)}", color="warning")
-                links = []
                 continue
 
-            animate_thinking(f"Navigating to {links[0]}", color="status")
-            if speech_module: speech_module.speak(f"Navigating to {links[0]}")
-            self.browser.go_to(links[0])
-            self.current_page = links[0]
-            self.search_history.append(links[0])
+            animate_thinking(f"Navigating to {link}", color="status")
+            if speech_module: speech_module.speak(f"Navigating to {link}")
+            self.browser.go_to(link)
+            self.current_page = link
+            self.search_history.append(link)
             page_text = self.browser.get_text()
             self.navigable_links = self.browser.get_navigable()
             prompt = self.make_navigation_prompt(user_prompt, page_text)
+            pretty_print(f"Current page: {self.current_page}", color="warning")
 
         prompt = self.conclude_prompt(user_prompt)
         mem_last_idx = self.memory.push('user', prompt)

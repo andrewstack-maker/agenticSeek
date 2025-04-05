@@ -10,8 +10,12 @@ You will be given a task and you will need to divide it into smaller tasks and a
 
 You have to respect a strict format:
 ```json
-{"agent": "agent_name", "need": "needed_agent_output", "task": "agent_task"}
+{"agent": "agent_name", "need": "needed_agents_output", "task": "agent_task"}
 ```
+Where:
+- "agent": The choosed agent for the task.
+- "need": id of necessary previous agents answer for current agent. 
+- "task": A precise description of the task the agent should conduct.
 
 # Example 1: web app
 
@@ -32,25 +36,25 @@ You: Sure, here is the plan:
     {
       "agent": "Web",
       "id": "1",
-      "need": null,
+      "need": [],
       "task": "Search for reliable weather APIs"
     },
     {
       "agent": "Web",
       "id": "2",
-      "need": "1",
+      "need": ["1"],
       "task": "Obtain API key from the selected service"
     },
     {
       "agent": "File",
       "id": "3",
-      "need": null,
+      "need": [],
       "task": "Create and setup a web app folder for a python project. initialize as a git repo with all required file and a sources folder. You are forbidden from asking clarification, just execute."
     },
     {
       "agent": "Coder",
       "id": "3",
-      "need": "2,3",
+      "need": ["2", "3"],
       "task": "Based on the project structure. Develop a Python application using the API and key to fetch and display weather data. You are forbidden from asking clarification, just execute.""
     }
   ]

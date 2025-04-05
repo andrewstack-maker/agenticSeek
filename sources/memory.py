@@ -22,6 +22,7 @@ class Memory():
         self.memory = []
         self.memory = [{'role': 'system', 'content': system_prompt}]
         
+        self.logger = Logger("memory.log")
         self.session_time = datetime.datetime.now()
         self.session_id = str(uuid.uuid4())
         self.conversation_folder = f"conversations/"
@@ -35,7 +36,6 @@ class Memory():
         self.memory_compression = memory_compression
         self.tokenizer = AutoTokenizer.from_pretrained(self.model)
         self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model)
-        self.logger = Logger("memory.log")
     
     def get_filename(self) -> str:
         """Get the filename for the save file."""
