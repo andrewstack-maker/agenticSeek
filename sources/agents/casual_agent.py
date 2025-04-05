@@ -29,10 +29,4 @@ class CasualAgent(Agent):
         return answer, reasoning
 
 if __name__ == "__main__":
-    from llm_provider import Provider
-
-    #local_provider = Provider("ollama", "deepseek-r1:14b", None)
-    server_provider = Provider("server", "deepseek-r1:14b", "192.168.1.100:5000")
-    agent = CasualAgent("deepseek-r1:14b", "jarvis", "prompts/casual_agent.txt", server_provider)
-    ans = agent.process("Hello, how are you?")
-    print(ans)
+    pass

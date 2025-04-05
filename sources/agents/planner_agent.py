@@ -76,10 +76,10 @@ class PlannerAgent(Agent):
         agents_tasks = self.parse_agent_tasks(json_plan)
         if agents_tasks == (None, None):
             return
-        pretty_print("▂▘ P L A N ▝▂", color="output")
+        pretty_print("▂▘ P L A N ▝▂", color="status")
         for task_name, task in agents_tasks:
-                    pretty_print(f"{task['agent']} -> {task['task']}", color="info")
-        pretty_print("▔▗ E N D ▖▔", color="output")
+            pretty_print(f"{task['agent']} -> {task['task']}", color="info")
+        pretty_print("▔▗ E N D ▖▔", color="status")
     
     def process(self, prompt, speech_module) -> str:
         ok = False
@@ -117,7 +117,4 @@ class PlannerAgent(Agent):
         return prev_agent_answer, ""
 
 if __name__ == "__main__":
-    from llm_provider import Provider
-    server_provider = Provider("server", "deepseek-r1:14b", "192.168.1.100:5000")
-    agent = PlannerAgent("deepseek-r1:14b", "jarvis", "prompts/planner_agent.txt", server_provider)
-    ans = agent.process("Make a cool game to illustrate the current relation between USA and europe")
+    pass

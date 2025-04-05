@@ -2,6 +2,7 @@
 import threading
 import logging
 from abc import abstractmethod
+from .cache import Cache
 
 class GenerationState:
     def __init__(self):
@@ -29,6 +30,7 @@ class GeneratorLLM():
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
+        cache = Cache()
     
     def set_model(self, model: str) -> None:
         self.logger.info(f"Model set to {model}")
