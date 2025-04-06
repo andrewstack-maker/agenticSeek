@@ -118,7 +118,7 @@ class PlannerAgent(Agent):
     def get_work_result_agent(self, task_needs, agents_work_result):
         return {k: agents_work_result[k] for k in task_needs if k in agents_work_result}
 
-    def process(self, prompt: str, speech_module: Speech) -> str:
+    def process(self, prompt: str, speech_module: Speech) -> Tuple[str, str]:
         agents_tasks = (None, None)
         agents_work_result = dict()
 
@@ -126,7 +126,7 @@ class PlannerAgent(Agent):
         agents_tasks = self.parse_agent_tasks(answer)
 
         if agents_tasks == (None, None):
-            return "Failed to parse the tasks.", reasoning
+            return "Failed to parse the tasks.", ""
         for task_name, task in agents_tasks:
             pretty_print(f"I will {task_name}.", color="info")
             pretty_print(f"Assigned agent {task['agent']} to {task_name}", color="info")
