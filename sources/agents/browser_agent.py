@@ -70,7 +70,7 @@ class BrowserAgent(Agent):
         {search_choice}
         Your goal is to find accurate and complete information to satisfy the user’s request.
         User request: {user_prompt}
-        To proceed, choose a relevant link from the search results. Announce your choice by saying: "I want to navigate to <link>"
+        To proceed, choose a relevant link from the search results. Announce your choice by saying: "I will navigate to <link>"
         Do not eplain your choice.
         """
     
@@ -104,7 +104,7 @@ class BrowserAgent(Agent):
           - If it does and you completed user request, say REQUEST_EXIT.
           - If it doesn’t, say: Error: <why page don't help> then go back or navigate to another link.
         2. **Navigate to a link by either: **
-          - Saying I want to navigate to <url>: (write down the full URL, e.g., www.example.com/cats).
+          - Saying I will navigate to <url>: (write down the full URL, e.g., www.example.com/cats).
           - Going back: If no link seems helpful, say: GO_BACK.
         3. **Fill forms on the page:**
           - Fill form only on relevant page with given informations. You might use form to conduct search on a page.
@@ -149,6 +149,8 @@ class BrowserAgent(Agent):
         You previously took these notes:
         {notes}
         Do not Step-by-Step explanation. Write Notes or Error as a long paragraph followed by your action.
+        You might REQUEST_EXIT if no more link are useful.
+        Do not navigate to AI tools or search engine. Only navigate to tool if asked.
         """
     
     def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:
@@ -200,7 +202,7 @@ class BrowserAgent(Agent):
             if "note" in line.lower():
                 saving = True
             if saving:
-                buffer.append(line)
+                buffer.append(line.replace("notes:", ''))
             else:
                 links.extend(self.extract_links(line))
         self.notes.append('. '.join(buffer).strip())
@@ -214,7 +216,7 @@ class BrowserAgent(Agent):
         return None
     
     def conclude_prompt(self, user_query: str) -> str:
-        annotated_notes = [f"{i+1}: {note.lower().replace('note:', '')}" for i, note in enumerate(self.notes)]
+        annotated_notes = [f"{i+1}: {note.lower()}" for i, note in enumerate(self.notes)]
         search_note = '\n'.join(annotated_notes)
         pretty_print(f"AI notes:\n{search_note}", color="success")
         return f"""
@@ -307,6 +309,7 @@ class BrowserAgent(Agent):
 
             links = self.parse_answer(answer)
             link = self.select_link(links)
+            self.search_history.append(link)
 
             if "REQUEST_EXIT" in answer:
                 pretty_print(f"Agent requested exit.", color="status")
@@ -334,7 +337,6 @@ class BrowserAgent(Agent):
             if speech_module: speech_module.speak(f"Navigating to {link}")
             self.browser.go_to(link)
             self.current_page = link
-            self.search_history.append(link)
             page_text = self.browser.get_text()
             self.navigable_links = self.browser.get_navigable()
             prompt = self.make_navigation_prompt(user_prompt, page_text)

@@ -344,8 +344,8 @@ class AgentRouter:
             return "HIGH"
         elif complexity == "LOW":
             return "LOW"
-        pretty_print(f"Failed to estimate the complexity of the text. Confidence: {confidence}", color="failure")
-        return None
+        pretty_print(f"Failed to estimate the complexity of the text.", color="failure")
+        return "LOW"
     
     def find_planner_agent(self) -> Agent:
         """

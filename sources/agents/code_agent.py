@@ -35,7 +35,7 @@ class CoderAgent(Agent):
         info = f"System Info:\n" \
                f"OS: {platform.system()} {platform.release()}\n" \
                f"Python Version: {platform.python_version()}\n" \
-               f"\nYou must work in directory: {self.work_dir}"
+               f"\nYou must save file in work directory: {self.work_dir}"
         return f"{prompt}\n\n{info}"
 
     def process(self, prompt, speech_module) -> str:

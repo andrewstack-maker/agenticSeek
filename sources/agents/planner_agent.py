@@ -81,8 +81,9 @@ class PlannerAgent(Agent):
     def show_plan(self, json_plan: dict) -> None:
         agents_tasks = self.parse_agent_tasks(json_plan)
         if agents_tasks == (None, None):
+            pretty_print("Failed to make a plan.", color="failure")
             return
-        pretty_print("▂▘ P L A N ▝▂", color="status")
+        pretty_print("\n▂▘ P L A N ▝▂", color="status")
         for task_name, task in agents_tasks:
             pretty_print(f"{task['agent']} -> {task['task']}", color="info")
         pretty_print("▔▗ E N D ▖▔", color="status")
@@ -94,7 +95,10 @@ class PlannerAgent(Agent):
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', prompt)
             answer, _ = self.llm_request()
-            pretty_print(answer.split('\n')[0], color="output")
+            for line in answer.split('\n'):
+                if "```json" in line:
+                    break
+            pretty_print(line, color="output")
             self.show_plan(answer)
             ok_str = input("Is the plan ok? (y/n): ")
             if ok_str == 'y':
@@ -122,7 +126,7 @@ class PlannerAgent(Agent):
         agents_tasks = self.parse_agent_tasks(answer)
 
         if agents_tasks == (None, None):
-            return "Failed to parse the tasks", reasoning
+            return "Failed to parse the tasks.", reasoning
         for task_name, task in agents_tasks:
             pretty_print(f"I will {task_name}.", color="info")
             pretty_print(f"Assigned agent {task['agent']} to {task_name}", color="info")
@@ -136,6 +140,3 @@ class PlannerAgent(Agent):
                 raise e
             agents_work_result[task['id']] = self.last_answer
         return self.last_answer, ""
-
-if __name__ == "__main__":
-    pass
