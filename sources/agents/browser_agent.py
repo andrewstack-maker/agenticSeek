@@ -296,7 +296,7 @@ class BrowserAgent(Agent):
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
         while not complete:
-            answer, reasoning = self.llm_decide(prompt, show_reasoning = True)
+            answer, reasoning = self.llm_decide(prompt, show_reasoning = False)
 
             extracted_form = self.extract_form(answer)
             if len(extracted_form) > 0:

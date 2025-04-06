@@ -162,6 +162,7 @@ class AgentRouter:
             ("Search my drive for a file called vacation_photos_2023.jpg.", "files"),
             ("Help me organize my desktop files into folders by type.", "files"),
             ("What’s your favorite movie and why?", "talk"),
+            ("what directory are you in ?", "files"),
             ("Search my drive for a file named budget_2024.xlsx", "files"),
             ("Write a Python function to sort a list of dictionaries by key", "code"),
             ("Find the latest updates on quantum computing on the web", "web"),
@@ -330,7 +331,11 @@ class AgentRouter:
         Returns:
         str: The estimated complexity
         """
-        predictions = self.complexity_classifier.predict(text)
+        try:
+            predictions = self.complexity_classifier.predict(text)
+        except Exception as e:
+            pretty_print(f"Error in estimate_complexity: {str(e)}", color="failure")
+            return "LOW"
         predictions = sorted(predictions, key=lambda x: x[1], reverse=True)
         if len(predictions) == 0:
             return "LOW"

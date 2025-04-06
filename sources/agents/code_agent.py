@@ -51,7 +51,7 @@ class CoderAgent(Agent):
             self.wait_message(speech_module)
             answer, reasoning = self.llm_request()
             if clarify_trigger in answer:
-                return answer.replace(clarify_trigger, ""), reasoning
+                return answer, reasoning
             if not "```" in answer:
                 self.last_answer = answer
                 break
