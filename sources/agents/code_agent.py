@@ -35,7 +35,7 @@ class CoderAgent(Agent):
         info = f"System Info:\n" \
                f"OS: {platform.system()} {platform.release()}\n" \
                f"Python Version: {platform.python_version()}\n" \
-               f"\nYou must work in directory: {self.work_dir}"
+               f"\nYou must save file in work directory: {self.work_dir}"
         return f"{prompt}\n\n{info}"
 
     def process(self, prompt, speech_module) -> str:
@@ -51,7 +51,7 @@ class CoderAgent(Agent):
             self.wait_message(speech_module)
             answer, reasoning = self.llm_request()
             if clarify_trigger in answer:
-                return answer.replace(clarify_trigger, ""), reasoning
+                return answer, reasoning
             if not "```" in answer:
                 self.last_answer = answer
                 break
@@ -68,10 +68,4 @@ class CoderAgent(Agent):
         return answer, reasoning
 
 if __name__ == "__main__":
-    from llm_provider import Provider
-
-    #local_provider = Provider("ollama", "deepseek-r1:14b", None)
-    server_provider = Provider("server", "deepseek-r1:14b", "192.168.1.100:5000")
-    agent = CoderAgent("deepseek-r1:14b", "jarvis", "prompts/coder_agent.txt", server_provider)
-    ans = agent.process("What is the output of 5+5 in python ?")
-    print(ans)
+    pass

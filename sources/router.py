@@ -1,12 +1,10 @@
 import os
 import sys
 import torch
-from typing import List, Tuple, Type, Dict, Tuple
+from typing import List, Tuple, Type, Dict
 
 from transformers import pipeline
 from adaptive_classifier import AdaptiveClassifier
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sources.agents.agent import Agent
 from sources.agents.code_agent import CoderAgent
@@ -15,6 +13,7 @@ from sources.agents.planner_agent import FileAgent
 from sources.agents.browser_agent import BrowserAgent
 from sources.language import LanguageUtility
 from sources.utility import pretty_print, animate_thinking, timer_decorator
+from sources.logger import Logger
 
 class AgentRouter:
     """
@@ -22,6 +21,7 @@ class AgentRouter:
     """
     def __init__(self, agents: list):
         self.agents = agents
+        self.logger = Logger("router.log")
         self.lang_analysis = LanguageUtility()
         self.pipelines = self.load_pipelines()
         self.talk_classifier = self.load_llm_router()
@@ -82,6 +82,7 @@ class AgentRouter:
             ("search my drive for a file called vacation_photos_2023.jpg.", "LOW"),
             ("help me organize my desktop files into folders by type.", "LOW"),
             ("write a Python function to sort a list of dictionaries by key", "LOW"),
+            ("can you search for startup in tokyo?", "LOW"),
             ("find the latest updates on quantum computing on the web", "LOW"),
             ("check if the folder ‘Work_Projects’ exists on my desktop", "LOW"),
             ("create a bash script to monitor CPU usage", "LOW"),
@@ -161,6 +162,7 @@ class AgentRouter:
             ("Search my drive for a file called vacation_photos_2023.jpg.", "files"),
             ("Help me organize my desktop files into folders by type.", "files"),
             ("What’s your favorite movie and why?", "talk"),
+            ("what directory are you in ?", "files"),
             ("Search my drive for a file named budget_2024.xlsx", "files"),
             ("Write a Python function to sort a list of dictionaries by key", "code"),
             ("Find the latest updates on quantum computing on the web", "web"),
@@ -307,6 +309,7 @@ class AgentRouter:
         llm_router, confidence_llm_router = result_llm_router[0], result_llm_router[1]
         final_score_bart = confidence_bart / (confidence_bart + confidence_llm_router)
         final_score_llm = confidence_llm_router / (confidence_bart + confidence_llm_router)
+        self.logger.info(f"Routing Vote: BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
         if log_confidence:
             pretty_print(f"Agent choice -> BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
         return bart if final_score_bart > final_score_llm else llm_router
@@ -328,12 +331,17 @@ class AgentRouter:
         Returns:
         str: The estimated complexity
         """
-        predictions = self.complexity_classifier.predict(text)
+        try:
+            predictions = self.complexity_classifier.predict(text)
+        except Exception as e:
+            pretty_print(f"Error in estimate_complexity: {str(e)}", color="failure")
+            return "LOW"
         predictions = sorted(predictions, key=lambda x: x[1], reverse=True)
         if len(predictions) == 0:
             return "LOW"
         complexity, confidence = predictions[0][0], predictions[0][1]
         if confidence < 0.4:
+            self.logger.info(f"Low confidence in complexity estimation: {confidence}")
             return "LOW"
         if complexity == "HIGH" and len(text) < 64:
             return None # ask for more info
@@ -341,8 +349,8 @@ class AgentRouter:
             return "HIGH"
         elif complexity == "LOW":
             return "LOW"
-        pretty_print(f"Failed to estimate the complexity of the text. Confidence: {confidence}", color="failure")
-        return None
+        pretty_print(f"Failed to estimate the complexity of the text.", color="failure")
+        return "LOW"
     
     def find_planner_agent(self) -> Agent:
         """
@@ -354,6 +362,7 @@ class AgentRouter:
             if agent.type == "planner_agent":
                 return agent
         pretty_print(f"Error finding planner agent. Please add a planner agent to the list of agents.", color="failure")
+        self.logger.error("Planner agent not found.")
         return None
     
     def select_agent(self, text: str) -> Agent:
@@ -386,9 +395,11 @@ class AgentRouter:
                 pretty_print(f"Selected agent: {agent.agent_name} (roles: {agent.role[lang]})", color="warning")
                 return agent
         pretty_print(f"Error choosing agent.", color="failure")
+        self.logger.error("No agent selected.")
         return None
 
 if __name__ == "__main__":
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     agents = [
         CasualAgent("jarvis", "../prompts/base/casual_agent.txt", None),
         BrowserAgent("browser", "../prompts/base/planner_agent.txt", None),

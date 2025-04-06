@@ -41,6 +41,7 @@ def setup():
 def get_updated_sentence():
     if not generator:
         return jsonify({"error": "Generator not initialized"}), 405
+    print(generator.get_status())
     return generator.get_status()
 
 if __name__ == '__main__':

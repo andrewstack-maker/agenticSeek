@@ -1,18 +1,15 @@
-import os
+import os, sys
 import re
 import platform
 import subprocess
 from sys import modules
-from typing import List, Tuple, Type, Dict, Tuple
+from typing import List, Tuple, Type, Dict
 
 from kokoro import KPipeline
 from IPython.display import display, Audio
 import soundfile as sf
 
-if __name__ == "__main__":
-    from utility import pretty_print, animate_thinking
-else:
-    from sources.utility import pretty_print, animate_thinking
+from sources.utility import pretty_print, animate_thinking
 
 class Speech():
     """
@@ -47,22 +44,22 @@ class Speech():
         if not os.path.exists(path):
             os.makedirs(path)
 
-    def speak(self, sentence: str, voice_number: int = 1):
+    def speak(self, sentence: str, voice_idx: int = 1):
         """
         Convert text to speech using an AI model and play the audio.
 
         Args:
             sentence (str): The text to convert to speech. Will be pre-processed.
-            voice_number (int, optional): Index of the voice to use from the voice map.
+            voice_idx (int, optional): Index of the voice to use from the voice map.
         """
         if not self.pipeline:
             return
-        if voice_number >= len(self.voice_map[self.language]) or voice_number < 0:
+        if voice_idx >= len(self.voice_map[self.language]):
             pretty_print("Invalid voice number, using default voice", color="error")
-            voice_number = 0
+            voice_idx = 0
         sentence = self.clean_sentence(sentence)
-        audio_file = f"{self.voice_folder}/sample_{self.voice_map[self.language][voice_number]}.wav"
-        self.voice = self.voice_map[self.language][voice_number]
+        audio_file = f"{self.voice_folder}/sample_{self.voice_map[self.language][voice_idx]}.wav"
+        self.voice = self.voice_map[self.language][voice_idx]
         generator = self.pipeline(
             sentence, voice=self.voice,
             speed=self.speed, split_pattern=r'\n+'
@@ -143,6 +140,7 @@ class Speech():
         return sentence
 
 if __name__ == "__main__":
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     speech = Speech()
     tosay_en = """
     I looked up recent news using the website https://www.theguardian.com/world
@@ -154,8 +152,8 @@ if __name__ == "__main__":
     J'ai consulté les dernières nouvelles sur le site https://www.theguardian.com/world
     """
     spk = Speech(enable=True, language="en", voice_idx=0)
-    spk.speak(tosay_en)
+    spk.speak(tosay_en, voice_idx=0)
     spk = Speech(enable=True, language="fr", voice_idx=0)
     spk.speak(tosay_fr)
-    spk = Speech(enable=True, language="zh", voice_idx=0)
-    spk.speak(tosay_zh)
+    #spk = Speech(enable=True, language="zh", voice_idx=0)
+    #spk.speak(tosay_zh)

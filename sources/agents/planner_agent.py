@@ -1,9 +1,11 @@
 import json
+from typing import List, Tuple, Type, Dict
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
 from sources.agents.code_agent import CoderAgent
 from sources.agents.file_agent import FileAgent
 from sources.agents.browser_agent import BrowserAgent
+from sources.text_to_speech import Speech
 from sources.tools.tools import Tools
 
 class PlannerAgent(Agent):
@@ -61,63 +63,80 @@ class PlannerAgent(Agent):
             return zip(names, tasks)
         return zip(tasks_names, tasks)
     
-    def make_prompt(self, task, needed_infos):
-        if needed_infos is None:
-            needed_infos = "No needed informations."
+    def make_prompt(self, task: dict, agent_infos_dict: dict):
+        infos = ""
+        if agent_infos_dict is None or len(agent_infos_dict) == 0:
+            infos = "No needed informations."
+        else:
+            for agent_id, info in agent_infos_dict.items():
+                infos += f"\t- According to agent {agent_id}:\n{info}\n\n"
         prompt = f"""
-        You are given the following informations:
-        {needed_infos}
+        You are given informations from your AI friends work:
+        {infos}
         Your task is:
         {task}
         """
         return prompt
     
-    def show_plan(self, json_plan):
+    def show_plan(self, json_plan: dict) -> None:
         agents_tasks = self.parse_agent_tasks(json_plan)
         if agents_tasks == (None, None):
+            pretty_print("Failed to make a plan.", color="failure")
             return
-        pretty_print("▂▘ P L A N ▝▂", color="output")
+        pretty_print("\n▂▘ P L A N ▝▂", color="status")
         for task_name, task in agents_tasks:
-                    pretty_print(f"{task['agent']} -> {task['task']}", color="info")
-        pretty_print("▔▗ E N D ▖▔", color="output")
+            pretty_print(f"{task['agent']} -> {task['task']}", color="info")
+        pretty_print("▔▗ E N D ▖▔", color="status")
     
-    def process(self, prompt, speech_module) -> str:
+    def make_plan(self, prompt: str) -> str:
         ok = False
-        agents_tasks = (None, None)
+        answer = None
         while not ok:
-            self.wait_message(speech_module)
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', prompt)
             answer, _ = self.llm_request()
-            pretty_print(answer.split('\n')[0], color="output")
+            for line in answer.split('\n'):
+                if "```json" in line:
+                    break
+            pretty_print(line, color="output")
             self.show_plan(answer)
             ok_str = input("Is the plan ok? (y/n): ")
             if ok_str == 'y':
                 ok = True
             else:
                 prompt = input("Please reformulate: ")
+        return answer
+    
+    def start_agent_process(self, task: str, required_infos: dict | None) -> str:
+        agent_prompt = self.make_prompt(task['task'], required_infos)
+        pretty_print(f"Agent {task['agent']} started working...", color="status")
+        agent_answer, _ = self.agents[task['agent'].lower()].process(agent_prompt, None)
+        self.agents[task['agent'].lower()].show_answer()
+        pretty_print(f"Agent {task['agent']} completed task.", color="status")
+        return agent_answer
+    
+    def get_work_result_agent(self, task_needs, agents_work_result):
+        return {k: agents_work_result[k] for k in task_needs if k in agents_work_result}
 
+    def process(self, prompt: str, speech_module: Speech) -> str:
+        agents_tasks = (None, None)
+        agents_work_result = dict()
+
+        answer = self.make_plan(prompt)
         agents_tasks = self.parse_agent_tasks(answer)
+
         if agents_tasks == (None, None):
-            return "Failed to parse the tasks", reasoning
-        prev_agent_answer = None
+            return "Failed to parse the tasks.", reasoning
         for task_name, task in agents_tasks:
             pretty_print(f"I will {task_name}.", color="info")
-            agent_prompt = self.make_prompt(task['task'], prev_agent_answer)
             pretty_print(f"Assigned agent {task['agent']} to {task_name}", color="info")
             if speech_module: speech_module.speak(f"I will {task_name}. I assigned the {task['agent']} agent to the task.")
+
+            if agents_work_result is not None:
+                required_infos = self.get_work_result_agent(task['need'], agents_work_result)
             try:
-                prev_agent_answer, _ = self.agents[task['agent'].lower()].process(agent_prompt, speech_module)
-                pretty_print(f"-- Agent answer ---\n\n", color="output")
-                self.agents[task['agent'].lower()].show_answer()
-                pretty_print(f"\n\n", color="output")
+                self.last_answer = self.start_agent_process(task, required_infos)
             except Exception as e:
                 raise e
-        self.last_answer = prev_agent_answer
-        return prev_agent_answer, ""
-
-if __name__ == "__main__":
-    from llm_provider import Provider
-    server_provider = Provider("server", "deepseek-r1:14b", "192.168.1.100:5000")
-    agent = PlannerAgent("deepseek-r1:14b", "jarvis", "prompts/planner_agent.txt", server_provider)
-    ans = agent.process("Make a cool game to illustrate the current relation between USA and europe")
+            agents_work_result[task['id']] = self.last_answer
+        return self.last_answer, ""

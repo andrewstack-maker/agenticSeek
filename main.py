@@ -1,7 +1,6 @@
 #!/usr/bin python3
 
 import sys
-import signal
 import argparse
 import configparser
 
@@ -17,12 +16,7 @@ warnings.filterwarnings("ignore")
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-def handleInterrupt(signum, frame):
-    sys.exit(0)
-
 def main():
-    signal.signal(signal.SIGINT, handler=handleInterrupt)
-
     pretty_print("Initializing...", color="status")
     provider = Provider(provider_name=config["MAIN"]["provider_name"],
                         model=config["MAIN"]["provider_model"],

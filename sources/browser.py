@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
-from typing import List, Tuple, Type, Dict, Tuple
+from typing import List, Tuple, Type, Dict
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from fake_useragent import UserAgent
@@ -18,19 +18,14 @@ import random
 import os
 import shutil
 import markdownify
-import logging
 import sys
 import re
 
-if __name__ == "__main__":
-    from utility import pretty_print, animate_thinking
-else:
-    from sources.utility import pretty_print, animate_thinking
-
-logging.basicConfig(filename='browser.log', level=logging.ERROR, 
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+from sources.utility import pretty_print, animate_thinking
+from sources.logger import Logger
 
 def get_chrome_path() -> str:
+    """Get the path to the Chrome executable."""
     if sys.platform.startswith("win"):
         paths = [
             "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -111,14 +106,11 @@ class Browser:
         """Initialize the browser with optional AntiCaptcha installation."""
         self.js_scripts_folder = "./sources/web_scripts/" if not __name__ == "__main__" else "./web_scripts/"
         self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
+        self.logger = Logger("browser.log")
         try:
             self.driver = driver
             self.wait = WebDriverWait(self.driver, 10)
-            self.logger = logging.getLogger(__name__)
-            self.logger.info("Browser initialized successfully")
         except Exception as e:
-            logging.basicConfig(filename='browser.log', level=logging.ERROR, 
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             raise Exception(f"Failed to initialize browser: {str(e)}")
         self.driver.get("https://www.google.com")
         if anticaptcha_manual_install:
@@ -142,7 +134,7 @@ class Browser:
                 message="stuck on 'checking browser' or verification screen"
             )
             self.apply_web_safety()
-            self.logger.info(f"Navigated to: {url}")
+            self.logger.log(f"Navigated to: {url}")
             return True
         except TimeoutException as e:
             self.logger.error(f"Timeout waiting for {url} to load: {str(e)}")
@@ -167,19 +159,29 @@ class Browser:
         return (word_count >= 5 and (has_punctuation or is_long_enough))
 
     def get_text(self) -> str | None:
-        """Get page text and convert it to README (Markdown) format."""
+        """Get page text as formatted Markdown"""
         try:
             soup = BeautifulSoup(self.driver.page_source, 'html.parser')
-            
-            for element in soup(['script', 'style']):
+            for element in soup(['script', 'style', 'noscript', 'meta', 'link']):
                 element.decompose()
-            
-            text = soup.get_text()
-            lines = (f"{line.strip()}\n" for line in text.splitlines())
-            text = "\n".join(chunk for chunk in lines if chunk and self.is_sentence(chunk))
-            text = text[:4096]
-            #markdown_text = markdownify.markdownify(text, heading_style="ATX")
-            return "[Start of page]\n" + text + "\n[End of page]"
+            markdown_converter = markdownify.MarkdownConverter(
+                heading_style="ATX",
+                strip=['a'],
+                autolinks=False,
+                bullets='•',
+                strong_em_symbol='*',
+                default_title=False,
+            )
+            markdown_text = markdown_converter.convert(str(soup.body))
+            lines = []
+            for line in markdown_text.splitlines():
+                stripped = line.strip()
+                if stripped and self.is_sentence(stripped):
+                    cleaned = ' '.join(stripped.split())
+                    lines.append(cleaned)
+            result = "[Start of page]\n\n" + "\n\n".join(lines) + "\n\n[End of page]"
+            result = re.sub(r'!\[(.*?)\]\(.*?\)', r'[IMAGE: \1]', result)
+            return result[:8192]
         except Exception as e:
             self.logger.error(f"Error getting text: {str(e)}")
             return None
@@ -247,20 +249,25 @@ class Browser:
             if not element.is_enabled():
                 return False
             try:
+                self.logger.error(f"Scrolling to element for click_element.")
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});", element)
                 time.sleep(0.1)
                 element.click()
                 return True
             except ElementClickInterceptedException as e:
+                self.logger.error(f"Error click_element: {str(e)}")
                 return False
         except TimeoutException:
+            self.logger.warning(f"Timeout clicking element.")
             return False
         except Exception as e:
             self.logger.error(f"Unexpected error clicking element at {xpath}: {str(e)}")
             return False
         
     def load_js(self, file_name: str) -> str:
+        """Load javascript from script folder to inject to page."""
         path = os.path.join(self.js_scripts_folder, file_name)
+        self.logger.info(f"Loading js at {path}")
         try:
             with open(path, 'r') as f:
                 return f.read()
@@ -270,6 +277,7 @@ class Browser:
             raise e
 
     def find_all_inputs(self, timeout=3):
+        """Find all inputs elements on the page."""
         try:
             WebDriverWait(self.driver, timeout).until(
                 EC.presence_of_element_located((By.TAG_NAME, "body"))
@@ -287,6 +295,7 @@ class Browser:
         try:
             input_elements = self.find_all_inputs()
             if not input_elements:
+                self.logger.info("No input element on page.")
                 return ["No input forms found on the page."]
 
             form_strings = []
@@ -335,14 +344,7 @@ class Browser:
         return False
 
     def find_and_click_btn(self, btn_type: str = 'login', timeout: int = 10) -> bool:
-        """
-        Find and click a submit button matching the specified type.
-        Args:
-            btn_type: The type of button to find.
-            timeout: time to wait for button to appear.
-        Returns:
-            bool: True if the button was found and clicked, False otherwise.
-        """
+        """Find and click a submit button matching the specified type."""
         buttons = self.get_buttons_xpath()
         if not buttons:
             self.logger.warning("No visible buttons found")
@@ -450,21 +452,19 @@ class Browser:
         input_elements = self.driver.execute_script(script)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     driver = create_driver()
     browser = Browser(driver, anticaptcha_manual_install=True)
-    time.sleep(10)
     
-    #browser.go_to("https://coinmarketcap.com/")
+    #browser.go_to("https://github.com/Fosowl/agenticSeek")
     #txt = browser.get_text()
     #print(txt)
+    #time.sleep(10)
+    #browser.go_to("https://practicetestautomation.com/practice-test-login/")
     print("AntiCaptcha / Form Test")
     browser.go_to("https://www.google.com/recaptcha/api2/demo")
-    #browser.go_to("https://practicetestautomation.com/practice-test-login/")
-    time.sleep(10)
     inputs = browser.get_form_inputs()
-    inputs = ['[input1](Martin)', f'[input2](Test)', '[input3](test@gmail.com)']
+    #inputs = ['[input1](Martin)', f'[input2](Test)', '[input3](test@gmail.com)']
     browser.fill_form_inputs(inputs)
     browser.find_and_click_submission()
     time.sleep(10)

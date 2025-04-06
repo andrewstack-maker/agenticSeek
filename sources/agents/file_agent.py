@@ -36,10 +36,4 @@ class FileAgent(Agent):
         return answer, reasoning
 
 if __name__ == "__main__":
-    from llm_provider import Provider
-
-    #local_provider = Provider("ollama", "deepseek-r1:14b", None)
-    server_provider = Provider("server", "deepseek-r1:14b", "192.168.1.100:5000")
-    agent = FileAgent("deepseek-r1:14b", "jarvis", "prompts/file_agent.txt", server_provider)
-    ans = agent.process("What is the content of the file toto.py ?")
-    print(ans)
+    pass

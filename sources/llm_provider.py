@@ -13,6 +13,7 @@ from openai import OpenAI
 from huggingface_hub import InferenceClient
 from typing import List, Tuple, Type, Dict
 from sources.utility import pretty_print, animate_thinking
+from sources.logger import Logger
 
 class Provider:
     def __init__(self, provider_name, model, server_address = "127.0.0.1:5000", is_local=False):
@@ -30,6 +31,7 @@ class Provider:
             "dsk_deepseek": self.dsk_deepseek,
             "test": self.test_fn
         }
+        self.logger = Logger("provider.log")
         self.api_key = None
         self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek"]
         if self.provider_name not in self.available_providers:
@@ -50,6 +52,7 @@ class Provider:
         if not api_key:
             api_key = input(f"Please enter your {provider} API key: ")
             set_key(".env", api_key_var, api_key)
+            self.logger.info("Set API key in env.")
             load_dotenv()
         return api_key
 
@@ -73,8 +76,12 @@ class Provider:
         Use the choosen provider to generate text.
         """
         llm = self.available_providers[self.provider_name]
+        self.logger.info(f"Using provider: {self.provider_name} at {self.server_ip}")
         try:
             thought = llm(history, verbose)
+        except KeyboardInterrupt:
+            self.logger.warning("User interrupted the operation with Ctrl+C")
+            return "Operation interrupted by user. REQUEST_EXIT"
         except ConnectionError as e:
             raise ConnectionError(f"{str(e)}\nConnection to {self.server_ip} failed.")
         except AttributeError as e:
@@ -98,6 +105,7 @@ class Provider:
             if output.returncode == 0:
                 return True
             else:
+                self.logger.error(f"Ping command returned code: {output.returncode}")
                 return False
         except subprocess.TimeoutExpired:
             return False
@@ -287,26 +295,11 @@ class Provider:
         This function is used to conduct tests.
         """
         thought = """
-hello!
-```python
-print("Hello world from python")
-```
-
-This is ls -la from bash.
-```bash
-ls -la
-```
-
-This is pwd from bash. 
-```bash
-pwd
-```
-
-goodbye!
+\n\n```json\n{\n  \"plan\": [\n    {\n      \"agent\": \"Web\",\n      \"id\": \"1\",\n      \"need\": null,\n      \"task\": \"Conduct a comprehensive web search to identify at least five AI startups located in Osaka. Use reliable sources and websites such as Crunchbase, TechCrunch, or local Japanese business directories. Capture the company names, their websites, areas of expertise, and any other relevant details.\"\n    },\n    {\n      \"agent\": \"Web\",\n      \"id\": \"2\",\n      \"need\": null,\n      \"task\": \"Perform a similar search to find at least five AI startups in Tokyo. Again, use trusted sources like Crunchbase, TechCrunch, or Japanese business news websites. Gather the same details as for Osaka: company names, websites, areas of focus, and additional information.\"\n    },\n    {\n      \"agent\": \"File\",\n      \"id\": \"3\",\n      \"need\": [\"1\", \"2\"],\n      \"task\": \"Create a new text file named research_japan.txt in the user's home directory. Organize the data collected from both searches into this file, ensuring it is well-structured and formatted for readability. Include headers for Osaka and Tokyo sections, followed by the details of each startup found.\"\n    }\n  ]\n}\n```
         """
         return thought
 
 if __name__ == "__main__":
-    provider = Provider("ollama", "deepseek-r1:1.5b", "127.0.0.1:11434")
+    provider = Provider("server", "deepseek-r1:14b", "192.168.1.20:3333")
     res = provider.respond(["user", "Hello, how are you?"])
     print("Response:", res)

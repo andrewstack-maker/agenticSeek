@@ -2,10 +2,12 @@
 """
 define a generic tool class, any tool can be used by the agent.
 
-A tool can be used by deepseek like so:
+A tool can be used by a llm like so:
 ```<tool name>
 <code or query to execute>
 ```
+
+we call these "blocks".
 
 For example:
 ```python
@@ -40,9 +42,7 @@ class Tools():
         return self.current_dir
     
     def check_config_dir_validity(self):
-        """
-        Check if the config directory is valid.
-        """
+        """Check if the config directory is valid."""
         path = self.config['MAIN']['work_dir']
         if path == "":
             print("WARNING: Work directory not set in config.ini")
@@ -56,15 +56,11 @@ class Tools():
         return True
     
     def config_exists(self):
-        """
-        Check if the config file exists.
-        """
+        """Check if the config file exists."""
         return os.path.exists('./config.ini')
 
     def create_work_dir(self):
-        """
-        Create the work directory if it does not exist.
-        """
+        """Create the work directory if it does not exist."""
         default_path = os.path.dirname(os.getcwd())
         if self.config_exists():
             self.config.read('./config.ini')

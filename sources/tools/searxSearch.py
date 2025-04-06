@@ -54,7 +54,7 @@ class searxSearch(Tools):
             status = self.link_valid(link)
             statuses.append(status)
         return statuses
-
+    
     def execute(self, blocks: list, safety: bool = False) -> str:
         """Executes a search query against a SearxNG instance using POST and extracts URLs and titles."""
         if not blocks:
