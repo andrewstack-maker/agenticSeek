@@ -54,7 +54,7 @@ class BrowserAgent(Agent):
         links_clean = []
         for link in links:
             link = link.strip()
-            if link[-1] == '.':
+            if not (link[-1].isalpha() or link[-1].isdigit()):
                 links_clean.append(link[:-1])
             else:
                 links_clean.append(link)
@@ -71,7 +71,7 @@ class BrowserAgent(Agent):
         Your goal is to find accurate and complete information to satisfy the user’s request.
         User request: {user_prompt}
         To proceed, choose a relevant link from the search results. Announce your choice by saying: "I want to navigate to <link>"
-        Do not explain your choice.
+        Do not eplain your choice.
         """
     
     def make_navigation_prompt(self, user_prompt: str, page_text: str) -> str:
@@ -120,22 +120,27 @@ class BrowserAgent(Agent):
         
         Example 1 (useful page, no need go futher):
         Note: According to karpathy site (<link>) LeCun net is ...<expand on page content>..."
-        No link seem useful to provide futher information. GO_BACK
+        No link seem useful to provide futher information.
+        Action: GO_BACK
 
         Example 2 (not useful, see useful link on page):
         Error: reddit.com/welcome does not discuss anything related to the user’s query.
-        There is a link that could lead to the information, I want to navigate to http://reddit.com/r/locallama
+        There is a link that could lead to the information.
+        Action: navigate to http://reddit.com/r/locallama
 
         Example 3 (not useful, no related links):
         Error: x.com does not discuss anything related to the user’s query and no navigation link are usefull.
-        GO_BACK
+        Action: GO_BACK
 
         Example 3 (query answer found, enought notes taken):
         Note: I found on <link> that ...<expand on information found>...
-        Given this answer the user query I should exit the web browser. REQUEST_EXIT
+        Given this answer the user query I should exit the web browser.
+        Action: REQUEST_EXIT
 
         Example 4 (loging form visible):
+
         Note: I am on the login page, I will type the given username and password. 
+        Action:
         [username_field](David)
         [password_field](edgerunners77)
 
@@ -143,7 +148,7 @@ class BrowserAgent(Agent):
         {user_prompt}
         You previously took these notes:
         {notes}
-        Do not Step-by-Step explanation. Instead write simple explanation sentence following by your notes and actions.
+        Do not Step-by-Step explanation. Write Notes or Error as a long paragraph followed by your action.
         """
     
     def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:
@@ -190,7 +195,7 @@ class BrowserAgent(Agent):
         buffer = []
         links = []
         for line in lines:
-            if "exit" in line:
+            if line == '' or 'action:' in line.lower():
                 saving = False
             if "note" in line.lower():
                 saving = True
@@ -198,7 +203,7 @@ class BrowserAgent(Agent):
                 buffer.append(line)
             else:
                 links.extend(self.extract_links(line))
-        self.notes.append('. '.join(buffer))
+        self.notes.append('. '.join(buffer).strip())
         return links
     
     def select_link(self, links: List[str]) -> str | None:
@@ -293,6 +298,7 @@ class BrowserAgent(Agent):
 
             extracted_form = self.extract_form(answer)
             if len(extracted_form) > 0:
+                pretty_print(f"Filling inputs form...", color="status")
                 self.browser.fill_form_inputs(extracted_form)
                 self.browser.find_and_click_submission()
                 page_text = self.browser.get_text()
@@ -303,22 +309,25 @@ class BrowserAgent(Agent):
             link = self.select_link(links)
 
             if "REQUEST_EXIT" in answer:
+                pretty_print(f"Agent requested exit.", color="status")
                 complete = True
                 break
 
             if len(unvisited) == 0:
+                pretty_print(f"Visited all links.", color="status")
                 break
 
             if "FORM_FILLED" in answer:
+                pretty_print(f"Filled form. Handling page update.", color="status")
                 page_text = self.browser.get_text()
                 self.navigable_links = self.browser.get_navigable()
                 prompt = self.make_navigation_prompt(user_prompt, page_text)
                 continue
 
             if link == None or "GO_BACK" in answer:
+                pretty_print(f"Going back to results. Still {len(unvisited)}", color="status")
                 unvisited = self.select_unvisited(search_result)
                 prompt = self.make_newsearch_prompt(user_prompt, unvisited)
-                pretty_print(f"Going back to results. Still {len(unvisited)}", color="warning")
                 continue
 
             animate_thinking(f"Navigating to {link}", color="status")
@@ -329,8 +338,8 @@ class BrowserAgent(Agent):
             page_text = self.browser.get_text()
             self.navigable_links = self.browser.get_navigable()
             prompt = self.make_navigation_prompt(user_prompt, page_text)
-            pretty_print(f"Current page: {self.current_page}", color="warning")
 
+        pretty_print("Exited navigation, starting to summarize finding...", color="status")
         prompt = self.conclude_prompt(user_prompt)
         mem_last_idx = self.memory.push('user', prompt)
         answer, reasoning = self.llm_request()
