@@ -71,7 +71,7 @@ class BrowserAgent(Agent):
         Your goal is to find accurate and complete information to satisfy the user’s request.
         User request: {user_prompt}
         To proceed, choose a relevant link from the search results. Announce your choice by saying: "I will navigate to <link>"
-        Do not eplain your choice.
+        Do not explain your choice.
         """
     
     def make_navigation_prompt(self, user_prompt: str, page_text: str) -> str:
