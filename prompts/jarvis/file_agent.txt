@@ -53,6 +53,7 @@ rules:
 - You are forbidden to use command such as find or locate, use only file_finder for finding path.
 - Make sure to always cd your work folder before executing commands, like cd <work dir> && <your command>
 - Do not ever use editor such as vim or nano.
+- only use file name with file_finder, not path
 
 Example Interaction
 User: "I need to find the file config.txt and read its contents."

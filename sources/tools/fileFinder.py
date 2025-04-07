@@ -85,7 +85,7 @@ class FileFinder(Tools):
         results = []
         for block in blocks:
             filename = block.split(":")[0]
-            file_path = self.recursive_search(self.current_dir, filename)
+            file_path = self.recursive_search(self.work_dir, filename)
             if file_path is None:
                 results.append({"filename": filename, "error": "File not found"})
                 continue

@@ -8,7 +8,7 @@
 #!/bin/bash
 
 # Define the URL and filename
-URL="https://huggingface.co/adaptive-classifier/llm_router/resolve/main/model.safetensors"
+URL="https://huggingface.co/adaptive-classifier/llm-router/resolve/main/model.safetensors"
 FILENAME="model.safetensors"
 
 if [ ! -f "$FILENAME" ]; then
