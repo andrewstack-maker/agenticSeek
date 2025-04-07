@@ -40,6 +40,7 @@ class BashInterpreter(Tools):
     
         concat_output = ""
         for command in commands:
+            command = f"cd {self.work_dir} && {command}"
             command = command.replace('\n', '')
             if self.safe_mode and is_unsafe(commands):
                 return "Unsafe command detected, execution aborted."

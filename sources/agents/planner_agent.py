@@ -37,9 +37,11 @@ class PlannerAgent(Agent):
 
         lines = text.strip().split('\n')
         for line in lines:
-            if line is None or len(line) == 0:
+            if line is None:
                 continue
             line = line.strip()
+            if len(line) == 0:
+                continue
             if '##' in line or line[0].isdigit():
                 tasks_names.append(line)
                 continue

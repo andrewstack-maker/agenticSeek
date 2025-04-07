@@ -34,12 +34,12 @@ class Tools():
         self.client = None
         self.messages = []
         self.config = configparser.ConfigParser()
-        self.current_dir = self.create_work_dir()
+        self.work_dir = self.create_work_dir()
         self.excutable_blocks_found = False
         self.safe_mode = True
     
     def get_work_dir(self):
-        return self.current_dir
+        return self.work_dir
     
     def check_config_dir_validity(self):
         """Check if the config directory is valid."""
@@ -116,7 +116,7 @@ class Tools():
             return
         save_path_dir = os.path.dirname(save_path)
         save_path_file = os.path.basename(save_path)
-        directory = os.path.join(self.current_dir, save_path_dir)
+        directory = os.path.join(self.work_dir, save_path_dir)
         if directory and not os.path.exists(directory):
             os.makedirs(directory)
         for block in blocks:

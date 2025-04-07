@@ -1,3 +1,4 @@
+import readline
 from typing import List, Tuple, Type, Dict
 
 from sources.text_to_speech import Speech
