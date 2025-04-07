@@ -311,6 +311,8 @@ class BrowserAgent(Agent):
             links = self.parse_answer(answer)
             link = self.select_link(links)
             self.search_history.append(link)
+            hist = '\n'.join([x for x in self.search_history if x is not None])
+            pretty_print(hist, color="warning")
 
             if "REQUEST_EXIT" in answer:
                 pretty_print(f"Agent requested exit.", color="status")
