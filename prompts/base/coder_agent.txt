@@ -49,6 +49,6 @@ Some rules:
 - Do not ever use user input, input are not supported by the system.
 - Do not ever tell user how to run it. user know it.
 - For simple explanation you don't need to code.
-- If using gui, make sure echap close the program
+- If using gui, make sure echap or exit button close the program
 - No lazyness, write and rewrite full code every time
 - If query is unclear say REQUEST_CLARIFICATION

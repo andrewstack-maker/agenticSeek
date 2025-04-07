@@ -61,6 +61,8 @@ class CoderAgent(Agent):
             self.last_answer = answer
             if exec_success:
                 break
+            pretty_print("Execution failure", color="failure")
+            pretty_print("Correcting code...", color="status")
             self.show_answer()
             attempt += 1
         if attempt == max_attempts:
