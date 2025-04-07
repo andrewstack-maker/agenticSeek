@@ -14,9 +14,14 @@ English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Franç
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
-## Task planning with multiple agents 
+## Search the Web
+![as_geopolitics](https://github.com/user-attachments/assets/0a778a24-92e8-4401-b5d4-1591fb9b2aff)
 
-![alt text](./media/examples/planner.png)
+## Write code
+
+![agenticpong](https://github.com/user-attachments/assets/3961c3da-d95a-4b0d-ac10-f0cb6bbae032)
+
+*And much more!*
 
 > *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
