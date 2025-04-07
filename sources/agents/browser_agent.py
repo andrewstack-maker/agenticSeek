@@ -297,6 +297,7 @@ class BrowserAgent(Agent):
         unvisited = [None]
         while not complete:
             answer, reasoning = self.llm_decide(prompt, show_reasoning = False)
+            pretty_print('▂'*32, color="status")
 
             extracted_form = self.extract_form(answer)
             if len(extracted_form) > 0:
