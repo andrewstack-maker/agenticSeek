@@ -212,6 +212,7 @@ class AgentRouter:
             ("Hi, how’s your day going?", "talk"),
             ("Can you find a file called resume.docx on my drive?", "files"),
             ("Write a simple Java program to print 'Hello World'", "code"),
+            ("can you find the current stock of Tesla?", "web"),
             ("Tell me a quick joke", "talk"),
             ("Search online for the best coffee shops in Seattle", "web"),
             ("Check if ‘project_plan.pdf’ exists in my Downloads folder", "files"),

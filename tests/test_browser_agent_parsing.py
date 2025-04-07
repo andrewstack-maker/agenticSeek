@@ -16,11 +16,11 @@ class TestBrowserAgentParsing(unittest.TestCase):
     def test_extract_links(self):
         # Test various link formats
         test_text = """
-        Check this out: https://example.com, and www.google.com!
+        Check this out: https://thriveonai.com/15-ai-startups-in-japan-to-take-note-of, and www.google.com!
         Also try https://test.org/about?page=1.
         """
         expected = [
-            "https://example.com",
+            "https://thriveonai.com/15-ai-startups-in-japan-to-take-note-of",
             "www.google.com",
             "https://test.org/about?page=1"
         ]
