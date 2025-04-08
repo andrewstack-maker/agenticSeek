@@ -17,12 +17,13 @@ class TestBrowserAgentParsing(unittest.TestCase):
         # Test various link formats
         test_text = """
         Check this out: https://thriveonai.com/15-ai-startups-in-japan-to-take-note-of, and www.google.com!
-        Also try https://test.org/about?page=1.
+        Also try https://test.org/about?page=1, hey this one as well bro https://weatherstack.com/documentation.
         """
         expected = [
             "https://thriveonai.com/15-ai-startups-in-japan-to-take-note-of",
             "www.google.com",
-            "https://test.org/about?page=1"
+            "https://test.org/about?page=1",
+            "https://weatherstack.com/documentation"
         ]
         result = self.agent.extract_links(test_text)
         self.assertEqual(result, expected)

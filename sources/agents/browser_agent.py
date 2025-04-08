@@ -1,13 +1,22 @@
 import re
 import time
+from datetime import date
+from typing import List, Tuple, Type, Dict
+from enum import Enum
 
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
 from sources.tools.searxSearch import searxSearch
 from sources.browser import Browser
-from datetime import date
-from typing import List, Tuple, Type, Dict
+from sources.logger import Logger
 
+class Action(Enum):
+    REQUEST_EXIT = "REQUEST_EXIT"
+    FORM_FILLED = "FORM_FILLED"
+    GO_BACK = "GO_BACK"
+    NAVIGATE = "NAVIGATE"
+    SEARCH = "SEARCH"
+    
 class BrowserAgent(Agent):
     def __init__(self, name, prompt_path, provider, verbose=False, browser=None):
         """
@@ -27,8 +36,10 @@ class BrowserAgent(Agent):
         self.current_page = ""
         self.search_history = []
         self.navigable_links = []
+        self.last_action = Action.NAVIGATE.value
         self.notes = []
         self.date = self.get_today_date()
+        self.logger = Logger("browser_agent.log")
     
     def get_today_date(self) -> str:
         """Get the date"""
@@ -101,15 +112,16 @@ class BrowserAgent(Agent):
 
         1. **Decide if the page answers the user’s query:**
           - If it does, take notes of useful information (Note: ...), include relevant link in note, then move to a new page.
-          - If it does and you completed user request, say REQUEST_EXIT.
+          - If it does and you completed user request, say {Action.REQUEST_EXIT}.
           - If it doesn’t, say: Error: <why page don't help> then go back or navigate to another link.
         2. **Navigate to a link by either: **
-          - Saying I will navigate to <url>: (write down the full URL, e.g., www.example.com/cats).
-          - Going back: If no link seems helpful, say: GO_BACK.
+          - Saying I will navigate to (write down the full URL) www.example.com/cats
+          - Going back: If no link seems helpful, say: {Action.GO_BACK.value}.
         3. **Fill forms on the page:**
-          - Fill form only on relevant page with given informations. You might use form to conduct search on a page.
-          - You can fill a form using [form_name](value). Don't GO_BACK when filling form.
-          - If a form is irrelevant or you lack informations leave it empty.
+          - Fill form only when relevant.
+          - Use Login if username/password specified by user. For quick task create account, remember password in a note.
+          - You can fill a form using [form_name](value). Don't {Action.GO_BACK.value} when filling form.
+          - If a form is irrelevant or you lack informations (eg: don't know user email) leave it empty.
         
         **Rules:**
         - Do not write "The page talk about ...", write your finding on the page and how they contribute to an answer.
@@ -121,7 +133,7 @@ class BrowserAgent(Agent):
         Example 1 (useful page, no need go futher):
         Note: According to karpathy site (<link>) LeCun net is ...<expand on page content>..."
         No link seem useful to provide futher information.
-        Action: GO_BACK
+        Action: {Action.GO_BACK.value}
 
         Example 2 (not useful, see useful link on page):
         Error: reddit.com/welcome does not discuss anything related to the user’s query.
@@ -130,12 +142,12 @@ class BrowserAgent(Agent):
 
         Example 3 (not useful, no related links):
         Error: x.com does not discuss anything related to the user’s query and no navigation link are usefull.
-        Action: GO_BACK
+        Action: {Action.GO_BACK.value}
 
         Example 3 (query answer found, enought notes taken):
         Note: I found on <link> that ...<expand on information found>...
         Given this answer the user query I should exit the web browser.
-        Action: REQUEST_EXIT
+        Action: {Action.REQUEST_EXIT.value}
 
         Example 4 (loging form visible):
 
@@ -149,8 +161,8 @@ class BrowserAgent(Agent):
         You previously took these notes:
         {notes}
         Do not Step-by-Step explanation. Write Notes or Error as a long paragraph followed by your action.
-        You might REQUEST_EXIT if no more link are useful.
-        Do not navigate to AI tools or search engine. Only navigate to tool if asked.
+        You might {Action.REQUEST_EXIT.value} if no more link are useful.
+        If you conduct research do not exit until you have several notes.
         """
     
     def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:
@@ -245,7 +257,7 @@ class BrowserAgent(Agent):
         You: "search: Recent space missions news, {self.date}"
 
         Do not explain, do not write anything beside the search query.
-        Except if query does not make any sense for a web search then explain why and say REQUEST_EXIT
+        Except if query does not make any sense for a web search then explain why and say {Action.REQUEST_EXIT.value}
         Do not try to answer query. you can only formulate search term or exit.
         """
     
@@ -258,10 +270,10 @@ class BrowserAgent(Agent):
         {page_text}
         The user asked: {user_prompt}
         Does the page answer the user’s query now?
-        If it does, take notes of the useful information, write down result and say FORM_FILLED.
+        If it does, take notes of the useful information, write down result and say {Action.FORM_FILLED.value}.
         If you were previously on a login form, no need to explain.
-        If it does and you completed user request, say REQUEST_EXIT
-        if it doesn’t, say: Error: This page does not answer the user’s query then GO_BACK.
+        If it does and you completed user request, say {Action.REQUEST_EXIT.value}
+        if it doesn’t, say: Error: Attempt to fill form didn't work {Action.GO_BACK.value}.
         """
     
     def show_search_results(self, search_result: List[str]):
@@ -286,7 +298,7 @@ class BrowserAgent(Agent):
         animate_thinking(f"Thinking...", color="status")
         mem_begin_idx = self.memory.push('user', self.search_prompt(user_prompt))
         ai_prompt, _ = self.llm_request()
-        if "REQUEST_EXIT" in ai_prompt:
+        if Action.REQUEST_EXIT.value in ai_prompt:
             pretty_print(f"Web agent requested exit.\n{reasoning}\n\n{ai_prompt}", color="failure")
             return ai_prompt, "" 
         animate_thinking(f"Searching...", color="status")
@@ -295,7 +307,8 @@ class BrowserAgent(Agent):
         self.show_search_results(search_result)
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
-        while not complete:
+        while not complete and len(unvisited) > 0:
+
             answer, reasoning = self.llm_decide(prompt, show_reasoning = False)
             pretty_print('▂'*32, color="status")
 
@@ -308,27 +321,22 @@ class BrowserAgent(Agent):
                 answer = self.handle_update_prompt(user_prompt, page_text)
                 answer, reasoning = self.llm_decide(prompt)
 
-            links = self.parse_answer(answer)
-            link = self.select_link(links)
-            self.search_history.append(link)
-
-            if "REQUEST_EXIT" in answer:
-                pretty_print(f"Agent requested exit.", color="status")
-                complete = True
-                break
-
-            if len(unvisited) == 0:
-                pretty_print(f"Visited all links.", color="status")
-                break
-
-            if "FORM_FILLED" in answer:
+            if Action.FORM_FILLED.value in answer:
                 pretty_print(f"Filled form. Handling page update.", color="status")
                 page_text = self.browser.get_text()
                 self.navigable_links = self.browser.get_navigable()
                 prompt = self.make_navigation_prompt(user_prompt, page_text)
                 continue
 
-            if link == None or "GO_BACK" in answer:
+            links = self.parse_answer(answer)
+            link = self.select_link(links)
+
+            if Action.REQUEST_EXIT.value in answer:
+                pretty_print(f"Agent requested exit.", color="status")
+                complete = True
+                break
+
+            if link == None or Action.GO_BACK.value in answer or link in self.search_history:
                 pretty_print(f"Going back to results. Still {len(unvisited)}", color="status")
                 unvisited = self.select_unvisited(search_result)
                 prompt = self.make_newsearch_prompt(user_prompt, unvisited)
@@ -337,6 +345,7 @@ class BrowserAgent(Agent):
             animate_thinking(f"Navigating to {link}", color="status")
             if speech_module: speech_module.speak(f"Navigating to {link}")
             self.browser.go_to(link)
+            self.search_history.append(link)
             self.current_page = link
             page_text = self.browser.get_text()
             self.navigable_links = self.browser.get_navigable()

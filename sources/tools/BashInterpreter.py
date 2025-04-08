@@ -44,7 +44,7 @@ class BashInterpreter(Tools):
             command = command.replace('\n', '')
             if self.safe_mode and is_unsafe(commands):
                 return "Unsafe command detected, execution aborted."
-            if self.language_bash_attempt(command):
+            if self.language_bash_attempt(command) and allow_language_exec_bash == False:
                 continue
             try:
                 process = subprocess.Popen(

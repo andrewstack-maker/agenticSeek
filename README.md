@@ -14,9 +14,15 @@ English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Franç
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
-## Task planning with multiple agents 
 
-![alt text](./media/examples/planner.png)
+
+
+https://github.com/user-attachments/assets/fe9e8006-0462-4793-8b31-25bd42c6d1eb
+
+
+
+
+*And much more!*
 
 > *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
