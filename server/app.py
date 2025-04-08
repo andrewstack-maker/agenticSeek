@@ -9,13 +9,13 @@ from sources.ollama_handler import OllamaLLM
 from sources.vllm_handler import Vllm
 
 parser = argparse.ArgumentParser(description='AgenticSeek server script')
-parser.add_argument('--provider', type=str, help='LLM backend library to use. set to [ollama] or [llamacpp]', required=True)
+parser.add_argument('--provider', type=str, help='LLM backend library to use. set to [ollama], [vllm] or [llamacpp]', required=True)
 parser.add_argument('--port', type=int, help='port to use', required=True)
 args = parser.parse_args()
 
 app = Flask(__name__)
 
-assert args.provider in ["ollama", "llamacpp"], f"Provider {args.provider} does not exists. see --help for more information"
+assert args.provider in ["ollama", "llamacpp", "vllm"], f"Provider {args.provider} does not exists. see --help for more information"
 
 handler_map = {
     "ollama": OllamaLLM(),

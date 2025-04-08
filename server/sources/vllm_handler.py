@@ -10,7 +10,7 @@ class Vllm(GeneratorLLM):
         """
         super().__init__()
         self.logger = logging.getLogger(__name__)
-        self.llm = LLM(model=self.model)
+        self.llm = None 
         
     def convert_history_to_prompt(self, history: List[Dict[str, str]]) -> str:
         """
@@ -37,6 +37,8 @@ class Vllm(GeneratorLLM):
             history: List of dictionaries in OpenAI format [{"role": "user", "content": "..."}, ...]
         """
         self.logger.info(f"Using {self.model} for generation with vLLM")
+        if self.llm is None:
+            self.llm = LLM(model=self.model)
         
         try:
             with self.state.lock:
