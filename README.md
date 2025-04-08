@@ -14,12 +14,13 @@ English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Franç
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
-## Search the Web
-![as_geopolitics](https://github.com/user-attachments/assets/0a778a24-92e8-4401-b5d4-1591fb9b2aff)
 
-## Write code
 
-![agenticpong](https://github.com/user-attachments/assets/3961c3da-d95a-4b0d-ac10-f0cb6bbae032)
+
+https://github.com/user-attachments/assets/fe9e8006-0462-4793-8b31-25bd42c6d1eb
+
+
+
 
 *And much more!*
 
