@@ -51,6 +51,7 @@ class Vllm(GeneratorLLM):
             sampling_params = SamplingParams(
                 temperature=0.7,
                 max_tokens=512,
+                gpu_memory_utilization=0.5,
                 stream=True  # Enable streaming
             )
             outputs = self.llm.generate(prompt, sampling_params, use_tqdm=False)
