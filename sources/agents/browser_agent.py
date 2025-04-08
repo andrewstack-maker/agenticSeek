@@ -112,7 +112,7 @@ class BrowserAgent(Agent):
 
         1. **Decide if the page answers the user’s query:**
           - If it does, take notes of useful information (Note: ...), include relevant link in note, then move to a new page.
-          - If it does and you completed user request, say {Action.REQUEST_EXIT}.
+          - If it does and no futher step would help with user request, say {Action.REQUEST_EXIT}.
           - If it doesn’t, say: Error: <why page don't help> then go back or navigate to another link.
         2. **Navigate to a link by either: **
           - Saying I will navigate to (write down the full URL) www.example.com/cats
@@ -145,7 +145,7 @@ class BrowserAgent(Agent):
         Action: {Action.GO_BACK.value}
 
         Example 3 (query answer found, enought notes taken):
-        Note: I found on <link> that ...<expand on information found>...
+        Note: I found on website www.example.com that ...<expand on information found>...
         Given this answer the user query I should exit the web browser.
         Action: {Action.REQUEST_EXIT.value}
 
@@ -161,8 +161,9 @@ class BrowserAgent(Agent):
         You previously took these notes:
         {notes}
         Do not Step-by-Step explanation. Write Notes or Error as a long paragraph followed by your action.
-        You might {Action.REQUEST_EXIT.value} if no more link are useful.
         If you conduct research do not exit until you have several notes.
+        Do not ever ask the user to conduct a task, do not ever exit expecting user intervention.
+        You should be Investigative, Curious and Skeptical.
         """
     
     def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:

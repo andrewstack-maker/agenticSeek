@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request
 
 from sources.llamacpp_handler import LlamacppLLM
 from sources.ollama_handler import OllamaLLM
+from sources.vllm_handler import Vllm
 
 parser = argparse.ArgumentParser(description='AgenticSeek server script')
 parser.add_argument('--provider', type=str, help='LLM backend library to use. set to [ollama] or [llamacpp]', required=True)
@@ -16,7 +17,13 @@ app = Flask(__name__)
 
 assert args.provider in ["ollama", "llamacpp"], f"Provider {args.provider} does not exists. see --help for more information"
 
-generator = OllamaLLM() if args.provider == "ollama" else LlamacppLLM() 
+handler_map = {
+    "ollama": OllamaLLM(),
+    "llamacpp": LlamacppLLM(),
+    "vllm": Vllm()
+}
+
+generator = handler_map[args.provider]
 
 @app.route('/generate', methods=['POST'])
 def start_generation():
