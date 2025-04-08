@@ -128,6 +128,7 @@ class AgentRouter:
             ("Check if a file named ‘project_proposal.pdf’ exists in my Documents", "LOW"),
             ("Search the web for tips on improving coding skills", "LOW"),
             ("Write a Python script to count words in a text file", "LOW"),
+            ("Search the web for restaurant", "LOW"),
             ("Find a public API for sports scores and build a web app to show live updates", "HIGH"),
             ("Create a simple HTML page with CSS styling", "LOW"),
             ("hi", "LOW"),
