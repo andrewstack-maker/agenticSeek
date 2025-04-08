@@ -1,3 +1,4 @@
+from .generator import GeneratorLLM
 from vllm import LLM, SamplingParams
 import logging
 from typing import List, Dict
