@@ -115,12 +115,13 @@ class BrowserAgent(Agent):
           - If it does and you completed user request, say {Action.REQUEST_EXIT}.
           - If it doesn’t, say: Error: <why page don't help> then go back or navigate to another link.
         2. **Navigate to a link by either: **
-          - Saying I will navigate to <url>: (write down the full URL, e.g., www.example.com/cats).
+          - Saying I will navigate to (write down the full URL) www.example.com/cats
           - Going back: If no link seems helpful, say: {Action.GO_BACK.value}.
         3. **Fill forms on the page:**
-          - Fill form only on relevant page with given informations. You might use form to conduct search on a page.
+          - Fill form only when relevant.
+          - Use Login if username/password specified by user. For quick task create account, remember password in a note.
           - You can fill a form using [form_name](value). Don't {Action.GO_BACK.value} when filling form.
-          - If a form is irrelevant or you lack informations leave it empty.
+          - If a form is irrelevant or you lack informations (eg: don't know user email) leave it empty.
         
         **Rules:**
         - Do not write "The page talk about ...", write your finding on the page and how they contribute to an answer.
@@ -161,7 +162,7 @@ class BrowserAgent(Agent):
         {notes}
         Do not Step-by-Step explanation. Write Notes or Error as a long paragraph followed by your action.
         You might {Action.REQUEST_EXIT.value} if no more link are useful.
-        Do not navigate to AI tools or search engine. Only navigate to tool if asked.
+        If you conduct research do not exit until you have several notes.
         """
     
     def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:
@@ -329,7 +330,6 @@ class BrowserAgent(Agent):
 
             links = self.parse_answer(answer)
             link = self.select_link(links)
-            self.search_history.append(link)
 
             if Action.REQUEST_EXIT.value in answer:
                 pretty_print(f"Agent requested exit.", color="status")
@@ -345,6 +345,7 @@ class BrowserAgent(Agent):
             animate_thinking(f"Navigating to {link}", color="status")
             if speech_module: speech_module.speak(f"Navigating to {link}")
             self.browser.go_to(link)
+            self.search_history.append(link)
             self.current_page = link
             page_text = self.browser.get_text()
             self.navigable_links = self.browser.get_navigable()

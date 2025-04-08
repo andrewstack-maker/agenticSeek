@@ -37,9 +37,13 @@ class Tools():
         self.work_dir = self.create_work_dir()
         self.excutable_blocks_found = False
         self.safe_mode = True
+        self.allow_language_exec_bash = False
     
     def get_work_dir(self):
         return self.work_dir
+    
+    def set_allow_language_exec_bash(value: bool) -> None:
+        self.allow_language_exec_bash = value 
     
     def check_config_dir_validity(self):
         """Check if the config directory is valid."""

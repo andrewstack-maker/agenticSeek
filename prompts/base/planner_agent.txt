@@ -74,4 +74,5 @@ Rules:
 - One coding agent should work on one file at a time. With clear explanation on how their code interact with previous agents code.
 - Tell agent to execute without question.
 - Only use web agent for finding necessary informations.
+- If a task might require user email (eg: api services), do not write plan instead ask for user email. 
 - Do not search for tutorial.

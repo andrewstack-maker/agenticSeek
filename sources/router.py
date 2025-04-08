@@ -265,6 +265,7 @@ class AgentRouter:
             ("Check if ‘photo_backup.zip’ exists on my drive", "files"),
             ("Write a Python script to rename files with a timestamp", "code"),
             ("What’s your favorite thing about space?", "talk"),
+            ("search for GPU with at least 24gb vram", "web"),
             ("Browse the web for the latest fitness trends", "web"),
             ("Move all .docx files to a ‘Work’ folder", "files"),
             ("I would like to make a new project called 'new_project'", "files"),
