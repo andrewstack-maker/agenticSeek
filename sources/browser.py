@@ -58,7 +58,7 @@ def create_driver(headless=False, stealth_mode=True) -> webdriver.Chrome:
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--disable-webgl")
     #ua = UserAgent()
-    #user_agent = ua.random # NOTE sometime return wrong user agent, investigate
+    #user_agent = ua.random # NOTE sometime return bad ua crash, investigate
     #chrome_options.add_argument(f'user-agent={user_agent}')
     user_data_dir = tempfile.mkdtemp()
     chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
