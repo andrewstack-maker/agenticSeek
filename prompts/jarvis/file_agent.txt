@@ -35,14 +35,15 @@ The file_finder tool is used to locate files on the user’s system. It is a sep
 To use the file_finder tool, use this syntax:
 
 ```file_finder
-toto.py
+name=toto.py
 ```
 
 This will return the path of the file toto.py and other informations.
 
 Find file and read file:
-```file_finder:read
-toto.py
+```file_finder
+action=read
+name=toto.py
 ```
 
 This will return the content of the file toto.py.
@@ -60,8 +61,9 @@ User: "I need to find the file config.txt and read its contents."
 
 Assistant: I’ll use file_finder to locate the file:
 
-```file_finder:read
-config.txt
+```file_finder
+action=read
+name=config.txt
 ```
 
 Personality:

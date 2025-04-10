@@ -127,6 +127,21 @@ class Tools():
             with open(os.path.join(directory, save_path_file), 'w') as f:
                 f.write(block)
     
+    def get_parameter_value(self, block: str, parameter_name: str) -> str:
+        """
+        Get a parameter name.
+        Args:
+            block (str): The block of text to search for the parameter
+            parameter_name (str): The name of the parameter to retrieve
+        Returns:
+            str: The value of the parameter
+        """
+        for param_line in block.split('\n'):
+            if parameter_name in param_line:
+                param_value = param_line.split('=')[1].strip()
+                return param_value
+        return None
+    
     def found_executable_blocks(self):
         """
         Check if executable blocks were found.

@@ -67,7 +67,9 @@ def create_driver(headless=False, stealth_mode=True) -> webdriver.Chrome:
     chrome_options.add_argument("--autoplay-policy=user-gesture-required")
     chrome_options.add_argument("--mute-audio")
     chrome_options.add_argument("--disable-notifications")
-    chrome_options.add_argument('--window-size=1080,560')
+    resolutions = [(1920, 1080), (1366, 768), (1440, 900)]
+    width, height = random.choice(resolutions)
+    chrome_options.add_argument(f'--window-size={width},{height}')
     if not stealth_mode:
         # crx file can't be installed in stealth mode
         crx_path = "./crx/nopecha.crx"
@@ -85,6 +87,15 @@ def create_driver(headless=False, stealth_mode=True) -> webdriver.Chrome:
     service = Service(chromedriver_path)
     if stealth_mode:
         driver = uc.Chrome(service=service, options=chrome_options)
+        driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+            "source": """
+                Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => Math.floor(Math.random() * 8) + 2 });
+                Object.defineProperty(navigator, 'deviceMemory', { get: () => Math.floor(Math.random() * 8) + 2 });
+            """
+        })
+        chrome_version = driver.capabilities['browserVersion']
+        user_agent = f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{chrome_version} Safari/537.36"
+        chrome_options.add_argument(f'user-agent={user_agent}')
         stealth(driver,
             languages=["en-US", "en"],
             vendor="Google Inc.",
@@ -125,6 +136,7 @@ class Browser:
 
     def go_to(self, url:str) -> bool:
         """Navigate to a specified URL."""
+        time.sleep(random.uniform(0.4, 2.5)) # more human behavior
         try:
             initial_handles = self.driver.window_handles
             self.driver.get(url)
@@ -465,9 +477,10 @@ if __name__ == "__main__":
     #browser.go_to("https://practicetestautomation.com/practice-test-login/")
     time.sleep(10)
     print("AntiCaptcha / Form Test")
-    browser.go_to("https://www.google.com/recaptcha/api2/demo")
+    #browser.go_to("https://www.google.com/recaptcha/api2/demo")
+    browser.go_to("https://auth.leboncoin.fr/login")
     inputs = browser.get_form_inputs()
-    #inputs = ['[input1](Martin)', f'[input2](Test)', '[input3](test@gmail.com)']
+    inputs = ['[input1](Martin)', f'[input2](Test)', '[input3](test@gmail.com)']
     browser.fill_form_inputs(inputs)
     browser.find_and_click_submission()
     time.sleep(10)
