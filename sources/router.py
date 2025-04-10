@@ -142,6 +142,7 @@ class AgentRouter:
             ("Locate ‘meeting_notes.docx’ in Downloads, I’m late for this call", "LOW"),
             ("Write a Python script to list all .pdf files in my Documents", "LOW"),
             ("Write a Python thing to sort my .jpg files by date", "LOW"),
+            ("make a snake game please", "LOW"),
             ("Find ‘gallery_list.pdf’, then build a web app to show my pics", "HIGH"),
             ("Find ‘budget_2025.xlsx’, analyze it, and make a chart for my boss", "HIGH"),
             ("Retrieve the latest publications on CRISPR and develop a web application to display them", "HIGH"),
