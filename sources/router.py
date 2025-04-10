@@ -356,7 +356,7 @@ class AgentRouter:
         llm_router, confidence_llm_router = result_llm_router[0], result_llm_router[1]
         final_score_bart = confidence_bart / (confidence_bart + confidence_llm_router)
         final_score_llm = confidence_llm_router / (confidence_bart + confidence_llm_router)
-        self.logger.info(f"Routing Vote: BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
+        self.logger.info(f"Routing Vote for text {text}: BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
         if log_confidence:
             pretty_print(f"Agent choice -> BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
         return bart if final_score_bart > final_score_llm else llm_router
