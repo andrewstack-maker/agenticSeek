@@ -87,8 +87,8 @@ class Provider:
         except AttributeError as e:
             raise NotImplementedError(f"{str(e)}\nIs {self.provider_name} implemented ?")
         except Exception as e:
-            if "RemoteDisconnected" in str(e):
-                return f"{self.server_ip} seem offline. RemoteDisconnected error."
+            if "refused" in str(e):
+                return f"Server {self.server_ip} seem offline. Unable to answer."
             raise Exception(f"Provider {self.provider_name} failed: {str(e)}") from e
         return thought
 

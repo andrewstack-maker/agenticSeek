@@ -106,13 +106,23 @@ class Memory():
         return curr_idx-1
     
     def clear(self) -> None:
+        """Clear all memory except system prompt"""
         self.logger.info("Memory clear performed.")
-        self.memory = []
+        self.memory = self.memory[:1]
     
     def clear_section(self, start: int, end: int) -> None:
-        """Clear a section of the memory."""
-        self.logger.info(f"Memory section {start} to {end} cleared.")
+        """
+        Clear a section of the memory. Ignore system message index.
+        Args:
+            start (int): Starting bound of the section to clear.
+            end (int): Ending bound of the section to clear.
+        """
+        self.logger.info(f"Clearing memory section {start} to {end}.")
+        start = max(0, start) + 1
+        end = min(end, len(self.memory)-1) + 2
+        self.logger.info(f"Memory before: {self.memory}")
         self.memory = self.memory[:start] + self.memory[end:]
+        self.logger.info(f"Memory after: {self.memory}")
     
     def get(self) -> list:
         return self.memory
@@ -172,7 +182,10 @@ if __name__ == "__main__":
     sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     memory = Memory("You are a helpful assistant.",
                     recover_last_session=False, memory_compression=True)
-    
+
+    memory.push('user', "hello")
+    memory.push('assistant', "how can i help you?")
+    memory.push('user', "why do i get this cuda error?")
     sample_text = """
 The error you're encountering:
 cuda.cu:52:10: fatal error: helper_functions.h: No such file or directory
@@ -190,11 +203,8 @@ Use #include "helper_functions.h" for local files.
 Use the -I flag to specify the directory containing helper_functions.h.
 Ensure the file exists in the specified location.
     """
-    
-    memory.push('user', "hello")
-    memory.push('assistant', "how can i help you?")
-    memory.push('user', "why do i get this cuda error?")
     memory.push('assistant', sample_text)
+    
     print("\n---\nmemory before:", memory.get())
     memory.compress()
     print("\n---\nmemory after:", memory.get())

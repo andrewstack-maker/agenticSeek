@@ -112,7 +112,6 @@ class BrowserAgent(Agent):
 
         1. **Decide if the page answers the user’s query:**
           - If it does, take notes of useful information (Note: ...), include relevant link in note, then move to a new page.
-          - If it does and you completed user request, say {Action.REQUEST_EXIT}.
           - If it doesn’t, say: Error: <why page don't help> then go back or navigate to another link.
         2. **Navigate to a link by either: **
           - Saying I will navigate to (write down the full URL) www.example.com/cats
@@ -122,6 +121,12 @@ class BrowserAgent(Agent):
           - Use Login if username/password specified by user. For quick task create account, remember password in a note.
           - You can fill a form using [form_name](value). Don't {Action.GO_BACK.value} when filling form.
           - If a form is irrelevant or you lack informations (eg: don't know user email) leave it empty.
+        4. **Decide if you completed the task**
+          - Check your notes. Do they fully answer the question? Did you verify with multiple pages?
+          - Are you sure it’s correct?
+          - If yes to all, say {Action.REQUEST_EXIT}.
+          - If no, or a page lacks info, go to another link.
+          - Never stop or ask the user for help.
         
         **Rules:**
         - Do not write "The page talk about ...", write your finding on the page and how they contribute to an answer.
@@ -144,9 +149,9 @@ class BrowserAgent(Agent):
         Error: x.com does not discuss anything related to the user’s query and no navigation link are usefull.
         Action: {Action.GO_BACK.value}
 
-        Example 3 (query answer found, enought notes taken):
-        Note: I found on <link> that ...<expand on information found>...
-        Given this answer the user query I should exit the web browser.
+        Example 3 (clear definitive query answer found or enought notes taken):
+        Note: I took 10 notes so far with enought finding to answer user question.
+        Therefore I should exit the web browser.
         Action: {Action.REQUEST_EXIT.value}
 
         Example 4 (loging form visible):
@@ -161,8 +166,6 @@ class BrowserAgent(Agent):
         You previously took these notes:
         {notes}
         Do not Step-by-Step explanation. Write Notes or Error as a long paragraph followed by your action.
-        You might {Action.REQUEST_EXIT.value} if no more link are useful.
-        If you conduct research do not exit until you have several notes.
         """
     
     def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:
@@ -356,7 +359,7 @@ class BrowserAgent(Agent):
         mem_last_idx = self.memory.push('user', prompt)
         answer, reasoning = self.llm_request()
         pretty_print(answer, color="output")
-        self.memory.clear_section(mem_begin_idx, mem_last_idx)
+        self.memory.clear_section(mem_begin_idx+1, mem_last_idx-1)
         return answer, reasoning
 
 if __name__ == "__main__":

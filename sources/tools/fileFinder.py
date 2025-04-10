@@ -62,11 +62,13 @@ class FileFinder(Tools):
         file_path = None
         excluded_files = [".pyc", ".o", ".so", ".a", ".lib", ".dll", ".dylib", ".so", ".git"]
         for root, dirs, files in os.walk(directory_path):
-            for file in files:
-                if any(excluded_file in file for excluded_file in excluded_files):
+            for f in files:
+                if f is None:
                     continue
-                if filename.strip() in file.strip():
-                    file_path = os.path.join(root, file)
+                if any(excluded_file in f for excluded_file in excluded_files):
+                    continue
+                if filename.strip() in f.strip():
+                    file_path = os.path.join(root, f)
                     return file_path
         return None
         
@@ -82,27 +84,25 @@ class FileFinder(Tools):
         if not blocks or not isinstance(blocks, list):
             return "Error: No valid filenames provided"
 
-        results = []
+        output = ""
         for block in blocks:
-            filename = block.split(":")[0]
+            filename = self.get_parameter_value(block, "name")
+            action = self.get_parameter_value(block, "action")
+            if filename is None:
+                output = "Error: No filename provided\n"
+                return output
+            if action is None:
+                action = "info"
             file_path = self.recursive_search(self.work_dir, filename)
             if file_path is None:
-                results.append({"filename": filename, "error": "File not found"})
+                output = f"File: {filename} - not found\n"
                 continue
-            if len(block.split(":")) > 1:
-                action = block.split(":")[1]
-            else:
-                action = "info"
             result = self.get_file_info(file_path)
-            results.append(result)
-
-        output = ""
-        for result in results:
             if "error" in result:
                 output += f"File: {result['filename']} - {result['error']}\n"
             else:
                 if action == "read":
-                    output += result['read']
+                    output += "Content:\n" + result['read'] + "\n"
                 else:
                     output += (f"File: {result['filename']}, "
                               f"found at {result['path']}, "
@@ -144,7 +144,10 @@ class FileFinder(Tools):
 
 if __name__ == "__main__":
     tool = FileFinder()
-    result = tool.execute(["toto.txt"], False)
+    result = tool.execute(["""
+action=read
+name=tools.py
+"""], False)
     print("Execution result:")
     print(result)
     print("\nFailure check:", tool.execution_failure_check(result))

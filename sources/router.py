@@ -1,6 +1,7 @@
 import os
 import sys
 import torch
+import random
 from typing import List, Tuple, Type, Dict
 
 from transformers import pipeline
@@ -70,12 +71,30 @@ class AgentRouter:
         Use the build in add_examples method of the Adaptive_classifier.
         """
         few_shots = [
-            ("can you find api and build a python web app with it ?", "HIGH"),
-            ("can you lookup for api that track flight and build a web flight tracking app", "HIGH"),
+            ("hi", "LOW"),
+            ("How it's going ?", "LOW"),
+            ("What’s the weather like today?", "LOW"),
+            ("Can you find a file named ‘notes.txt’ in my Documents folder?", "LOW"),
+            ("Write a Python script to generate a random password", "LOW"),
+            ("Debug this JavaScript code that’s not running properly", "LOW"),
+            ("Search the web for the cheapest laptop under $500", "LOW"),
+            ("Locate a file called ‘report_2024.pdf’ on my drive", "LOW"),
+            ("Check if a folder named ‘Backups’ exists on my system", "LOW"),
+            ("Can you find ‘family_vacation.mp4’ in my Videos folder?", "LOW"),
+            ("Search my drive for a file named ‘todo_list.xlsx’", "LOW"),
+            ("Write a Python function to check if a string is a palindrome", "LOW"),
+            ("Can you search the web for startups in Berlin?", "LOW"),
+            ("Find recent articles on blockchain technology online", "LOW"),
+            ("Check if ‘Personal_Projects’ folder exists on my desktop", "LOW"),
+            ("Create a bash script to list all running processes", "LOW"),
+            ("Debug this Python script that’s crashing on line 10", "LOW"),
+            ("Browse the web to find out who invented Python", "LOW"),
+            ("Locate a file named ‘shopping_list.txt’ on my system", "LOW"),
+            ("Search the web for tips on staying productive", "LOW"),
+            ("Find ‘sales_pitch.pptx’ in my Downloads folder", "LOW"),
             ("can you find a file called resume.docx on my drive?", "LOW"),
             ("can you write a python script to check if the device on my network is connected to the internet", "LOW"),
             ("can you debug this Java code? It’s not working.", "LOW"),
-            ("can you browse the web and find me a 4090 for cheap?", "LOW"),
             ("can you find the old_project.zip file somewhere on my drive?", "LOW"),
             ("can you locate the backup folder I created last month on my system?", "LOW"),
             ("could you check if the presentation.pdf file exists in my downloads?", "LOW"),
@@ -91,50 +110,72 @@ class AgentRouter:
             ("find the file ‘important_notes.txt’", "LOW"),
             ("search the web for the best ways to learn a new language", "LOW"),
             ("locate the file ‘presentation.pptx’ in my Documents folder", "LOW"),
-            ("Make a 3d game in javascript using three.js", "HIGH"),
-            ("Create a whole web app in python using the flask framework that query news API", "HIGH"),
-            ("Find the latest research papers on AI and build a web app that display them", "HIGH"),
-            ("Create a bash script that monitor the CPU usage and send an email if it's too high", "HIGH"),
+            ("Make a 3d game in javascript using three.js", "LOW"),
+            ("Find the latest research papers on AI and build save in a file", "HIGH"),
             ("Make a web server in go that serve a simple html page", "LOW"),
-            ("Make a web server in go that query a weather API and display the weather", "HIGH"),
-            ("Make a web search for latest news on the stock market and display them", "HIGH"),
-            ("Search the web for latest ai papers", "LOW"),
-            ("Write a Python script to calculate the factorial of a number", "LOW"),
-            ("Can you find a weather API and build a Python app to display current weather", "HIGH"),
             ("Search the web for the cheapest 4K monitor and provide a link", "LOW"),
-            ("Create a Python web app using Flask to track cryptocurrency prices from an API", "HIGH"),
             ("Write a JavaScript function to reverse a string", "LOW"),
             ("Can you locate a file called ‘budget_2025.xlsx’ on my system?", "LOW"),
             ("Search the web for recent articles on space exploration", "LOW"),
-            ("Find a public API for movie data and build a web app to display movie ratings", "HIGH"),
-            ("Write a bash script to list all files in a directory", "LOW"),
             ("when is the exam period for master student in france?", "LOW"),
             ("Check if a folder named ‘Photos_2024’ exists on my desktop", "LOW"),
+            ("Can you look up some nice knitting patterns on that web thingy?", "LOW"),
+            ("Goodness, check if my ‘Photos_Grandkids’ folder is still on the desktop", "LOW"),
             ("Create a Python script to rename all files in a folder based on their creation date", "LOW"),
-            ("Search the web for tutorials on machine learning and build a simple ML model in Python", "HIGH"),
-            ("Debug this Python code that’s throwing an error", "LOW"),
             ("Can you find a file named ‘meeting_notes.txt’ in my Downloads folder?", "LOW"),
-            ("Create a JavaScript game using Phaser.js with multiple levels", "HIGH"),
             ("Write a Go program to check if a port is open on a network", "LOW"),
             ("Search the web for the latest electric car reviews", "LOW"),
-            ("Find a public API for book data and create a Flask app to list bestsellers", "HIGH"),
             ("Write a Python function to merge two sorted lists", "LOW"),
-            ("Organize my desktop files by extension and then write a script to list them", "HIGH"),
             ("Create a bash script to monitor disk space and alert via text file", "LOW"),
+            ("What’s out there on the web about cheap travel spots?", "LOW"),
             ("Search X for posts about AI ethics and summarize them", "LOW"),
-            ("Find the latest research on renewable energy and build a web app to display it", "HIGH"),
-            ("Write a C program to sort an array of integers", "LOW"),
-            ("Create a Node.js server that queries a public API for traffic data and displays it", "HIGH"),
             ("Check if a file named ‘project_proposal.pdf’ exists in my Documents", "LOW"),
             ("Search the web for tips on improving coding skills", "LOW"),
             ("Write a Python script to count words in a text file", "LOW"),
             ("Search the web for restaurant", "LOW"),
-            ("Find a public API for sports scores and build a web app to show live updates", "HIGH"),
             ("Create a simple HTML page with CSS styling", "LOW"),
-            ("hi", "LOW"),
-            ("Bonjour", "LOW"),
-            ("What's up ?", "LOW"),
+            ("Use file.txt and then use it to ...", "HIGH"),
+            ("Yo, what’s good? Find my ‘mixtape.mp3’ real quick", "LOW"),
+            ("Can you follow the readme and install the project", "HIGH"),
+            ("Man, write me a dope Python script to flex some random numbers", "LOW"),
+            ("Search the web for peer-reviewed articles on gene editing", "LOW"),
+            ("Locate ‘meeting_notes.docx’ in Downloads, I’m late for this call", "LOW"),
+            ("Write a Python script to list all .pdf files in my Documents", "LOW"),
+            ("Write a Python thing to sort my .jpg files by date", "LOW"),
+            ("make a snake game please", "LOW"),
+            ("Find ‘gallery_list.pdf’, then build a web app to show my pics", "HIGH"),
+            ("Find ‘budget_2025.xlsx’, analyze it, and make a chart for my boss", "HIGH"),
+            ("Retrieve the latest publications on CRISPR and develop a web application to display them", "HIGH"),
+            ("Bro dig up a music API and build me a tight app for the hottest tracks", "HIGH"),
+            ("Find a public API for sports scores and build a web app to show live updates", "HIGH"),
+            ("Find a public API for book data and create a Flask app to list bestsellers", "HIGH"),
+            ("Organize my desktop files by extension and then write a script to list them", "HIGH"),
+            ("Find the latest research on renewable energy and build a web app to display it", "HIGH"),
+            ("can you find vitess repo, clone it and install by following the readme", "HIGH"),
+            ("Create a JavaScript game using Phaser.js with multiple levels", "HIGH"),
+            ("Use my research_note.txt file, double check the informations on the web", "HIGH"),
+            ("Make a web server in go that query a flight API and display them in a app", "HIGH"),
+            ("can you lookup for api that track flight and build a web flight tracking app", "HIGH"),
+            ("Find the file toto.pdf then use its content to reply to Jojo on superforum.com", "HIGH"),
+            ("Create a whole web app in python using the flask framework that query news API", "HIGH"),
+            ("Create a bash script that monitor the CPU usage and send an email if it's too high", "HIGH"),
+            ("Make a web search for latest news on the stock market and display them with python", "HIGH"),
+            ("Find my resume file, apply to job that might fit online", "HIGH"),
+            ("Can you find a weather API and build a Python app to display current weather", "HIGH"),
+            ("Create a Python web app using Flask to track cryptocurrency prices from an API", "HIGH"),
+            ("Search the web for tutorials on machine learning and build a simple ML model in Python", "HIGH"),
+            ("Find a public API for movie data and build a web app to display movie ratings", "HIGH"),
+            ("Create a Node.js server that queries a public API for traffic data and displays it", "HIGH"),
+            ("can you find api and build a python web app with it ?", "HIGH"),
+            ("Find a public API for recipe data and build a web app to display recipes", "HIGH"),
+            ("Search the web for recent space mission updates and build a Flask app", "HIGH"),
+            ("Create a Python script to scrape a website and save data to a database", "HIGH"),
+            ("Find a public API for fitness tracking and build a web app to show stats", "HIGH"),
+            ("Search the web for tutorials on web development and build a sample site", "HIGH"),
+            ("Create a Node.js app to query a public API for event listings and display them", "HIGH"),
+            ("Find a file named ‘budget.xlsx’, analyze its data, and generate a chart", "HIGH"),
         ]
+        random.shuffle(few_shots)
         texts = [text for text, _ in few_shots]
         labels = [label for _, label in few_shots]
         self.complexity_classifier.add_examples(texts, labels)
@@ -285,6 +326,7 @@ class AgentRouter:
             ("hi", "talk"),
             ("hello", "talk"),
         ]
+        random.shuffle(few_shots)
         texts = [text for text, _ in few_shots]
         labels = [label for _, label in few_shots]
         self.talk_classifier.add_examples(texts, labels)
@@ -315,7 +357,7 @@ class AgentRouter:
         llm_router, confidence_llm_router = result_llm_router[0], result_llm_router[1]
         final_score_bart = confidence_bart / (confidence_bart + confidence_llm_router)
         final_score_llm = confidence_llm_router / (confidence_bart + confidence_llm_router)
-        self.logger.info(f"Routing Vote: BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
+        self.logger.info(f"Routing Vote for text {text}: BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
         if log_confidence:
             pretty_print(f"Agent choice -> BART: {bart} ({final_score_bart}) LLM-router: {llm_router} ({final_score_llm})")
         return bart if final_score_bart > final_score_llm else llm_router

@@ -8,7 +8,7 @@ from sources.llamacpp_handler import LlamacppLLM
 from sources.ollama_handler import OllamaLLM
 
 parser = argparse.ArgumentParser(description='AgenticSeek server script')
-parser.add_argument('--provider', type=str, help='LLM backend library to use. set to [ollama] or [llamacpp]', required=True)
+parser.add_argument('--provider', type=str, help='LLM backend library to use. set to [ollama], [vllm] or [llamacpp]', required=True)
 parser.add_argument('--port', type=int, help='port to use', required=True)
 args = parser.parse_args()
 
@@ -16,7 +16,12 @@ app = Flask(__name__)
 
 assert args.provider in ["ollama", "llamacpp"], f"Provider {args.provider} does not exists. see --help for more information"
 
-generator = OllamaLLM() if args.provider == "ollama" else LlamacppLLM() 
+handler_map = {
+    "ollama": OllamaLLM(),
+    "llamacpp": LlamacppLLM(),
+}
+
+generator = handler_map[args.provider]
 
 @app.route('/generate', methods=['POST'])
 def start_generation():
