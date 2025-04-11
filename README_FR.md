@@ -417,6 +417,6 @@ Nous recherchons des développeurs pour améliorer AgenticSeek ! Consultez la se
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
 
-## Auteurs:
+## Auteurs/Mainteneurs:
  > [Fosowl](https://github.com/Fosowl) - Epitech 2024, France
  > [steveh8758](https://github.com/steveh8758) - Université Feng Chia, Taiwan
