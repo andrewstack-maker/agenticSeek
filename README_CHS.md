@@ -3,7 +3,7 @@
 <p>
 
 --------------------------------------------------------------------------------
-[English](./README.md) | 中文
+[English](./README.md) | 中文 | [日本語](./README_JP.md)
 
 # AgenticSeek: 类似 Manus 但基于 Deepseek R1 Agents 的本地模型。
 
