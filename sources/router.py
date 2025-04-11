@@ -430,7 +430,8 @@ class AgentRouter:
         Returns:
             Agent: The selected agent
         """
-        if len(self.agents) == 0:
+        assert len(self.agents) > 0, "No agents available."
+        if len(self.agents) == 1:
             return self.agents[0]
         lang = self.lang_analysis.detect_language(text)
         text = self.find_first_sentence(text)
@@ -449,7 +450,8 @@ class AgentRouter:
             raise e
         for agent in self.agents:
             if best_agent == agent.role["en"]:
-                pretty_print(f"Selected agent: {agent.agent_name} (roles: {agent.role[lang]})", color="warning")
+                role_name = agent.role[lang] if lang in agent.role else agent.role["en"]
+                pretty_print(f"Selected agent: {agent.agent_name} (roles: {role_name})", color="warning")
                 return agent
         pretty_print(f"Error choosing agent.", color="failure")
         self.logger.error("No agent selected.")

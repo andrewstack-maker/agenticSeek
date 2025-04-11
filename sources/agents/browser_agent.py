@@ -166,6 +166,7 @@ class BrowserAgent(Agent):
         You previously took these notes:
         {notes}
         Do not Step-by-Step explanation. Write Notes or Error as a long paragraph followed by your action.
+        Do not go to tutorials or help pages.
         """
     
     def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:
