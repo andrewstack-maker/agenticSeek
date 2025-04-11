@@ -6,6 +6,7 @@ from sources.tools.C_Interpreter import CInterpreter
 from sources.tools.GoInterpreter import GoInterpreter
 from sources.tools.PyInterpreter import PyInterpreter
 from sources.tools.BashInterpreter import BashInterpreter
+from sources.tools.JavaInterpreter import JavaInterpreter
 from sources.tools.fileFinder import FileFinder
 
 class CoderAgent(Agent):
@@ -19,6 +20,7 @@ class CoderAgent(Agent):
             "python": PyInterpreter(),
             "c": CInterpreter(),
             "go": GoInterpreter(),
+            "java": JavaInterpreter(),
             "file_finder": FileFinder()
         }
         self.work_dir = self.tools["file_finder"].get_work_dir()

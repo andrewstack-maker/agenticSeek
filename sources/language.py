@@ -10,11 +10,17 @@ from sources.logger import Logger
 
 class LanguageUtility:
     """LanguageUtility for language, or emotion identification"""
-    def __init__(self):
+    def __init__(self, supported_language: List[str] = ["en", "fr", "zh"]):
+        """
+        Initialize the LanguageUtility class
+        args:
+            supported_language: list of languages for translation, determine which Helsinki-NLP model to load
+        """
         self.sid = None 
         self.translators_tokenizer = None 
         self.translators_model = None
         self.logger = Logger("language.log")
+        self.supported_language = supported_language
         self.load_model()
     
     def load_model(self) -> None:
@@ -24,23 +30,18 @@ class LanguageUtility:
         except LookupError:
             nltk.download('vader_lexicon')
         self.sid = SentimentIntensityAnalyzer()
-        self.translators_tokenizer = {
-            "fr": MarianTokenizer.from_pretrained("Helsinki-NLP/opus-mt-fr-en"),
-            "zh": MarianTokenizer.from_pretrained("Helsinki-NLP/opus-mt-zh-en")
-        }
-        self.translators_model = {
-            "fr": MarianMTModel.from_pretrained("Helsinki-NLP/opus-mt-fr-en"),
-            "zh": MarianMTModel.from_pretrained("Helsinki-NLP/opus-mt-zh-en")
-        }
+        self.translators_tokenizer = {lang: MarianTokenizer.from_pretrained(f"Helsinki-NLP/opus-mt-{lang}-en") for lang in self.supported_language if lang != "en"}
+        self.translators_model = {lang: MarianMTModel.from_pretrained(f"Helsinki-NLP/opus-mt-{lang}-en") for lang in self.supported_language if lang != "en"}
     
     def detect_language(self, text: str) -> str:
         """
         Detect the language of the given text using langdetect
+        Limited to the supported languages list because of the model tendency to mistake similar languages
         Args:
             text: string to analyze
         Returns: ISO639-1 language code
         """
-        langid.set_languages(['fr', 'en', 'zh'])
+        langid.set_languages(self.supported_language)
         lang, score = langid.classify(text)
         self.logger.info(f"Identified: {text} as {lang} with conf {score}")
         return lang

@@ -14,15 +14,7 @@ English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Franç
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
-
-
-
 https://github.com/user-attachments/assets/fe9e8006-0462-4793-8b31-25bd42c6d1eb
-
-
-
-
-*And much more!*
 
 > *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
@@ -185,7 +177,7 @@ Here are some example usage:
 
 > *Show me how much space I have left on my disk*
 
-> *Can you install follow the readme and install project at /home/path/project*
+> *Can you follow the readme and install project at /home/path/project*
 
 ### Casual
 
@@ -356,6 +348,7 @@ stealth_mode = False
 - listen -> listen to voice input (True) or not (False).
 - work_dir -> Folder the AI will have access to. eg: /Users/user/Documents/.
 - jarvis_personality -> Uses a JARVIS-like personality (True) or not (False). This simply change the prompt file.
+- languages -> The list of supported language, needed for the llm router to work properly, avoid putting too many or too similar languages.
 - headless_browser -> Runs browser without a visible window (True) or not (False).
 - stealth_mode -> Make bot detector time harder. Only downside is you have to manually install the anticaptcha extension.
 
@@ -437,7 +430,7 @@ Yes with Ollama or Server providers, all speech to text, LLM and text to speech 
 
 This started as Side-Project we did out of interest about AI agents. What’s special about it is that we want to use local model and avoid APIs.
 We draw inspiration from Jarvis and Friday (Iron man movies) to make it "cool" but for functionnality we take more inspiration from Manus, because that's what people want in the first place: a local manus alternative.
-Unlike Manus, AgenticSeek prioritizes independence from external systems, giving you more control, privacy and avoid api cost. 
+Unlike Manus, AgenticSeek prioritizes independence from external systems, giving you more control, privacy and avoid api cost.
 
 ## Contribute
 
@@ -445,6 +438,6 @@ We’re looking for developers to improve AgenticSeek! Check out open issues or 
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
 
-## Authors:
+## Maintainers:
  > [Fosowl](https://github.com/Fosowl)
  > [steveh8758](https://github.com/steveh8758) 

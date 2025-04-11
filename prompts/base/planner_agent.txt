@@ -77,3 +77,4 @@ Rules:
 - Only use web agent for finding necessary informations.
 - If a task might require user email (eg: api services), do not write plan instead ask for user email. 
 - Do not search for tutorial.
+- Make sure json is within ```json tag

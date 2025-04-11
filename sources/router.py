@@ -20,10 +20,10 @@ class AgentRouter:
     """
     AgentRouter is a class that selects the appropriate agent based on the user query.
     """
-    def __init__(self, agents: list):
+    def __init__(self, agents: list, supported_language: List[str] = ["en", "fr", "zh"]):
         self.agents = agents
         self.logger = Logger("router.log")
-        self.lang_analysis = LanguageUtility()
+        self.lang_analysis = LanguageUtility(supported_language=supported_language)
         self.pipelines = self.load_pipelines()
         self.talk_classifier = self.load_llm_router()
         self.complexity_classifier = self.load_llm_router()
@@ -100,10 +100,17 @@ class AgentRouter:
             ("could you check if the presentation.pdf file exists in my downloads?", "LOW"),
             ("search my drive for a file called vacation_photos_2023.jpg.", "LOW"),
             ("help me organize my desktop files into folders by type.", "LOW"),
+            ("make a blackjack in golang", "LOW"),
+            ("write a python script to ping a website", "LOW"),
+            ("write a simple Java program to print 'Hello World'", "LOW"),
+            ("write a Java program to calculate the area of a circle", "LOW"),
             ("write a Python function to sort a list of dictionaries by key", "LOW"),
             ("can you search for startup in tokyo?", "LOW"),
             ("find the latest updates on quantum computing on the web", "LOW"),
             ("check if the folder ‘Work_Projects’ exists on my desktop", "LOW"),
+            (" can you browse the web, use overpass-turbo to show fountains in toulouse", "LOW"),
+            ("search the web for the best budget smartphones of 2025", "LOW"),
+            ("write a Python script to download all images from a webpage", "LOW"),
             ("create a bash script to monitor CPU usage", "LOW"),
             ("debug this C++ code that keeps crashing", "LOW"),
             ("can you browse the web to find out who fosowl is ?", "LOW"),
@@ -153,8 +160,10 @@ class AgentRouter:
             ("Find the latest research on renewable energy and build a web app to display it", "HIGH"),
             ("can you find vitess repo, clone it and install by following the readme", "HIGH"),
             ("Create a JavaScript game using Phaser.js with multiple levels", "HIGH"),
+            ("Search the web for the latest trends in web development and build a sample site", "HIGH"),
             ("Use my research_note.txt file, double check the informations on the web", "HIGH"),
             ("Make a web server in go that query a flight API and display them in a app", "HIGH"),
+            ("Search the web for the latest trends in AI and demo it in pytorch", "HIGH"),
             ("can you lookup for api that track flight and build a web flight tracking app", "HIGH"),
             ("Find the file toto.pdf then use its content to reply to Jojo on superforum.com", "HIGH"),
             ("Create a whole web app in python using the flask framework that query news API", "HIGH"),
@@ -421,7 +430,8 @@ class AgentRouter:
         Returns:
             Agent: The selected agent
         """
-        if len(self.agents) == 0:
+        assert len(self.agents) > 0, "No agents available."
+        if len(self.agents) == 1:
             return self.agents[0]
         lang = self.lang_analysis.detect_language(text)
         text = self.find_first_sentence(text)
@@ -440,7 +450,8 @@ class AgentRouter:
             raise e
         for agent in self.agents:
             if best_agent == agent.role["en"]:
-                pretty_print(f"Selected agent: {agent.agent_name} (roles: {agent.role[lang]})", color="warning")
+                role_name = agent.role[lang] if lang in agent.role else agent.role["en"]
+                pretty_print(f"Selected agent: {agent.agent_name} (roles: {role_name})", color="warning")
                 return agent
         pretty_print(f"Error choosing agent.", color="failure")
         self.logger.error("No agent selected.")
