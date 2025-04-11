@@ -3,7 +3,7 @@
 <p>
 
 --------------------------------------------------------------------------------
-[English](./README.md) | [繁體中文](./README_CHT.md) | Français
+[English](./README.md) | [繁體中文](./README_CHT.md) | [日本語](./README_JP.md) | Français
 
 # AgenticSeek: Une IA comme Manus mais à base d'agents DeepSeek R1 fonctionnant en local.
 
