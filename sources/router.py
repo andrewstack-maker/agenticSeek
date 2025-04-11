@@ -20,10 +20,10 @@ class AgentRouter:
     """
     AgentRouter is a class that selects the appropriate agent based on the user query.
     """
-    def __init__(self, agents: list):
+    def __init__(self, agents: list, supported_language: List[str] = ["en", "fr", "zh"]):
         self.agents = agents
         self.logger = Logger("router.log")
-        self.lang_analysis = LanguageUtility()
+        self.lang_analysis = LanguageUtility(supported_language=supported_language)
         self.pipelines = self.load_pipelines()
         self.talk_classifier = self.load_llm_router()
         self.complexity_classifier = self.load_llm_router()

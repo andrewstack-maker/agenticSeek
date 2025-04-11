@@ -15,6 +15,7 @@ class Interaction:
                  tts_enabled: bool = True,
                  stt_enabled: bool = True,
                  recover_last_session: bool = False,
+                 langs: List[str] = ["en", "zh"]
                 ):
         self.is_active = True
         self.current_agent = None
@@ -25,7 +26,7 @@ class Interaction:
         self.tts_enabled = tts_enabled
         self.stt_enabled = stt_enabled
         self.recover_last_session = recover_last_session
-        self.router = AgentRouter(self.agents)
+        self.router = AgentRouter(self.agents, supported_language=langs)
         if tts_enabled:
             animate_thinking("Initializing text-to-speech...", color="status")
             self.speech = Speech(enable=tts_enabled)
