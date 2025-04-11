@@ -80,9 +80,10 @@ class PlannerAgent(Agent):
         """
         return prompt
     
-    def show_plan(self, json_plan: dict) -> None:
-        agents_tasks = self.parse_agent_tasks(json_plan)
+    def show_plan(self, answer: dict) -> None:
+        agents_tasks = self.parse_agent_tasks(answer)
         if agents_tasks == (None, None):
+            pretty_print(answer, color="warning")
             pretty_print("Failed to make a plan. This can happen with (too) small LLM. Clarify your request and insist on it making a plan.", color="failure")
             return
         pretty_print("\n▂▘ P L A N ▝▂", color="status")
@@ -97,10 +98,6 @@ class PlannerAgent(Agent):
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', prompt)
             answer, _ = self.llm_request()
-            for line in answer.split('\n'):
-                if "```json" in line:
-                    break
-            pretty_print(line, color="output")
             self.show_plan(answer)
             ok_str = input("Is the plan ok? (y/n): ")
             if ok_str == 'y':
