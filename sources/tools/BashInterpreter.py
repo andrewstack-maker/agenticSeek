@@ -25,7 +25,7 @@ class BashInterpreter(Tools):
         If so, return True, otherwise return False.
         Code written by the AI will be executed automatically, so it should not use bash to run it.
         """
-        lang_interpreter = ["python3", "gcc", "g++", "go", "javac", "rustc", "clang", "clang++", "rustc", "rustc++", "rustc++"]
+        lang_interpreter = ["python3", "gcc", "g++", "mvn", "go", "javac", "rustc", "clang", "clang++", "rustc", "rustc++", "rustc++"]
         for word in command.split():
             if word in lang_interpreter:
                 return True
