@@ -14,11 +14,7 @@ class CasualAgent(Agent):
         super().__init__(name, prompt_path, provider, verbose, None)
         self.tools = {
         } # No tools for the casual agent
-        self.role = {
-            "en": "talk",
-            "fr": "discuter",
-            "zh": "聊天",
-        }
+        self.role = "talk"
         self.type = "casual_agent"
     
     def process(self, prompt, speech_module) -> str:

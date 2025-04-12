@@ -26,11 +26,7 @@ class BrowserAgent(Agent):
         self.tools = {
             "web_search": searxSearch(),
         }
-        self.role = {
-            "en": "web",
-            "fr": "web",
-            "zh": "网络",
-        }
+        self.role = "web"
         self.type = "browser_agent"
         self.browser = browser
         self.current_page = ""

@@ -15,11 +15,7 @@ class FileAgent(Agent):
             "bash": BashInterpreter()
         }
         self.work_dir = self.tools["file_finder"].get_work_dir()
-        self.role = {
-            "en": "files",
-            "fr": "fichiers",
-            "zh": "文件",
-        }
+        self.role = "files"
         self.type = "file_agent"
     
     def process(self, prompt, speech_module) -> str:

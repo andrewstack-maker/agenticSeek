@@ -24,11 +24,7 @@ class CoderAgent(Agent):
             "file_finder": FileFinder()
         }
         self.work_dir = self.tools["file_finder"].get_work_dir()
-        self.role = {
-            "en": "code",
-            "fr": "codage",
-            "zh": "编码",
-        }
+        self.role = "code"
         self.type = "code_agent"
 
     
