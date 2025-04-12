@@ -187,11 +187,7 @@ class CasualAgent(Agent):
         super().__init__(name, prompt_path, provider, verbose, None)
         self.tools = {
         } # No tools for the casual agent
-        self.role = {
-            "en": "talk",
-            "fr": "discuter",
-            "zh": "聊天",
-        }
+        self.role = "en"
         self.type = "casual_agent"
     
     def process(self, prompt, speech_module) -> str:
@@ -206,7 +202,7 @@ Agent have several parameters that should be sets:
 
 `tools`: A dictionary of tools the agent can use. Each tool must inherit from the Tools class. For example, a CasualAgent has no tools ({}), while a coding agent might include a Python execution tool.
 
-`role`:A dictionary defining the agent's role, used by the routing system to select the appropriate agent. It is currently set as a dict for different language but only the "en" key is needed (previous multilingual support needed a language dict), this may be refactored in the future.
+`role`:A dictionary defining the agent's role, used by the routing system to select the appropriate agent.
 `type: the agent type, a fixed name to identify the unique agent type.
 
 Every agent must implement the process method, which defines how it handles user input and generates a response.
