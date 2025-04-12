@@ -106,9 +106,10 @@ class BrowserAgent(Agent):
 
         # Instruction
 
-        1. **Decide if the page answers the user’s query:**
-          - If it does, take notes of useful information (Note: ...), include relevant link in note, then move to a new page.
-          - If it doesn’t, say: Error: <why page don't help> then go back or navigate to another link.
+        1. **Evaluate if the page is relevant for user’s query and document finding:**
+          - If the page is relevant, extract and summarize key information in concise notes (Note: <your note>)
+          - If page not relevant, state: "Error: <specific reason the page does not address the query>" and either return to the previous page or navigate to a new link.
+          - Notes should be factual, useful summaries of relevant content, they should always include specific names or link. Written as: "On <website URL>, <key fact 1>. <Key fact 2>. <Additional insight>." Avoid phrases like "the page provides" or "I found that."
         2. **Navigate to a link by either: **
           - Saying I will navigate to (write down the full URL) www.example.com/cats
           - Going back: If no link seems helpful, say: {Action.GO_BACK.value}.
@@ -132,7 +133,7 @@ class BrowserAgent(Agent):
         # Example:
         
         Example 1 (useful page, no need go futher):
-        Note: According to karpathy site (<link>) LeCun net is ...<expand on page content>..."
+        Note: According to karpathy site LeCun net is ...
         No link seem useful to provide futher information.
         Action: {Action.GO_BACK.value}
 
@@ -146,7 +147,7 @@ class BrowserAgent(Agent):
         Action: {Action.GO_BACK.value}
 
         Example 3 (clear definitive query answer found or enought notes taken):
-        Note: I took 10 notes so far with enought finding to answer user question.
+        I took 10 notes so far with enought finding to answer user question.
         Therefore I should exit the web browser.
         Action: {Action.REQUEST_EXIT.value}
 
@@ -161,7 +162,7 @@ class BrowserAgent(Agent):
         {user_prompt}
         You previously took these notes:
         {notes}
-        Do not Step-by-Step explanation. Write Notes or Error as a long paragraph followed by your action.
+        Do not Step-by-Step explanation. Write comprehensive Notes or Error as a long paragraph followed by your action.
         Do not go to tutorials or help pages.
         """
     
