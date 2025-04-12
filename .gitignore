@@ -1,10 +1,13 @@
 *.wav
 *.DS_Store
 *.log
+cookies.json
 *.tmp
 *.safetensors
 config.ini
+test_agent.py
 *.egg-info
+.voices/
 experimental/
 conversations/
 agentic_env/*

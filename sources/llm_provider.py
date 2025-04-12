@@ -131,7 +131,6 @@ class Provider:
             while not is_complete:
                 try:
                     response = requests.get(f"http://{self.server_ip}/get_updated_sentence")
-                    print(response)
                     if "error" in response.json():
                         pretty_print(response.json()["error"], color="failure")
                         break
