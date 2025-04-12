@@ -24,11 +24,7 @@ class PlannerAgent(Agent):
             "file": FileAgent(name, "prompts/base/file_agent.txt", provider, verbose=False),
             "web": BrowserAgent(name, "prompts/base/browser_agent.txt", provider, verbose=False, browser=browser)
         }
-        self.role = {
-            "en": "Complex Task",
-            "fr": "Tache complexe",
-            "zh": "复杂任务",
-        }
+        self.role = "planification"
         self.type = "planner_agent"
 
     def parse_agent_tasks(self, text):

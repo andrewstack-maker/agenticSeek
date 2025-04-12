@@ -129,13 +129,24 @@ class Provider:
             requests.post(route_gen, json={"messages": history})
             is_complete = False
             while not is_complete:
-                response = requests.get(f"http://{self.server_ip}/get_updated_sentence")
-                if "error" in response.json():
-                    pretty_print(response.json()["error"], color="failure")
+                try:
+                    response = requests.get(f"http://{self.server_ip}/get_updated_sentence")
+                    print(response)
+                    if "error" in response.json():
+                        pretty_print(response.json()["error"], color="failure")
+                        break
+                    thought = response.json()["sentence"]
+                    is_complete = bool(response.json()["is_complete"])
+                    time.sleep(2)
+                except requests.exceptions.RequestException as e:
+                    pretty_print(f"HTTP request failed: {str(e)}", color="failure")
                     break
-                thought = response.json()["sentence"]
-                is_complete = bool(response.json()["is_complete"])
-                time.sleep(2)
+                except ValueError as e:
+                    pretty_print(f"Failed to parse JSON response: {str(e)}", color="failure")
+                    break
+                except Exception as e:
+                    pretty_print(f"An error occurred: {str(e)}", color="failure")
+                    break
         except KeyError as e:
             raise Exception(f"{str(e)}\nError occured with server route. Are you using the correct address for the config.ini provider?") from e
         except Exception as e:
@@ -300,6 +311,6 @@ class Provider:
         return thought
 
 if __name__ == "__main__":
-    provider = Provider("server", "deepseek-r1:14b", "192.168.1.20:3333")
+    provider = Provider("server", "deepseek-r1:32b", " 172.81.127.6:8080")
     res = provider.respond(["user", "Hello, how are you?"])
     print("Response:", res)

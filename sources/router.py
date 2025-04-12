@@ -436,7 +436,7 @@ class AgentRouter:
         lang = self.lang_analysis.detect_language(text)
         text = self.find_first_sentence(text)
         text = self.lang_analysis.translate(text, lang)
-        labels = [agent.role["en"] for agent in self.agents]
+        labels = [agent.role for agent in self.agents]
         complexity = self.estimate_complexity(text)
         if complexity == None:
             pretty_print(f"Humm, the task seem complex but you gave very little information. can you clarify?", color="info")
@@ -449,8 +449,8 @@ class AgentRouter:
         except Exception as e:
             raise e
         for agent in self.agents:
-            if best_agent == agent.role["en"]:
-                role_name = agent.role[lang] if lang in agent.role else agent.role["en"]
+            if best_agent == agent.role:
+                role_name = agent.role
                 pretty_print(f"Selected agent: {agent.agent_name} (roles: {role_name})", color="warning")
                 return agent
         pretty_print(f"Error choosing agent.", color="failure")
