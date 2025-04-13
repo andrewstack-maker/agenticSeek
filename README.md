@@ -84,7 +84,7 @@ python3 setup.py install
 
 ## Run locally on your machine
 
-**We recommend using at least Deepseek 14B, smaller models struggle with tool use and forget quickly the context.**
+**We recommend using at the very least Deepseek 14B, smaller models will struggle with tasks especially for web browsing.**
 
 ### 1️⃣ **Download Models**  
 
@@ -139,8 +139,6 @@ python3 main.py
 ---
 
 ## Usage
-
-Warning: We only support French, English and Chinese, prompt in other language would work but might not be routed to the proper agent.
 
 Make sure the services are up and running with `./start_services.sh` and run the agenticSeek with `python3 main.py`
 
