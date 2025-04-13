@@ -14,7 +14,9 @@ English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Franç
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
-https://github.com/user-attachments/assets/fe9e8006-0462-4793-8b31-25bd42c6d1eb
+
+https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
+
 
 > *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
