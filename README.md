@@ -140,8 +140,6 @@ python3 main.py
 
 ## Usage
 
-Warning: We only support French, English and Chinese, prompt in other language would work but might not be routed to the proper agent.
-
 Make sure the services are up and running with `./start_services.sh` and run the agenticSeek with `python3 main.py`
 
 ```sh
