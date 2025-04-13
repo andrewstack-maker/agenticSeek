@@ -57,6 +57,8 @@ class CoderAgent(Agent):
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)
             self.last_answer = answer
+            if self.get_last_tool_type() == "bash":
+                continue
             if exec_success:
                 break
             pretty_print("Execution failure", color="failure")

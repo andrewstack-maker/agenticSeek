@@ -34,8 +34,18 @@ class Memory():
         self.model = "pszemraj/led-base-book-summary"
         self.device = self.get_cuda_device()
         self.memory_compression = memory_compression
+        self.tokenizer = None
+        self.model = None
+        if self.memory_compression:
+            self.download_model()
+    
+    def download_model(self):
+        """Download the model if not already downloaded."""
+        pretty_print("Downloading memory compression model...", color="status")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model)
         self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model)
+        self.logger.info("Memory compression system initialized.")
+
     
     def get_filename(self) -> str:
         """Get the filename for the save file."""
@@ -170,6 +180,9 @@ class Memory():
         """
         Compress the memory using the AI model.
         """
+        if self.tokenizer is None or self.model is None:
+            self.logger.warning("No tokenizer or model to perform memory compression.")
+            return
         for i in range(len(self.memory)):
             if i < 2:
                 continue

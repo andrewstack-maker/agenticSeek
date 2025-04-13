@@ -22,6 +22,8 @@ import markdownify
 import sys
 import re
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from sources.utility import pretty_print, animate_thinking
 from sources.logger import Logger
 
@@ -348,17 +350,23 @@ class Browser:
         result.sort(key=lambda x: len(x[0]))
         return result
 
-    def find_and_click_submission(self, timeout: int = 10) -> bool:
-        possible_submissions = ["login", "submit", "register", "calculate", "login", "submit", "register", "calculate", "save", "send",
-                                "continue", "apply", "ok", "confirm", "next", "proceed", "accept", "agree", "yes", "no", "cancel",
-                                "close", "done", "finish", "start", "calculate"]
-        for submission in possible_submissions:
-            if self.find_and_click_btn(submission, timeout):
-                return True
-        self.logger.warning("No submission button found")
-        return False
+    def wait_for_submission_outcome(self, timeout: int = 10) -> bool:
+        """
+        Wait for a submission outcome (e.g., URL change or new element).
+        """
+        try:
+            wait = WebDriverWait(self.driver, timeout)
+            wait.until(
+                lambda driver: driver.current_url != self.driver.current_url or
+                               driver.find_elements(By.XPATH, "//*[contains(text(), 'success')]")
+            )
+            self.logger.info("Detected submission outcome")
+            return True
+        except TimeoutException:
+            self.logger.warning("No submission outcome detected")
+            return False
 
-    def find_and_click_btn(self, btn_type: str = 'login', timeout: int = 10) -> bool:
+    def find_and_click_btn(self, btn_type: str = 'login', timeout: int = 5) -> bool:
         """Find and click a submit button matching the specified type."""
         buttons = self.get_buttons_xpath()
         if not buttons:
@@ -366,7 +374,7 @@ class Browser:
             return False
 
         for button_text, xpath in buttons:
-            if btn_type.lower() in button_text.lower():
+            if btn_type.lower() in button_text.lower() or btn_type.lower() in xpath.lower():
                 try:
                     wait = WebDriverWait(self.driver, timeout)
                     element = wait.until(
@@ -385,6 +393,56 @@ class Browser:
                     return False
         self.logger.warning(f"No button matching '{btn_type}' found")
         return False
+
+    def tick_all_checkboxes(self) -> bool:
+        """
+        Find and tick all checkboxes on the page.
+        Returns True if successful, False if any issues occur.
+        """
+        try:
+            checkboxes = self.driver.find_elements(By.XPATH, "//input[@type='checkbox']")
+            if not checkboxes:
+                self.logger.info("No checkboxes found on the page")
+                return True
+
+            for index, checkbox in enumerate(checkboxes, 1):
+                try:
+                    WebDriverWait(self.driver, 10).until(
+                        EC.element_to_be_clickable(checkbox)
+                    )
+                    self.driver.execute_script(
+                        "arguments[0].scrollIntoView({block: 'center', inline: 'center'});", checkbox
+                    )
+                    if not checkbox.is_selected():
+                        try:
+                            checkbox.click()
+                            self.logger.info(f"Ticked checkbox {index}")
+                        except ElementClickInterceptedException:
+                            self.driver.execute_script("arguments[0].click();", checkbox)
+                            self.logger.info(f"Ticked checkbox {index} using JavaScript")
+                    else:
+                        self.logger.debug(f"Checkbox {index} already ticked")
+                except TimeoutException:
+                    self.logger.warning(f"Timeout waiting for checkbox {index} to be clickable")
+                    continue
+                except Exception as e:
+                    self.logger.error(f"Error ticking checkbox {index}: {str(e)}")
+                    continue
+            return True
+        except Exception as e:
+            self.logger.error(f"Error finding checkboxes: {str(e)}")
+            return False
+
+    def find_and_click_submission(self, timeout: int = 10) -> bool:
+        possible_submissions = ["login", "submit", "register", "continue", "apply",
+                                "ok", "confirm", "proceed", "accept", 
+                                "done", "finish", "start", "calculate"]
+        for submission in possible_submissions:
+            if self.find_and_click_btn(submission, timeout):
+                self.logger.info(f"Clicked on submission button: {submission}")
+                return True
+        self.logger.warning("No submission button found")
+        return False
     
     def find_input_xpath_by_name(self, inputs, name: str) -> str | None:
         for field in inputs:
@@ -393,7 +451,7 @@ class Browser:
         return None
 
     def fill_form_inputs(self, input_list: List[str]) -> bool:
-        """Fill form inputs based on a list of [name](value) strings."""
+        """Fill inputs based on a list of [name](value) strings."""
         if not isinstance(input_list, list):
             self.logger.error("input_list must be a list")
             return False
@@ -410,8 +468,19 @@ class Browser:
                 value = value.strip()
                 xpath = self.find_input_xpath_by_name(inputs, name)
                 if not xpath:
+                    self.logger.warning(f"Input field '{name}' not found")
                     continue
-                element = self.driver.find_element(By.XPATH, xpath)
+                try:
+                    element = WebDriverWait(self.driver, 10).until(
+                        EC.element_to_be_clickable((By.XPATH, xpath))
+                    )
+                except TimeoutException:
+                    self.logger.error(f"Timeout waiting for element '{name}' to be clickable")
+                    continue
+                self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
+                if not element.is_displayed() or not element.is_enabled():
+                    self.logger.warning(f"Element '{name}' is not interactable (not displayed or disabled)")
+                    continue
                 input_type = (element.get_attribute("type") or "text").lower()
                 if input_type in ["checkbox", "radio"]:
                     is_checked = element.is_selected()
@@ -428,6 +497,25 @@ class Browser:
         except Exception as e:
             self.logger.error(f"Error filling form inputs: {str(e)}")
             return False
+    
+    def fill_form(self, input_list: List[str]) -> bool:
+        """Fill form inputs based on a list of [name](value) and submit."""
+        if not isinstance(input_list, list):
+            self.logger.error("input_list must be a list")
+            return False
+        if self.fill_form_inputs(input_list):
+            self.logger.info("Form filled successfully")
+            self.tick_all_checkboxes()
+            if self.find_and_click_submission():
+                if self.wait_for_submission_outcome():
+                    self.logger.info("Submission outcome detected")
+                    return True
+                else:
+                    self.logger.warning("No submission outcome detected")
+            else:
+                self.logger.warning("Failed to submit form")
+        self.logger.warning("Failed to fill form inputs")
+        return False
 
     def get_current_url(self) -> str:
         """Get the current URL of the page."""
@@ -467,7 +555,6 @@ class Browser:
         input_elements = self.driver.execute_script(script)
 
 if __name__ == "__main__":
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     driver = create_driver()
     browser = Browser(driver, anticaptcha_manual_install=True)
     
@@ -475,12 +562,12 @@ if __name__ == "__main__":
     #txt = browser.get_text()
     #print(txt)
     #browser.go_to("https://practicetestautomation.com/practice-test-login/")
-    time.sleep(10)
+    input("press enter to continue")
     print("AntiCaptcha / Form Test")
     #browser.go_to("https://www.google.com/recaptcha/api2/demo")
-    browser.go_to("https://auth.leboncoin.fr/login")
-    inputs = browser.get_form_inputs()
-    inputs = ['[input1](Martin)', f'[input2](Test)', '[input3](test@gmail.com)']
-    browser.fill_form_inputs(inputs)
-    browser.find_and_click_submission()
-    time.sleep(10)
+    browser.go_to("https://home.openweathermap.org/users/sign_up")
+    inputs_visible = browser.get_form_inputs()
+    print("inputs:", inputs_visible)
+    inputs_fill = ['[q](checked)', '[q](checked)', '[user[username]](mlg)', '[user[email]](mlg.fcu@gmail.com)', '[user[password]](placeholder_P@ssw0rd123)', '[user[password_confirmation]](placeholder_P@ssw0rd123)']
+    browser.fill_form(inputs_fill)
+    input("press enter to exit")

@@ -10,6 +10,7 @@ class Logger:
         self.log_path = os.path.join(self.folder, log_filename)
         self.enabled = True
         self.logger = None
+        self.last_log_msg = ""
         if self.enabled:
             self.create_logging(log_filename)
 
@@ -33,7 +34,10 @@ class Logger:
             return False
     
     def log(self, message, level=logging.INFO):
+        if self.last_log_msg == message:
+            return
         if self.enabled:
+            self.last_log_msg = message
             self.logger.log(level, message)
 
     def info(self, message):

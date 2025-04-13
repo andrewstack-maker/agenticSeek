@@ -163,7 +163,7 @@ class BrowserAgent(Agent):
         You previously took these notes:
         {notes}
         Do not Step-by-Step explanation. Write comprehensive Notes or Error as a long paragraph followed by your action.
-        Do not go to tutorials or help pages.
+        You must always take notes.
         """
     
     def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:
@@ -262,20 +262,24 @@ class BrowserAgent(Agent):
         Do not try to answer query. you can only formulate search term or exit.
         """
     
-    def handle_update_prompt(self, user_prompt: str, page_text: str) -> str:
-        return f"""
+    def handle_update_prompt(self, user_prompt: str, page_text: str, fill_success: bool) -> str:
+        prompt = f"""
         You are a web browser.
         You just filled a form on the page.
         Now you should see the result of the form submission on the page:
         Page text:
         {page_text}
         The user asked: {user_prompt}
-        Does the page answer the user’s query now?
+        Does the page answer the user’s query now? Are you still on a login page or did you get redirected?
         If it does, take notes of the useful information, write down result and say {Action.FORM_FILLED.value}.
-        If you were previously on a login form, no need to explain.
-        If it does and you completed user request, say {Action.REQUEST_EXIT.value}
         if it doesn’t, say: Error: Attempt to fill form didn't work {Action.GO_BACK.value}.
+        If you were previously on a login form, no need to take notes.
         """
+        if not fill_success:
+            prompt += f"""
+            According to browser feedback, the form was not filled correctly. Is that so? you might consider other strategies.
+            """
+        return prompt
     
     def show_search_results(self, search_result: List[str]):
         pretty_print("\nSearch results:", color="output")
@@ -298,28 +302,28 @@ class BrowserAgent(Agent):
 
         animate_thinking(f"Thinking...", color="status")
         mem_begin_idx = self.memory.push('user', self.search_prompt(user_prompt))
-        ai_prompt, _ = self.llm_request()
+        ai_prompt, reasoning = self.llm_request()
         if Action.REQUEST_EXIT.value in ai_prompt:
             pretty_print(f"Web agent requested exit.\n{reasoning}\n\n{ai_prompt}", color="failure")
             return ai_prompt, "" 
         animate_thinking(f"Searching...", color="status")
         search_result_raw = self.tools["web_search"].execute([ai_prompt], False)
-        search_result = self.jsonify_search_results(search_result_raw)[:12]
+        search_result = self.jsonify_search_results(search_result_raw)[:16]
         self.show_search_results(search_result)
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
         while not complete and len(unvisited) > 0:
 
+            self.memory.clear()
             answer, reasoning = self.llm_decide(prompt, show_reasoning = False)
             pretty_print('▂'*32, color="status")
 
             extracted_form = self.extract_form(answer)
             if len(extracted_form) > 0:
                 pretty_print(f"Filling inputs form...", color="status")
-                self.browser.fill_form_inputs(extracted_form)
-                self.browser.find_and_click_submission()
+                fill_success = self.browser.fill_form(extracted_form)
                 page_text = self.browser.get_text()
-                answer = self.handle_update_prompt(user_prompt, page_text)
+                answer = self.handle_update_prompt(user_prompt, page_text, fill_success)
                 answer, reasoning = self.llm_decide(prompt)
 
             if Action.FORM_FILLED.value in answer:

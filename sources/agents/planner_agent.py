@@ -80,7 +80,7 @@ class PlannerAgent(Agent):
         agents_tasks = self.parse_agent_tasks(answer)
         if agents_tasks == (None, None):
             pretty_print(answer, color="warning")
-            pretty_print("Failed to make a plan. This can happen with (too) small LLM. Clarify your request and insist on it making a plan.", color="failure")
+            pretty_print("Failed to make a plan. This can happen with (too) small LLM. Clarify your request and insist on it making a plan within ```json.", color="failure")
             return
         pretty_print("\n▂▘ P L A N ▝▂", color="status")
         for task_name, task in agents_tasks:

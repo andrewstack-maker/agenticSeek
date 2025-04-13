@@ -28,6 +28,7 @@ class Provider:
             "lm-studio": self.lm_studio_fn,
             "huggingface": self.huggingface_fn,
             "deepseek": self.deepseek_fn,
+            "together": self.together_fn,
             "dsk_deepseek": self.dsk_deepseek,
             "test": self.test_fn
         }
@@ -122,7 +123,7 @@ class Provider:
         route_gen = f"http://{self.server_ip}/generate"
 
         if not self.is_ip_online(self.server_ip.split(":")[0]):
-            raise Exception(f"Server is offline at {self.server_ip}")
+            pretty_print(f"Server is offline at {self.server_ip}", color="failure")
 
         try:
             requests.post(route_setup, json={"model": self.model})
@@ -218,6 +219,27 @@ class Provider:
             return thought
         except Exception as e:
             raise Exception(f"OpenAI API error: {str(e)}") from e
+
+    def together_fn(self, history, verbose=False):
+        """
+        Use together AI for completion
+        """
+        from together import Together
+        client = Together(api_key=self.api_key)
+
+        try:
+            response = client.chat.completions.create(
+                model=self.model,
+                messages=history,
+            )
+            if response is None:
+                raise Exception("Together AI response is empty.")
+            thought = response.choices[0].message.content
+            if verbose:
+                print(thought)
+            return thought
+        except Exception as e:
+            raise Exception(f"Together AI API error: {str(e)}") from e
 
     def deepseek_fn(self, history, verbose=False):
         """
