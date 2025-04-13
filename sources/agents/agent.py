@@ -14,10 +14,11 @@ class executorResult:
     """
     A class to store the result of a tool execution.
     """
-    def __init__(self, block, feedback, success):
+    def __init__(self, block, feedback, success, tool_type):
         self.block = block
         self.feedback = feedback
         self.success = success
+        self.tool_type = tool_type
     
     def show(self):
         pretty_print('▂'*64, color="status")
@@ -127,6 +128,9 @@ class Agent():
     
     def get_blocks_result(self) -> list:
         return self.blocks_result
+    
+    def get_last_tool_type(self) -> str:
+        return self.blocks_result[-1].tool_type if len(self.blocks_result) > 0 else None
 
     def show_answer(self):
         """
@@ -185,7 +189,7 @@ class Agent():
                     output = tool.execute([block])
                     feedback = tool.interpreter_feedback(output) # tool interpreter feedback
                     success = not tool.execution_failure_check(output)
-                    self.blocks_result.append(executorResult(block, feedback, success))
+                    self.blocks_result.append(executorResult(block, feedback, success, name))
                     if not success:
                         self.memory.push('user', feedback)
                         return False, feedback

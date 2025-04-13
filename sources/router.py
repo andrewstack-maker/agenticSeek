@@ -152,6 +152,7 @@ class AgentRouter:
             ("make a snake game please", "LOW"),
             ("Find ‘gallery_list.pdf’, then build a web app to show my pics", "HIGH"),
             ("Find ‘budget_2025.xlsx’, analyze it, and make a chart for my boss", "HIGH"),
+            ("I want you to make me a plan to travel to Tainan", "HIGH"),
             ("Retrieve the latest publications on CRISPR and develop a web application to display them", "HIGH"),
             ("Bro dig up a music API and build me a tight app for the hottest tracks", "HIGH"),
             ("Find a public API for sports scores and build a web app to show live updates", "HIGH"),
