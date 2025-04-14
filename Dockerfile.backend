@@ -1,7 +1,5 @@
-# Use official Python 3.11 image as the base
-FROM python:3.11
+FROM python:3.10
 
-# Set working directory
 WORKDIR /app
 
 # Install system dependencies
@@ -21,6 +19,18 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip cache purge
 
-COPY . .
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN BLIS_ARCH=generic pip install --no-cache-dir -r requirements.txt
+# Copy application code
+COPY app.py .
+COPY sources/ ./sources/
+COPY prompts/ ./prompts/
+COPY config.ini .
+
+# Expose port
+EXPOSE 8000
+
+# Run the application
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

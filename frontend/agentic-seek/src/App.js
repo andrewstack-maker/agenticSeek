@@ -27,6 +27,7 @@ function App() {
         setError(null);
 
         try {
+            //const res = await axios.post('http://backend:8000/query', { ... });
             const res = await axios.post('http://localhost:8000/query', {
                 query,
                 lang: 'en',
@@ -54,11 +55,12 @@ function App() {
 
     const handleGetScreenshot = async () => {
         try {
+            //const res = await axios.get('http://backend:8000/screenshots/updated_screen.png');
             const res = await axios.get('http://localhost:8000/screenshots/updated_screen.png');
             setResponseData((prev) => ({ ...prev, screenshot: res.data.screenshot }));
             setCurrentView('screenshot');
         } catch (err) {
-            setError('Failed to fetch screenshot.');
+            setError('Browser not in use');
         }
     };
 
@@ -70,7 +72,8 @@ function App() {
             <main className="main">
                 <div className="chat-container">
                     <div className="left-panel">
-                        <h2>Chat</h2>
+                        <h2>C H A T</h2>
+                        <br></br>
                         <div className="messages">
                             {messages.length === 0 ? (
                                 <p className="placeholder">No messages yet. Type below to start!</p>
@@ -110,7 +113,8 @@ function App() {
                         </form>
                     </div>
                     <div className="right-panel">
-                        <h2>Details</h2>
+                        <h2>I N T E R F A C E</h2>
+                        <br></br>
                         <div className="view-selector">
                             <button
                                 className={currentView === 'blocks' ? 'active' : ''}
