@@ -14,7 +14,9 @@ English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Franç
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
-https://github.com/user-attachments/assets/fe9e8006-0462-4793-8b31-25bd42c6d1eb
+
+https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
+
 
 > *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
@@ -82,7 +84,7 @@ python3 setup.py install
 
 ## Run locally on your machine
 
-**We recommend using at least Deepseek 14B, smaller models struggle with tool use and forget quickly the context.**
+**We recommend using at the very least Deepseek 14B, smaller models will struggle with tasks especially for web browsing.**
 
 ### 1️⃣ **Download Models**  
 
@@ -137,8 +139,6 @@ python3 main.py
 ---
 
 ## Usage
-
-Warning: We only support French, English and Chinese, prompt in other language would work but might not be routed to the proper agent.
 
 Make sure the services are up and running with `./start_services.sh` and run the agenticSeek with `python3 main.py`
 
