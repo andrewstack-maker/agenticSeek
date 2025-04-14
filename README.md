@@ -321,7 +321,7 @@ Example config:
 [MAIN]
 is_local = True
 provider_name = ollama
-provider_model = deepseek-r1:1.5b
+provider_model = deepseek-r1:32b
 provider_server_address = 127.0.0.1:11434
 agent_name = Friday
 recover_last_session = False
@@ -339,7 +339,7 @@ stealth_mode = False
 
 - is_local -> Runs the agent locally (True) or on a remote server (False).
 - provider_name -> The provider to use (one of: `ollama`, `server`, `lm-studio`, `deepseek-api`)
-- provider_model -> The model used, e.g., deepseek-r1:1.5b.
+- provider_model -> The model used, e.g., deepseek-r1:32b.
 - provider_server_address -> Server address, e.g., 127.0.0.1:11434 for local. Set to anything for non-local API.
 - agent_name -> Name of the agent, e.g., Friday. Used as a trigger word for TTS.
 - recover_last_session -> Restarts from last session (True) or not (False).
@@ -410,9 +410,12 @@ If this section is incomplete please raise an issue.
 
 **Q: What hardware do I need?**  
 
-7B Model: GPU with 8GB VRAM.
-14B Model: 12GB GPU (e.g., RTX 3060).
-32B Model: 24GB+ VRAM.
+| Model Size  | GPU  | Comment                                               |
+|-----------|--------|-----------------------------------------------------------|
+| 7B        | 8GB Vram | ⚠️ Not recommended. Performance is poor, frequent hallucinations, and planner agents will likely fail. |
+| 14B        | 12 GB VRAM (e.g. RTX 3060) | ✅ Usable for simple tasks. May struggle with web browsing and planning tasks. |
+| 32B        | 24+ GB VRAM (e.g. RTX 4090) | 🚀 Success with most tasks, might still struggle with task planning |
+| 70B+        | 48+ GB Vram (eg. rtx 4090) | 💪 Excellent. Recommended for advanced use cases. |
 
 **Q: Why Deepseek R1 over other models?**  
 

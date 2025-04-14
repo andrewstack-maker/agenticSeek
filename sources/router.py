@@ -29,6 +29,7 @@ class AgentRouter:
         self.complexity_classifier = self.load_llm_router()
         self.learn_few_shots_tasks()
         self.learn_few_shots_complexity()
+        self.asked_clarify = False
     
     def load_pipelines(self) -> Dict[str, Type[pipeline]]:
         """
@@ -439,9 +440,11 @@ class AgentRouter:
         text = self.lang_analysis.translate(text, lang)
         labels = [agent.role for agent in self.agents]
         complexity = self.estimate_complexity(text)
-        if complexity == None:
+        if complexity == None and self.asked_clarify == False:
+            self.asked_clarify = True
             pretty_print(f"Humm, the task seem complex but you gave very little information. can you clarify?", color="info")
             return None
+        self.asked_clarify = False
         if complexity == "HIGH":
             pretty_print(f"Complex task detected, routing to planner agent.", color="info")
             return self.find_planner_agent()

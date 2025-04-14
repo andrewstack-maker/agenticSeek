@@ -341,7 +341,7 @@ class BrowserAgent(Agent):
                 complete = True
                 break
 
-            if link == None or Action.GO_BACK.value in answer or link in self.search_history:
+            if (link == None and not len(extracted_form)) or Action.GO_BACK.value in answer or link in self.search_history:
                 pretty_print(f"Going back to results. Still {len(unvisited)}", color="status")
                 unvisited = self.select_unvisited(search_result)
                 prompt = self.make_newsearch_prompt(user_prompt, unvisited)
