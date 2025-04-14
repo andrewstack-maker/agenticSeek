@@ -121,38 +121,36 @@ function App() {
                             <button
                                 className={currentView === 'screenshot' ? 'active' : ''}
                                 onClick={responseData?.screenshot ? () => setCurrentView('screenshot') : handleGetScreenshot}
-                                disabled={responseData?.agent_name !== 'Browser'}
                             >
                                 Browser View
                             </button>
                         </div>
                         <div className="content">
                             {error && <p className="error">{error}</p>}
-                            {responseData ? (
-                                currentView === 'blocks' ? (
-                                    <div className="blocks">
-                                        {Object.values(responseData.blocks).length > 0 ? (
-                                            Object.values(responseData.blocks).map((block, index) => (
-                                                <div key={index} className="block">
-                                                    <p className="block-tool">Tool: {block.tool_type}</p>
-                                                    <pre>{block.block}</pre>
-                                                    <p className="block-feedback">Feedback: {block.feedback}</p>
-                                                    <p className="block-success">
-                                                        Success: {block.success ? 'Yes' : 'No'}
-                                                    </p>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <p className="placeholder">No blocks available.</p>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="screenshot">
-                                      <img src="http://localhost:8000/screenshots/updated_screen.png" alt="Screenshot" />
-                                    </div>
-                                )
+                            {currentView === 'blocks' ? (
+                                <div className="blocks">
+                                    {responseData && responseData.blocks && Object.values(responseData.blocks).length > 0 ? (
+                                        Object.values(responseData.blocks).map((block, index) => (
+                                            <div key={index} className="block">
+                                                <p className="block-tool">Tool: {block.tool_type}</p>
+                                                <pre>{block.block}</pre>
+                                                <p className="block-feedback">Feedback: {block.feedback}</p>
+                                                <p className="block-success">
+                                                    Success: {block.success ? 'Yes' : 'No'}
+                                                </p>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="block">
+                                            <p className="block-tool">Tool: No tool in use</p>
+                                            <pre>No file opened</pre>
+                                        </div>
+                                    )}
+                                </div>
                             ) : (
-                                <p className="placeholder">Nothing to display.</p>
+                                <div className="screenshot">
+                                  <img src="http://localhost:8000/screenshots/updated_screen.png" alt="Screenshot" />
+                                </div>
                             )}
                         </div>
                     </div>
