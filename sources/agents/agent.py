@@ -7,24 +7,9 @@ import time
 
 from sources.memory import Memory
 from sources.utility import pretty_print
+from sources.schemas import executorResult
 
 random.seed(time.time())
-
-class executorResult:
-    """
-    A class to store the result of a tool execution.
-    """
-    def __init__(self, block, feedback, success, tool_type):
-        self.block = block
-        self.feedback = feedback
-        self.success = success
-        self.tool_type = tool_type
-    
-    def show(self):
-        pretty_print('▂'*64, color="status")
-        pretty_print(self.block, color="code" if self.success else "failure")
-        pretty_print('▂'*64, color="status")
-        pretty_print(self.feedback, color="success" if self.success else "failure")
 
 class Agent():
     """

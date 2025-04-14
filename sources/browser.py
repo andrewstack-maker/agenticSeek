@@ -131,6 +131,7 @@ class Browser:
         self.driver.get("https://www.google.com")
         if anticaptcha_manual_install:
             self.load_anticatpcha_manually()
+        self.screenshot_folder = os.path.join(os.getcwd(), ".screenshots")
             
     def load_anticatpcha_manually(self):
         pretty_print("You might want to install the AntiCaptcha extension for captchas.", color="warning")
@@ -152,6 +153,7 @@ class Browser:
             )
             self.apply_web_safety()
             self.logger.log(f"Navigated to: {url}")
+            self.screenshot()
             return True
         except TimeoutException as e:
             self.logger.error(f"Timeout waiting for {url} to load: {str(e)}")
@@ -270,6 +272,8 @@ class Browser:
                 self.driver.execute_script("arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});", element)
                 time.sleep(0.1)
                 element.click()
+                self.logger.info(f"Clicked element at {xpath}")
+                self.screenshot()
                 return True
             except ElementClickInterceptedException as e:
                 self.logger.error(f"Error click_element: {str(e)}")
@@ -509,6 +513,7 @@ class Browser:
             if self.find_and_click_submission():
                 if self.wait_for_submission_outcome():
                     self.logger.info("Submission outcome detected")
+                    self.screenshot()
                     return True
                 else:
                     self.logger.warning("No submission outcome detected")
@@ -532,15 +537,19 @@ class Browser:
                 "window.scrollTo(0, document.body.scrollHeight);"
             )
             time.sleep(1)
+            self.screenshot()
             return True
         except Exception as e:
             self.logger.error(f"Error scrolling: {str(e)}")
             return False
 
-    def screenshot(self, filename:str) -> bool:
+    def screenshot(self, filename:str = 'updated_screen.png') -> bool:
         """Take a screenshot of the current page."""
         try:
-            self.driver.save_screenshot(filename)
+            path = os.path.join(self.screenshot_folder, filename)
+            if not os.path.exists(self.screenshot_folder):
+                os.makedirs(self.screenshot_folder)
+            self.driver.save_screenshot(path)
             self.logger.info(f"Screenshot saved as {filename}")
             return True
         except Exception as e:
@@ -555,7 +564,7 @@ class Browser:
         input_elements = self.driver.execute_script(script)
 
 if __name__ == "__main__":
-    driver = create_driver()
+    driver = create_driver(headless=True, stealth_mode=True)
     browser = Browser(driver, anticaptcha_manual_install=True)
     
     #browser.go_to("https://github.com/Fosowl/agenticSeek")

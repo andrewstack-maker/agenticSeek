@@ -21,25 +21,36 @@ class Interaction:
         self.current_agent = None
         self.last_query = None
         self.last_answer = None
-        self.speech = None
         self.agents = agents
         self.tts_enabled = tts_enabled
         self.stt_enabled = stt_enabled
         self.recover_last_session = recover_last_session
         self.router = AgentRouter(self.agents, supported_language=langs)
-        if tts_enabled:
-            animate_thinking("Initializing text-to-speech...", color="status")
-            self.speech = Speech(enable=tts_enabled)
         self.ai_name = self.find_ai_name()
+        self.speech = None
         self.transcriber = None
         self.recorder = None
+        self.is_generating = False
+        if tts_enabled:
+            self.initialize_tts()
         if stt_enabled:
-            animate_thinking("Initializing speech recognition...", color="status")
-            self.transcriber = AudioTranscriber(self.ai_name, verbose=False)
-            self.recorder = AudioRecorder()
+            self.initialize_stt()
         if recover_last_session:
             self.load_last_session()
         self.emit_status()
+
+    def initialize_tts(self):
+        """Initialize TTS."""
+        if not self.speech:
+            animate_thinking("Initializing text-to-speech...", color="status")
+            self.speech = Speech(enable=self.tts_enabled)
+
+    def initialize_stt(self):
+        """Initialize STT."""
+        if not self.transcriber or not self.recorder:
+            animate_thinking("Initializing speech recognition...", color="status")
+            self.transcriber = AudioTranscriber(self.ai_name, verbose=False)
+            self.recorder = AudioRecorder()
     
     def emit_status(self):
         """Print the current status of agenticSeek."""
@@ -125,7 +136,9 @@ class Interaction:
             push_last_agent_memory = True
         tmp = self.last_answer
         self.current_agent = agent
+        self.is_generating = True
         self.last_answer, _ = agent.process(self.last_query, self.speech)
+        self.is_generating = False
         if push_last_agent_memory:
             self.current_agent.memory.push('user', self.last_query)
             self.current_agent.memory.push('assistant', self.last_answer)
