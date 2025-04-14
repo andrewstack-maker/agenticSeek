@@ -332,6 +332,6 @@ class Provider:
         return thought
 
 if __name__ == "__main__":
-    provider = Provider("server", "deepseek-r1:32b", " 172.81.127.6:8080")
+    provider = Provider("server", "deepseek-r1:32b", " x.x.x.x:8080")
     res = provider.respond(["user", "Hello, how are you?"])
     print("Response:", res)
