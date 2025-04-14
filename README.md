@@ -415,7 +415,7 @@ If this section is incomplete please raise an issue.
 | 7B        | 8GB Vram | ⚠️ Not recommended. Performance is poor, frequent hallucinations, and planner agents will likely fail. |
 | 14B        | 12 GB VRAM (e.g. RTX 3060) | ✅ Usable for simple tasks. May struggle with web browsing and planning tasks. |
 | 32B        | 24+ GB VRAM (e.g. RTX 4090) | 🚀 Success with most tasks, might still struggle with task planning |
-| 70B+        | 48+ GB Vram (eg. rtx 4090) | 💪 Excellent. Recommended for advanced use cases. |
+| 70B+        | 48+ GB Vram (eg. mac studio) | 💪 Excellent. Recommended for advanced use cases. |
 
 **Q: Why Deepseek R1 over other models?**  
 
