@@ -87,6 +87,8 @@ class Provider:
             raise ConnectionError(f"{str(e)}\nConnection to {self.server_ip} failed.")
         except AttributeError as e:
             raise NotImplementedError(f"{str(e)}\nIs {self.provider_name} implemented ?")
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(f"{str(e)}\nA import related to provider {self.provider_name} was not found. Is it installed ?")
         except Exception as e:
             if "refused" in str(e):
                 return f"Server {self.server_ip} seem offline. Unable to answer."

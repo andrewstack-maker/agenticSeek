@@ -128,10 +128,11 @@ class Browser:
             self.wait = WebDriverWait(self.driver, 10)
         except Exception as e:
             raise Exception(f"Failed to initialize browser: {str(e)}")
+        self.screenshot_folder = os.path.join(os.getcwd(), ".screenshots")
+        self.screenshot()
         self.driver.get("https://www.google.com")
         if anticaptcha_manual_install:
             self.load_anticatpcha_manually()
-        self.screenshot_folder = os.path.join(os.getcwd(), ".screenshots")
             
     def load_anticatpcha_manually(self):
         pretty_print("You might want to install the AntiCaptcha extension for captchas.", color="warning")
@@ -542,6 +543,9 @@ class Browser:
         except Exception as e:
             self.logger.error(f"Error scrolling: {str(e)}")
             return False
+    
+    def get_screenshot(self) -> str:
+        return self.screenshot_folder + "/updated_screen.png"
 
     def screenshot(self, filename:str = 'updated_screen.png') -> bool:
         """Take a screenshot of the current page."""
