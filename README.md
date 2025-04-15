@@ -10,7 +10,7 @@ English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Franç
 
 **A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, browse the web and correct it's mistakes all without sending a byte of data to the cloud. Built with reasoning models like DeepSeek R1, this autonomous agent runs entirely on your hardware, keeping your data private.
 
-[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/XSTKZ8nP) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
@@ -211,7 +211,8 @@ If you have a powerful computer or a server that you can use, but you want to us
 On your "server" that will run the AI model, get the ip address
 
 ```sh
-ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
+ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1 # local ip
+curl https://ipinfo.io/ip # public ip
 ```
 
 Note: For Windows or macOS, use ipconfig or ifconfig respectively to find the IP address.
@@ -244,14 +245,14 @@ You have the choice between using `ollama` and `llamacpp` as a LLM service.
 
 Now on your personal computer:
 
-Change the `config.ini` file to set the `provider_name` to `server` and `provider_model` to `deepseek-r1:14b`.
+Change the `config.ini` file to set the `provider_name` to `server` and `provider_model` to `deepseek-r1:xxb`.
 Set the `provider_server_address` to the ip address of the machine that will run the model.
 
 ```sh
 [MAIN]
 is_local = False
 provider_name = server
-provider_model = deepseek-r1:14b
+provider_model = deepseek-r1:70b
 provider_server_address = x.x.x.x:3333
 ```
 
@@ -264,14 +265,16 @@ python3 main.py
 
 ## **Run with an API**  
 
-Set the desired provider in the `config.ini`
+Set the desired provider in the `config.ini`.
+
+We recommand together AI if you want to use Qwen/Deepseek-r1. openai or other API work as well.
 
 ```sh
 [MAIN]
 is_local = False
-provider_name = openai
-provider_model = gpt-4o
-provider_server_address = 127.0.0.1:5000
+provider_name = together
+provider_model = deepseek-ai/DeepSeek-R1-Distill-Llama-70B
+provider_server_address = 127.0.0.1:5000 # doesn't matter for non local API provider
 ```
 
 WARNING: Make sure there is not trailing space in the config.
@@ -368,9 +371,9 @@ The table below show the available providers:
 To select a provider change the config.ini:
 
 ```
-is_local = False
-provider_name = openai
-provider_model = gpt-4o
+is_local = True
+provider_name = ollama
+provider_model = deepseek-r1:32b
 provider_server_address = 127.0.0.1:5000
 ```
 `is_local`: should be True for any locally running LLM, otherwise False.
@@ -415,7 +418,7 @@ If this section is incomplete please raise an issue.
 | 7B        | 8GB Vram | ⚠️ Not recommended. Performance is poor, frequent hallucinations, and planner agents will likely fail. |
 | 14B        | 12 GB VRAM (e.g. RTX 3060) | ✅ Usable for simple tasks. May struggle with web browsing and planning tasks. |
 | 32B        | 24+ GB VRAM (e.g. RTX 4090) | 🚀 Success with most tasks, might still struggle with task planning |
-| 70B+        | 48+ GB Vram (eg. rtx 4090) | 💪 Excellent. Recommended for advanced use cases. |
+| 70B+        | 48+ GB Vram (eg. mac studio) | 💪 Excellent. Recommended for advanced use cases. |
 
 **Q: Why Deepseek R1 over other models?**  
 
@@ -423,11 +426,11 @@ Deepseek R1 excels at reasoning and tool use for its size. We think it’s a sol
 
 **Q: I get an error running `main.py`. What do I do?**  
 
-Ensure Ollama is running (`ollama serve`), your `config.ini` matches your provider, and dependencies are installed. If none work feel free to raise an issue.
+Ensure local is running (`ollama serve`), your `config.ini` matches your provider, and dependencies are installed. If none work feel free to raise an issue.
 
 **Q: Can it really run 100% locally?**  
 
-Yes with Ollama or Server providers, all speech to text, LLM and text to speech model run locally. Non-local options (OpenAI or others API) are optional.
+Yes with Ollama, lm-studio or server providers, all speech to text, LLM and text to speech model run locally. Non-local options (OpenAI or others API) are optional.
 
 **Q: Why should I use AgenticSeek when I have Manus?**
 
