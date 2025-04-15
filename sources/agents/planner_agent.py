@@ -76,8 +76,7 @@ class PlannerAgent(Agent):
         """
         return prompt
     
-    def show_plan(self, answer: dict) -> None:
-        agents_tasks = self.parse_agent_tasks(answer)
+    def show_plan(self, agents_tasks: dict, answer: str) -> None:
         if agents_tasks == (None, None):
             pretty_print(answer, color="warning")
             pretty_print("Failed to make a plan. This can happen with (too) small LLM. Clarify your request and insist on it making a plan within ```json.", color="failure")
@@ -94,12 +93,13 @@ class PlannerAgent(Agent):
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', prompt)
             answer, _ = self.llm_request()
-            self.show_plan(answer)
-            ok_str = input("Is the plan ok? (y/n): ")
-            if ok_str == 'y':
-                ok = True
-            else:
-                prompt = input("Please reformulate: ")
+            agents_tasks = self.parse_agent_tasks(answer)
+            if agents_tasks == (None, None):
+                prompt = f"Failed to parse the tasks. Please make a plan within ```json.\n"
+                pretty_print("Failed to make plan. Retrying...", color="warning")
+                continue
+            self.show_plan(agents_tasks, answer)
+            ok = True
         return answer
     
     def start_agent_process(self, task: str, required_infos: dict | None) -> str:

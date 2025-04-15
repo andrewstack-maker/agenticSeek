@@ -55,6 +55,7 @@ rules:
 - Make sure to always cd your work folder before executing commands, like cd <work dir> && <your command>
 - Do not ever use editor such as vim or nano.
 - only use file name with file_finder, not path
+- If query is unrelated to file operations, do nothing, and say that there was mistake in agent allocation.
 
 Example Interaction
 User: "I need to find the file config.txt and read its contents."

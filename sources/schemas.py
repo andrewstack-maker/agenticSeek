@@ -1,12 +1,11 @@
 
 from typing import Tuple, Callable
 from pydantic import BaseModel
+from sources.utility import pretty_print
 
 class QueryRequest(BaseModel):
     query: str
-    lang: str = "en"
     tts_enabled: bool = True
-    stt_enabled: bool = False
 
     def __str__(self):
         return f"Query: {self.query}, Language: {self.lang}, TTS: {self.tts_enabled}, STT: {self.stt_enabled}"
@@ -14,9 +13,7 @@ class QueryRequest(BaseModel):
     def jsonify(self):
         return {
             "query": self.query,
-            "lang": self.lang,
             "tts_enabled": self.tts_enabled,
-            "stt_enabled": self.stt_enabled
         }
 
 class QueryResponse(BaseModel):

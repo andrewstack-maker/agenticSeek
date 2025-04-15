@@ -9,45 +9,111 @@ function App() {
     const [error, setError] = useState(null);
     const [currentView, setCurrentView] = useState('blocks');
     const [responseData, setResponseData] = useState(null);
+    const [isOnline, setIsOnline] = useState(false); // Added state
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
+    // Added: checks /health
+    const checkHealth = async () => {
+        try {
+            await axios.get('http://0.0.0.0:8000/health');
+            setIsOnline(true);
+            console.log('System is online');
+        } catch {
+            setIsOnline(false);
+            console.log('System is offline');
+        }
+    };
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
+    useEffect(() => {
+        if (currentView === 'screenshot') {
+            let isMounted = true;
+    
+            const fetchScreenshot = async () => {
+                try {
+                    const res = await axios.get('http://0.0.0.0:8000/screenshots/updated_screen.png', {
+                        responseType: 'blob',
+                        params: { t: new Date().getTime() }
+                    });
+                    if (isMounted) {
+                        console.log('Screenshot fetched successfully');
+                        const imageUrl = URL.createObjectURL(res.data);
+                        setResponseData((prev) => {
+                            if (prev?.screenshot && prev.screenshot !== 'placeholder.png') {
+                                URL.revokeObjectURL(prev.screenshot);
+                            }
+                            return {
+                                ...prev,
+                                screenshot: imageUrl,
+                                screenshotTimestamp: new Date().getTime()
+                            };
+                        });
+                    }
+                } catch (err) {
+                    console.error('Error fetching screenshot:', err);
+                    if (isMounted) {
+                        setResponseData((prev) => ({
+                            ...prev,
+                            screenshot: 'placeholder.png',
+                            screenshotTimestamp: new Date().getTime()
+                        }));
+                    }
+                }
+            };
+    
+            fetchScreenshot();
+            const interval = setInterval(fetchScreenshot, 1000);
+    
+            return () => {
+                isMounted = false;
+                clearInterval(interval);
+                if (responseData?.screenshot && responseData.screenshot !== 'placeholder.png') {
+                    URL.revokeObjectURL(responseData.screenshot);
+                }
+            };
+        }
+    }, [currentView]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!query.trim()) return;
+        checkHealth();
+        if (!query.trim()) {
+            console.log('Empty query');
+            return;
+        }
         setMessages((prev) => [...prev, { type: 'user', content: query }]);
         setIsLoading(true);
         setError(null);
 
         try {
-            //const res = await axios.post('http://backend:8000/query', { ... });
-            const res = await axios.post('${process.env.BACKEND_URL}/query', {
+            console.log('Sending query:', query);
+            const res = await axios.post('http://0.0.0.0:8000/query', {
                 query,
-                lang: 'en',
-                tts_enabled: false,
-                stt_enabled: false,
+                tts_enabled: false
             });
+            console.log('Response:', res.data);
             const data = res.data;
             setResponseData(data);
             setMessages((prev) => [
                 ...prev,
                 { type: 'agent', content: data.answer, agentName: data.agent_name },
             ]);
-            setCurrentView('blocks');
         } catch (err) {
+            console.error('Error:', err);
             setError('Failed to process query.');
             setMessages((prev) => [
                 ...prev,
                 { type: 'error', content: 'Error: Unable to get a response.' },
             ]);
         } finally {
+            console.log('Query completed');
             setIsLoading(false);
             setQuery('');
         }
@@ -55,11 +121,12 @@ function App() {
 
     const handleGetScreenshot = async () => {
         try {
-            //const res = await axios.get('http://backend:8000/screenshots/updated_screen.png');
-            const res = await axios.get('${process.env.BACKEND_URL}/screenshots/updated_screen.png');
+            console.log('Fetching screenshot...');
+            const res = await axios.get('http://0.0.0.0:8000/screenshots/updated_screen.png');
             setResponseData((prev) => ({ ...prev, screenshot: res.data.screenshot }));
             setCurrentView('screenshot');
         } catch (err) {
+            console.error('Error fetching screenshot:', err);
             setError('Browser not in use');
         }
     };
@@ -73,7 +140,7 @@ function App() {
                 <div className="chat-container">
                     <div className="left-panel">
                         <h2>C H A T</h2>
-                        <br></br>
+                        <br />
                         <div className="messages">
                             {messages.length === 0 ? (
                                 <p className="placeholder">No messages yet. Type below to start!</p>
@@ -98,7 +165,8 @@ function App() {
                             )}
                             <div ref={messagesEndRef} />
                         </div>
-                        {isLoading && <div className="loading-animation">Loading...</div>}
+                        {isOnline && isLoading && <div className="loading-animation">Thinking...</div>}
+                        {!isLoading && !isOnline && <p className="loading-animation">System offline. Deploy backend first.</p>}
                         <form onSubmit={handleSubmit} className="input-form">
                             <input
                                 type="text"
@@ -114,7 +182,7 @@ function App() {
                     </div>
                     <div className="right-panel">
                         <h2>I N T E R F A C E</h2>
-                        <br></br>
+                        <br />
                         <div className="view-selector">
                             <button
                                 className={currentView === 'blocks' ? 'active' : ''}
@@ -153,7 +221,15 @@ function App() {
                                 </div>
                             ) : (
                                 <div className="screenshot">
-                                  <img src="${process.env.BACKEND_URL}/screenshots/updated_screen.png" alt="Screenshot" />
+                                    <img
+                                        src={responseData?.screenshot || 'placeholder.png'}
+                                        alt="Screenshot"
+                                        onError={(e) => {
+                                            e.target.src = 'placeholder.png';
+                                            console.error('Failed to load screenshot');
+                                        }}
+                                        key={responseData?.screenshotTimestamp || 'default'} // Force re-render
+                                    />
                                 </div>
                             )}
                         </div>

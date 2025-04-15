@@ -22,12 +22,15 @@ config.read('config.ini')
 app = FastAPI(title="AgenticSeek API", version="0.1.0")
 logger = Logger("backend.log")
 
+if not os.path.exists(".screenshots"):
+    os.makedirs(".screenshots")
+
 app.mount("/screenshots", StaticFiles(directory=".screenshots"), name="screenshots")
 
 # Add CORS middleware to allow frontend requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -139,7 +142,6 @@ async def process_query(request: QueryRequest):
         )
     try:
         interaction.tts_enabled = request.tts_enabled
-        interaction.stt_enabled = request.stt_enabled
         interaction.last_query = request.query
         logger.info("Agents request is being processed")
         is_generating = True

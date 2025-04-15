@@ -123,16 +123,25 @@ class Browser:
         self.js_scripts_folder = "./sources/web_scripts/" if not __name__ == "__main__" else "./web_scripts/"
         self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
         self.logger = Logger("browser.log")
+        self.screenshot_folder = os.path.join(os.getcwd(), ".screenshots")
+        self.tabs = []
         try:
             self.driver = driver
             self.wait = WebDriverWait(self.driver, 10)
         except Exception as e:
             raise Exception(f"Failed to initialize browser: {str(e)}")
-        self.screenshot_folder = os.path.join(os.getcwd(), ".screenshots")
-        self.screenshot()
-        self.driver.get("https://www.google.com")
+        self.setup_tabs()
         if anticaptcha_manual_install:
             self.load_anticatpcha_manually()
+    
+    def setup_tabs(self):
+        self.tabs = self.driver.window_handles
+        self.driver.get("https://www.google.com")
+        self.screenshot()
+    
+    def switch_control_tab(self):
+        self.logger.log("Switching to control tab.")
+        self.driver.switch_to.window(self.tabs[0])
             
     def load_anticatpcha_manually(self):
         pretty_print("You might want to install the AntiCaptcha extension for captchas.", color="warning")
@@ -154,6 +163,7 @@ class Browser:
             )
             self.apply_web_safety()
             self.logger.log(f"Navigated to: {url}")
+            self.logger.info(f"Navigated to: {self.get_page_title()}")
             self.screenshot()
             return True
         except TimeoutException as e:
@@ -201,6 +211,8 @@ class Browser:
                     lines.append(cleaned)
             result = "[Start of page]\n\n" + "\n\n".join(lines) + "\n\n[End of page]"
             result = re.sub(r'!\[(.*?)\]\(.*?\)', r'[IMAGE: \1]', result)
+            self.logger.info(f"Extracted text: {result[:100]}...")
+            self.logger.info(f"Extracted text length: {len(result)}")
             return result[:8192]
         except Exception as e:
             self.logger.error(f"Error getting text: {str(e)}")
@@ -226,9 +238,11 @@ class Browser:
     def is_link_valid(self, url:str) -> bool:
         """Check if a URL is a valid link (page, not related to icon or metadata)."""
         if len(url) > 64:
+            self.logger.warning(f"URL too long: {url}")
             return False
         parsed_url = urlparse(url)
         if not parsed_url.scheme or not parsed_url.netloc:
+            self.logger.warning(f"Invalid URL: {url}")
             return False
         if re.search(r'/\d+$', parsed_url.path):
             return False
@@ -360,6 +374,7 @@ class Browser:
         Wait for a submission outcome (e.g., URL change or new element).
         """
         try:
+            self.logger.info("Waiting for submission outcome...")
             wait = WebDriverWait(self.driver, timeout)
             wait.until(
                 lambda driver: driver.current_url != self.driver.current_url or
@@ -387,8 +402,10 @@ class Browser:
                         message=f"Button with XPath '{xpath}' not clickable within {timeout} seconds"
                     )
                     if self.click_element(xpath):
+                        self.logger.info(f"Clicked button '{button_text}' at XPath: {xpath}")
                         return True
                     else:
+                        self.logger.warning(f"Button '{button_text}' at XPath: {xpath} not clickable")
                         return False
                 except TimeoutException:
                     self.logger.warning(f"Timeout waiting for '{button_text}' button at XPath: {xpath}")
@@ -424,9 +441,9 @@ class Browser:
                             self.logger.info(f"Ticked checkbox {index}")
                         except ElementClickInterceptedException:
                             self.driver.execute_script("arguments[0].click();", checkbox)
-                            self.logger.info(f"Ticked checkbox {index} using JavaScript")
+                            self.logger.warning(f"Click checkbox {index} intercepted")
                     else:
-                        self.logger.debug(f"Checkbox {index} already ticked")
+                        self.logger.info(f"Checkbox {index} already ticked")
                 except TimeoutException:
                     self.logger.warning(f"Timeout waiting for checkbox {index} to be clickable")
                     continue
@@ -534,6 +551,7 @@ class Browser:
     def scroll_bottom(self) -> bool:
         """Scroll to the bottom of the page."""
         try:
+            self.logger.info("Scrolling to the bottom of the page...")
             self.driver.execute_script(
                 "window.scrollTo(0, document.body.scrollHeight);"
             )
@@ -549,6 +567,7 @@ class Browser:
 
     def screenshot(self, filename:str = 'updated_screen.png') -> bool:
         """Take a screenshot of the current page."""
+        self.logger.info("Taking screenshot...")
         try:
             path = os.path.join(self.screenshot_folder, filename)
             if not os.path.exists(self.screenshot_folder):
@@ -564,11 +583,12 @@ class Browser:
         """
         Apply security measures to block any website malicious/annoying execution, privacy violation etc..
         """
+        self.logger.info("Applying web safety measures...")
         script = self.load_js("inject_safety_script.js")
         input_elements = self.driver.execute_script(script)
 
 if __name__ == "__main__":
-    driver = create_driver(headless=True, stealth_mode=True)
+    driver = create_driver(headless=False, stealth_mode=True)
     browser = Browser(driver, anticaptcha_manual_install=True)
     
     #browser.go_to("https://github.com/Fosowl/agenticSeek")

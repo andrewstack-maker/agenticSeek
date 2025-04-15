@@ -54,12 +54,9 @@ if [ ! -f "docker-compose.yml" ]; then
     exit 1
 fi
 
-# start searxng service for internet search service
-cd searxng && ./setup_searxng.sh && cd ..
-
-# start docker compose for searxng, redis, frontend services
 echo "SearXNG setup complete!"
 
+# start docker compose for searxng, redis, frontend services
 echo "Warning: stopping all docker containers (t-4 seconds)..."
 sleep 4
 docker stop $(docker ps -a -q)
