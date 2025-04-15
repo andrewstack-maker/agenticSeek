@@ -28,7 +28,7 @@ function App() {
 
         try {
             //const res = await axios.post('http://backend:8000/query', { ... });
-            const res = await axios.post('http://localhost:8000/query', {
+            const res = await axios.post('${process.env.BACKEND_URL}/query', {
                 query,
                 lang: 'en',
                 tts_enabled: false,
@@ -56,7 +56,7 @@ function App() {
     const handleGetScreenshot = async () => {
         try {
             //const res = await axios.get('http://backend:8000/screenshots/updated_screen.png');
-            const res = await axios.get('http://localhost:8000/screenshots/updated_screen.png');
+            const res = await axios.get('${process.env.BACKEND_URL}/screenshots/updated_screen.png');
             setResponseData((prev) => ({ ...prev, screenshot: res.data.screenshot }));
             setCurrentView('screenshot');
         } catch (err) {
@@ -153,7 +153,7 @@ function App() {
                                 </div>
                             ) : (
                                 <div className="screenshot">
-                                  <img src="http://localhost:8000/screenshots/updated_screen.png" alt="Screenshot" />
+                                  <img src="${process.env.BACKEND_URL}/screenshots/updated_screen.png" alt="Screenshot" />
                                 </div>
                             )}
                         </div>

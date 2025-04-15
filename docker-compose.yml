@@ -32,8 +32,8 @@ services:
       - ./searxng:/etc/searxng:rw
     environment:
       - SEARXNG_BASE_URL=http://localhost:8080/
-      - UWSGI_WORKERS=4
-      - UWSGI_THREADS=4
+      - UWSGI_WORKERS=1
+      - UWSGI_THREADS=1
     cap_add:
       - CHOWN
       - SETGID
@@ -48,27 +48,6 @@ services:
     networks:
       - agentic-seek-net
 
-  backend:
-    container_name: backend
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./.screenshots:/app/.screenshots:ro  # Mount screenshots folder
-      - ./app.py:/app/app.py:ro             # Mount backend code
-      - ./sources:/app/sources:ro           # Assuming sources/ contains your modules
-      - ./prompts:/app/prompts:ro           # Assuming prompts/ for agent prompts
-      - ./config.ini:/app/config.ini:ro     # Config file
-    environment:
-      - PYTHONUNBUFFERED=1
-    depends_on:
-      - searxng
-      - redis
-    networks:
-      - agentic-seek-net
-
   frontend:
     container_name: frontend
     build:
@@ -77,12 +56,11 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend/agentic-seek/src:/app/src  # Live reload for development
+      - ./frontend/agentic-seek/src:/app/src
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true  # Ensure file watching works in Docker
-    depends_on:
-      - backend
+      - BACKEND_URL=http://host.docker.internal:8000
     networks:
       - agentic-seek-net
 

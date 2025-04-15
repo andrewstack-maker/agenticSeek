@@ -46,7 +46,7 @@ def get_chrome_path() -> str:
             return path
     return None
 
-def create_driver(headless=False, stealth_mode=True) -> webdriver.Chrome:
+def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx") -> webdriver.Chrome:
     """Create a Chrome WebDriver with specified options."""
     chrome_options = Options()
     chrome_path = get_chrome_path()
@@ -74,10 +74,10 @@ def create_driver(headless=False, stealth_mode=True) -> webdriver.Chrome:
     chrome_options.add_argument(f'--window-size={width},{height}')
     if not stealth_mode:
         # crx file can't be installed in stealth mode
-        crx_path = "./crx/nopecha.crx"
         if not os.path.exists(crx_path):
-            raise FileNotFoundError(f"Extension file not found at: {crx_path}")
-        chrome_options.add_extension(crx_path)
+            pretty_print(f"Anti-captcha CRX not found at {crx_path}.", color="failure")
+        else:
+            chrome_options.add_extension(crx_path)
     
     chromedriver_path = shutil.which("chromedriver")
     if not chromedriver_path:
