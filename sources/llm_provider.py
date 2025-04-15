@@ -34,7 +34,7 @@ class Provider:
         }
         self.logger = Logger("provider.log")
         self.api_key = None
-        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek"]
+        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek", "together"]
         if self.provider_name not in self.available_providers:
             raise ValueError(f"Unknown provider: {provider_name}")
         if self.provider_name in self.unsafe_providers:
