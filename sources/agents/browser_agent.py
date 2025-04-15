@@ -361,7 +361,6 @@ class BrowserAgent(Agent):
         mem_last_idx = self.memory.push('user', prompt)
         answer, reasoning = self.llm_request()
         pretty_print(answer, color="output")
-        self.memory.clear_section(mem_begin_idx+1, mem_last_idx-1)
         return answer, reasoning
 
 if __name__ == "__main__":
