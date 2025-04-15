@@ -30,6 +30,7 @@ class PyInterpreter(Tools):
             '__builtins__': __builtins__,
             'os': os,
             'sys': sys,
+            '__name__': '__main__'
         }
         code = '\n\n'.join(codes)
         try:
@@ -93,6 +94,9 @@ here is a save test
 def print_hello():
     hello = "Hello World"
     print(hello)
+
+if __name__ == "__main__":
+    print_hello()
 ```
 """
     py = PyInterpreter()

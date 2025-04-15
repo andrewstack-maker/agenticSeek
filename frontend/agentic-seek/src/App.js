@@ -14,6 +14,7 @@ function App() {
 
     useEffect(() => {
         scrollToBottom();
+        checkHealth();
     }, [messages]);
 
     // Added: checks /health
