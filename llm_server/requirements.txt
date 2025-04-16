@@ -1,0 +1,4 @@
+flask>=2.3.0
+ollama>=0.4.7
+gunicorn==19.10.0
+llama-cpp-python
