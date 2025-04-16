@@ -86,34 +86,36 @@ python3 setup.py install
 
 **We recommend using at the very least Deepseek 14B, smaller models will struggle with tasks especially for web browsing.**
 
-### 1️⃣ **Download Models**  
 
-Make sure you have [Ollama](https://ollama.com/) installed.
+###  **Run the Assistant (Locally)**  
 
-Download the `deepseek-r1:14b` model from [DeepSeek](https://deepseek.com/models)
+Start your local provider, for example with ollama:
 
-```sh
-ollama pull deepseek-r1:14b
-```
-
-### 2️ **Run the Assistant (Ollama)**  
-
-Start the ollama server
 ```sh
 ollama serve
 ```
 
-Change the config.ini file to set the provider_name to `ollama` and provider_model to `deepseek-r1:14b`
+See below for a list of local supported provider.
+
+Change the config.ini file to set the provider_name to a supported provider and provider_model to `deepseek-r1:14b`
 
 NOTE: `deepseek-r1:14b`is an example, use a bigger model if your hardware allow it.
 
 ```sh
 [MAIN]
 is_local = True
-provider_name = ollama
+provider_name = ollama # or lm-studio, openai, etc..
 provider_model = deepseek-r1:14b
 provider_server_address = 127.0.0.1:11434
 ```
+
+**List of local providers**
+
+| Provider  | Local? | Description                                               |
+|-----------|--------|-----------------------------------------------------------|
+| ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
+| lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
+| openai    | No     |  Use API compatible  |
 
 start all services :
 

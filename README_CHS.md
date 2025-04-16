@@ -10,7 +10,7 @@
 
 **Manus AI 的本地替代品**，它是一个具有语音功能的大语言模型秘书，可以 Coding、访问你的电脑文件、浏览网页，并自动修正错误与反省，最重要的是不会向云端传送任何资料。采用 DeepSeek R1 等推理模型构建，完全在本地硬体上运行，进而保证资料的隐私。
 
-[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj)
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
 
 > 🛠️ **目前还在开发阶段** – 欢迎任何贡献者加入我们！
 
@@ -84,48 +84,51 @@ python3 setup.py install
 
 **建议至少使用 Deepseek 14B 以上参数的模型，较小的模型难以使用助理功能并且很快就会忘记上下文之间的关系。**
 
-### 1️⃣ **下载模型**
 
-确定已经安装 [Ollama](https://ollama.com/)。
+### **本地运行助手**
 
-请在 [DeepSeek](https://deepseek.com/models) 下载至少大于 `deepseek-r1:14b` 的模型。
+启动你的本地提供者，例如使用 ollama：
 
-```sh
-ollama pull deepseek-r1:14b
-```
-
-### 2️ **启动框架 （ollama）**
-
-启动 Ollama 服务器。
 ```sh
 ollama serve
 ```
 
-请更改 `config.ini` 文件，将 `provider_name` 设置为 `ollama` 并且 `provider_model` 设置为你刚刚下载的模型，如 `deepseek-r1:14b`。
+请参阅下方支持的本地提供者列表。
 
-注意：`deepseek-r1:14b` 只是范例，如果你的电脑允许的话，请使用更大的模型。
+修改 `config.ini` 文件，将 `provider_name` 设置为支持的提供者，并将 `provider_model` 设置为 `deepseek-r1:14b`。
+
+注意：`deepseek-r1:14b` 只是一个示例，如果你的硬件允许，可以使用更大的模型。
 
 ```sh
 [MAIN]
 is_local = True
-provider_name = ollama
+provider_name = ollama # 或 lm-studio, openai 等
 provider_model = deepseek-r1:14b
 provider_server_address = 127.0.0.1:11434
 ```
 
-开始所有服务:
+**本地提供者列表**
+
+| 提供者      | 本地? | 描述                                                   |
+|-------------|--------|-------------------------------------------------------|
+| ollama      | 是     | 使用 ollama 作为 LLM 提供者，轻松本地运行 LLM         |
+| lm-studio   | 是     | 使用 LM Studio 本地运行 LLM（将 `provider_name` 设置为 `lm-studio`）|
+| openai      | 否     | 使用兼容的 API                                        |
+
+启动所有服务：
 
 ```sh
 sudo ./start_services.sh # MacOS
-start ./start_services.cmd # Window
+start ./start_services.cmd # Windows
 ```
 
-
-运行 AgenticSeek:
+运行助手：
 
 ```sh
 python3 cli.py
 ```
+
+
 
 *如果你不知道如何开始，请参阅 **Usage** 部分*
 

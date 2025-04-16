@@ -9,7 +9,7 @@
 
 Une alternative **entièrement locale** à Manus AI, un assistant IA qui code, explore votre système de fichiers, navigue sur le web et corrige ses erreurs, tout cela sans envoyer la moindre donnée dans le cloud. Cet agent autonome fonctionne entièrement sur votre hardware, garantissant la confidentialité de vos données.
 
-[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj)
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
 
 > 🛠️ **En cours de développement** – On cherche activement des contributeurs!
 
@@ -81,33 +81,32 @@ pip3 install -r requirements.txt
 
 ## Faire fonctionner sur votre machine 
 
-**Nous recommandons d’utiliser au moins DeepSeek 14B, les modèles plus petits ont du mal avec l’utilisation des outils et oublient rapidement le contexte.**
+**Nous recommandons d’utiliser au minimum DeepSeek 14B, les modèles plus petits ont du mal avec l’utilisation des outils et oublient rapidement le contexte.**
 
-### 1️⃣ **Téléchargement du modèle**  
-
-Assurer vous d'avoir [Ollama](https://ollama.com/) installé.
-
-Télécharger `deepseek-r1:14b` de [DeepSeek](https://deepseek.com/models) (ou autre en fonction de votre hardware, voir section FAQ)
-
-```sh
-ollama pull deepseek-r1:14b
-```
-
-### 2️ **Démarrage d'ollama**  
-
+Lancer votre provider local, par exemple avec ollama:
 ```sh
 ollama serve
 ```
 
-Modifiez le fichier config.ini pour définir provider_name sur ollama et provider_model sur deepseek-r1:14b
+Voyez la section **Provider** pour la liste de provideurs disponible.
+
+Modifiez le fichier config.ini pour définir provider_name sur le nom d'un provideur et provider_model sur le LLM à utiliser.
 
 ```sh
 [MAIN]
 is_local = True
-provider_name = ollama
+provider_name = ollama # ou lm-studio, openai, etc...
 provider_model = deepseek-r1:14b
 provider_server_address = 127.0.0.1:11434
 ```
+
+**Liste des provideurs locaux**
+
+| Fournisseur | Local ? | Description                                               |
+|-------------|---------|-----------------------------------------------------------|
+| ollama      | Oui     | Exécutez des LLM localement avec facilité en utilisant ollama comme fournisseur LLM |
+| lm-studio   | Oui     | Exécutez un LLM localement avec LM studio (définissez `provider_name` sur `lm-studio`) |
+| openai      | Non     | Utilisez une API compatible |
 
 démarrer tous les services :
 

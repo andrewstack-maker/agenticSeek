@@ -24,7 +24,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY app.py .
+COPY api.py .
 COPY sources/ ./sources/
 COPY prompts/ ./prompts/
 COPY config.ini .
@@ -33,4 +33,4 @@ COPY config.ini .
 EXPOSE 8000
 
 # Run the application
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api:api", "--host", "0.0.0.0", "--port", "8000"]
