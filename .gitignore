@@ -9,10 +9,12 @@ test_agent.py
 config.ini
 .voices/
 experimental/
+.logs/
 .screenshots/*.png
 .screenshots/*.jpg
 conversations/
 agentic_env/*
+agentic_seek_env/*
 .env
 */.env
 dsk/
