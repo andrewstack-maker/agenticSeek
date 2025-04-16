@@ -402,8 +402,6 @@ class AgentRouter:
         if confidence < 0.4:
             self.logger.info(f"Low confidence in complexity estimation: {confidence}")
             return "LOW"
-        if complexity == "HIGH" and len(text) < 64:
-            return None # ask for more info
         if complexity == "HIGH":
             return "HIGH"
         elif complexity == "LOW":
@@ -440,11 +438,6 @@ class AgentRouter:
         text = self.lang_analysis.translate(text, lang)
         labels = [agent.role for agent in self.agents]
         complexity = self.estimate_complexity(text)
-        if complexity == None and self.asked_clarify == False:
-            self.asked_clarify = True
-            pretty_print(f"Humm, the task seem complex but you gave very little information. can you clarify?", color="info")
-            return None
-        self.asked_clarify = False
         if complexity == "HIGH":
             pretty_print(f"Complex task detected, routing to planner agent.", color="info")
             return self.find_planner_agent()

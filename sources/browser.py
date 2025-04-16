@@ -44,6 +44,11 @@ def get_chrome_path() -> str:
     for path in paths:
         if os.path.exists(path) and os.access(path, os.X_OK):  # Check if executable
             return path
+    print("Looking for Google Chrome in these locations failed:")
+    print('\n'.join(paths))
+    path = input("Google Chrome not found. Please enter the path to the Chrome executable: ")
+    if os.path.exists(path) and os.access(path, os.X_OK):
+        return path
     return None
 
 def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx") -> webdriver.Chrome:
