@@ -14,6 +14,7 @@
 
 > 🛠️ **目前还在开发阶段** – 欢迎任何贡献者加入我们！
 
+https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 > *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
 
@@ -21,10 +22,6 @@
 
 > *I would like to setup a new project file index as mark2.*
 
-
-### AgenticSeek 可以进行任务规划！
-
-![alt text](./media/examples/planner.png)
 
 ## Features:
 
@@ -164,36 +161,35 @@ python3 cli.py
 
 ### Coding/Bash
 
-> *Help me with matrix multiplication in Golang*
+> *在 Golang 中幫助我進行矩陣乘法*
 
-> *Scan my network with nmap, find if any suspicious devices is connected*
+> *使用 nmap 掃描我的網路，找出是否有任何可疑裝置連接*
 
-> *Make a snake game in python*
+> *用 Python 製作一個貪食蛇遊戲*
 
 ### 网路搜寻
 
-> *Do a web search to find cool tech startup in Japan working on cutting edge AI research*
+> *進行網路搜尋，找出日本從事尖端人工智慧研究的酷炫科技新創公司*
 
-> *Can you find on the internet who created agenticSeek?*
+> *你能在網路上找到誰創造了 AgenticSeek 嗎？*
 
-> *Can you find on which website I can buy a rtx 4090 for cheap*
+> *你能在哪個網站上找到便宜的 RTX 4090 嗎？*
 
 ### 档案浏览与搜寻
 
-> *Hey can you find where is million_dollars_contract.pdf i lost it*
+> *嘿，你能找到我遺失的 million_dollars_contract.pdf 在哪裡嗎？*
 
-> *Show me how much space I have left on my disk*
+> *告訴我我的磁碟還剩下多少空間*
 
-> *Find and read the README.md and follow the install instruction*
+> *尋找並閱讀 README.md，並按照安裝說明進行操作*
 
 ### 日常聊天
 
-> *Tell me about France*
+> *告訴我關於法國的事*
 
-> *What is the meaning of life ?*
+> *人生的意義是什麼？*
 
-> *Should I take creatine before or after workout?*
-
+> *我應該在鍛鍊前還是鍛鍊後服用肌酸？*
 
 当你把指令送出后，AgenticSeek 会自动调用最能提供帮助的助理，去完成你交办的工作和指令。
 
@@ -201,12 +197,9 @@ python3 cli.py
 
 所以我们希望你在使用时，能明确地表明你希望他要怎么做，下面给你一个范例！
 
-你该说：
-`Do a web search and find out which are the best country for solo-travel`
+你应该说：进行网络搜索，找出哪些国家最适合独自旅行
 
-
-而不是说：
-`Do you know some good countries for solo-travel?`
+而不是说：你知道哪些国家适合独自旅行？
 
 ---
 

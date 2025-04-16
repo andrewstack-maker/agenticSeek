@@ -13,7 +13,7 @@ Une alternative **entièrement locale** à Manus AI, un assistant IA qui code, e
 
 > 🛠️ **En cours de développement** – On cherche activement des contributeurs!
 
-![alt text](./media/whale_readme.jpg)
+https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 > *Recherche sur le web des activités à faire à Paris*
 
@@ -22,9 +22,6 @@ Une alternative **entièrement locale** à Manus AI, un assistant IA qui code, e
 > *J'aimerais que tu trouve une api météo et que tu me code une application qui affiche la météo à Toulouse*
 
 
-### agenticSeek peut désormais planifier des taches!
-
-![alt text](./media/examples/planner.png)
 
 
 ## Fonctionnalités:
