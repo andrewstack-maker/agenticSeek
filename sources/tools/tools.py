@@ -31,7 +31,6 @@ class Tools():
     """
     def __init__(self):
         self.tag = "undefined"
-        self.api_key = None
         self.client = None
         self.messages = []
         self.logger = Logger("tools.log")

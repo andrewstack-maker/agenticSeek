@@ -30,10 +30,9 @@ services:
       - "8080:8080"
     volumes:
       - ./searxng:/etc/searxng:rw
-      - ./searxng/entrypoint.sh:/usr/local/bin/searxng-entrypoint.sh:ro
-    entrypoint: /usr/local/bin/searxng-entrypoint.sh
     environment:
       - SEARXNG_BASE_URL=http://localhost:8080/
+      - SEARXNG_SECRET_KEY=$(openssl rand -hex 32)
       - UWSGI_WORKERS=4
       - UWSGI_THREADS=4
     cap_add:

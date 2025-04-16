@@ -16,6 +16,7 @@ class FlightSearch(Tools):
         """
         super().__init__()
         self.tag = "flight_search"
+        self.api_key = None
         self.api_key = api_key or os.getenv("AVIATIONSTACK_API_KEY")
 
     def execute(self, blocks: str, safety: bool = True) -> str:
