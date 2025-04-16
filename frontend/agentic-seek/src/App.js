@@ -9,7 +9,7 @@ function App() {
     const [error, setError] = useState(null);
     const [currentView, setCurrentView] = useState('blocks');
     const [responseData, setResponseData] = useState(null);
-    const [isOnline, setIsOnline] = useState(false); // Added state
+    const [isOnline, setIsOnline] = useState(false);
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
@@ -17,7 +17,6 @@ function App() {
         checkHealth();
     }, [messages]);
 
-    // Added: checks /health
     const checkHealth = async () => {
         try {
             await axios.get('http://0.0.0.0:8000/health');
@@ -229,7 +228,7 @@ function App() {
                                             e.target.src = 'placeholder.png';
                                             console.error('Failed to load screenshot');
                                         }}
-                                        key={responseData?.screenshotTimestamp || 'default'} // Force re-render
+                                        key={responseData?.screenshotTimestamp || 'default'} 
                                     />
                                 </div>
                             )}
