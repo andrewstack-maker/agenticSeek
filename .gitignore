@@ -9,6 +9,8 @@ test_agent.py
 config.ini
 .voices/
 experimental/
+.screenshots/*.png
+.screenshots/*.jpg
 conversations/
 agentic_env/*
 .env
