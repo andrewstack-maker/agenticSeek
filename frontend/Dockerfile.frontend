@@ -3,11 +3,11 @@ FROM node:18
 WORKDIR /app
 
 # Install dependencies
-COPY package.json package-lock.json ./
+COPY agentic-seek-front/package.json agentic-seek-front/package-lock.json ./
 RUN npm install
 
 # Copy application code
-COPY . .
+COPY .agentic-seek-front/ .
 
 # Expose port
 EXPOSE 3000

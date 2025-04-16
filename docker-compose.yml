@@ -52,12 +52,12 @@ services:
   frontend:
     container_name: frontend
     build:
-      context: ./frontend/agentic-seek
+      context: ./frontend
       dockerfile: Dockerfile.frontend
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend/agentic-seek/src:/app/src
+      - ./frontend/agentic-seek-front/src:/app/src
       - ./screenshots:/app/screenshots
     environment:
       - NODE_ENV=development
