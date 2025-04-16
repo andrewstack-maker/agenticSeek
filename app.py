@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
 import os
+import uvicorn
+import aiofiles
 import configparser
+import asyncio
 from typing import List
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-import uvicorn
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -17,17 +20,17 @@ from sources.utility import pretty_print
 from sources.logger import Logger
 from sources.schemas import QueryRequest, QueryResponse
 
+from concurrent.futures import ThreadPoolExecutor
+
+from celery import Celery
+
+app = FastAPI(title="AgenticSeek API", version="0.1.0")
+celery_app = Celery("tasks", broker="redis://localhost:6379/0", backend="redis://localhost:6379/0")
+celery_app.conf.update(task_track_started=True)
+logger = Logger("backend.log")
 config = configparser.ConfigParser()
 config.read('config.ini')
-app = FastAPI(title="AgenticSeek API", version="0.1.0")
-logger = Logger("backend.log")
 
-if not os.path.exists(".screenshots"):
-    os.makedirs(".screenshots")
-
-app.mount("/screenshots", StaticFiles(directory=".screenshots"), name="screenshots")
-
-# Add CORS middleware to allow frontend requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -35,6 +38,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+if not os.path.exists(".screenshots"):
+    os.makedirs(".screenshots")
+app.mount("/screenshots", StaticFiles(directory=".screenshots"), name="screenshots")
+
+executor = ThreadPoolExecutor(max_workers=1)
 
 def initialize_system():
     stealth_mode = config.getboolean('BROWSER', 'stealth_mode')
@@ -97,31 +106,45 @@ def initialize_system():
 interaction = initialize_system()
 is_generating = False
 
+@app.get("/screenshot")
+async def get_screenshot():
+    logger.info("Screenshot endpoint called")
+    screenshot_path = ".screenshots/updated_screen.png"
+    if os.path.exists(screenshot_path):
+        return FileResponse(screenshot_path)
+    logger.error("No screenshot available")
+    return JSONResponse(
+        status_code=404,
+        content={"error": "No screenshot available"}
+    )
+
 @app.get("/health")
 async def health_check():
     logger.info("Health check endpoint called")
     return {"status": "healthy", "version": "0.1.0"}
 
-@app.get("/screenshot")
-async def get_screenshot():
-    logger.info("Screenshot endpoint called")
-    if os.path.exists(".screenshots"):
-        screenshot = interaction.current_agent.browser.get_screenshot()
-        return JSONResponse(
-            status_code=200,
-            content={"screenshot": screenshot}
-        )
-    else:
-        logger.error("No browser agent available for screenshot")
-        return JSONResponse(
-            status_code=400,
-            content={"error": "No browser agent available"}
-        )
-
 @app.get("/is_active")
 async def is_active():
     logger.info("Is active endpoint called")
     return {"is_active": interaction.is_active}
+
+def think_wrapper(interaction, query, tts_enabled):
+    try:
+        interaction.tts_enabled = tts_enabled
+        interaction.last_query = query
+        logger.info("Agents request is being processed")
+        success = interaction.think()
+        if not success:
+            interaction.last_answer = "Error: No answer from agent"
+            interaction.last_success = False
+        else:
+            interaction.last_success = True
+        return success
+    except Exception as e:
+        logger.error(f"Error in think_wrapper: {str(e)}")
+        interaction.last_answer = f"Error: {str(e)}"
+        interaction.last_success = False
+        raise e
 
 @app.post("/query", response_model=QueryResponse)
 async def process_query(request: QueryRequest):
@@ -136,49 +159,43 @@ async def process_query(request: QueryRequest):
     )
     if is_generating:
         logger.warning("Another query is being processed, please wait.")
-        return JSONResponse(
-            status_code=429,
-            content=query_resp.jsonify()
-        )
+        return JSONResponse(status_code=429, content=query_resp.jsonify())
+
     try:
-        interaction.tts_enabled = request.tts_enabled
-        interaction.last_query = request.query
-        logger.info("Agents request is being processed")
         is_generating = True
-        success = interaction.think()
+        loop = asyncio.get_running_loop()
+        success = await loop.run_in_executor(
+            executor, think_wrapper, interaction, request.query, request.tts_enabled
+        )
         is_generating = False
+
         if not success:
-            query_resp.answer = "Error: No answer from agent"
-            return JSONResponse(
-                status_code=400,
-                content=query_resp.jsonify()
-            )
+            query_resp.answer = interaction.last_answer
+            return JSONResponse(status_code=400, content=query_resp.jsonify())
+
         if interaction.current_agent:
             blocks_json = {f'{i}': block.jsonify() for i, block in enumerate(interaction.current_agent.get_blocks_result())}
         else:
             logger.error("No current agent found")
             blocks_json = {}
-            return JSONResponse(
-                status_code=400,
-                content=query_resp.jsonify()
-            )
+            query_resp.answer = "Error: No current agent"
+            return JSONResponse(status_code=400, content=query_resp.jsonify())
+
         logger.info(f"Answer: {interaction.last_answer}")
         logger.info(f"Blocks: {blocks_json}")
         query_resp.done = "true"
         query_resp.answer = interaction.last_answer
         query_resp.agent_name = interaction.current_agent.agent_name
-        query_resp.success = str(success)
+        query_resp.success = str(interaction.last_success)
         query_resp.blocks = blocks_json
         logger.info("Query processed successfully")
-        return JSONResponse(
-            status_code=200,
-            content=query_resp.jsonify()
-        )
+        return JSONResponse(status_code=200, content=query_resp.jsonify())
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")
-        if config.getboolean('MAIN', 'save_session'):
-            interaction.save_session()
-        raise e
+        is_generating = False
+        query_resp.answer = interaction.last_answer
+        query_resp.success = "false"
+        return JSONResponse(status_code=500, content=query_resp.jsonify())
     finally:
         logger.info("Processing finished")
         if config.getboolean('MAIN', 'save_session'):

@@ -39,7 +39,8 @@ function App() {
     
             const fetchScreenshot = async () => {
                 try {
-                    const res = await axios.get('http://0.0.0.0:8000/screenshots/updated_screen.png', {
+                    const timestamp = new Date().getTime();
+                    const res = await axios.get(`http://0.0.0.0:8000/screenshots/updated_screen.png?timestamp=${timestamp}`, {
                         responseType: 'blob'
                     });
                     if (isMounted) {
