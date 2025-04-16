@@ -40,8 +40,7 @@ function App() {
             const fetchScreenshot = async () => {
                 try {
                     const res = await axios.get('http://0.0.0.0:8000/screenshots/updated_screen.png', {
-                        responseType: 'blob',
-                        params: { t: new Date().getTime() }
+                        responseType: 'blob'
                     });
                     if (isMounted) {
                         console.log('Screenshot fetched successfully');

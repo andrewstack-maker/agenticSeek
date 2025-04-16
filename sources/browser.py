@@ -153,11 +153,10 @@ class Browser:
         try:
             initial_handles = self.driver.window_handles
             self.driver.get(url)
-            wait = WebDriverWait(self.driver, timeout=30)
+            wait = WebDriverWait(self.driver, timeout=10)
             wait.until(
                 lambda driver: (
-                    driver.execute_script("return document.readyState") == "complete" and
-                    not any(keyword in driver.page_source.lower() for keyword in ["checking your browser", "verifying", "captcha"])
+                    not any(keyword in driver.page_source.lower() for keyword in ["checking your browser", "captcha"])
                 ),
                 message="stuck on 'checking browser' or verification screen"
             )
@@ -591,12 +590,10 @@ if __name__ == "__main__":
     driver = create_driver(headless=False, stealth_mode=True)
     browser = Browser(driver, anticaptcha_manual_install=True)
     
-    #browser.go_to("https://github.com/Fosowl/agenticSeek")
-    #txt = browser.get_text()
-    #print(txt)
-    #browser.go_to("https://practicetestautomation.com/practice-test-login/")
     input("press enter to continue")
     print("AntiCaptcha / Form Test")
+    #browser.go_to("https://practicetestautomation.com/practice-test-login/")
+    #txt = browser.get_text()
     #browser.go_to("https://www.google.com/recaptcha/api2/demo")
     browser.go_to("https://home.openweathermap.org/users/sign_up")
     inputs_visible = browser.get_form_inputs()

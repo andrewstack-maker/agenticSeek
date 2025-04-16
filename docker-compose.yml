@@ -58,6 +58,7 @@ services:
       - "3000:3000"
     volumes:
       - ./frontend/agentic-seek/src:/app/src
+      - ./screenshots:/app/screenshots
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true  # Ensure file watching works in Docker
