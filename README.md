@@ -439,6 +439,8 @@ Unlike Manus, AgenticSeek prioritizes independence from external systems, giving
 
 We’re looking for developers to improve AgenticSeek! Check out open issues or discussion.
 
+[Contribution guide](./docs/CONTRIBUTING.md)
+
 [![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
 
 ## Maintainers:

@@ -473,6 +473,8 @@ https://googlechromelabs.github.io/chrome-for-testing/
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
 
+[Contribution guide](./docs/CONTRIBUTING.md)
+
 ## 作者:
  > [Fosowl](https://github.com/Fosowl)
  > [steveh8758](https://github.com/steveh8758) 

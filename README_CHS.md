@@ -471,6 +471,8 @@ https://googlechromelabs.github.io/chrome-for-testing/
 
 我们正在寻找开发者来改善 AgenticSeek！你可以在 Issues 查看未解决的问题或和我们讨论更酷的新功能！
 
+[Contribution guide](./docs/CONTRIBUTING.md)
+
 [![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
 
 ## 作者:
