@@ -121,7 +121,7 @@ sudo ./start_services.sh
 Lancer agenticSeek:
 
 ```sh
-python3 main.py
+python3 cli.py
 ```
 
 Voyez la section **Utilisation** si vous ne comprenez pas comment l’utiliser
@@ -136,11 +136,11 @@ Voyez la section **Configuration** pour une explication détaillée du fichier d
 
 ## Utilisation
 
-Assurez-vous que les services sont en cours d’exécution avec ./start_services.sh et lancez AgenticSeek avec python3 main.py
+Assurez-vous que les services sont en cours d’exécution avec ./start_services.sh et lancez AgenticSeek avec python3 cli.py
 
 ```sh
 sudo ./start_services.sh
-python3 main.py
+python3 cli.py
 ```
 
 Vous verrez un prompt: ">>> "
@@ -255,7 +255,7 @@ Exécutez l’assistant :
 
 ```sh
 sudo ./start_services.sh
-python3 main.py
+python3 cli.py
 ```
 
 ## **Exécuter avec une API**  
@@ -278,7 +278,7 @@ Exécutez l’assistant :
 
 ```sh
 sudo ./start_services.sh
-python3 main.py
+python3 cli.py
 ```
 
 ## Config
@@ -297,6 +297,7 @@ speak = False
 listen = False
 work_dir =  /Users/mlg/Documents/ai_folder
 jarvis_personality = False
+languages = en fr
 [BROWSER]
 headless_browser = False
 stealth_mode = False
@@ -330,6 +331,7 @@ stealth_mode = False
 
 `stealth_mode` -> Rend la détection des bots plus difficile. Le seul inconvénient est que vous devez installer manuellement l’extension anticaptcha.
 
+`languages` -> La liste de languages supportés (nécessaire pour le routage d'agents). Plus la liste est longue. Plus un nombre important de modèles sera téléchargés.
 
 ## Providers
 

@@ -125,7 +125,7 @@ start ./start_services.cmd # Window
 Run the assistant:
 
 ```sh
-python3 main.py
+python3 cli.py
 ```
 
 *See the **Usage** section if you don't understand how to use it*
@@ -144,7 +144,7 @@ Make sure the services are up and running with `./start_services.sh` and run the
 
 ```sh
 sudo ./start_services.sh
-python3 main.py
+python3 cli.py
 ```
 
 You will be prompted with `>>> `
@@ -259,7 +259,7 @@ Run the assistant:
 
 ```sh
 sudo ./start_services.sh # start_services.cmd on windows
-python3 main.py
+python3 cli.py
 ```
 
 ## **Run with an API**  
@@ -284,7 +284,7 @@ Run the assistant:
 
 ```sh
 sudo ./start_services.sh # start_services.cmd on windows
-python3 main.py
+python3 cli.py
 ```
 
 ---
@@ -338,19 +338,34 @@ stealth_mode = False
 **Explanation**:
 
 - is_local -> Runs the agent locally (True) or on a remote server (False).
+
 - provider_name -> The provider to use (one of: `ollama`, `server`, `lm-studio`, `deepseek-api`)
+
 - provider_model -> The model used, e.g., deepseek-r1:32b.
+
 - provider_server_address -> Server address, e.g., 127.0.0.1:11434 for local. Set to anything for non-local API.
+
 - agent_name -> Name of the agent, e.g., Friday. Used as a trigger word for TTS.
+
 - recover_last_session -> Restarts from last session (True) or not (False).
+
 - save_session -> Saves session data (True) or not (False).
+
 - speak -> Enables voice output (True) or not (False).
+
 - listen -> listen to voice input (True) or not (False).
+
 - work_dir -> Folder the AI will have access to. eg: /Users/user/Documents/.
+
 - jarvis_personality -> Uses a JARVIS-like personality (True) or not (False). This simply change the prompt file.
+
 - languages -> The list of supported language, needed for the llm router to work properly, avoid putting too many or too similar languages.
+
 - headless_browser -> Runs browser without a visible window (True) or not (False).
+
 - stealth_mode -> Make bot detector time harder. Only downside is you have to manually install the anticaptcha extension.
+
+- languages -> List of supported languages. Required for agent routing system. The longer the languages list the more model will be downloaded.
 
 ## Providers
 
@@ -421,7 +436,7 @@ If this section is incomplete please raise an issue.
 
 Deepseek R1 excels at reasoning and tool use for its size. We think it’s a solid fit for our needs other models work fine, but Deepseek is our primary pick.
 
-**Q: I get an error running `main.py`. What do I do?**  
+**Q: I get an error running `cli.py`. What do I do?**  
 
 Ensure Ollama is running (`ollama serve`), your `config.ini` matches your provider, and dependencies are installed. If none work feel free to raise an issue.
 

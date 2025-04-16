@@ -127,7 +127,7 @@ start ./start_services.cmd # Window
 運行 AgenticSeek:
 
 ```sh
-python3 main.py
+python3 cli.py
 ```
 
 *如果你不知道如何開始，請參閱 **Usage** 部分*
@@ -143,11 +143,11 @@ python3 main.py
 
 ## Usage （使用方法）
 
-確定所有的核心檔案都啟用了，也就是執行過這條命令 `./start_services.sh` 然後你就可以使用 `python3 main.py` 來啟動 AgenticSeek 了！
+確定所有的核心檔案都啟用了，也就是執行過這條命令 `./start_services.sh` 然後你就可以使用 `python3 cli.py` 來啟動 AgenticSeek 了！
 
 ```sh
 sudo ./start_services.sh
-python3 main.py
+python3 cli.py
 ```
 
 當你看到執行後顯示 `>>> `
@@ -264,7 +264,7 @@ provider_server_address = x.x.x.x:3333
 
 ```sh
 sudo ./start_services.sh
-python3 main.py
+python3 cli.py
 ```
 
 ## **Run with an API （透過 API 執行）**
@@ -289,7 +289,7 @@ provider_server_address = 127.0.0.1:5000
 
 ```sh
 sudo ./start_services.sh
-python3 main.py
+python3 cli.py
 ```
 
 ---
@@ -379,6 +379,8 @@ stealth_mode = False
     - False：背景執行瀏覽器。
 - stealth_mode
     -  隱私模式，但需要你自己安裝反爬蟲擴充功能。
+- languages
+    -  支持的语言列表。用于代理路由系统。语言列表越长，下载的模型越多。
 
 ## 框架
 
