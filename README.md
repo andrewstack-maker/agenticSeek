@@ -115,7 +115,7 @@ provider_server_address = 127.0.0.1:11434
 |-----------|--------|-----------------------------------------------------------|
 | ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
 | lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
-| openai    | No     |  Use API compatible  |
+| openai    | Yes     |  Use API compatible  |
 
 start all services :
 
@@ -217,8 +217,6 @@ ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
 ```
 
 Note: For Windows or macOS, use ipconfig or ifconfig respectively to find the IP address.
-
-**If you wish to use openai based provider follow the *Run with an API*  section.**
 
 Clone the repository and enter the `server/`folder.
 

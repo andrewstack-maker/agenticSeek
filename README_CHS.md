@@ -16,11 +16,11 @@
 
 https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
-> *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
+> *在大阪和東京深入搜尋人工智慧新創公司，至少找到 5 家，然後儲存在 research_japan.txt 檔案中*
 
-> *Can you make a tetris game in C ?*
+> *你可以用 C 語言製作俄羅斯方塊遊戲嗎？*
 
-> *I would like to setup a new project file index as mark2.*
+> *我想設定一個新的專案檔案索引，命名為 mark2。*
 
 
 ## Features:
