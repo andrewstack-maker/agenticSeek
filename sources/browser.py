@@ -46,8 +46,13 @@ def get_chrome_path() -> str:
             return path
     print("Looking for Google Chrome in these locations failed:")
     print('\n'.join(paths))
+    chrome_path_env = os.environ.get("CHROME_EXECUTABLE_PATH")
+    if chrome_path_env and os.path.exists(chrome_path_env) and os.access(chrome_path_env, os.X_OK):
+        return chrome_path_env
     path = input("Google Chrome not found. Please enter the path to the Chrome executable: ")
     if os.path.exists(path) and os.access(path, os.X_OK):
+        os.environ["CHROME_EXECUTABLE_PATH"] = path
+        print(f"Chrome path saved to environment variable CHROME_EXECUTABLE_PATH")
         return path
     return None
 
