@@ -330,6 +330,7 @@ speak = False
 listen = False
 work_dir =  /Users/mlg/Documents/ai_folder
 jarvis_personality = False
+languages = en zh
 [BROWSER]
 headless_browser = False
 stealth_mode = False

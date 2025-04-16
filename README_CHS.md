@@ -143,6 +143,10 @@ python3 cli.py
 
 ## Usage （使用方法）
 
+为确保 agenticSeek 在中文环境下正常工作，请确保在 config.ini 中设置语言选项。
+languages = en zh
+更多信息请参阅 Config 部分
+
 确定所有的核心档案都启用了，也就是执行过这条命令 `./start_services.sh` 然后你就可以使用 `python3 cli.py` 来启动 AgenticSeek 了！
 
 ```sh
@@ -335,6 +339,7 @@ speak = False
 listen = False
 work_dir = /Users/mlg/Documents/ai_folder
 jarvis_personality = False
+languages = en zh
 [BROWSER]
 headless_browser = False
 stealth_mode = False
