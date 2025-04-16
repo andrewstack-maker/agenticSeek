@@ -254,7 +254,7 @@ def execute_modules(self, answer: str) -> Tuple[bool, str]:
 ## 1. Agent selection logic
 
 <p align="center">
-<img align="center" src="./docs/technical/routing_system.png">
+<img align="center" src="./technical/routing_system.png">
 <p>
 
 The agent selection is done in 4 steps:
@@ -271,7 +271,7 @@ The agent selection is done in 4 steps:
 ### File/Code agents
 
 <p align="center">
-<img align="center" src="./docs/technical/code_agent.png">
+<img align="center" src="./technical/code_agent.png">
 <p>
 
 The File and Code agents operate similarly: when a prompt is submitted, they initiate a loop between the LLM and a code interpreter. This loop continues executing commands or code until the execution is successful or the maximum number of attempts is reached.
@@ -279,7 +279,7 @@ The File and Code agents operate similarly: when a prompt is submitted, they ini
 ### Web agent
 
 <p align="center">
-<img align="center" src="./docs/technical/web_agent.png">
+<img align="center" src="./technical/web_agent.png">
 <p>
 
 The Web agent controls a Selenium-driven browser. Upon receiving a query, it begins by generating an optimized search prompt and executing the web_search tool. It then enters a navigation loop, during which it:
