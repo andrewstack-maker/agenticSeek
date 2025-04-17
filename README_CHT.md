@@ -84,7 +84,7 @@ python3 setup.py install
 
 **建議至少使用 Deepseek 14B 以上參數的模型，較小的模型難以使用助理功能並且很快就會忘記上下文之間的關係。**
 
-### **本地运行助手**
+**本地运行助手**
 
 启动你的本地提供者，例如使用 ollama：
 
@@ -114,8 +114,34 @@ provider_server_address = 127.0.0.1:11434
 | lm-studio   | 是     | 使用 LM Studio 本地运行 LLM（将 `provider_name` 设置为 `lm-studio`）|
 | openai      | 否     | 使用兼容的 API                                        |
 
+下一步： [Start services and run AgenticSeek](#Start-services-and-Run)  
 
-### **启动服务并运行**
+---
+
+## **Run with an API （透過 API 執行）**
+
+設定 `config.ini`。
+
+```sh
+[MAIN]
+is_local = False
+provider_name = openai
+provider_model = gpt-4o
+provider_server_address = 127.0.0.1:5000
+```
+
+警告：確保 `config.ini` 沒有行尾空格。
+
+如果使用基於本機的 openai-based api 則把 `is_local` 設定為 `True`。
+
+同時更改你的 IP 為 openai-based api 的 IP。
+
+下一步： [Start services and run AgenticSeek](#Start-services-and-Run)  
+
+---
+
+## Start services and Run
+(启动服务并运行)
 
 如果需要，请激活你的 Python 环境。
 ```sh
@@ -152,13 +178,6 @@ python3 api.py
 
 
 *如果你不知道如何開始，請參閱 **Usage** 部分*
-
-*如果遇到問題，請先參考 **Known issues** 部分*
-
-
-*如果你的電腦無法在本機運行 deepseek，也許你可以試看看 API 的方式，參見 **Run with an API***
-
-*有關設定檔的詳細解釋，請參閱 **Config** 部分。*
 
 ---
 
@@ -231,31 +250,6 @@ python3 cli.py
 
 ---
 
-
-## **Run with an API （透過 API 執行）**
-
-設定 `config.ini`。
-
-```sh
-[MAIN]
-is_local = False
-provider_name = openai
-provider_model = gpt-4o
-provider_server_address = 127.0.0.1:5000
-```
-
-警告：確保 `config.ini` 沒有行尾空格。
-
-如果使用基於本機的 openai-based api 則把 `is_local` 設定為 `True`。
-
-同時更改你的 IP 為 openai-based api 的 IP。
-
-執行 AgenticSeek：
-
-```sh
-sudo ./start_services.sh
-python3 cli.py
-```
 
 ---
 

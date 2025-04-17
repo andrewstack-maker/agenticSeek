@@ -159,7 +159,7 @@ Next step: [Start services and run AgenticSeek](#Start-services-and-Run)
 
 ## Start services and Run
 
-Activate you python env if needed.
+Activate your python env if needed.
 ```sh
 source agentic_seek_env/bin/activate
 ```
@@ -196,7 +196,7 @@ Please note that the Web interface doesn't stream messages at the moment.
 
 ## Usage
 
-Make sure the services are up and running with `./start_services.sh` and run the agenticSeek with `python3 main.py`
+Make sure the services are up and running with `./start_services.sh` and run the AgenticSeek with `python3 main.py`
 
 ```sh
 sudo ./start_services.sh
@@ -204,7 +204,7 @@ python3 cli.py
 ```
 
 You will be prompted with `>>> `
-This indicate agenticSeek await you type for instructions.
+This indicate AgenticSeek await you type for instructions.
 You can also use speech to text by setting `listen = True` in the config.
 
 To exit, simply say `goodbye`.
@@ -223,7 +223,7 @@ Here are some example usage:
 
 > *Do a web search to find cool tech startup in Japan working on cutting edge AI research*
 
-> *Can you find on the internet who created agenticSeek?*
+> *Can you find on the internet who created AgenticSeek?*
 
 > *Can you use a fuel calculator online to estimate the cost of a Nice - Milan trip*
 
@@ -244,7 +244,7 @@ Here are some example usage:
 > *What's the best workout routine ?*
 
 
-After you type your query, agenticSeek will allocate the best agent for the task.
+After you type your query, AgenticSeek will allocate the best agent for the task.
 
 Because this is an early prototype, the agent routing system might not always allocate the right agent based on your query.
 
