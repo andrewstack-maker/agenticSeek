@@ -43,7 +43,7 @@ https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 ---
 
-## **Installation**
+## Installation
 
 Make sure you have chrome driver, docker and python3.10 (or newer) installed.
 
@@ -81,13 +81,14 @@ pip3 install -r requirements.txt
 python3 setup.py install
 ```
 
+---
 
-## Run locally on your machine
+## Setup for running LLM locally on your machine
 
 **We recommend using at the very least Deepseek 14B, smaller models will struggle with tasks especially for web browsing.**
 
 
-###  **Setup you local provider**  
+**Setup your local provider**  
 
 Start your local provider, for example with ollama:
 
@@ -96,6 +97,8 @@ ollama serve
 ```
 
 See below for a list of local supported provider.
+
+**Update the config.ini**
 
 Change the config.ini file to set the provider_name to a supported provider and provider_model to `deepseek-r1:14b`
 
@@ -117,7 +120,44 @@ provider_server_address = 127.0.0.1:11434
 | lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
 | openai    | Yes     |  Use API compatible  |
 
-### **Start services & Run**
+
+Next step: [Start services and run AgenticSeek](#Start-services-and-Run)  
+
+*See the **Known issues** section if you are having issues*
+
+*See the **Run with an API** section if your hardware can't run deepseek locally*
+
+*See the **Config** section for detailled config file explanation.*
+
+---
+
+## Setup to run with an API
+
+Set the desired provider in the `config.ini`
+
+```sh
+[MAIN]
+is_local = False
+provider_name = openai
+provider_model = gpt-4o
+provider_server_address = 127.0.0.1:5000
+```
+
+WARNING: Make sure there is not trailing space in the config.
+
+Set `is_local` to True if using a local openai-based api.
+
+Change the IP address if your openai-based api run on your own server.
+
+Next step: [Start services and run AgenticSeek](#Start-services-and-Run)
+
+*See the **Known issues** section if you are having issues*
+
+*See the **Config** section for detailled config file explanation.*
+
+---
+
+## Start services and Run
 
 Activate you python env if needed.
 ```sh
@@ -151,15 +191,6 @@ python3 api.py
 Go to `http://localhost:3000/` and you should see the web interface.
 
 Please note that the Web interface doesn't stream messages at the moment.
-
-
-*See the **Usage** section if you don't understand how to use it*
-
-*See the **Known issues** section if you are having issues*
-
-*See the **Run with an API** section if your hardware can't run deepseek locally*
-
-*See the **Config** section for detailled config file explanation.*
 
 ---
 
@@ -227,11 +258,9 @@ Instead, ask:
 
 ---
 
-## **Run the LLM on your own server**  
+## **Bonus: Setup to run the LLM on your own server**  
 
 If you have a powerful computer or a server that you can use, but you want to use it from your laptop you have the options to run the LLM on a remote server. 
-
-### 1️⃣  **Set up and start the server scripts** 
 
 On your "server" that will run the AI model, get the ip address
 
@@ -263,7 +292,6 @@ python3 app.py --provider ollama --port 3333
 
 You have the choice between using `ollama` and `llamacpp` as a LLM service.
 
-### 2️⃣ **Run it** 
 
 Now on your personal computer:
 
@@ -278,37 +306,7 @@ provider_model = deepseek-r1:14b
 provider_server_address = x.x.x.x:3333
 ```
 
-Run the assistant:
-
-```sh
-sudo ./start_services.sh # start_services.cmd on windows
-python3 cli.py
-```
-
-## **Run with an API**  
-
-Set the desired provider in the `config.ini`
-
-```sh
-[MAIN]
-is_local = False
-provider_name = openai
-provider_model = gpt-4o
-provider_server_address = 127.0.0.1:5000
-```
-
-WARNING: Make sure there is not trailing space in the config.
-
-Set `is_local` to True if using a local openai-based api.
-
-Change the IP address if your openai-based api run on your own server.
-
-Run the assistant:
-
-```sh
-sudo ./start_services.sh # start_services.cmd on windows
-python3 cli.py
-```
+Next step: [Start services and run AgenticSeek](#Start-services-and-Run)  
 
 ---
 

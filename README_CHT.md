@@ -231,6 +231,34 @@ python3 cli.py
 
 ---
 
+
+## **Run with an API （透過 API 執行）**
+
+設定 `config.ini`。
+
+```sh
+[MAIN]
+is_local = False
+provider_name = openai
+provider_model = gpt-4o
+provider_server_address = 127.0.0.1:5000
+```
+
+警告：確保 `config.ini` 沒有行尾空格。
+
+如果使用基於本機的 openai-based api 則把 `is_local` 設定為 `True`。
+
+同時更改你的 IP 為 openai-based api 的 IP。
+
+執行 AgenticSeek：
+
+```sh
+sudo ./start_services.sh
+python3 cli.py
+```
+
+---
+
 ## **在本地執行屬於你的 LLM 伺服器** 
 
 如果你有一台功能強大的電腦或伺服器，但你想透過筆記型電腦使用它，那麼你可以選擇在遠端伺服器上執行 LLM。
@@ -285,37 +313,6 @@ provider_model = deepseek-r1:14b
 provider_server_address = x.x.x.x:3333
 ```
 
-執行 AgenticSeek：
-
-```sh
-sudo ./start_services.sh
-python3 cli.py
-```
-
-## **Run with an API （透過 API 執行）**
-
-設定 `config.ini`。
-
-```sh
-[MAIN]
-is_local = False
-provider_name = openai
-provider_model = gpt-4o
-provider_server_address = 127.0.0.1:5000
-```
-
-警告：確保 `config.ini` 沒有行尾空格。
-
-如果使用基於本機的 openai-based api 則把 `is_local` 設定為 `True`。
-
-同時更改你的 IP 為 openai-based api 的 IP。
-
-執行 AgenticSeek：
-
-```sh
-sudo ./start_services.sh
-python3 cli.py
-```
 
 ---
 
