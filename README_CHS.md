@@ -115,19 +115,41 @@ provider_server_address = 127.0.0.1:11434
 | lm-studio   | 是     | 使用 LM Studio 本地运行 LLM（将 `provider_name` 设置为 `lm-studio`）|
 | openai      | 否     | 使用兼容的 API                                        |
 
-启动所有服务：
+
+### **启动服务并运行**
+
+如果需要，请激活你的 Python 环境。
+```sh
+source agentic_seek_env/bin/activate
+```
+
+启动所需的服务。这将启动 `docker-compose.yml` 中的所有服务，包括：
+- searxng
+- redis（由 redis 提供支持）
+- 前端
 
 ```sh
 sudo ./start_services.sh # MacOS
 start ./start_services.cmd # Windows
 ```
 
-运行助手：
+**选项 1:** 使用 CLI 界面运行。
 
 ```sh
 python3 cli.py
 ```
 
+**选项 2:** 使用 Web 界面运行。
+
+启动后端服务。
+
+```sh
+python3 api.py
+```
+
+访问 `http://localhost:3000/`，你应该会看到 Web 界面。
+
+请注意，目前 Web 界面不支持消息流式传输。
 
 
 *如果你不知道如何开始，请参阅 **Usage** 部分*
@@ -447,6 +469,16 @@ https://googlechromelabs.github.io/chrome-for-testing/
 | 14B        | 12GB VRAM（例如 RTX 3060） | ✅ 可用于简单任务。可能在网页浏览和规划任务上表现较弱。 |
 | 32B        | 24GB+ VRAM（例如 RTX 4090） | 🚀 能完成大多数任务，但在任务规划上可能仍有困难。 |
 | 70B+        | 48GB+ VRAM（例如 Mac Studio） | 💪 表现优秀。推荐用于高级用例。 |
+
+**Q: 是否支持中文以外的语言？**
+
+DeepSeek R1 天生会说中文
+
+但注意：代理路由系统只懂英文，所以必须通过 config.ini 的 languages 参数（如 languages = en zh）告诉系统：
+
+如果不设置中文？后果可能是：你让它写代码，结果跳出来个"医生代理"（虽然我们根本没有这个代理... 但系统会一脸懵圈！）
+
+实际上会下载一个小型翻译模型来协助任务分配
 
 **Q：为什么选择 Deepseek R1 而不是其他模型？**
 

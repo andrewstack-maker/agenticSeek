@@ -108,23 +108,48 @@ provider_server_address = 127.0.0.1:11434
 | lm-studio   | Oui     | Exécutez un LLM localement avec LM studio (définissez `provider_name` sur `lm-studio`) |
 | openai      | Oui     | Utilisez une API local compatible avec openai |
 
-démarrer tous les services :
 
+### **Démarrer les services & Exécuter**
+
+Activez votre environnement Python si nécessaire.
 ```sh
-sudo ./start_services.sh
+source agentic_seek_env/bin/activate
 ```
 
-Lancer agenticSeek:
+Démarrez les services requis. Cela lancera tous les services définis dans le fichier docker-compose.yml, y compris :
+    - searxng
+    - redis (nécessaire pour searxng)
+    - frontend
+
+```sh
+sudo ./start_services.sh # MacOS
+start ./start_services.cmd # Windows
+```
+
+**Option 1 :** Exécuter avec l'interface CLI.
 
 ```sh
 python3 cli.py
 ```
 
+**Option 2 :** Exécuter avec l'interface Web.
+
+Démarrez le backend.
+
+```sh
+python3 api.py
+```
+
+Allez sur `http://localhost:3000/` et vous devriez voir l'interface web.
+
+Veuillez noter que l'interface web ne diffuse pas les messages en continu pour le moment.
+
+
 Voyez la section **Utilisation** si vous ne comprenez pas comment l’utiliser
 
 Voyez la section **Problèmes** connus si vous rencontrez des problèmes
 
-Voyez la section **Exécuter** avec une API si votre matériel ne peut pas exécuter DeepSeek localement
+Voyez la section **Exécuter avec une API** si votre matériel ne peut pas exécuter DeepSeek localement
 
 Voyez la section **Configuration** pour une explication détaillée du fichier de configuration.
 
@@ -245,12 +270,7 @@ provider_model = deepseek-r1:14b
 provider_server_address = x.x.x.x:3333
 ```
 
-Exécutez l’assistant :
-
-```sh
-sudo ./start_services.sh
-python3 cli.py
-```
+Ensuite, exécutez avec le CLI ou l'interface graphique comme expliqué dans la section pour les fournisseurs locaux.
 
 ## **Exécuter avec une API**  
 
@@ -268,12 +288,7 @@ provider_model = gpt-4o
 provider_server_address = 127.0.0.1:5000
 ```
 
-Exécutez l’assistant :
-
-```sh
-sudo ./start_services.sh
-python3 cli.py
-```
+Ensuite, exécutez avec le CLI ou l'interface graphique comme expliqué dans la section pour les fournisseurs locaux.
 
 ## Config
 

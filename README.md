@@ -87,7 +87,7 @@ python3 setup.py install
 **We recommend using at the very least Deepseek 14B, smaller models will struggle with tasks especially for web browsing.**
 
 
-###  **Run the Assistant (Locally)**  
+###  **Setup you local provider**  
 
 Start your local provider, for example with ollama:
 
@@ -117,18 +117,41 @@ provider_server_address = 127.0.0.1:11434
 | lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
 | openai    | Yes     |  Use API compatible  |
 
-start all services :
+### **Start services & Run**
+
+Activate you python env if needed.
+```sh
+source agentic_seek_env/bin/activate
+```
+
+Start required services. This will start all services from the docker-compose.yml, including:
+    - searxng
+    - redis (required by searxng)
+    - frontend
 
 ```sh
 sudo ./start_services.sh # MacOS
 start ./start_services.cmd # Window
 ```
 
-Run the assistant:
+**Options 1:** Run with the CLI interface.
 
 ```sh
 python3 cli.py
 ```
+
+**Options 2:** Run with the Web interface.
+
+Start the backend.
+
+```sh
+python3 api.py
+```
+
+Go to `http://localhost:3000/` and you should see the web interface.
+
+Please note that the Web interface doesn't stream messages at the moment.
+
 
 *See the **Usage** section if you don't understand how to use it*
 
