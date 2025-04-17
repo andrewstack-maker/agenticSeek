@@ -95,7 +95,7 @@ server:
   # If your instance owns a /etc/searxng/settings.yml file, then set the following
   # values there.
 
-  secret_key: "a0f32049a2301f36ef012b9b7ef62733b4af1379a1d28d5c33d92cea37288182"  # Is overwritten by ${SEARXNG_SECRET}
+  secret_key: "1234bbd68b6c51ff0b9ccb77e39b1f20a3178b63e71496cbc89ef019f0341382"  # Is overwritten by ${SEARXNG_SECRET}
   # Proxy image results through SearXNG. Is overwritten by ${SEARXNG_IMAGE_PROXY}
   image_proxy: false
   # 1.0 and 1.1 are supported
@@ -2640,6 +2640,12 @@ engines:
   - name: pkg.go.dev
     engine: pkg_go_dev
     shortcut: pgo
+    disabled: true
+
+  - name: senscritique
+    engine: senscritique
+    shortcut: scr
+    timeout: 4.0
     disabled: true
 
 # Doku engine lets you access to any Doku wiki instance:

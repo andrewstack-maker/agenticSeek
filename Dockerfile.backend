@@ -27,10 +27,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY api.py .
 COPY sources/ ./sources/
 COPY prompts/ ./prompts/
+COPY crx/ crx/
+COPY llm_router/ llm_router/
+COPY .env .
 COPY config.ini .
 
 # Expose port
 EXPOSE 8000
 
 # Run the application
-CMD ["uvicorn", "api:api", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python3", "api.py"]

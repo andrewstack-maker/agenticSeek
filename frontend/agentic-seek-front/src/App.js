@@ -19,7 +19,7 @@ function App() {
 
     const checkHealth = async () => {
         try {
-            await axios.get('http://0.0.0.0:8000/health');
+            await axios.get('http://backend:8000/health');
             setIsOnline(true);
             console.log('System is online');
         } catch {
@@ -39,7 +39,7 @@ function App() {
             const fetchScreenshot = async () => {
                 try {
                     const timestamp = new Date().getTime();
-                    const res = await axios.get(`http://0.0.0.0:8000/screenshots/updated_screen.png?timestamp=${timestamp}`, {
+                    const res = await axios.get(`http://backend:8000/screenshots/updated_screen.png?timestamp=${timestamp}`, {
                         responseType: 'blob'
                     });
                     if (isMounted) {
@@ -94,7 +94,7 @@ function App() {
 
         try {
             console.log('Sending query:', query);
-            const res = await axios.post('http://0.0.0.0:8000/query', {
+            const res = await axios.post('http://backend:8000/query', {
                 query,
                 tts_enabled: false
             });

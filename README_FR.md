@@ -383,13 +383,14 @@ Et téléchargez la version de chromedriver correspondant à votre système d’
 Si cette section est incomplète, merci de faire une nouvelle issue sur github.
 
 ## FAQ
+**Q: Quel matériel est nécessaire ?**  
 
-**Q: J'ai besoin d'un gros PC?**  
-
-ça dépend du modèle!
-Pour un modèle 7B : GPU avec 8 Go de VRAM.
-Pour un modèle 14B : GPU 12 Go (par exemple, RTX 3060).
-Et un modèle 32B : 24 Go+ de VRAM.
+| Taille du Modèle  | GPU  | Commentaire                                               |
+|--------------------|------|----------------------------------------------------------|
+| 7B                | 8 Go VRAM | ⚠️ Non recommandé. Performances médiocres, hallucinations fréquentes, et l'agent planificateur échouera probablement. |
+| 14B               | 12 Go VRAM (par ex. RTX 3060) | ✅ Utilisable pour des tâches simples. Peut rencontrer des difficultés avec la navigation web et les tâches de planification. |
+| 32B               | 24+ Go VRAM (par ex. RTX 4090) | 🚀 Réussite avec la plupart des tâches, peut encore avoir des difficultés avec la planification des tâches. |
+| 70B+              | 48+ Go VRAM (par ex. Mac Studio) | 💪 Excellent. Recommandé pour des cas d'utilisation avancés. |
 
 **Q: Pourquoi deepseek et pas un autre modèle**  
 

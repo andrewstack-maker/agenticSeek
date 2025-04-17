@@ -24,14 +24,14 @@ from concurrent.futures import ThreadPoolExecutor
 
 from celery import Celery
 
-app = FastAPI(title="AgenticSeek API", version="0.1.0")
+api = FastAPI(title="AgenticSeek API", version="0.1.0")
 celery_app = Celery("tasks", broker="redis://localhost:6379/0", backend="redis://localhost:6379/0")
 celery_app.conf.update(task_track_started=True)
 logger = Logger("backend.log")
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-app.add_middleware(
+api.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
@@ -41,7 +41,7 @@ app.add_middleware(
 
 if not os.path.exists(".screenshots"):
     os.makedirs(".screenshots")
-app.mount("/screenshots", StaticFiles(directory=".screenshots"), name="screenshots")
+api.mount("/screenshots", StaticFiles(directory=".screenshots"), name="screenshots")
 
 executor = ThreadPoolExecutor(max_workers=1)
 
@@ -106,7 +106,7 @@ def initialize_system():
 interaction = initialize_system()
 is_generating = False
 
-@app.get("/screenshot")
+@api.get("/screenshot")
 async def get_screenshot():
     logger.info("Screenshot endpoint called")
     screenshot_path = ".screenshots/updated_screen.png"
@@ -118,12 +118,12 @@ async def get_screenshot():
         content={"error": "No screenshot available"}
     )
 
-@app.get("/health")
+@api.get("/health")
 async def health_check():
     logger.info("Health check endpoint called")
     return {"status": "healthy", "version": "0.1.0"}
 
-@app.get("/is_active")
+@api.get("/is_active")
 async def is_active():
     logger.info("Is active endpoint called")
     return {"is_active": interaction.is_active}
@@ -146,7 +146,7 @@ def think_wrapper(interaction, query, tts_enabled):
         interaction.last_success = False
         raise e
 
-@app.post("/query", response_model=QueryResponse)
+@api.post("/query", response_model=QueryResponse)
 async def process_query(request: QueryRequest):
     global is_generating
     logger.info(f"Processing query: {request.query}")
@@ -199,4 +199,4 @@ async def process_query(request: QueryRequest):
             interaction.save_session()
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(api, host="0.0.0.0", port=8000)
