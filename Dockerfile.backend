@@ -1,24 +1,32 @@
-FROM python:3.10
+FROM ubuntu:22.04
+# Warning: doesn't work yet, backend is run on host machine for now
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    gfortran \
-    libportaudio2 \
-    portaudio19-dev \
-    ffmpeg \
-    libavcodec-dev \
-    libavformat-dev \
-    libavutil-dev \
-    chromium \
-    chromium-driver \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -qq -y && \
+apt-get install -y \
+        gcc \
+        g++ \
+        gfortran \
+        libportaudio2 \
+        portaudio19-dev \
+        ffmpeg \
+        libavcodec-dev \
+        libavformat-dev \
+        libavutil-dev \
+        gnupg2 \
+        wget \
+        unzip \
+        python3 \
+        python3-pip \
+        libasound2 \
+        libatk-bridge2.0-0 \
+        libgtk-4-1 \
+        libnss3 \
+        xdg-utils \
+        wget && \
 
-RUN pip cache purge
-
+RUN chmod +x /opt/chrome/chrome
 # Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

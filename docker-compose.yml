@@ -66,46 +66,36 @@ services:
     networks:
       - agentic-seek-net
   
-  backend:
-    container_name: backend
-    build:
-      context: ./
-      dockerfile: Dockerfile.backend
-    stdin_open: true
-    tty: true
-    shm_size: 6g
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./:/app
-    #network_mode: host
-    environment:
-      - NODE_ENV=development
-      - REDIS_URL=redis://redis:6379/0
-      - SEARXNG_URL=http://searxng:8080
-      - OLLAMA_URL=http://localhost:11434
-      - LM_STUDIO_URL=http://localhost:1234
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    depends_on:
-      - redis
-      - searxng
-      - selenium
-    networks:
-      - agentic-seek-net
-  
-  selenium:
-    image: selenium/standalone-chrome
-    platform: linux/amd64
-    shm_size: 2g
-    volumes:
-      - /dev/shm:/dev/shm
-      - chrome_profiles:/tmp/chrome
-    ports:
-      - 4444:4444
-    networks:
-      - agentic-seek-net
+  # NOTE: backend service is not working yet due to issue with chromedriver on docker.
+  # Therefore backend is run on host machine.
+  # Open to pull requests to fix this.
 
+  #backend:
+  #  container_name: backend
+  #  build:
+  #    context: ./
+  #    dockerfile: Dockerfile.backend
+  #  stdin_open: true
+  #  tty: true
+  #  shm_size: 8g
+  #  ports:
+  #    - "8000:8000"
+  #  volumes:
+  #    - ./:/app
+  #  environment:
+  #    - NODE_ENV=development
+  #    - REDIS_URL=redis://redis:6379/0
+  #    - SEARXNG_URL=http://searxng:8080
+  #    - OLLAMA_URL=http://localhost:11434
+  #    - LM_STUDIO_URL=http://localhost:1234
+  #  extra_hosts:
+  #    - "host.docker.internal:host-gateway"
+  #  depends_on:
+  #    - redis
+  #    - searxng
+  #  networks:
+  #    - agentic-seek-net
+  
 volumes:
   redis-data:
   chrome_profiles:

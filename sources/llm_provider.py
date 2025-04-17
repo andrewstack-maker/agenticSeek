@@ -53,10 +53,8 @@ class Provider:
         api_key_var = f"{provider.upper()}_API_KEY"
         api_key = os.getenv(api_key_var)
         if not api_key:
-            api_key = input(f"Please enter your {provider} API key: ")
-            set_key(".env", api_key_var, api_key)
-            self.logger.info("Set API key in env.")
-            load_dotenv()
+            pretty_print(f"API key {api_key_var} not found in .env file. Please add it", color="warning")
+            exit(1)
         return api_key
 
     def check_address_format(self, address):

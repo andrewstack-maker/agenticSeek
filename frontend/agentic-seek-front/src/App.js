@@ -122,7 +122,7 @@ function App() {
     const handleGetScreenshot = async () => {
         try {
             console.log('Fetching screenshot...');
-            const res = await axios.get('http://0.0.0.0:8000/screenshots/updated_screen.png');
+            const res = await axios.get('http://backend:8000/screenshots/updated_screen.png');
             setResponseData((prev) => ({ ...prev, screenshot: res.data.screenshot }));
             setCurrentView('screenshot');
         } catch (err) {
