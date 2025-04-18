@@ -78,7 +78,6 @@ class Agent():
     def get_tools(self) -> dict:
         return self.tools
     
-    @property
     def get_blocks_result(self) -> list:
         return self.blocks_result
 

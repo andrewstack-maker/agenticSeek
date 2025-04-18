@@ -10,7 +10,7 @@ function App() {
     const [currentView, setCurrentView] = useState('blocks');
     const [responseData, setResponseData] = useState(null);
     const [isOnline, setIsOnline] = useState(false);
-    const [status, setStatus] = useState('No agent working.');
+    const [status, setStatus] = useState('Agents ready');
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
@@ -72,7 +72,7 @@ function App() {
             const res = await axios.get('http://0.0.0.0:8000/latest_answer');
             const data = res.data;
             const answerExists = messages.some(
-                (msg) => msg.timestamp === data.timestamp || data.answer != undefined
+                (msg) => msg.timestamp === data.timestamp || data.answer === undefined
             );
             if (!answerExists) {
                 setMessages((prev) => [
