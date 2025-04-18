@@ -175,7 +175,7 @@ async def process_query(request: QueryRequest):
         agent_name="Unknown",
         success="false",
         blocks={},
-        status="No agent working.",
+        status="Agent working...",
         timestamp=str(time.time())
     )
     if is_generating:

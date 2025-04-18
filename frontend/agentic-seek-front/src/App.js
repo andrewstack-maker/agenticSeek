@@ -14,13 +14,15 @@ function App() {
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            checkHealth();
-            fetchLatestAnswer();
-            fetchScreenshot();
-        }, 1500);
-        return () => clearInterval(intervalId);
-    }, [messages]);
+        if (!isLoading) {
+            const intervalId = setInterval(() => {
+                checkHealth();
+                fetchLatestAnswer();
+                fetchScreenshot();
+            }, 1500);
+            return () => clearInterval(intervalId);
+        }
+    }, [isLoading, messages]);
 
     const checkHealth = async () => {
         try {
@@ -71,21 +73,35 @@ function App() {
         try {
             const res = await axios.get('http://0.0.0.0:8000/latest_answer');
             const data = res.data;
+    
+            if (!data.answer || data.answer.trim() === '') {
+                return;
+            }
             const answerExists = messages.some(
-                (msg) => msg.timestamp === data.timestamp || data.answer === undefined
+                (msg) =>
+                    msg.timestamp === data.timestamp &&
+                    normalizeAnswer(msg.content) === normalizeAnswer(data.answer)
             );
+            console.log('Fetched latest answer:', data.answer);
             if (!answerExists) {
                 setMessages((prev) => [
                     ...prev,
-                    { type: 'agent', content: data.answer, agentName: data.agent_name, status: data.status, timestamp: data.timestamp },
+                    {
+                        type: 'agent',
+                        content: data.answer,
+                        agentName: data.agent_name,
+                        status: data.status,
+                        timestamp: data.timestamp,
+                    },
                 ]);
                 setStatus(data.status);
                 scrollToBottom();
             }
         } catch (error) {
-            console.error("Error fetching latest answer:", error);
+            console.error('Error fetching latest answer:', error);
         }
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -100,10 +116,12 @@ function App() {
 
         try {
             console.log('Sending query:', query);
+            setQuery('waiting for response...');
             const res = await axios.post('http://0.0.0.0:8000/query', {
                 query,
                 tts_enabled: false
             });
+            setQuery('Enter your query...');
             console.log('Response:', res.data);
             const data = res.data;
             setResponseData(data);

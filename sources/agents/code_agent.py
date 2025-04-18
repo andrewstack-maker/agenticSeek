@@ -69,7 +69,7 @@ class CoderAgent(Agent):
             self.status_message = "Correcting code..."
             self.show_answer()
             attempt += 1
-        self.status_message = "Done"
+        self.status_message = "Ready"
         if attempt == max_attempts:
             return "I'm sorry, I couldn't find a solution to your problem. How would you like me to proceed ?", reasoning
         return answer, reasoning

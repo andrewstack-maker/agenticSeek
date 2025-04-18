@@ -372,7 +372,7 @@ class BrowserAgent(Agent):
         self.status_message = "Summarizing findings..."
         answer, reasoning = await self.llm_request()
         pretty_print(answer, color="output")
-        self.status_message = "Done"
+        self.status_message = "Ready"
         return answer, reasoning
 
 if __name__ == "__main__":
