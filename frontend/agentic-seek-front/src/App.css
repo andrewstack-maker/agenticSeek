@@ -1,0 +1,257 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Orbitron', sans-serif;
+    background-color: #0a0a0a;
+    color: #ffffff;
+    overflow-x: hidden;
+  }
+  
+  .app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header {
+    padding: 20px;
+    text-align: center;
+    background-color: #1a1a1a;
+    border-bottom: 2px solid #00ffcc;
+    box-shadow: 0 0 10px #00ffcc;
+  }
+  
+  .header h1 {
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .main {
+    flex: 1;
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  
+  .chat-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    height: calc(100vh - 200px);
+  }
+
+  .left-panel,
+  .right-panel {
+    background-color: #1a1a1a;
+    border: 1px solid #00ffcc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .left-panel {
+    padding: 20px;
+  }
+  
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    gap: 15px;
+  }
+  
+  .no-messages {
+    text-align: center;
+    color: #666;
+    margin-top: 20px;
+  }
+  
+  .message {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+.messages::-webkit-scrollbar,
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+  
+  .user-message {
+    background-color: #00ffcc;
+    color: #000;
+    align-self: flex-end;
+    border: 1px solid #00ccaa;
+  }
+  
+  .agent-message {
+    background-color: #333;
+    color: #fff;
+    align-self: flex-start;
+    border: 1px solid #00ffcc;
+  }
+  
+  .error-message {
+    background-color: #ff4444;
+    color: #fff;
+    align-self: flex-start;
+    border: 1px solid #cc3333;
+  }
+  
+  .agent-name {
+    display: block;
+    font-size: 0.8rem;
+    color: #00ffcc;
+    margin-bottom: 5px;
+  }
+  
+  .input-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .input-form input {
+    flex: 1;
+    padding: 12px;
+    font-size: 1rem;
+    background-color: #222;
+    border: 1px solid #00ffcc;
+    color: #fff;
+    border-radius: 4px;
+    outline: none;
+    transition: box-shadow 0.3s;
+  }
+  
+  .input-form input:focus {
+    box-shadow: 0 0 8px #00ffcc;
+  }
+  
+  .input-form button {
+    padding: 12px 24px;
+    font-size: 1rem;
+    background-color: #00ffcc;
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+  }
+  
+  .input-form button:hover {
+    background-color: #00ccaa;
+  }
+  
+  .input-form button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+  }
+  
+  .right-panel {
+    padding: 20px;
+  }
+  
+  .view-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .view-selector button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #00ffcc;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .view-selector button.active,
+  .view-selector button:hover {
+    background-color: #00ffcc;
+    color: #000;
+  }
+  
+  .view-selector button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+  }
+  
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 5px;
+  }
+  
+  .blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .block {
+    background-color: #222;
+    padding: 10px;
+    border: 1px solid #00ffcc;
+    border-radius: 4px;
+  }
+  
+  .block-tool,
+  .block-feedback,
+  .block-success {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  
+  .block pre {
+    background-color: #111;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  
+  .screenshot {
+    margin-top: 10px;
+  }
+  
+  .screenshot img {
+    max-width: 100%;
+    border: 1px solid #00ffcc;
+    border-radius: 4px;
+  }
+  
+  .error {
+    color: #ff4444;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .chat-container {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+  
+    .left-panel,
+    .right-panel {
+      height: 50vh;
+    }
+  }

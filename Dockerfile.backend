@@ -1,0 +1,47 @@
+FROM ubuntu:22.04
+# Warning: doesn't work yet, backend is run on host machine for now
+
+WORKDIR /app
+
+RUN apt-get update -qq -y && \
+apt-get install -y \
+        gcc \
+        g++ \
+        gfortran \
+        libportaudio2 \
+        portaudio19-dev \
+        ffmpeg \
+        libavcodec-dev \
+        libavformat-dev \
+        libavutil-dev \
+        gnupg2 \
+        wget \
+        unzip \
+        python3 \
+        python3-pip \
+        libasound2 \
+        libatk-bridge2.0-0 \
+        libgtk-4-1 \
+        libnss3 \
+        xdg-utils \
+        wget && \
+
+RUN chmod +x /opt/chrome/chrome
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY api.py .
+COPY sources/ ./sources/
+COPY prompts/ ./prompts/
+COPY crx/ crx/
+COPY llm_router/ llm_router/
+COPY .env .
+COPY config.ini .
+
+# Expose port
+EXPOSE 8000
+
+# Run the application
+CMD ["python3", "api.py"]

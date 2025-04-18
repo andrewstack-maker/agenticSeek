@@ -76,8 +76,7 @@ class PlannerAgent(Agent):
         """
         return prompt
     
-    def show_plan(self, answer: dict) -> None:
-        agents_tasks = self.parse_agent_tasks(answer)
+    def show_plan(self, agents_tasks: dict, answer: str) -> None:
         if agents_tasks == (None, None):
             pretty_print(answer, color="warning")
             pretty_print("Failed to make a plan. This can happen with (too) small LLM. Clarify your request and insist on it making a plan within ```json.", color="failure")
@@ -87,25 +86,26 @@ class PlannerAgent(Agent):
             pretty_print(f"{task['agent']} -> {task['task']}", color="info")
         pretty_print("▔▗ E N D ▖▔", color="status")
     
-    def make_plan(self, prompt: str) -> str:
+    async def make_plan(self, prompt: str) -> str:
         ok = False
         answer = None
         while not ok:
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', prompt)
-            answer, _ = self.llm_request()
-            self.show_plan(answer)
-            ok_str = input("Is the plan ok? (y/n): ")
-            if ok_str == 'y':
-                ok = True
-            else:
-                prompt = input("Please reformulate: ")
+            answer, _ = await self.llm_request()
+            agents_tasks = self.parse_agent_tasks(answer)
+            if agents_tasks == (None, None):
+                prompt = f"Failed to parse the tasks. Please make a plan within ```json.\n"
+                pretty_print("Failed to make plan. Retrying...", color="warning")
+                continue
+            self.show_plan(agents_tasks, answer)
+            ok = True
         return answer
     
-    def start_agent_process(self, task: str, required_infos: dict | None) -> str:
+    async def start_agent_process(self, task: dict, required_infos: dict | None) -> str:
         agent_prompt = self.make_prompt(task['task'], required_infos)
         pretty_print(f"Agent {task['agent']} started working...", color="status")
-        agent_answer, _ = self.agents[task['agent'].lower()].process(agent_prompt, None)
+        agent_answer, _ = await self.agents[task['agent'].lower()].process(agent_prompt, None)
         self.agents[task['agent'].lower()].show_answer()
         pretty_print(f"Agent {task['agent']} completed task.", color="status")
         return agent_answer
@@ -113,16 +113,17 @@ class PlannerAgent(Agent):
     def get_work_result_agent(self, task_needs, agents_work_result):
         return {k: agents_work_result[k] for k in task_needs if k in agents_work_result}
 
-    def process(self, prompt: str, speech_module: Speech) -> Tuple[str, str]:
+    async def process(self, prompt: str, speech_module: Speech) -> Tuple[str, str]:
         agents_tasks = (None, None)
         agents_work_result = dict()
 
-        answer = self.make_plan(prompt)
+        answer = await self.make_plan(prompt)
         agents_tasks = self.parse_agent_tasks(answer)
 
         if agents_tasks == (None, None):
             return "Failed to parse the tasks.", ""
         for task_name, task in agents_tasks:
+            self.status_message = "Starting agent process..."
             pretty_print(f"I will {task_name}.", color="info")
             pretty_print(f"Assigned agent {task['agent']} to {task_name}", color="info")
             if speech_module: speech_module.speak(f"I will {task_name}. I assigned the {task['agent']} agent to the task.")
@@ -130,7 +131,7 @@ class PlannerAgent(Agent):
             if agents_work_result is not None:
                 required_infos = self.get_work_result_agent(task['need'], agents_work_result)
             try:
-                self.last_answer = self.start_agent_process(task, required_infos)
+                self.last_answer = await self.start_agent_process(task, required_infos)
             except Exception as e:
                 raise e
             agents_work_result[task['id']] = self.last_answer

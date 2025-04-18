@@ -130,9 +130,7 @@ class Memory():
         self.logger.info(f"Clearing memory section {start} to {end}.")
         start = max(0, start) + 1
         end = min(end, len(self.memory)-1) + 2
-        self.logger.info(f"Memory before: {self.memory}")
         self.memory = self.memory[:start] + self.memory[end:]
-        self.logger.info(f"Memory after: {self.memory}")
     
     def get(self) -> list:
         return self.memory

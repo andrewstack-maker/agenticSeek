@@ -1,3 +1,4 @@
+import asyncio
 
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
@@ -17,11 +18,12 @@ class CasualAgent(Agent):
         self.role = "talk"
         self.type = "casual_agent"
     
-    def process(self, prompt, speech_module) -> str:
+    async def process(self, prompt, speech_module) -> str:
         self.memory.push('user', prompt)
         animate_thinking("Thinking...", color="status")
-        answer, reasoning = self.llm_request()
+        answer, reasoning = await self.llm_request()
         self.last_answer = answer
+        self.status_message = "Ready"
         return answer, reasoning
 
 if __name__ == "__main__":

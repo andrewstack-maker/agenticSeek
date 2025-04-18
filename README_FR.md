@@ -9,11 +9,11 @@
 
 Une alternative **entièrement locale** à Manus AI, un assistant IA qui code, explore votre système de fichiers, navigue sur le web et corrige ses erreurs, tout cela sans envoyer la moindre donnée dans le cloud. Cet agent autonome fonctionne entièrement sur votre hardware, garantissant la confidentialité de vos données.
 
-[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj)
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
 
 > 🛠️ **En cours de développement** – On cherche activement des contributeurs!
 
-![alt text](./media/whale_readme.jpg)
+https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 > *Recherche sur le web des activités à faire à Paris*
 
@@ -22,9 +22,6 @@ Une alternative **entièrement locale** à Manus AI, un assistant IA qui code, e
 > *J'aimerais que tu trouve une api météo et que tu me code une application qui affiche la météo à Toulouse*
 
 
-### agenticSeek peut désormais planifier des taches!
-
-![alt text](./media/examples/planner.png)
 
 
 ## Fonctionnalités:
@@ -84,51 +81,75 @@ pip3 install -r requirements.txt
 
 ## Faire fonctionner sur votre machine 
 
-**Nous recommandons d’utiliser au moins DeepSeek 14B, les modèles plus petits ont du mal avec l’utilisation des outils et oublient rapidement le contexte.**
+**Nous recommandons d’utiliser au minimum DeepSeek 14B, les modèles plus petits ont du mal avec l’utilisation des outils et oublient rapidement le contexte.**
 
-### 1️⃣ **Téléchargement du modèle**  
-
-Assurer vous d'avoir [Ollama](https://ollama.com/) installé.
-
-Télécharger `deepseek-r1:14b` de [DeepSeek](https://deepseek.com/models) (ou autre en fonction de votre hardware, voir section FAQ)
-
-```sh
-ollama pull deepseek-r1:14b
-```
-
-### 2️ **Démarrage d'ollama**  
-
+Lancer votre provider local, par exemple avec ollama:
 ```sh
 ollama serve
 ```
 
-Modifiez le fichier config.ini pour définir provider_name sur ollama et provider_model sur deepseek-r1:14b
+Voyez la section **Provider** pour la liste de provideurs disponible.
+
+Modifiez le fichier config.ini pour définir provider_name sur le nom d'un provideur et provider_model sur le LLM à utiliser.
 
 ```sh
 [MAIN]
 is_local = True
-provider_name = ollama
+provider_name = ollama # ou lm-studio, openai, etc...
 provider_model = deepseek-r1:14b
 provider_server_address = 127.0.0.1:11434
 ```
 
-démarrer tous les services :
+**Liste des provideurs locaux**
 
+| Fournisseur | Local ? | Description                                               |
+|-------------|---------|-----------------------------------------------------------|
+| ollama      | Oui     | Exécutez des LLM localement avec facilité en utilisant ollama comme fournisseur LLM |
+| lm-studio   | Oui     | Exécutez un LLM localement avec LM studio (définissez `provider_name` sur `lm-studio`) |
+| openai      | Oui     | Utilisez une API local compatible avec openai |
+
+
+### **Démarrer les services & Exécuter**
+
+Activez votre environnement Python si nécessaire.
 ```sh
-sudo ./start_services.sh
+source agentic_seek_env/bin/activate
 ```
 
-Lancer agenticSeek:
+Démarrez les services requis. Cela lancera tous les services définis dans le fichier docker-compose.yml, y compris :
+    - searxng
+    - redis (nécessaire pour searxng)
+    - frontend
 
 ```sh
-python3 main.py
+sudo ./start_services.sh # MacOS
+start ./start_services.cmd # Windows
 ```
+
+**Option 1 :** Exécuter avec l'interface CLI.
+
+```sh
+python3 cli.py
+```
+
+**Option 2 :** Exécuter avec l'interface Web.
+
+Démarrez le backend.
+
+```sh
+python3 api.py
+```
+
+Allez sur `http://localhost:3000/` et vous devriez voir l'interface web.
+
+Veuillez noter que l'interface web ne diffuse pas les messages en continu pour le moment.
+
 
 Voyez la section **Utilisation** si vous ne comprenez pas comment l’utiliser
 
 Voyez la section **Problèmes** connus si vous rencontrez des problèmes
 
-Voyez la section **Exécuter** avec une API si votre matériel ne peut pas exécuter DeepSeek localement
+Voyez la section **Exécuter avec une API** si votre matériel ne peut pas exécuter DeepSeek localement
 
 Voyez la section **Configuration** pour une explication détaillée du fichier de configuration.
 
@@ -136,18 +157,20 @@ Voyez la section **Configuration** pour une explication détaillée du fichier d
 
 ## Utilisation
 
-Assurez-vous que les services sont en cours d’exécution avec ./start_services.sh et lancez AgenticSeek avec python3 main.py
+Assurez-vous que les services sont en cours d’exécution avec ./start_services.sh et lancez AgenticSeek avec le CLI ou l'interface Web.
 
-```sh
-sudo ./start_services.sh
-python3 main.py
-```
+**CLI:**
+Vous verrez un prompt : ">>> "  
+Cela indique qu’AgenticSeek attend que vous saisissiez des instructions.  
+Vous pouvez également utiliser la reconnaissance vocale en définissant `listen = True` dans la configuration.  
+Pour quitter, dites simplement `goodbye`.  
 
-Vous verrez un prompt: ">>> "
-Cela indique qu’AgenticSeek attend que vous saisissiez des instructions.
-Vous pouvez également utiliser la reconnaissance vocale en définissant listen = True dans la configuration.
+**Interface:**
 
-Pour quitter, dites simplement `goodbye`.
+Assurez-vous d'avoir bien démarré le backend avec `python3 api.py`.  
+Allez sur `localhost:3000` où vous verrez une interface web.  
+Tapez simplement votre message et patientez.  
+Si vous n'avez pas d'interface sur `localhost:3000`, c'est que vous n'avez pas démarré les services avec `start_services.sh`.
 
 Voici quelques exemples d’utilisation :
 
@@ -155,7 +178,7 @@ Voici quelques exemples d’utilisation :
 
 > *Aide-moi avec la multiplication de matrices en Golang*
 
-> *Initalize un nouveau project python, setup le readme, gitignore et tout le bordel et fait un premier commit*
+> *Initalize un nouveau project python, setup le readme, gitignore etc.. et fait un premier commit*
 
 > *Fais un jeu snake en Python*
 
@@ -211,8 +234,6 @@ ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
 
 Remarque : Pour Windows ou macOS, utilisez respectivement ipconfig ou ifconfig pour trouver l’adresse IP.
 
-**Si vous souhaitez utiliser un fournisseur basé sur OpenAI, suivez la section Exécuter avec une API.**
-
 Clonez le dépôt et entrez dans le dossier server/.
 
 
@@ -251,12 +272,7 @@ provider_model = deepseek-r1:14b
 provider_server_address = x.x.x.x:3333
 ```
 
-Exécutez l’assistant :
-
-```sh
-sudo ./start_services.sh
-python3 main.py
-```
+Ensuite, exécutez avec le CLI ou l'interface graphique comme expliqué dans la section pour les fournisseurs locaux.
 
 ## **Exécuter avec une API**  
 
@@ -274,12 +290,7 @@ provider_model = gpt-4o
 provider_server_address = 127.0.0.1:5000
 ```
 
-Exécutez l’assistant :
-
-```sh
-sudo ./start_services.sh
-python3 main.py
-```
+Ensuite, exécutez avec le CLI ou l'interface graphique comme expliqué dans la section pour les fournisseurs locaux.
 
 ## Config
 
@@ -297,6 +308,7 @@ speak = False
 listen = False
 work_dir =  /Users/mlg/Documents/ai_folder
 jarvis_personality = False
+languages = en fr
 [BROWSER]
 headless_browser = False
 stealth_mode = False
@@ -330,6 +342,7 @@ stealth_mode = False
 
 `stealth_mode` -> Rend la détection des bots plus difficile. Le seul inconvénient est que vous devez installer manuellement l’extension anticaptcha.
 
+`languages` -> La liste de languages supportés (nécessaire pour le routage d'agents). Plus la liste est longue. Plus un nombre important de modèles sera téléchargés.
 
 ## Providers
 
@@ -340,9 +353,10 @@ Le tableau ci-dessous montre les LLM providers disponibles :
 | ollama    | Yes    | Exécutez des LLM localement avec facilité en utilisant Ollama comme fournisseur LLM 
 | server    | Yes    | Hébergez le modèle sur une autre machine, exécutez sur votre machine locale 
 | lm-studio  | Yes    | Exécutez un LLM localement avec LM Studio (définissez provider_name sur lm-studio) 
-| openai    | No     | Utilise ChatGPT API (pas privé) |
-| deepseek-api  | No     | Deepseek API (pas privé) |
-| huggingface| No    | Hugging-Face API (pas privé) |
+| openai    | No     | Utilise l'API ChatGPT (pas privé) |
+| deepseek-api  | No     | Utilise l'API Deepseek (pas privé) |
+| huggingface| No    | Utilise Hugging-Face (pas privé) |
+| together| No    | Utilise l'api Together AI |
 
 Pour sélectionner un provider LLM, modifiez le config.ini :
 
@@ -387,13 +401,14 @@ Et téléchargez la version de chromedriver correspondant à votre système d’
 Si cette section est incomplète, merci de faire une nouvelle issue sur github.
 
 ## FAQ
+**Q: Quel matériel est nécessaire ?**  
 
-**Q: J'ai besoin d'un gros PC?**  
-
-ça dépend du modèle!
-Pour un modèle 7B : GPU avec 8 Go de VRAM.
-Pour un modèle 14B : GPU 12 Go (par exemple, RTX 3060).
-Et un modèle 32B : 24 Go+ de VRAM.
+| Taille du Modèle  | GPU  | Commentaire                                               |
+|--------------------|------|----------------------------------------------------------|
+| 7B                | 8 Go VRAM | ⚠️ Non recommandé. Performances médiocres, hallucinations fréquentes, et l'agent planificateur échouera probablement. |
+| 14B               | 12 Go VRAM (par ex. RTX 3060) | ✅ Utilisable pour des tâches simples. Peut rencontrer des difficultés avec la navigation web et les tâches de planification. |
+| 32B               | 24+ Go VRAM (par ex. RTX 4090) | 🚀 Réussite avec la plupart des tâches, peut encore avoir des difficultés avec la planification des tâches. |
+| 70B+              | 48+ Go VRAM (par ex. Mac Studio) | 💪 Excellent. Recommandé pour des cas d'utilisation avancés. |
 
 **Q: Pourquoi deepseek et pas un autre modèle**  
 
@@ -417,6 +432,8 @@ Nous recherchons des développeurs pour améliorer AgenticSeek ! Consultez la se
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
 
+[Guide du contributeur](./docs/CONTRIBUTING.md)
+
 ## Auteurs/Mainteneurs:
- > [Fosowl](https://github.com/Fosowl) - Epitech 2024, France
- > [steveh8758](https://github.com/steveh8758) - Université Feng Chia, Taiwan
+ > [Fosowl](https://github.com/Fosowl)
+ > [steveh8758](https://github.com/steveh8758)

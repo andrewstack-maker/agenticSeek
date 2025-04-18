@@ -29,8 +29,8 @@ services:
       - ./searxng:/etc/searxng:rw
     environment:
       - SEARXNG_BASE_URL=http://localhost:8080/
-      - UWSGI_WORKERS=4
-      - UWSGI_THREADS=4
+      - UWSGI_WORKERS=1
+      - UWSGI_THREADS=1
     cap_add:
       - CHOWN
       - SETGID

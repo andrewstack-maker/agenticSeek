@@ -1,0 +1,105 @@
+version: '3'
+
+services:
+  redis:
+    container_name: redis
+    image: docker.io/valkey/valkey:8-alpine
+    command: valkey-server --save 30 1 --loglevel warning
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+    networks:
+      - agentic-seek-net
+
+  searxng:
+    container_name: searxng
+    image: docker.io/searxng/searxng:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8080/
+      - SEARXNG_SECRET_KEY=$(openssl rand -hex 32)
+      - UWSGI_WORKERS=4
+      - UWSGI_THREADS=4
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+    depends_on:
+      - redis
+    networks:
+      - agentic-seek-net
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/agentic-seek-front/src:/app/src
+      - ./screenshots:/app/screenshots
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - BACKEND_URL=http://backend:8000
+    networks:
+      - agentic-seek-net
+  
+  # NOTE: backend service is not working yet due to issue with chromedriver on docker.
+  # Therefore backend is run on host machine.
+  # Open to pull requests to fix this.
+
+  #backend:
+  #  container_name: backend
+  #  build:
+  #    context: ./
+  #    dockerfile: Dockerfile.backend
+  #  stdin_open: true
+  #  tty: true
+  #  shm_size: 8g
+  #  ports:
+  #    - "8000:8000"
+  #  volumes:
+  #    - ./:/app
+  #  environment:
+  #    - NODE_ENV=development
+  #    - REDIS_URL=redis://redis:6379/0
+  #    - SEARXNG_URL=http://searxng:8080
+  #    - OLLAMA_URL=http://localhost:11434
+  #    - LM_STUDIO_URL=http://localhost:1234
+  #  extra_hosts:
+  #    - "host.docker.internal:host-gateway"
+  #  depends_on:
+  #    - redis
+  #    - searxng
+  #  networks:
+  #    - agentic-seek-net
+  
+volumes:
+  redis-data:
+  chrome_profiles:
+
+networks:
+  agentic-seek-net:
+    driver: bridge

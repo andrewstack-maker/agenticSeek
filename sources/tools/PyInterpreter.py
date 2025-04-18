@@ -30,18 +30,27 @@ class PyInterpreter(Tools):
             '__builtins__': __builtins__,
             'os': os,
             'sys': sys,
+            '__name__': '__main__'
         }
         code = '\n\n'.join(codes)
+        self.logger.info(f"Executing code:\n{code}")
         try:
             try:
                 buffer = exec(code, global_vars)
+                self.logger.info(f"Code executed successfully.\noutput:{buffer}")
                 print(buffer)
                 if buffer is not None:
                     output = buffer + '\n'
+            except SystemExit:
+                self.logger.info("SystemExit caught, code execution stopped.")
+                output = stdout_buffer.getvalue()
+                return f"[SystemExit caught] Output before exit:\n{output}"
             except Exception as e:
+                self.logger.error(f"Code execution failed: {str(e)}")
                 return "code execution failed:" + str(e)
             output = stdout_buffer.getvalue()
         finally:
+            self.logger.info("Code execution finished.")
             sys.stdout = sys.__stdout__
         return output
 
@@ -74,7 +83,9 @@ class PyInterpreter(Tools):
         ]
         combined_pattern = "|".join(error_patterns)
         if re.search(combined_pattern, feedback, re.IGNORECASE):
+            self.logger.error(f"Execution failure detected: {feedback}")
             return True
+        self.logger.info("No execution success detected.")
         return False
 
 if __name__ == "__main__":
@@ -93,6 +104,9 @@ here is a save test
 def print_hello():
     hello = "Hello World"
     print(hello)
+
+if __name__ == "__main__":
+    print_hello()
 ```
 """
     py = PyInterpreter()

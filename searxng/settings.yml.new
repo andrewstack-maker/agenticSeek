@@ -2,7 +2,7 @@ general:
   # Debug mode, only for development. Is overwritten by ${SEARXNG_DEBUG}
   debug: false
   # displayed name
-  instance_name: "SearXNG"
+  instance_name: "searxng"
   # For example: https://example.com/privacy
   privacypolicy_url: false
   # use true to use your own donation page written in searx/info/en/donate.md
@@ -34,7 +34,7 @@ search:
   # Filter results. 0: None, 1: Moderate, 2: Strict
   safe_search: 0
   # Existing autocomplete backends: "360search", "baidu", "brave", "dbpedia", "duckduckgo", "google", "yandex",
-  # "mwmbl", "seznam", "sogou", "stract", "swisscows", "qwant", "wikipedia" -
+  # "mwmbl", "seznam", "sogou", "stract", "swisscows", "quark", "qwant", "wikipedia" -
   # leave blank to turn it off by default.
   autocomplete: ""
   # minimun characters to type before autocompleter starts
@@ -80,11 +80,11 @@ search:
 
 server:
   # Is overwritten by ${SEARXNG_PORT} and ${SEARXNG_BIND_ADDRESS}
-  port: 8080
+  port: 8888
   bind_address: "127.0.0.1"
   # public URL of the instance, to ensure correct inbound links. Is overwritten
   # by ${SEARXNG_URL}.
-  base_url: true  # "http://example.com/location"
+  base_url: /  # "http://example.com/location"
   # rate limit the number of request on the instance, block some bots.
   # Is overwritten by ${SEARXNG_LIMITER}
   limiter: false
@@ -95,7 +95,7 @@ server:
   # If your instance owns a /etc/searxng/settings.yml file, then set the following
   # values there.
 
-  secret_key: "supersecret"  # Is overwritten by ${SEARXNG_SECRET},W
+  secret_key: "1234bbd68b6c51ff0b9ccb77e39b1f20a3178b63e71496cbc89ef019f0341382"  # Is overwritten by ${SEARXNG_SECRET}
   # Proxy image results through SearXNG. Is overwritten by ${SEARXNG_IMAGE_PROXY}
   image_proxy: false
   # 1.0 and 1.1 are supported
@@ -226,29 +226,38 @@ outgoing:
   #    - 1.1.1.2
   #    - fe80::/126
 
-# External plugin configuration, for more details see
+# Plugin configuration, for more details see
 #   https://docs.searxng.org/admin/settings/settings_plugins.html
 #
-# plugins:
-#   - mypackage.mymodule.MyPlugin
-#   - mypackage.mymodule.MyOtherPlugin
-#   - ...
+plugins:
 
-# Comment or un-comment plugin to activate / deactivate by default.
-#   https://docs.searxng.org/admin/settings/settings_plugins.html
-#
-# enabled_plugins:
-#   # these plugins are enabled if nothing is configured ..
-#   - 'Basic Calculator'
-#   - 'Hash plugin'
-#   - 'Self Information'
-#   - 'Tracker URL remover'
-#   - 'Unit converter plugin'
-#   - 'Ahmia blacklist'  # activation depends on outgoing.using_tor_proxy
-#   # these plugins are disabled if nothing is configured ..
-#   - 'Hostnames plugin'  # see 'hostnames' configuration below
-#   - 'Open Access DOI rewrite'
-#   - 'Tor check plugin'
+  searx.plugins.calculator.SXNGPlugin:
+    active: true
+
+  searx.plugins.hash_plugin.SXNGPlugin:
+    active: true
+
+  searx.plugins.self_info.SXNGPlugin:
+    active: true
+
+  searx.plugins.unit_converter.SXNGPlugin:
+    active: true
+
+  searx.plugins.ahmia_filter.SXNGPlugin:
+    active: true
+
+  searx.plugins.hostnames.SXNGPlugin:
+    active: true
+
+  searx.plugins.oa_doi_rewrite.SXNGPlugin:
+    active: false
+
+  searx.plugins.tor_check.SXNGPlugin:
+    active: false
+
+  searx.plugins.tracker_url_remover.SXNGPlugin:
+    active: false
+
 
 # Configuration of the "Hostnames plugin":
 #
@@ -550,6 +559,11 @@ engines:
   - name: bing videos
     engine: bing_videos
     shortcut: biv
+
+  - name: bitchute
+    engine: bitchute
+    shortcut: bit
+    disabled: true
 
   - name: bitbucket
     engine: xpath
@@ -1112,6 +1126,11 @@ engines:
       require_api_key: false
       results: JSON
 
+  - name: il post
+    engine: il_post
+    shortcut: pst
+    disabled: true
+
   - name: imdb
     engine: imdb
     shortcut: imdb
@@ -1298,12 +1317,19 @@ engines:
     disabled: true
     number_of_results: 20
 
+  # https://docs.searxng.org/dev/engines/offline/search-indexer-engines.html#module-searx.engines.meilisearch
   # - name: meilisearch
   #   engine: meilisearch
   #   shortcut: mes
   #   enable_http: true
   #   base_url: http://localhost:7700
   #   index: my-index
+  #   auth_key: Bearer XXXX
+
+  - name: microsoft learn
+    engine: microsoft_learn
+    shortcut: msl
+    disabled: true
 
   - name: mixcloud
     engine: mixcloud
@@ -1338,6 +1364,11 @@ engines:
     engine: mwmbl
     # api_url: https://api.mwmbl.org
     shortcut: mwm
+    disabled: true
+
+  - name: niconico
+    engine: niconico
+    shortcut: nico
     disabled: true
 
   - name: npm
@@ -1379,6 +1410,11 @@ engines:
   - name: odysee
     engine: odysee
     shortcut: od
+    disabled: true
+
+  - name: ollama
+    engine: ollama
+    shortcut: ollama
     disabled: true
 
   - name: openairedatasets
@@ -1642,6 +1678,20 @@ engines:
     shortcut: pypi
     engine: pypi
 
+  - name: quark
+    quark_category: general
+    categories: [general]
+    engine: quark
+    shortcut: qk
+    disabled: true
+
+  - name: quark images
+    quark_category: images
+    categories: [images]
+    engine: quark
+    shortcut: qki
+    disabled: true
+
   - name: qwant
     qwant_categ: web
     engine: qwant
@@ -1703,6 +1753,12 @@ engines:
     page_size: 25
     disabled: true
 
+  - name: reuters
+    engine: reuters
+    shortcut: reu
+    # https://docs.searxng.org/dev/engines/online/reuters.html
+    # sort_order = "relevance"
+
   - name: right dao
     engine: xpath
     paging: true
@@ -1756,6 +1812,12 @@ engines:
     disabled: true
     about:
       website: https://searchmysite.net
+
+  - name: selfhst icons
+    engine: selfhst
+    shortcut: si
+    inactive: true
+    disabled: true
 
   - name: sepiasearch
     engine: sepiasearch
@@ -2578,6 +2640,12 @@ engines:
   - name: pkg.go.dev
     engine: pkg_go_dev
     shortcut: pgo
+    disabled: true
+
+  - name: senscritique
+    engine: senscritique
+    shortcut: scr
+    timeout: 4.0
     disabled: true
 
 # Doku engine lets you access to any Doku wiki instance:

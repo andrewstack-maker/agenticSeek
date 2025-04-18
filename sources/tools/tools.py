@@ -21,6 +21,7 @@ import sys
 import os
 import configparser
 from abc import abstractmethod
+from sources.logger import Logger
 
 sys.path.append('..')
 
@@ -30,9 +31,9 @@ class Tools():
     """
     def __init__(self):
         self.tag = "undefined"
-        self.api_key = None
         self.client = None
         self.messages = []
+        self.logger = Logger("tools.log")
         self.config = configparser.ConfigParser()
         self.work_dir = self.create_work_dir()
         self.excutable_blocks_found = False
@@ -118,10 +119,12 @@ class Tools():
         """
         if save_path is None:
             return
+        self.logger.info(f"Saving blocks to {save_path}")
         save_path_dir = os.path.dirname(save_path)
         save_path_file = os.path.basename(save_path)
         directory = os.path.join(self.work_dir, save_path_dir)
         if directory and not os.path.exists(directory):
+            self.logger.info(f"Creating directory {directory}")
             os.makedirs(directory)
         for block in blocks:
             with open(os.path.join(directory, save_path_file), 'w') as f:
@@ -199,6 +202,7 @@ class Tools():
             self.excutable_blocks_found = True
             code_blocks.append(content)
             start_index = end_pos + len(end_tag)
+        self.logger.info(f"Found {len(code_blocks)} blocks to execute")
         return code_blocks, save_path
     
 if __name__ == "__main__":

@@ -43,7 +43,7 @@ https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 ---
 
-## **Installation**
+## Installation
 
 Make sure you have chrome driver, docker and python3.10 (or newer) installed.
 
@@ -81,54 +81,47 @@ pip3 install -r requirements.txt
 python3 setup.py install
 ```
 
+---
 
-## Run locally on your machine
+## Setup for running LLM locally on your machine
 
 **We recommend using at the very least Deepseek 14B, smaller models will struggle with tasks especially for web browsing.**
 
-### 1️⃣ **Download Models**  
 
-Make sure you have [Ollama](https://ollama.com/) installed.
+**Setup your local provider**  
 
-Download the `deepseek-r1:14b` model from [DeepSeek](https://deepseek.com/models)
+Start your local provider, for example with ollama:
 
-```sh
-ollama pull deepseek-r1:14b
-```
-
-### 2️ **Run the Assistant (Ollama)**  
-
-Start the ollama server
 ```sh
 ollama serve
 ```
 
-Change the config.ini file to set the provider_name to `ollama` and provider_model to `deepseek-r1:14b`
+See below for a list of local supported provider.
+
+**Update the config.ini**
+
+Change the config.ini file to set the provider_name to a supported provider and provider_model to `deepseek-r1:14b`
 
 NOTE: `deepseek-r1:14b`is an example, use a bigger model if your hardware allow it.
 
 ```sh
 [MAIN]
 is_local = True
-provider_name = ollama
+provider_name = ollama # or lm-studio, openai, etc..
 provider_model = deepseek-r1:14b
 provider_server_address = 127.0.0.1:11434
 ```
 
-start all services :
+**List of local providers**
 
-```sh
-sudo ./start_services.sh # MacOS
-start ./start_services.cmd # Window
-```
+| Provider  | Local? | Description                                               |
+|-----------|--------|-----------------------------------------------------------|
+| ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
+| lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
+| openai    | Yes     |  Use openai compatible API  |
 
-Run the assistant:
 
-```sh
-python3 main.py
-```
-
-*See the **Usage** section if you don't understand how to use it*
+Next step: [Start services and run AgenticSeek](#Start-services-and-Run)  
 
 *See the **Known issues** section if you are having issues*
 
@@ -138,17 +131,82 @@ python3 main.py
 
 ---
 
+## Setup to run with an API
+
+Set the desired provider in the `config.ini`
+
+```sh
+[MAIN]
+is_local = False
+provider_name = openai
+provider_model = gpt-4o
+provider_server_address = 127.0.0.1:5000
+```
+
+WARNING: Make sure there is not trailing space in the config.
+
+Set `is_local` to True if using a local openai-based api.
+
+Change the IP address if your openai-based api run on your own server.
+
+Next step: [Start services and run AgenticSeek](#Start-services-and-Run)
+
+*See the **Known issues** section if you are having issues*
+
+*See the **Config** section for detailled config file explanation.*
+
+---
+
+## Start services and Run
+
+Activate your python env if needed.
+```sh
+source agentic_seek_env/bin/activate
+```
+
+Start required services. This will start all services from the docker-compose.yml, including:
+    - searxng
+    - redis (required by searxng)
+    - frontend
+
+```sh
+sudo ./start_services.sh # MacOS
+start ./start_services.cmd # Window
+```
+
+**Options 1:** Run with the CLI interface.
+
+```sh
+python3 cli.py
+```
+
+**Options 2:** Run with the Web interface.
+
+Note: Currently we advice you run the CLI instead. Web interface is an active work in progress.
+
+Start the backend.
+
+```sh
+python3 api.py
+```
+
+Go to `http://localhost:3000/` and you should see the web interface.
+
+Please note that the Web interface doesn't stream messages at the moment.
+
+---
+
 ## Usage
 
-Make sure the services are up and running with `./start_services.sh` and run the agenticSeek with `python3 main.py`
+Make sure the services are up and running with `./start_services.sh` and run the AgenticSeek with `python3 main.py`
 
 ```sh
 sudo ./start_services.sh
-python3 main.py
+python3 cli.py
 ```
 
 You will be prompted with `>>> `
-This indicate agenticSeek await you type for instructions.
+This indicate AgenticSeek await you type for instructions.
 You can also use speech to text by setting `listen = True` in the config.
 
 To exit, simply say `goodbye`.
@@ -167,7 +225,7 @@ Here are some example usage:
 
 > *Do a web search to find cool tech startup in Japan working on cutting edge AI research*
 
-> *Can you find on the internet who created agenticSeek?*
+> *Can you find on the internet who created AgenticSeek?*
 
 > *Can you use a fuel calculator online to estimate the cost of a Nice - Milan trip*
 
@@ -188,7 +246,7 @@ Here are some example usage:
 > *What's the best workout routine ?*
 
 
-After you type your query, agenticSeek will allocate the best agent for the task.
+After you type your query, AgenticSeek will allocate the best agent for the task.
 
 Because this is an early prototype, the agent routing system might not always allocate the right agent based on your query.
 
@@ -202,11 +260,9 @@ Instead, ask:
 
 ---
 
-## **Run the LLM on your own server**  
+## **Bonus: Setup to run the LLM on your own server**  
 
 If you have a powerful computer or a server that you can use, but you want to use it from your laptop you have the options to run the LLM on a remote server. 
-
-### 1️⃣  **Set up and start the server scripts** 
 
 On your "server" that will run the AI model, get the ip address
 
@@ -216,8 +272,6 @@ curl https://ipinfo.io/ip # public ip
 ```
 
 Note: For Windows or macOS, use ipconfig or ifconfig respectively to find the IP address.
-
-**If you wish to use openai based provider follow the *Run with an API*  section.**
 
 Clone the repository and enter the `server/`folder.
 
@@ -241,7 +295,6 @@ python3 app.py --provider ollama --port 3333
 
 You have the choice between using `ollama` and `llamacpp` as a LLM service.
 
-### 2️⃣ **Run it** 
 
 Now on your personal computer:
 
@@ -256,39 +309,8 @@ provider_model = deepseek-r1:70b
 provider_server_address = x.x.x.x:3333
 ```
 
-Run the assistant:
 
-```sh
-sudo ./start_services.sh # start_services.cmd on windows
-python3 main.py
-```
-
-## **Run with an API**  
-
-Set the desired provider in the `config.ini`.
-
-We recommand together AI if you want to use Qwen/Deepseek-r1. openai or other API work as well.
-
-```sh
-[MAIN]
-is_local = False
-provider_name = together
-provider_model = deepseek-ai/DeepSeek-R1-Distill-Llama-70B
-provider_server_address = 127.0.0.1:5000 # doesn't matter for non local API provider
-```
-
-WARNING: Make sure there is not trailing space in the config.
-
-Set `is_local` to True if using a local openai-based api.
-
-Change the IP address if your openai-based api run on your own server.
-
-Run the assistant:
-
-```sh
-sudo ./start_services.sh # start_services.cmd on windows
-python3 main.py
-```
+Next step: [Start services and run AgenticSeek](#Start-services-and-Run)  
 
 ---
 
@@ -333,6 +355,7 @@ speak = False
 listen = False
 work_dir =  /Users/mlg/Documents/ai_folder
 jarvis_personality = False
+languages = en zh
 [BROWSER]
 headless_browser = False
 stealth_mode = False
@@ -341,19 +364,34 @@ stealth_mode = False
 **Explanation**:
 
 - is_local -> Runs the agent locally (True) or on a remote server (False).
+
 - provider_name -> The provider to use (one of: `ollama`, `server`, `lm-studio`, `deepseek-api`)
+
 - provider_model -> The model used, e.g., deepseek-r1:32b.
+
 - provider_server_address -> Server address, e.g., 127.0.0.1:11434 for local. Set to anything for non-local API.
+
 - agent_name -> Name of the agent, e.g., Friday. Used as a trigger word for TTS.
+
 - recover_last_session -> Restarts from last session (True) or not (False).
+
 - save_session -> Saves session data (True) or not (False).
+
 - speak -> Enables voice output (True) or not (False).
+
 - listen -> listen to voice input (True) or not (False).
+
 - work_dir -> Folder the AI will have access to. eg: /Users/user/Documents/.
+
 - jarvis_personality -> Uses a JARVIS-like personality (True) or not (False). This simply change the prompt file.
+
 - languages -> The list of supported language, needed for the llm router to work properly, avoid putting too many or too similar languages.
+
 - headless_browser -> Runs browser without a visible window (True) or not (False).
+
 - stealth_mode -> Make bot detector time harder. Only downside is you have to manually install the anticaptcha extension.
+
+- languages -> List of supported languages. Required for agent routing system. The longer the languages list the more model will be downloaded.
 
 ## Providers
 
@@ -363,10 +401,11 @@ The table below show the available providers:
 |-----------|--------|-----------------------------------------------------------|
 | ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
 | server    | Yes    | Host the model on another machine, run your local machine |
-| lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
-| openai    | No     | Use ChatGPT API (non-private)                             |
-| deepseek-api  | No     | Deepseek API (non-private)                                |
+| lm-studio  | Yes    | Run LLM locally with LM studio (`lm-studio`)             |
+| openai    | Depends  | Use ChatGPT API (non-private) or openai compatible API  |
+| deepseek-api  | No     | Deepseek API (non-private)                            |
 | huggingface| No    | Hugging-Face API (non-private)                            |
+| togetherAI | No    | Use together AI API (non-private)                         |
 
 To select a provider change the config.ini:
 
@@ -424,7 +463,7 @@ If this section is incomplete please raise an issue.
 
 Deepseek R1 excels at reasoning and tool use for its size. We think it’s a solid fit for our needs other models work fine, but Deepseek is our primary pick.
 
-**Q: I get an error running `main.py`. What do I do?**  
+**Q: I get an error running `cli.py`. What do I do?**  
 
 Ensure local is running (`ollama serve`), your `config.ini` matches your provider, and dependencies are installed. If none work feel free to raise an issue.
 
@@ -441,6 +480,8 @@ Unlike Manus, AgenticSeek prioritizes independence from external systems, giving
 ## Contribute
 
 We’re looking for developers to improve AgenticSeek! Check out open issues or discussion.
+
+[Contribution guide](./docs/CONTRIBUTING.md)
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
 

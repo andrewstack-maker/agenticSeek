@@ -10,21 +10,19 @@
 
 **Manus AI 的本地替代品**，它是一個具有語音功能的大語言模型秘書，可以 Coding、訪問你的電腦文件、瀏覽網頁，並自動修正錯誤與反省，最重要的是不會向雲端傳送任何資料。採用 DeepSeek R1 等推理模型構建，完全在本地硬體上運行，進而保證資料的隱私。
 
-[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj)
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
 
 > 🛠️ **目前還在開發階段** – 歡迎任何貢獻者加入我們！
 
+https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
-> *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
+> *在大阪和東京深入搜尋人工智慧新創公司，至少找到 5 家，然後儲存在 research_japan.txt 檔案中*
 
-> *Can you make a tetris game in C ?*
+> *你可以用 C 語言製作俄羅斯方塊遊戲嗎？*
 
-> *I would like to setup a new project file index as mark2.*
+> *我想設定一個新的專案檔案索引，命名為 mark2。*
 
 
-### AgenticSeek 可以進行任務規劃！
-
-![alt text](./media/examples/planner.png)
 
 ## Features:
 
@@ -82,72 +80,120 @@ pip3 install -r requirements.txt
 python3 setup.py install
 ```
 
-
 ## 在本地機器上運行 AgenticSeek
 
 **建議至少使用 Deepseek 14B 以上參數的模型，較小的模型難以使用助理功能並且很快就會忘記上下文之間的關係。**
 
-### 1️⃣ **下載模型**  
+**本地运行助手**
 
-確定已經安裝 [Ollama](https://ollama.com/)。
+启动你的本地提供者，例如使用 ollama：
 
-請在 [DeepSeek](https://deepseek.com/models) 下載至少大於 `deepseek-r1:14b` 的模型。
-
-```sh
-ollama pull deepseek-r1:14b
-```
-
-### 2️ **啟動框架 （ollama）**
-
-啟動 Ollama 服務器。
 ```sh
 ollama serve
 ```
 
-請更改 `config.ini` 文件，將 `provider_name` 設置為 `ollama` 並且 `provider_model` 設置為你剛剛下載的模型，如 `deepseek-r1:14b`。
+请参阅下方支持的本地提供者列表。
 
-注意：`deepseek-r1:14b` 只是範例，如果你的電腦允許的話，請使用更大的模型。
+修改 `config.ini` 文件，将 `provider_name` 设置为支持的提供者，并将 `provider_model` 设置为 `deepseek-r1:14b`。
+
+注意：`deepseek-r1:14b` 只是一个示例，如果你的硬件允许，可以使用更大的模型。
 
 ```sh
 [MAIN]
 is_local = True
-provider_name = ollama
+provider_name = ollama # 或 lm-studio, openai 等
 provider_model = deepseek-r1:14b
 provider_server_address = 127.0.0.1:11434
 ```
 
-開始所有服務:
+**本地提供者列表**
+
+| 提供者      | 本地? | 描述                                                   |
+|-------------|--------|-------------------------------------------------------|
+| ollama      | 是     | 使用 ollama 作为 LLM 提供者，轻松本地运行 LLM         |
+| lm-studio   | 是     | 使用 LM Studio 本地运行 LLM（将 `provider_name` 设置为 `lm-studio`）|
+| openai      | 否     | 使用兼容的 API                                        |
+
+下一步： [Start services and run AgenticSeek](#Start-services-and-Run)  
+
+---
+
+## **Run with an API （透過 API 執行）**
+
+設定 `config.ini`。
+
+```sh
+[MAIN]
+is_local = False
+provider_name = openai
+provider_model = gpt-4o
+provider_server_address = 127.0.0.1:5000
+```
+
+警告：確保 `config.ini` 沒有行尾空格。
+
+如果使用基於本機的 openai-based api 則把 `is_local` 設定為 `True`。
+
+同時更改你的 IP 為 openai-based api 的 IP。
+
+下一步： [Start services and run AgenticSeek](#Start-services-and-Run)  
+
+---
+
+## Start services and Run
+(启动服务并运行)
+
+如果需要，请激活你的 Python 环境。
+```sh
+source agentic_seek_env/bin/activate
+```
+
+启动所需的服务。这将启动 `docker-compose.yml` 中的所有服务，包括：
+- searxng
+- redis（由 redis 提供支持）
+- 前端
 
 ```sh
 sudo ./start_services.sh # MacOS
-start ./start_services.cmd # Window
+start ./start_services.cmd # Windows
 ```
 
-
-運行 AgenticSeek:
+**选项 1:** 使用 CLI 界面运行。
 
 ```sh
-python3 main.py
+python3 cli.py
 ```
 
+**选项 2:** 使用 Web 界面运行。
+
+注意：目前我們建議您使用 CLI 界面。Web 界面仍在積極開發中。
+
+启动后端服务。
+
+```sh
+python3 api.py
+```
+
+访问 `http://localhost:3000/`，你应该会看到 Web 界面。
+
+请注意，目前 Web 界面不支持消息流式传输。
+
+
 *如果你不知道如何開始，請參閱 **Usage** 部分*
-
-*如果遇到問題，請先參考 **Known issues** 部分*
-
-
-*如果你的電腦無法在本機運行 deepseek，也許你可以試看看 API 的方式，參見 **Run with an API***
-
-*有關設定檔的詳細解釋，請參閱 **Config** 部分。*
 
 ---
 
 ## Usage （使用方法）
 
-確定所有的核心檔案都啟用了，也就是執行過這條命令 `./start_services.sh` 然後你就可以使用 `python3 main.py` 來啟動 AgenticSeek 了！
+为确保 agenticSeek 在中文环境下正常工作，请确保在 config.ini 中设置语言选项。
+languages = en zh
+更多信息请参阅 Config 部分
+
+確定所有的核心檔案都啟用了，也就是執行過這條命令 `./start_services.sh` 然後你就可以使用 `python3 cli.py` 來啟動 AgenticSeek 了！
 
 ```sh
 sudo ./start_services.sh
-python3 main.py
+python3 cli.py
 ```
 
 當你看到執行後顯示 `>>> `
@@ -160,35 +206,35 @@ python3 main.py
 
 ### Coding/Bash
 
-> *Help me with matrix multiplication in Golang*
+> *在 Golang 中幫助我進行矩陣乘法*
 
-> *Scan my network with nmap, find if any suspicious devices is connected*
+> *使用 nmap 掃描我的網路，找出是否有任何可疑裝置連接*
 
-> *Make a snake game in python*
+> *用 Python 製作一個貪食蛇遊戲*
 
 ### 網路搜尋
 
-> *Do a web search to find cool tech startup in Japan working on cutting edge AI research*
+> *進行網路搜尋，找出日本從事尖端人工智慧研究的酷炫科技新創公司*
 
-> *Can you find on the internet who created agenticSeek?*
+> *你能在網路上找到誰創造了 AgenticSeek 嗎？*
 
-> *Can you find on which website I can buy a rtx 4090 for cheap*
+> *你能在哪個網站上找到便宜的 RTX 4090 嗎？*
 
 ### 檔案瀏覽與搜尋
 
-> *Hey can you find where is million_dollars_contract.pdf i lost it*
+> *嘿，你能找到我遺失的 million_dollars_contract.pdf 在哪裡嗎？*
 
-> *Show me how much space I have left on my disk*
+> *告訴我我的磁碟還剩下多少空間*
 
-> *Find and read the README.md and follow the install instruction*
+> *尋找並閱讀 README.md，並按照安裝說明進行操作*
 
 ### 日常聊天
 
-> *Tell me about France*
+> *告訴我關於法國的事*
 
-> *What is the meaning of life ?*
+> *人生的意義是什麼？*
 
-> *Should I take creatine before or after workout?*
+> *我應該在鍛鍊前還是鍛鍊後服用肌酸？*
 
 
 當你把指令送出後，AgenticSeek 會自動調用最能提供幫助的助理，去完成你交辦的工作和指令。
@@ -198,11 +244,14 @@ python3 main.py
 所以我們希望你在使用時，能明確地表明你希望他要怎麼做，下面給你一個範例！
 
 你該說：
-`Do a web search and find out which are the best country for solo-travel`
+- 进行网络搜索，找出哪些国家最适合独自旅行
 
 
 而不是說：
-`Do you know some good countries for solo-travel?`
+- 你知道哪些国家适合独自旅行？
+
+---
+
 
 ---
 
@@ -260,37 +309,6 @@ provider_model = deepseek-r1:14b
 provider_server_address = x.x.x.x:3333
 ```
 
-執行 AgenticSeek：
-
-```sh
-sudo ./start_services.sh
-python3 main.py
-```
-
-## **Run with an API （透過 API 執行）**
-
-設定 `config.ini`。
-
-```sh
-[MAIN]
-is_local = False
-provider_name = openai
-provider_model = gpt-4o
-provider_server_address = 127.0.0.1:5000
-```
-
-警告：確保 `config.ini` 沒有行尾空格。
-
-如果使用基於本機的 openai-based api 則把 `is_local` 設定為 `True`。
-
-同時更改你的 IP 為 openai-based api 的 IP。
-
-執行 AgenticSeek：
-
-```sh
-sudo ./start_services.sh
-python3 main.py
-```
 
 ---
 
@@ -335,6 +353,7 @@ speak = False
 listen = False
 work_dir =  /Users/mlg/Documents/ai_folder
 jarvis_personality = False
+languages = en zh
 [BROWSER]
 headless_browser = False
 stealth_mode = False
@@ -379,6 +398,8 @@ stealth_mode = False
     - False：背景執行瀏覽器。
 - stealth_mode
     -  隱私模式，但需要你自己安裝反爬蟲擴充功能。
+- languages
+    -  支持的语言列表。用于代理路由系统。语言列表越长，下载的模型越多。
 
 ## 框架
 
@@ -436,11 +457,14 @@ https://googlechromelabs.github.io/chrome-for-testing/
 
 ## FAQ
 
-**Q：我需要什麼的硬體配備？**
+**Q: 我需要什麼硬體？**  
 
-7B 型號：具有 8GB VRAM 的 GPU。
-14B 型號：12GB GPU（例如 RTX 3060）。
-32B 型號：24GB+ VRAM。
+| 模型大小  | GPU  | 備註                                               |
+|-----------|--------|-----------------------------------------------------------|
+| 7B        | 8GB Vram | ⚠️ 不推薦。性能較差，經常出現幻覺，規劃代理可能會失敗。 |
+| 14B        | 12 GB VRAM (例如 RTX 3060) | ✅ 適用於簡單任務。可能在網頁瀏覽和規劃任務上表現不佳。 |
+| 32B        | 24+ GB VRAM (例如 RTX 4090) | 🚀 大多數任務成功，但可能仍在任務規劃上有困難。 |
+| 70B+        | 48+ GB Vram (例如 mac studio) | 💪 表現優異。建議用於高級使用情境。 |
 
 **Q：為什麼選擇 Deepseek R1 而不是其他模型？**
 
@@ -467,11 +491,23 @@ https://googlechromelabs.github.io/chrome-for-testing/
 
 不不不，AgenticSeek 和 Manus 是不同取向的東西，我們優先考慮的是本地執行和隱私，而不是基於雲端。這是一個與 Manus 相比起來更有趣且易使用的方案！
 
+**Q: 是否支持中文以外的语言？**
+
+DeepSeek R1 天生会说中文
+
+但注意：代理路由系统只懂英文，所以必须通过 config.ini 的 languages 参数（如 languages = en zh）告诉系统：
+
+如果不设置中文？后果可能是：你让它写代码，结果跳出来个"医生代理"（虽然我们根本没有这个代理... 但系统会一脸懵圈！）
+
+实际上会下载一个小型翻译模型来协助任务分配
+
 ## 貢獻
 
 我們正在尋找開發者來改善 AgenticSeek！你可以在 Issues 查看未解決的問題或和我們討論更酷的新功能！
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
+
+[Contribution guide](./docs/CONTRIBUTING.md)
 
 ## 作者:
  > [Fosowl](https://github.com/Fosowl)

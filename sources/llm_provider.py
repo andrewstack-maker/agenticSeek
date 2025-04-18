@@ -7,7 +7,9 @@ import requests
 import subprocess
 import ipaddress
 import httpx
+import socket
 import platform
+from urllib.parse import urlparse
 from dotenv import load_dotenv, set_key
 from openai import OpenAI
 from huggingface_hub import InferenceClient
@@ -34,7 +36,7 @@ class Provider:
         }
         self.logger = Logger("provider.log")
         self.api_key = None
-        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek"]
+        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek", "together"]
         if self.provider_name not in self.available_providers:
             raise ValueError(f"Unknown provider: {provider_name}")
         if self.provider_name in self.unsafe_providers:
@@ -51,10 +53,8 @@ class Provider:
         api_key_var = f"{provider.upper()}_API_KEY"
         api_key = os.getenv(api_key_var)
         if not api_key:
-            api_key = input(f"Please enter your {provider} API key: ")
-            set_key(".env", api_key_var, api_key)
-            self.logger.info("Set API key in env.")
-            load_dotenv()
+            pretty_print(f"API key {api_key_var} not found in .env file. Please add it", color="warning")
+            exit(1)
         return api_key
 
     def check_address_format(self, address):
@@ -87,31 +87,34 @@ class Provider:
             raise ConnectionError(f"{str(e)}\nConnection to {self.server_ip} failed.")
         except AttributeError as e:
             raise NotImplementedError(f"{str(e)}\nIs {self.provider_name} implemented ?")
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(f"{str(e)}\nA import related to provider {self.provider_name} was not found. Is it installed ?")
         except Exception as e:
             if "refused" in str(e):
                 return f"Server {self.server_ip} seem offline. Unable to answer."
             raise Exception(f"Provider {self.provider_name} failed: {str(e)}") from e
         return thought
 
-    def is_ip_online(self, ip_address):
+    def is_ip_online(self, address: str, timeout: int = 10) -> bool:
         """
-        Check if an IP address is online by sending a ping request.
+        Check if an address is online by sending a ping request.
         """
-        if ip_address == "127.0.0.1":
+        if not address:
+            return False
+        if address.lower() in ["127.0.0.1", "localhost", "0.0.0.0"]:
             return True
+        hostname = urlparse(f'http://{address}' if not address.startswith(('http://', 'https://')) else address).hostname or address
+        try:
+            ip_address = socket.gethostbyname(hostname)
+        except socket.gaierror:
+            self.logger.error(f"Cannot resolve: {hostname}")
+            return False
         param = '-n' if platform.system().lower() == 'windows' else '-c'
         command = ['ping', param, '1', ip_address]
         try:
-            output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=15)
-            if output.returncode == 0:
-                return True
-            else:
-                self.logger.error(f"Ping command returned code: {output.returncode}")
-                return False
-        except subprocess.TimeoutExpired:
-            return False
-        except Exception as e:
-            pretty_print(f"Error with ping request {str(e)}", color="failure")
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
+            return result.returncode == 0
+        except (subprocess.TimeoutExpired, subprocess.SubprocessError) as e:
             return False
 
     def server_fn(self, history, verbose = False):

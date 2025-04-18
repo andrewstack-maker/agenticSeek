@@ -1,19 +1,36 @@
 *.wav
 *.DS_Store
 *.log
-cookies.json
 *.tmp
 *.safetensors
-config.ini
-test_agent.py
 *.egg-info
+cookies.json
+test_agent.py
+config.ini
 .voices/
 experimental/
+.logs/
+.screenshots/*.png
+.screenshots/*.jpg
 conversations/
 agentic_env/*
+agentic_seek_env/*
 .env
 */.env
 dsk/
+
+### react ###
+.DS_*
+*.log
+logs
+**/*.backup.*
+**/*.back.*
+node_modules
+bower_components
+*.sublime*
+psd
+thumb
+sketch
 
 
 # Byte-compiled / optimized / DLL files
