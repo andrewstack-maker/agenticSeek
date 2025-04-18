@@ -45,6 +45,7 @@ class Agent():
         self.tools = {}
         self.blocks_result = []
         self.last_answer = ""
+        self.status_message = "Haven't started yet"
         self.verbose = verbose
         self.executor = ThreadPoolExecutor(max_workers=1)
     
@@ -118,6 +119,7 @@ class Agent():
         """
         Asynchronously ask the LLM to process the prompt.
         """
+        self.status_message = "Thinking..."
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(self.executor, self.sync_llm_request)
     

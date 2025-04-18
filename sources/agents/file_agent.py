@@ -30,6 +30,7 @@ class FileAgent(Agent):
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)
             self.last_answer = answer
+        self.status_message = "Done"
         return answer, reasoning
 
 if __name__ == "__main__":

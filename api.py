@@ -5,6 +5,7 @@ import uvicorn
 import aiofiles
 import configparser
 import asyncio
+import time
 from typing import List
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -136,7 +137,9 @@ async def get_latest_answer():
             "answer": interaction.current_agent.last_answer,
             "agent_name": interaction.current_agent.agent_name if interaction.current_agent else "None",
             "success": "false",
-            "blocks": {f'{i}': block.jsonify() for i, block in enumerate(interaction.current_agent.get_blocks_result())} if interaction.current_agent else {}
+            "blocks": {f'{i}': block.jsonify() for i, block in enumerate(interaction.current_agent.get_blocks_result())} if interaction.current_agent else {},
+            "status": interaction.current_agent.status_message if interaction.current_agent else "No status available",
+            "timestamp": str(time.time())
         }
         query_resp_history.append(query_resp)
         return JSONResponse(status_code=200, content=query_resp)
@@ -171,7 +174,9 @@ async def process_query(request: QueryRequest):
         answer="Waiting for agent...",
         agent_name="Waiting for agent...",
         success="false",
-        blocks={}
+        blocks={},
+        status="Waiting for agent...",
+        timestamp=str(time.time())
     )
     if is_generating:
         logger.warning("Another query is being processed, please wait.")
@@ -208,7 +213,9 @@ async def process_query(request: QueryRequest):
             "answer": query_resp.answer,
             "agent_name": query_resp.agent_name,
             "success": query_resp.success,
-            "blocks": query_resp.blocks
+            "blocks": query_resp.blocks,
+            "status": query_resp.status,
+            "timestamp": query_resp.timestamp
         }
         query_resp_history.append(query_resp_dict)
 

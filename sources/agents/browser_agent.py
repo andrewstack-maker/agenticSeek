@@ -308,6 +308,7 @@ class BrowserAgent(Agent):
             pretty_print(f"Web agent requested exit.\n{reasoning}\n\n{ai_prompt}", color="failure")
             return ai_prompt, "" 
         animate_thinking(f"Searching...", color="status")
+        self.status_message = "Searching..."
         search_result_raw = self.tools["web_search"].execute([ai_prompt], False)
         search_result = self.jsonify_search_results(search_result_raw)[:16]
         self.show_search_results(search_result)
@@ -322,6 +323,7 @@ class BrowserAgent(Agent):
 
             extracted_form = self.extract_form(answer)
             if len(extracted_form) > 0:
+                self.status_message = "Filling web form..."
                 pretty_print(f"Filling inputs form...", color="status")
                 fill_success = self.browser.fill_form(extracted_form)
                 page_text = self.browser.get_text()
@@ -339,12 +341,14 @@ class BrowserAgent(Agent):
             link = self.select_link(links)
 
             if Action.REQUEST_EXIT.value in answer:
+                self.status_message = "Exiting web browser..."
                 pretty_print(f"Agent requested exit.", color="status")
                 complete = True
                 break
 
             if (link == None and not len(extracted_form)) or Action.GO_BACK.value in answer or link in self.search_history:
                 pretty_print(f"Going back to results. Still {len(unvisited)}", color="status")
+                self.status_message = "Going back to search results..."
                 unvisited = self.select_unvisited(search_result)
                 prompt = self.make_newsearch_prompt(user_prompt, unvisited)
                 continue
@@ -357,13 +361,16 @@ class BrowserAgent(Agent):
             page_text = self.browser.get_text()
             self.navigable_links = self.browser.get_navigable()
             prompt = self.make_navigation_prompt(user_prompt, page_text)
+            self.status_message = "Navigating..."
             self.browser.screenshot()
 
         pretty_print("Exited navigation, starting to summarize finding...", color="status")
         prompt = self.conclude_prompt(user_prompt)
         mem_last_idx = self.memory.push('user', prompt)
+        self.status_message = "Summarizing findings..."
         answer, reasoning = await self.llm_request()
         pretty_print(answer, color="output")
+        self.status_message = "Done"
         return answer, reasoning
 
 if __name__ == "__main__":

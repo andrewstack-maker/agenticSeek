@@ -23,6 +23,7 @@ class CasualAgent(Agent):
         animate_thinking("Thinking...", color="status")
         answer, reasoning = await self.llm_request()
         self.last_answer = answer
+        self.status_message = "Done"
         return answer, reasoning
 
 if __name__ == "__main__":

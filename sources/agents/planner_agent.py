@@ -102,7 +102,7 @@ class PlannerAgent(Agent):
             ok = True
         return answer
     
-    async def start_agent_process(self, task: str, required_infos: dict | None) -> str:
+    async def start_agent_process(self, task: dict, required_infos: dict | None) -> str:
         agent_prompt = self.make_prompt(task['task'], required_infos)
         pretty_print(f"Agent {task['agent']} started working...", color="status")
         agent_answer, _ = await self.agents[task['agent'].lower()].process(agent_prompt, None)
@@ -123,6 +123,7 @@ class PlannerAgent(Agent):
         if agents_tasks == (None, None):
             return "Failed to parse the tasks.", ""
         for task_name, task in agents_tasks:
+            self.status_message = "Starting agent process..."
             pretty_print(f"I will {task_name}.", color="info")
             pretty_print(f"Assigned agent {task['agent']} to {task_name}", color="info")
             if speech_module: speech_module.speak(f"I will {task_name}. I assigned the {task['agent']} agent to the task.")

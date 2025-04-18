@@ -22,6 +22,8 @@ class QueryResponse(BaseModel):
     agent_name: str
     success: str
     blocks: dict
+    status: str
+    timestamp: str
 
     def __str__(self):
         return f"Done: {self.done}, Answer: {self.answer}, Agent Name: {self.agent_name}, Success: {self.success}, Blocks: {self.blocks}"
