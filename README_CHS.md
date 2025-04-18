@@ -2,8 +2,8 @@
 <img align="center" src="./media/whale_readme.jpg">
 <p>
 
---------------------------------------------------------------------------------
-[English](./README.md) | 繁體中文
+
+[English](./README.md) | 中文 | [日本語](./README_JP.md)
 
 # AgenticSeek: 類似 Manus 但基於 Deepseek R1 Agents 的本地模型。
 
