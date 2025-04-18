@@ -14,15 +14,13 @@ function App() {
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
-        if (!isLoading) {
-            const intervalId = setInterval(() => {
-                checkHealth();
-                fetchLatestAnswer();
-                fetchScreenshot();
-            }, 1500);
-            return () => clearInterval(intervalId);
-        }
-    }, [isLoading, messages]);
+        const intervalId = setInterval(() => {
+            checkHealth();
+            fetchLatestAnswer();
+            fetchScreenshot();
+        }, 1500);
+        return () => clearInterval(intervalId);
+    }, [messages]);
 
     const checkHealth = async () => {
         try {
