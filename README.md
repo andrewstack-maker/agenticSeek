@@ -118,7 +118,7 @@ provider_server_address = 127.0.0.1:11434
 |-----------|--------|-----------------------------------------------------------|
 | ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
 | lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
-| openai    | Yes     |  Use API compatible  |
+| openai    | Yes     |  Use openai compatible API  |
 
 
 Next step: [Start services and run AgenticSeek](#Start-services-and-Run)  
@@ -181,6 +181,8 @@ python3 cli.py
 ```
 
 **Options 2:** Run with the Web interface.
+
+Note: Currently we advice you run the CLI instead. Web interface is an active work in progress.
 
 Start the backend.
 
@@ -397,10 +399,11 @@ The table below show the available providers:
 |-----------|--------|-----------------------------------------------------------|
 | ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
 | server    | Yes    | Host the model on another machine, run your local machine |
-| lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
-| openai    | No     | Use ChatGPT API (non-private)                             |
-| deepseek-api  | No     | Deepseek API (non-private)                                |
+| lm-studio  | Yes    | Run LLM locally with LM studio (`lm-studio`)             |
+| openai    | Depends  | Use ChatGPT API (non-private) or openai compatible API  |
+| deepseek-api  | No     | Deepseek API (non-private)                            |
 | huggingface| No    | Hugging-Face API (non-private)                            |
+| togetherAI | No    | Use together AI API (non-private)                         |
 
 To select a provider change the config.ini:
 

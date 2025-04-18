@@ -157,18 +157,20 @@ Voyez la section **Configuration** pour une explication détaillée du fichier d
 
 ## Utilisation
 
-Assurez-vous que les services sont en cours d’exécution avec ./start_services.sh et lancez AgenticSeek avec python3 cli.py
+Assurez-vous que les services sont en cours d’exécution avec ./start_services.sh et lancez AgenticSeek avec le CLI ou l'interface Web.
 
-```sh
-sudo ./start_services.sh
-python3 cli.py
-```
+**CLI:**
+Vous verrez un prompt : ">>> "  
+Cela indique qu’AgenticSeek attend que vous saisissiez des instructions.  
+Vous pouvez également utiliser la reconnaissance vocale en définissant `listen = True` dans la configuration.  
+Pour quitter, dites simplement `goodbye`.  
 
-Vous verrez un prompt: ">>> "
-Cela indique qu’AgenticSeek attend que vous saisissiez des instructions.
-Vous pouvez également utiliser la reconnaissance vocale en définissant listen = True dans la configuration.
+**Interface:**
 
-Pour quitter, dites simplement `goodbye`.
+Assurez-vous d'avoir bien démarré le backend avec `python3 api.py`.  
+Allez sur `localhost:3000` où vous verrez une interface web.  
+Tapez simplement votre message et patientez.  
+Si vous n'avez pas d'interface sur `localhost:3000`, c'est que vous n'avez pas démarré les services avec `start_services.sh`.
 
 Voici quelques exemples d’utilisation :
 
@@ -176,7 +178,7 @@ Voici quelques exemples d’utilisation :
 
 > *Aide-moi avec la multiplication de matrices en Golang*
 
-> *Initalize un nouveau project python, setup le readme, gitignore et tout le bordel et fait un premier commit*
+> *Initalize un nouveau project python, setup le readme, gitignore etc.. et fait un premier commit*
 
 > *Fais un jeu snake en Python*
 
@@ -351,9 +353,10 @@ Le tableau ci-dessous montre les LLM providers disponibles :
 | ollama    | Yes    | Exécutez des LLM localement avec facilité en utilisant Ollama comme fournisseur LLM 
 | server    | Yes    | Hébergez le modèle sur une autre machine, exécutez sur votre machine locale 
 | lm-studio  | Yes    | Exécutez un LLM localement avec LM Studio (définissez provider_name sur lm-studio) 
-| openai    | No     | Utilise ChatGPT API (pas privé) |
-| deepseek-api  | No     | Deepseek API (pas privé) |
-| huggingface| No    | Hugging-Face API (pas privé) |
+| openai    | No     | Utilise l'API ChatGPT (pas privé) |
+| deepseek-api  | No     | Utilise l'API Deepseek (pas privé) |
+| huggingface| No    | Utilise Hugging-Face (pas privé) |
+| together| No    | Utilise l'api Together AI |
 
 Pour sélectionner un provider LLM, modifiez le config.ini :
 
