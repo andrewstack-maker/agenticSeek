@@ -346,11 +346,13 @@ class BrowserAgent(Agent):
                 complete = True
                 break
 
-            if (link == None and not len(extracted_form)) or Action.GO_BACK.value in answer or link in self.search_history:
+            if (link == None and len(extracted_form) < 3) or Action.GO_BACK.value in answer or link in self.search_history:
                 pretty_print(f"Going back to results. Still {len(unvisited)}", color="status")
                 self.status_message = "Going back to search results..."
                 unvisited = self.select_unvisited(search_result)
                 prompt = self.make_newsearch_prompt(user_prompt, unvisited)
+                self.search_history.append(link)
+                self.current_page = link
                 continue
 
             animate_thinking(f"Navigating to {link}", color="status")

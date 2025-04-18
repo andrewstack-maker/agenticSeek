@@ -137,7 +137,7 @@ async def get_latest_answer():
             "answer": interaction.current_agent.last_answer,
             "agent_name": interaction.current_agent.agent_name if interaction.current_agent else "None",
             "success": interaction.current_agent.success,
-            "blocks": {f'{i}': block.jsonify() for i, block in enumerate(interaction.current_agent.get_blocks_result)} if interaction.current_agent else {},
+            "blocks": {f'{i}': block.jsonify() for i, block in enumerate(interaction.current_agent.get_blocks_result())} if interaction.current_agent else {},
             "status": interaction.current_agent.get_status_message if interaction.current_agent else "No status available",
             "timestamp": str(time.time())
         }
@@ -175,7 +175,7 @@ async def process_query(request: QueryRequest):
         agent_name="Unknown",
         success="false",
         blocks={},
-        status="Waiting for agent...",
+        status="No agent working.",
         timestamp=str(time.time())
     )
     if is_generating:
@@ -192,7 +192,7 @@ async def process_query(request: QueryRequest):
             return JSONResponse(status_code=400, content=query_resp.jsonify())
 
         if interaction.current_agent:
-            blocks_json = {f'{i}': block.jsonify() for i, block in enumerate(interaction.current_agent.get_blocks_result)}
+            blocks_json = {f'{i}': block.jsonify() for i, block in enumerate(interaction.current_agent.get_blocks_result())}
         else:
             logger.error("No current agent found")
             blocks_json = {}
