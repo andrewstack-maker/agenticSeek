@@ -20,8 +20,6 @@ from sources.utility import pretty_print
 from sources.logger import Logger
 from sources.schemas import QueryRequest, QueryResponse
 
-from concurrent.futures import ThreadPoolExecutor
-
 from celery import Celery
 
 api = FastAPI(title="AgenticSeek API", version="0.1.0")
@@ -42,8 +40,6 @@ api.add_middleware(
 if not os.path.exists(".screenshots"):
     os.makedirs(".screenshots")
 api.mount("/screenshots", StaticFiles(directory=".screenshots"), name="screenshots")
-
-executor = ThreadPoolExecutor(max_workers=1)
 
 def initialize_system():
     stealth_mode = config.getboolean('BROWSER', 'stealth_mode')
@@ -105,6 +101,7 @@ def initialize_system():
 
 interaction = initialize_system()
 is_generating = False
+query_resp_history = []
 
 @api.get("/screenshot")
 async def get_screenshot():
@@ -128,12 +125,31 @@ async def is_active():
     logger.info("Is active endpoint called")
     return {"is_active": interaction.is_active}
 
-def think_wrapper(interaction, query, tts_enabled):
+@api.get("/latest_answer")
+async def get_latest_answer():
+    global query_resp_history
+    if interaction.current_agent is None:
+        return JSONResponse(status_code=404, content={"error": "No agent available"})
+    if interaction.current_agent.last_answer not in [q["answer"] for q in query_resp_history]:
+        query_resp = {
+            "done": "false",
+            "answer": interaction.current_agent.last_answer,
+            "agent_name": interaction.current_agent.agent_name if interaction.current_agent else "None",
+            "success": "false",
+            "blocks": {f'{i}': block.jsonify() for i, block in enumerate(interaction.current_agent.get_blocks_result())} if interaction.current_agent else {}
+        }
+        query_resp_history.append(query_resp)
+        return JSONResponse(status_code=200, content=query_resp)
+    if query_resp_history:
+        return JSONResponse(status_code=200, content=query_resp_history[-1])
+    return JSONResponse(status_code=404, content={"error": "No answer available"})
+
+async def think_wrapper(interaction, query, tts_enabled):
     try:
         interaction.tts_enabled = tts_enabled
         interaction.last_query = query
         logger.info("Agents request is being processed")
-        success = interaction.think()
+        success = await interaction.think()
         if not success:
             interaction.last_answer = "Error: No answer from agent"
             interaction.last_success = False
@@ -148,7 +164,7 @@ def think_wrapper(interaction, query, tts_enabled):
 
 @api.post("/query", response_model=QueryResponse)
 async def process_query(request: QueryRequest):
-    global is_generating
+    global is_generating, query_resp_history
     logger.info(f"Processing query: {request.query}")
     query_resp = QueryResponse(
         done="false",
@@ -163,10 +179,7 @@ async def process_query(request: QueryRequest):
 
     try:
         is_generating = True
-        loop = asyncio.get_running_loop()
-        success = await loop.run_in_executor(
-            executor, think_wrapper, interaction, request.query, request.tts_enabled
-        )
+        success = await think_wrapper(interaction, request.query, request.tts_enabled)
         is_generating = False
 
         if not success:
@@ -188,6 +201,17 @@ async def process_query(request: QueryRequest):
         query_resp.agent_name = interaction.current_agent.agent_name
         query_resp.success = str(interaction.last_success)
         query_resp.blocks = blocks_json
+        
+        # Store the raw dictionary representation
+        query_resp_dict = {
+            "done": query_resp.done,
+            "answer": query_resp.answer,
+            "agent_name": query_resp.agent_name,
+            "success": query_resp.success,
+            "blocks": query_resp.blocks
+        }
+        query_resp_history.append(query_resp_dict)
+
         logger.info("Query processed successfully")
         return JSONResponse(status_code=200, content=query_resp.jsonify())
     except Exception as e:

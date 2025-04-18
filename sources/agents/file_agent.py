@@ -1,3 +1,4 @@
+import asyncio
 
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
@@ -18,14 +19,14 @@ class FileAgent(Agent):
         self.role = "files"
         self.type = "file_agent"
     
-    def process(self, prompt, speech_module) -> str:
+    async def process(self, prompt, speech_module) -> str:
         exec_success = False
         prompt += f"\nYou must work in directory: {self.work_dir}"
         self.memory.push('user', prompt)
         while exec_success is False:
-            self.wait_message(speech_module)
+            await self.wait_message(speech_module)
             animate_thinking("Thinking...", color="status")
-            answer, reasoning = self.llm_request()
+            answer, reasoning = await self.llm_request()
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)
             self.last_answer = answer

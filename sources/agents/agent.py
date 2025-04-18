@@ -5,6 +5,9 @@ import os
 import random
 import time
 
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
 from sources.memory import Memory
 from sources.utility import pretty_print
 from sources.schemas import executorResult
@@ -43,7 +46,28 @@ class Agent():
         self.blocks_result = []
         self.last_answer = ""
         self.verbose = verbose
+        self.executor = ThreadPoolExecutor(max_workers=1)
     
+    @property
+    def get_agent_name(self) -> str:
+        return self.agent_name
+    
+    @property
+    def get_agent_type(self) -> str:
+        return self.type
+    
+    @property
+    def get_agent_role(self) -> str:
+        return self.role
+    
+    @property
+    def get_last_answer(self) -> str:
+        return self.last_answer
+    
+    @property
+    def get_blocks(self) -> list:
+        return self.blocks_result
+
     @property
     def get_tools(self) -> dict:
         return self.tools
@@ -90,7 +114,14 @@ class Agent():
         end_idx = text.rfind(end_tag)+8
         return text[start_idx:end_idx]
     
-    def llm_request(self) -> Tuple[str, str]:
+    async def llm_request(self) -> Tuple[str, str]:
+        """
+        Asynchronously ask the LLM to process the prompt.
+        """
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(self.executor, self.sync_llm_request)
+    
+    def sync_llm_request(self) -> Tuple[str, str]:
         """
         Ask the LLM to process the prompt and return the answer and the reasoning.
         """
@@ -102,14 +133,15 @@ class Agent():
         self.memory.push('assistant', answer)
         return answer, reasoning
     
-    def wait_message(self, speech_module):
+    async def wait_message(self, speech_module):
         if speech_module is None:
             return
         messages = ["Please be patient, I am working on it.",
                     "Computing... I recommand you have a coffee while I work.",
                     "Hold on, I’m crunching numbers.",
                     "Working on it, please let me think."]
-        if speech_module: speech_module.speak(messages[random.randint(0, len(messages)-1)])
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(self.executor, lambda: speech_module.speak(messages[random.randint(0, len(messages)-1)]))
     
     def get_blocks_result(self) -> list:
         return self.blocks_result

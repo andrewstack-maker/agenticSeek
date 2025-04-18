@@ -3,6 +3,7 @@ import time
 from datetime import date
 from typing import List, Tuple, Type, Dict
 from enum import Enum
+import asyncio
 
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
@@ -166,10 +167,10 @@ class BrowserAgent(Agent):
         You must always take notes.
         """
     
-    def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:
+    async def llm_decide(self, prompt: str, show_reasoning: bool = False) -> Tuple[str, str]:
         animate_thinking("Thinking...", color="status")
         self.memory.push('user', prompt)
-        answer, reasoning = self.llm_request()
+        answer, reasoning = await self.llm_request()
         if show_reasoning:
             pretty_print(reasoning, color="failure")
         pretty_print(answer, color="output")
@@ -287,7 +288,7 @@ class BrowserAgent(Agent):
             pretty_print(f"Title: {res['title']} - ", color="info", no_newline=True)
             pretty_print(f"Link: {res['link']}", color="status")
 
-    def process(self, user_prompt: str, speech_module: type) -> Tuple[str, str]:
+    async def process(self, user_prompt: str, speech_module: type) -> Tuple[str, str]:
         """
         Process the user prompt to conduct an autonomous web search.
         Start with a google search with searxng using web_search tool.
@@ -302,7 +303,7 @@ class BrowserAgent(Agent):
 
         animate_thinking(f"Thinking...", color="status")
         mem_begin_idx = self.memory.push('user', self.search_prompt(user_prompt))
-        ai_prompt, reasoning = self.llm_request()
+        ai_prompt, reasoning = await self.llm_request()
         if Action.REQUEST_EXIT.value in ai_prompt:
             pretty_print(f"Web agent requested exit.\n{reasoning}\n\n{ai_prompt}", color="failure")
             return ai_prompt, "" 
@@ -315,7 +316,8 @@ class BrowserAgent(Agent):
         while not complete and len(unvisited) > 0:
 
             self.memory.clear()
-            answer, reasoning = self.llm_decide(prompt, show_reasoning = False)
+            answer, reasoning = await self.llm_decide(prompt, show_reasoning = False)
+            self.last_answer = answer
             pretty_print('▂'*32, color="status")
 
             extracted_form = self.extract_form(answer)
@@ -324,7 +326,7 @@ class BrowserAgent(Agent):
                 fill_success = self.browser.fill_form(extracted_form)
                 page_text = self.browser.get_text()
                 answer = self.handle_update_prompt(user_prompt, page_text, fill_success)
-                answer, reasoning = self.llm_decide(prompt)
+                answer, reasoning = await self.llm_decide(prompt)
 
             if Action.FORM_FILLED.value in answer:
                 pretty_print(f"Filled form. Handling page update.", color="status")
@@ -355,11 +357,12 @@ class BrowserAgent(Agent):
             page_text = self.browser.get_text()
             self.navigable_links = self.browser.get_navigable()
             prompt = self.make_navigation_prompt(user_prompt, page_text)
+            self.browser.screenshot()
 
         pretty_print("Exited navigation, starting to summarize finding...", color="status")
         prompt = self.conclude_prompt(user_prompt)
         mem_last_idx = self.memory.push('user', prompt)
-        answer, reasoning = self.llm_request()
+        answer, reasoning = await self.llm_request()
         pretty_print(answer, color="output")
         return answer, reasoning
 

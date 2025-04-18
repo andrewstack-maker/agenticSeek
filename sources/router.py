@@ -362,6 +362,8 @@ class AgentRouter:
         Returns:
             str: The selected label
         """
+        if len(text) <= 8:
+            return "talk"
         result_bart = self.pipelines['bart'](text, labels)
         result_llm_router = self.llm_router(text)
         bart, confidence_bart = result_bart['labels'][0], result_bart['scores'][0]

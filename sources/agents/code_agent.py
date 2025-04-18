@@ -1,4 +1,5 @@
 import platform, os
+import asyncio
 
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent, executorResult
@@ -26,7 +27,6 @@ class CoderAgent(Agent):
         self.work_dir = self.tools["file_finder"].get_work_dir()
         self.role = "code"
         self.type = "code_agent"
-
     
     def add_sys_info_prompt(self, prompt):
         """Add system information to the prompt."""
@@ -36,7 +36,7 @@ class CoderAgent(Agent):
                f"\nYou must save file in work directory: {self.work_dir}"
         return f"{prompt}\n\n{info}"
 
-    def process(self, prompt, speech_module) -> str:
+    async def process(self, prompt, speech_module) -> str:
         answer = ""
         attempt = 0
         max_attempts = 4
@@ -46,20 +46,22 @@ class CoderAgent(Agent):
 
         while attempt < max_attempts:
             animate_thinking("Thinking...", color="status")
-            self.wait_message(speech_module)
-            answer, reasoning = self.llm_request()
+            await self.wait_message(speech_module)
+            answer, reasoning = await self.llm_request()
             if clarify_trigger in answer:
+                self.last_answer = answer
+                await asyncio.sleep(0)
                 return answer, reasoning
             if not "```" in answer:
                 self.last_answer = answer
+                await asyncio.sleep(0)
                 break
             animate_thinking("Executing code...", color="status")
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)
             self.last_answer = answer
-            if self.get_last_tool_type() == "bash":
-                continue
-            if exec_success:
+            await asyncio.sleep(0)
+            if exec_success and self.get_last_tool_type() != "bash":
                 break
             pretty_print("Execution failure", color="failure")
             pretty_print("Correcting code...", color="status")

@@ -124,7 +124,7 @@ class Interaction:
         self.last_query = query
         return query
     
-    def think(self) -> bool:
+    async def think(self) -> bool:
         """Request AI agents to process the user input."""
         push_last_agent_memory = False
         if self.last_query is None or len(self.last_query) == 0:
@@ -137,7 +137,7 @@ class Interaction:
         tmp = self.last_answer
         self.current_agent = agent
         self.is_generating = True
-        self.last_answer, _ = agent.process(self.last_query, self.speech)
+        self.last_answer, _ = await agent.process(self.last_query, self.speech)
         self.is_generating = False
         if push_last_agent_memory:
             self.current_agent.memory.push('user', self.last_query)
@@ -145,6 +145,18 @@ class Interaction:
         if self.last_answer == tmp:
             self.last_answer = None
         return True
+    
+    def get_updated_process_answer(self) -> str:
+        """Get the answer from the last agent."""
+        if self.current_agent is None:
+            return None
+        return self.current_agent.get_last_answer()
+    
+    def get_updated_block_answer(self) -> str:
+        """Get the answer from the last agent."""
+        if self.current_agent is None:
+            return None
+        return self.current_agent.get_last_block_answer()
     
     def show_answer(self) -> None:
         """Show the answer to the user."""

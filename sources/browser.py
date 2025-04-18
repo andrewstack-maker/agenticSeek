@@ -172,8 +172,6 @@ class Browser:
             )
             self.apply_web_safety()
             self.logger.log(f"Navigated to: {url}")
-            self.logger.info(f"Navigated to: {self.get_page_title()}")
-            self.screenshot()
             return True
         except TimeoutException as e:
             self.logger.error(f"Timeout waiting for {url} to load: {str(e)}")
@@ -297,7 +295,6 @@ class Browser:
                 time.sleep(0.1)
                 element.click()
                 self.logger.info(f"Clicked element at {xpath}")
-                self.screenshot()
                 return True
             except ElementClickInterceptedException as e:
                 self.logger.error(f"Error click_element: {str(e)}")
@@ -540,7 +537,6 @@ class Browser:
             if self.find_and_click_submission():
                 if self.wait_for_submission_outcome():
                     self.logger.info("Submission outcome detected")
-                    self.screenshot()
                     return True
                 else:
                     self.logger.warning("No submission outcome detected")
@@ -564,8 +560,7 @@ class Browser:
             self.driver.execute_script(
                 "window.scrollTo(0, document.body.scrollHeight);"
             )
-            time.sleep(1)
-            self.screenshot()
+            time.sleep(0.5)
             return True
         except Exception as e:
             self.logger.error(f"Error scrolling: {str(e)}")
@@ -577,6 +572,7 @@ class Browser:
     def screenshot(self, filename:str = 'updated_screen.png') -> bool:
         """Take a screenshot of the current page."""
         self.logger.info("Taking screenshot...")
+        time.sleep(0.1)
         try:
             path = os.path.join(self.screenshot_folder, filename)
             if not os.path.exists(self.screenshot_folder):

@@ -86,13 +86,13 @@ class PlannerAgent(Agent):
             pretty_print(f"{task['agent']} -> {task['task']}", color="info")
         pretty_print("▔▗ E N D ▖▔", color="status")
     
-    def make_plan(self, prompt: str) -> str:
+    async def make_plan(self, prompt: str) -> str:
         ok = False
         answer = None
         while not ok:
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', prompt)
-            answer, _ = self.llm_request()
+            answer, _ = await self.llm_request()
             agents_tasks = self.parse_agent_tasks(answer)
             if agents_tasks == (None, None):
                 prompt = f"Failed to parse the tasks. Please make a plan within ```json.\n"
@@ -102,10 +102,10 @@ class PlannerAgent(Agent):
             ok = True
         return answer
     
-    def start_agent_process(self, task: str, required_infos: dict | None) -> str:
+    async def start_agent_process(self, task: str, required_infos: dict | None) -> str:
         agent_prompt = self.make_prompt(task['task'], required_infos)
         pretty_print(f"Agent {task['agent']} started working...", color="status")
-        agent_answer, _ = self.agents[task['agent'].lower()].process(agent_prompt, None)
+        agent_answer, _ = await self.agents[task['agent'].lower()].process(agent_prompt, None)
         self.agents[task['agent'].lower()].show_answer()
         pretty_print(f"Agent {task['agent']} completed task.", color="status")
         return agent_answer
@@ -113,11 +113,11 @@ class PlannerAgent(Agent):
     def get_work_result_agent(self, task_needs, agents_work_result):
         return {k: agents_work_result[k] for k in task_needs if k in agents_work_result}
 
-    def process(self, prompt: str, speech_module: Speech) -> Tuple[str, str]:
+    async def process(self, prompt: str, speech_module: Speech) -> Tuple[str, str]:
         agents_tasks = (None, None)
         agents_work_result = dict()
 
-        answer = self.make_plan(prompt)
+        answer = await self.make_plan(prompt)
         agents_tasks = self.parse_agent_tasks(answer)
 
         if agents_tasks == (None, None):
@@ -130,7 +130,7 @@ class PlannerAgent(Agent):
             if agents_work_result is not None:
                 required_infos = self.get_work_result_agent(task['need'], agents_work_result)
             try:
-                self.last_answer = self.start_agent_process(task, required_infos)
+                self.last_answer = await self.start_agent_process(task, required_infos)
             except Exception as e:
                 raise e
             agents_work_result[task['id']] = self.last_answer

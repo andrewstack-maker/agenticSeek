@@ -3,6 +3,7 @@
 import sys
 import argparse
 import configparser
+import asyncio
 
 from sources.llm_provider import Provider
 from sources.interaction import Interaction
@@ -16,7 +17,7 @@ warnings.filterwarnings("ignore")
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-def main():
+async def main():
     pretty_print("Initializing...", color="status")
     stealth_mode = config.getboolean('BROWSER', 'stealth_mode')
     personality_folder = "jarvis" if config.getboolean('MAIN', 'jarvis_personality') else "base"
@@ -59,7 +60,7 @@ def main():
     try:
         while interaction.is_active:
             interaction.get_user()
-            if interaction.think():
+            if await interaction.think():
                 interaction.show_answer()
     except Exception as e:
         if config.getboolean('MAIN', 'save_session'):
@@ -69,6 +70,5 @@ def main():
         if config.getboolean('MAIN', 'save_session'):
             interaction.save_session()
 
-
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

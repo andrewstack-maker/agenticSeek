@@ -10,11 +10,24 @@ function App() {
     const [currentView, setCurrentView] = useState('blocks');
     const [responseData, setResponseData] = useState(null);
     const [isOnline, setIsOnline] = useState(false);
+    const [isMounted, setIsMounted] = useState(true);
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
-        scrollToBottom();
-        checkHealth();
+        const intervalId = setInterval(() => {
+            checkHealth();
+            fetchLatestAnswer();
+            fetchScreenshot();
+        }, 1500);
+        return () => clearInterval(intervalId);
+    }, [messages]);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            scrollToBottom();
+        }, 7000);
+
+        return () => clearInterval(intervalId);
     }, [messages]);
 
     const checkHealth = async () => {
@@ -32,54 +45,58 @@ function App() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    useEffect(() => {
-        if (currentView === 'screenshot') {
-            let isMounted = true;
-    
-            const fetchScreenshot = async () => {
-                try {
-                    const timestamp = new Date().getTime();
-                    const res = await axios.get(`http://0.0.0.0:8000/screenshots/updated_screen.png?timestamp=${timestamp}`, {
-                        responseType: 'blob'
-                    });
-                    if (isMounted) {
-                        console.log('Screenshot fetched successfully');
-                        const imageUrl = URL.createObjectURL(res.data);
-                        setResponseData((prev) => {
-                            if (prev?.screenshot && prev.screenshot !== 'placeholder.png') {
-                                URL.revokeObjectURL(prev.screenshot);
-                            }
-                            return {
-                                ...prev,
-                                screenshot: imageUrl,
-                                screenshotTimestamp: new Date().getTime()
-                            };
-                        });
+    const fetchScreenshot = async () => {
+        try {
+            const timestamp = new Date().getTime();
+            const res = await axios.get(`http://0.0.0.0:8000/screenshots/updated_screen.png?timestamp=${timestamp}`, {
+                responseType: 'blob'
+            });
+            if (isMounted) {
+                console.log('Screenshot fetched successfully');
+                const imageUrl = URL.createObjectURL(res.data);
+                setResponseData((prev) => {
+                    if (prev?.screenshot && prev.screenshot !== 'placeholder.png') {
+                        URL.revokeObjectURL(prev.screenshot);
                     }
-                } catch (err) {
-                    console.error('Error fetching screenshot:', err);
-                    if (isMounted) {
-                        setResponseData((prev) => ({
-                            ...prev,
-                            screenshot: 'placeholder.png',
-                            screenshotTimestamp: new Date().getTime()
-                        }));
-                    }
-                }
-            };
-    
-            fetchScreenshot();
-            const interval = setInterval(fetchScreenshot, 1000);
-    
-            return () => {
-                isMounted = false;
-                clearInterval(interval);
-                if (responseData?.screenshot && responseData.screenshot !== 'placeholder.png') {
-                    URL.revokeObjectURL(responseData.screenshot);
-                }
-            };
+                    return {
+                        ...prev,
+                        screenshot: imageUrl,
+                        screenshotTimestamp: new Date().getTime()
+                    };
+                });
+            }
+        } catch (err) {
+            console.error('Error fetching screenshot:', err);
+            if (isMounted) {
+                setResponseData((prev) => ({
+                    ...prev,
+                    screenshot: 'placeholder.png',
+                    screenshotTimestamp: new Date().getTime()
+                }));
+            }
         }
-    }, [currentView]);
+    };
+
+    const normalizeAnswer = (answer) => answer.trim().toLowerCase();
+
+    const fetchLatestAnswer = async () => {
+        try {
+            const res = await axios.get('http://0.0.0.0:8000/latest_answer');
+            const data = res.data;
+            const normalizedAnswer = normalizeAnswer(data.answer);
+            const answerExists = messages.some(
+                (msg) => normalizeAnswer(msg.content) === normalizedAnswer && data.answer != undefined
+            );
+            if (!answerExists) {
+                setMessages((prev) => [
+                    ...prev,
+                    { type: 'agent', content: data.answer, agentName: data.agent_name },
+                ]);
+            }
+        } catch (error) {
+            console.error("Error fetching latest answer:", error);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -101,10 +118,7 @@ function App() {
             console.log('Response:', res.data);
             const data = res.data;
             setResponseData(data);
-            setMessages((prev) => [
-                ...prev,
-                { type: 'agent', content: data.answer, agentName: data.agent_name },
-            ]);
+            fetchLatestAnswer();
         } catch (err) {
             console.error('Error:', err);
             setError('Failed to process query.');
