@@ -10,7 +10,7 @@
 
 **Manus AIの完全なローカル代替品**、音声対応のAIアシスタントで、コードを書き、ファイルシステムを探索し、ウェブを閲覧し、ミスを修正し、データをクラウドに送信することなくすべてを行います。DeepSeek R1のような推論モデルを使用して構築されており、この自律エージェントは完全にハードウェア上で動作し、データのプライバシーを保護します。
 
-[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/4Ub2D6Fj) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/XSTKZ8nP) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
 
 > 🛠️ **進行中の作業** – 貢献者を探しています！
 
@@ -87,60 +87,116 @@ pip3 install -r requirements.txt
 python3 setup.py install
 ```
 
+---
 
-## ローカルで実行
+## ローカルマシンでLLMを実行するためのセットアップ
 
-**少なくともDeepseek 14Bを使用することをお勧めします。小さなモデルはツールの使用に苦労し、コンテキストをすぐに忘れてしまいます。**
+**少なくともDeepseek 14Bを使用することをお勧めします。小さいモデルでは、特にウェブブラウジングのタスクで苦労する可能性があります。**
 
-### 1️⃣ **モデルをダウンロード**  
+**ローカルプロバイダーをセットアップする**  
 
-[Ollama](https://ollama.com/)がインストールされていることを確認してください。
+たとえば、ollamaを使用してローカルプロバイダーを開始します:
 
-[DeepSeek](https://deepseek.com/models)から`deepseek-r1:14b`モデルをダウンロードします。
-
-```sh
-ollama pull deepseek-r1:14b
-```
-
-### 2️ **アシスタントを実行（Ollama）**  
-
-ollamaサーバーを起動します
 ```sh
 ollama serve
 ```
 
-config.iniファイルを変更して、provider_nameを`ollama`、provider_modelを`deepseek-r1:14b`に設定します。
+以下に、サポートされているローカルプロバイダーのリストを示します。
 
-注意: `deepseek-r1:14b`は例です。ハードウェアが許す場合は、より大きなモデルを使用してください。
+**config.iniを更新する**
+
+config.iniファイルを変更して、`provider_name`をサポートされているプロバイダーに設定し、`provider_model`を`deepseek-r1:14b`に設定します。
+
+注意: `deepseek-r1:14b`は例です。ハードウェアが許可する場合は、より大きなモデルを使用してください。
 
 ```sh
 [MAIN]
 is_local = True
-provider_name = ollama
+provider_name = ollama # または lm-studio、openai など
 provider_model = deepseek-r1:14b
 provider_server_address = 127.0.0.1:11434
 ```
 
-すべてのサービスを開始します:
+**ローカルプロバイダーのリスト**
+
+| プロバイダー  | ローカル? | 説明                                               |
+|-----------|--------|-----------------------------------------------------------|
+| ollama    | はい    | ollamaをLLMプロバイダーとして使用して、ローカルでLLMを簡単に実行 |
+| lm-studio  | はい    | LM studioを使用してローカルでLLMを実行（`provider_name`を`lm-studio`に設定）|
+| openai    | はい    | OpenAI互換APIを使用  |
+
+次のステップ: [サービスを開始してAgenticSeekを実行する](#Start-services-and-Run)  
+
+*問題が発生している場合は、**既知の問題**セクションを参照してください。*
+
+*ハードウェアがDeepseekをローカルで実行できない場合は、**APIを使用した実行**セクションを参照してください。*
+
+*詳細な設定ファイルの説明については、**設定**セクションを参照してください。*
+
+---
+
+## APIを使用したセットアップ
+
+`config.ini`で希望するプロバイダーを設定してください。
+
+```sh
+[MAIN]
+is_local = False
+provider_name = openai
+provider_model = gpt-4o
+provider_server_address = 127.0.0.1:5000
+```
+
+警告: `config.ini`に末尾のスペースがないことを確認してください。
+
+ローカルのOpenAIベースのAPIを使用する場合は、`is_local`をTrueに設定してください。
+
+OpenAIベースのAPIが独自のサーバーで実行されている場合は、IPアドレスを変更してください。
+
+次のステップ: [サービスを開始してAgenticSeekを実行する](#Start-services-and-Run)
+
+*問題が発生している場合は、**既知の問題**セクションを参照してください。*
+
+*詳細な設定ファイルの説明については、**設定**セクションを参照してください。*
+
+---
+
+## サービスの開始と実行
+
+必要に応じてPython環境をアクティブにしてください。
+```sh
+source agentic_seek_env/bin/activate
+```
+
+必要なサービスを開始します。これにより、docker-compose.ymlから以下のサービスがすべて開始されます:
+- searxng
+- redis (searxngに必要)
+- フロントエンド
 
 ```sh
 sudo ./start_services.sh # MacOS
 start ./start_services.cmd # Windows
 ```
 
-アシスタントを実行します:
+**オプション1:** CLIインターフェースで実行。
 
 ```sh
-python3 main.py
+python3 cli.py
 ```
 
-*使い方がわからない場合は、**Usage**セクションを参照してください*
+**オプション2:** Webインターフェースで実行。
 
-*問題が発生した場合は、**Known issues**セクションを参照してください*
+注意: 現在、CLIの使用を推奨しています。Webインターフェースは開発中です。
 
-*ハードウェアがローカルでdeepseekを実行できない場合は、**Run with an API**セクションを参照してください*
+バックエンドを開始します。
 
-*詳細な設定ファイルの説明については、**Config**セクションを参照してください。*
+```sh
+python3 api.py
+```
+
+`http://localhost:3000/`にアクセスすると、Webインターフェースが表示されます。
+
+現在、Webインターフェースではメッセージのストリーミングがサポートされていないことに注意してください。
 
 ---
 
@@ -210,31 +266,27 @@ configで`listen = True`を設定することで、音声認識を使用する�
 
 ---
 
-## **独自のサーバーでLLMを実行**  
+## **ボーナス: 自分のサーバーでLLMを実行するためのセットアップ**  
 
-強力なコンピュータやサーバーを持っているが、ラップトップから使用したい場合は、リモートサーバーでLLMを実行するオプションがあります。
+強力なコンピュータやサーバーを持っていて、それをラップトップから使用したい場合、リモートサーバーでLLMを実行するオプションがあります。
 
-### 1️⃣  **サーバースクリプトをセットアップして起動** 
-
-AIモデルを実行する「サーバー」で、IPアドレスを取得します
+AIモデルを実行する「サーバー」で、IPアドレスを取得します。
 
 ```sh
-ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
+ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1 # ローカルIP
+curl https://ipinfo.io/ip # 公開IP
 ```
 
-注意: WindowsまたはmacOSの場合、IPアドレスを見つけるためにそれぞれipconfigまたはifconfigを使用します。
+注意: WindowsまたはmacOSの場合、IPアドレスを見つけるには、それぞれ`ipconfig`または`ifconfig`を使用してください。
 
-**openaiベースのプロバイダーを使用する場合は、*Run with an API*セクションに従ってください。**
-
-リポジトリをクローンし、`server/`フォルダーに入ります。
-
+リポジトリをクローンし、`server/`フォルダーに移動します。
 
 ```sh
 git clone --depth 1 https://github.com/Fosowl/agenticSeek.git
 cd agenticSeek/server/
 ```
 
-サーバー固有の要件をインストールします:
+サーバー固有の依存関係をインストールします:
 
 ```sh
 pip3 install -r requirements.txt
@@ -246,54 +298,23 @@ pip3 install -r requirements.txt
 python3 app.py --provider ollama --port 3333
 ```
 
-LLMサービスとして`ollama`と`llamacpp`のどちらかを使用することができます。
+`ollama`と`llamacpp`のどちらかをLLMサービスとして選択できます。
 
-### 2️⃣ **実行** 
+次に、個人用コンピュータで以下を行います:
 
-今度は個人のコンピュータで:
-
-`config.ini`ファイルを変更して、`provider_name`を`server`、`provider_model`を`deepseek-r1:14b`に設定します。
+`config.ini`ファイルを変更し、`provider_name`を`server`に、`provider_model`を`deepseek-r1:xxb`に設定します。
 `provider_server_address`をモデルを実行するマシンのIPアドレスに設定します。
 
 ```sh
 [MAIN]
 is_local = False
 provider_name = server
-provider_model = deepseek-r1:14b
+provider_model = deepseek-r1:70b
 provider_server_address = x.x.x.x:3333
 ```
 
-アシスタントを実行します:
+次のステップ: [サービスを開始してAgenticSeekを実行する](#Start-services-and-Run)  
 
-```sh
-sudo ./start_services.sh # Windowsの場合はstart_services.cmd
-python3 main.py
-```
-
-## **APIを使用して実行**  
-
-`config.ini`で希望するプロバイダーを設定します
-
-```sh
-[MAIN]
-is_local = False
-provider_name = openai
-provider_model = gpt-4o
-provider_server_address = 127.0.0.1:5000
-```
-
-警告: 設定に末尾のスペースがないことを確認してください。
-
-ローカルのopenaiベースのAPIを使用する場合は、`is_local`をTrueに設定します。
-
-openaiベースのAPIが独自のサーバーで実行されている場合は、IPアドレスを変更します。
-
-アシスタントを実行します:
-
-```sh
-sudo ./start_services.sh # Windowsの場合はstart_services.cmd
-python3 main.py
-```
 
 ---
 
@@ -338,6 +359,7 @@ speak = False
 listen = False
 work_dir =  /Users/mlg/Documents/ai_folder
 jarvis_personality = False
+languages = en ja
 [BROWSER]
 headless_browser = False
 stealth_mode = False
@@ -358,6 +380,7 @@ stealth_mode = False
 - jarvis_personality -> JARVISのようなパーソナリティを使用する（True）か、しない（False）。これは単にプロンプトファイルを変更するだけです。
 - headless_browser -> ウィンドウを表示せずにブラウザを実行する（True）か、しない（False）。
 - stealth_mode -> ボット検出を難しくします。唯一の欠点は、anticaptcha拡張機能を手動でインストールする必要があることです。
+- languages -> List of supported languages. Required for agent routing system. The longer the languages list the more model will be downloaded.
 
 ## プロバイダー
 
@@ -365,12 +388,14 @@ stealth_mode = False
 
 | プロバイダー  | ローカル? | 説明                                               |
 |-----------|--------|-----------------------------------------------------------|
-| ollama    | はい    | ollamaを使用してLLMをローカルで簡単に実行 |
-| server    | はい    | モデルを別のマシンにホストし、ローカルマシンで実行 |
-| lm-studio  | はい    | LM studioを使用してLLMをローカルで実行（`provider_name`を`lm-studio`に設定）|
-| openai    | いいえ     | ChatGPT APIを使用（非プライベート）                             |
-| deepseek-api  | いいえ     | Deepseek API（非プライベート）                                |
-| huggingface| いいえ    | Hugging-Face API（非プライベート）                            |
+| ollama    | はい    | ollamaをLLMプロバイダーとして使用して、ローカルでLLMを簡単に実行 |
+| server    | はい    | モデルを別のマシンでホストし、ローカルマシンで実行         |
+| lm-studio | はい    | LM studio（`lm-studio`）を使用してローカルでLLMを実行      |
+| openai    | 場合による | ChatGPT API（非プライベート）またはopenai互換APIを使用   |
+| deepseek-api | いいえ  | Deepseek API（非プライベート）                          |
+| huggingface| いいえ  | Hugging-Face API（非プライベート）                        |
+| togetherAI | いいえ  | together AI API（非プライベート）を使用                  
+
 
 プロバイダーを選択するには、config.iniを変更します:
 
@@ -417,9 +442,12 @@ https://googlechromelabs.github.io/chrome-for-testing/
 
 **Q: どのようなハードウェアが必要ですか？**  
 
-7Bモデル: 8GBのVRAMを持つGPU。
-14Bモデル: 12GBのGPU（例: RTX 3060）。
-32Bモデル: 24GB以上のVRAM。
+| モデルサイズ  | GPU  | コメント                                               |
+|-----------|--------|-----------------------------------------------------------|
+| 7B        | 8GB VRAM | ⚠️ 推奨されません。パフォーマンスが低く、頻繁に幻覚を起こし、プランナーエージェントが失敗する可能性が高いです。 |
+| 14B        | 12GB VRAM (例: RTX 3060) | ✅ 簡単なタスクには使用可能です。ウェブブラウジングや計画タスクには苦労する可能性があります。 |
+| 32B        | 24GB以上のVRAM (例: RTX 4090) | 🚀 ほとんどのタスクで成功しますが、タスク計画にはまだ苦労する可能性があります。 |
+| 70B+        | 48GB以上のVRAM (例: Mac Studio) | 💪 優れた性能。高度なユースケースに推奨されます。 |
 
 **Q: なぜ他のモデルではなくDeepseek R1を選ぶのですか？**  
 
