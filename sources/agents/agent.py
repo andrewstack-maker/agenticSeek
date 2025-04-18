@@ -44,6 +44,7 @@ class Agent():
                                 memory_compression=False)
         self.tools = {}
         self.blocks_result = []
+        self.success = True
         self.last_answer = ""
         self.status_message = "Haven't started yet"
         self.verbose = verbose
@@ -68,10 +69,18 @@ class Agent():
     @property
     def get_blocks(self) -> list:
         return self.blocks_result
+    
+    @property
+    def get_status_message(self) -> str:
+        return self.status_message
 
     @property
     def get_tools(self) -> dict:
         return self.tools
+    
+    @property
+    def get_blocks_result(self) -> list:
+        return self.blocks_result
 
     def add_tool(self, name: str, tool: Callable) -> None:
         if tool is not Callable:
@@ -145,9 +154,6 @@ class Agent():
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(self.executor, lambda: speech_module.speak(messages[random.randint(0, len(messages)-1)]))
     
-    def get_blocks_result(self) -> list:
-        return self.blocks_result
-    
     def get_last_tool_type(self) -> str:
         return self.blocks_result[-1].tool_type if len(self.blocks_result) > 0 else None
 
@@ -194,11 +200,12 @@ class Agent():
         Execute all the tools the agent has and return the result.
         """
         feedback = ""
-        success = False
+        success = True
         blocks = None
         if answer.startswith("```"):
             answer = "I will execute:\n" + answer # there should always be a text before blocks for the function that display answer
 
+        self.success = True
         for name, tool in self.tools.items():
             feedback = ""
             blocks, save_path = tool.load_exec_block(answer)
@@ -210,6 +217,7 @@ class Agent():
                     success = not tool.execution_failure_check(output)
                     self.blocks_result.append(executorResult(block, feedback, success, name))
                     if not success:
+                        self.success = False
                         self.memory.push('user', feedback)
                         return False, feedback
                 self.memory.push('user', feedback)

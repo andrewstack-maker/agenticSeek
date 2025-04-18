@@ -136,9 +136,9 @@ async def get_latest_answer():
             "done": "false",
             "answer": interaction.current_agent.last_answer,
             "agent_name": interaction.current_agent.agent_name if interaction.current_agent else "None",
-            "success": "false",
+            "success": interaction.current_agent.success,
             "blocks": {f'{i}': block.jsonify() for i, block in enumerate(interaction.current_agent.get_blocks_result())} if interaction.current_agent else {},
-            "status": interaction.current_agent.status_message if interaction.current_agent else "No status available",
+            "status": interaction.current_agent.get_status_message if interaction.current_agent else "No status available",
             "timestamp": str(time.time())
         }
         query_resp_history.append(query_resp)
