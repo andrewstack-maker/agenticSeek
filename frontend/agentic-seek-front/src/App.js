@@ -72,7 +72,7 @@ function App() {
             const res = await axios.get('http://0.0.0.0:8000/latest_answer');
             const data = res.data;
             const answerExists = messages.some(
-                (msg) => msg.timestamp === data.timestamp && data.answer != undefined
+                (msg) => msg.timestamp === data.timestamp || data.answer != undefined
             );
             if (!answerExists) {
                 setMessages((prev) => [
