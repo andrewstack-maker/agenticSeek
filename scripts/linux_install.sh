@@ -30,6 +30,6 @@ sudo apt install -y docker-compose
 # Install Selenium for chromedriver
 pip3 install selenium
 # Install Python dependencies from requirements.txt
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt --no-cache-dir
 
 echo "Installation complete for Linux!"
