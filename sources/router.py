@@ -178,6 +178,7 @@ class AgentRouter:
             ("Find a public API for movie data and build a web app to display movie ratings", "HIGH"),
             ("Create a Node.js server that queries a public API for traffic data and displays it", "HIGH"),
             ("can you find api and build a python web app with it ?", "HIGH"),
+            ("do a deep search of current AI player for 2025 and make me a report in a file", "HIGH"),
             ("Find a public API for recipe data and build a web app to display recipes", "HIGH"),
             ("Search the web for recent space mission updates and build a Flask app", "HIGH"),
             ("Create a Python script to scrape a website and save data to a database", "HIGH"),

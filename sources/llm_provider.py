@@ -22,7 +22,7 @@ class Provider:
         self.provider_name = provider_name.lower()
         self.model = model
         self.is_local = is_local
-        self.server_ip = self.check_address_format(server_address)
+        self.server_ip = server_address
         self.available_providers = {
             "ollama": self.ollama_fn,
             "server": self.server_fn,
@@ -44,7 +44,6 @@ class Provider:
             self.api_key = self.get_api_key(self.provider_name)
         elif self.provider_name != "ollama":
             pretty_print(f"Provider: {provider_name} initialized at {self.server_ip}", color="success")
-        self.check_address_format(self.server_ip)
         if not self.is_ip_online(self.server_ip.split(':')[0]):
             raise Exception(f"Server at {self.server_ip} is offline.")
 
@@ -56,21 +55,6 @@ class Provider:
             pretty_print(f"API key {api_key_var} not found in .env file. Please add it", color="warning")
             exit(1)
         return api_key
-
-    def check_address_format(self, address):
-        """
-        Validate if the address is valid IP.
-        """
-        try:
-            address = address.replace('http://', '')
-            ip, port = address.rsplit(":", 1)
-            if all(c.lower() in ".:abcdef0123456789" for c in ip):
-                ipaddress.ip_address(ip)
-            if not port.isdigit() or not (0 <= int(port) <= 65535):
-                raise ValueError("Port must be a number between 0 and 65535.")
-        except ValueError as e:
-            raise Exception(f"Invalid address format: {e}. Is port specified?")
-        return address
 
     def respond(self, history, verbose = True):
         """
