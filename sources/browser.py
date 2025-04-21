@@ -244,7 +244,7 @@ class Browser:
     
     def is_link_valid(self, url:str) -> bool:
         """Check if a URL is a valid link (page, not related to icon or metadata)."""
-        if len(url) > 64:
+        if len(url) > 72:
             self.logger.warning(f"URL too long: {url}")
             return False
         parsed_url = urlparse(url)

@@ -18,7 +18,7 @@ function App() {
             checkHealth();
             fetchLatestAnswer();
             fetchScreenshot();
-        }, 1500);
+        }, 3000);
         return () => clearInterval(intervalId);
     }, [messages]);
 
@@ -61,7 +61,13 @@ function App() {
         }
     };
 
-    const normalizeAnswer = (answer) => answer.trim().toLowerCase();
+    const normalizeAnswer = (answer) => {
+        return answer
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, ' ')
+            .replace(/[.,!?]/g, '')
+    };
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -75,12 +81,10 @@ function App() {
             if (!data.answer || data.answer.trim() === '') {
                 return;
             }
+            const normalizedNewAnswer = normalizeAnswer(data.answer);
             const answerExists = messages.some(
-                (msg) =>
-                    msg.timestamp === data.timestamp &&
-                    normalizeAnswer(msg.content) === normalizeAnswer(data.answer)
+                (msg) => normalizeAnswer(msg.content) === normalizedNewAnswer
             );
-            console.log('Fetched latest answer:', data.answer);
             if (!answerExists) {
                 setMessages((prev) => [
                     ...prev,
@@ -89,17 +93,19 @@ function App() {
                         content: data.answer,
                         agentName: data.agent_name,
                         status: data.status,
-                        timestamp: data.timestamp,
+                        uid: data.uid,
                     },
                 ]);
                 setStatus(data.status);
                 scrollToBottom();
+            } else {
+                console.log('Duplicate answer detected, skipping:', data.answer);
             }
         } catch (error) {
             console.error('Error fetching latest answer:', error);
         }
     };
-    
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
