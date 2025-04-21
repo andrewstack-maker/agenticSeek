@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+import uuid
 
 from sources.llm_provider import Provider
 from sources.interaction import Interaction
@@ -20,6 +21,7 @@ from sources.browser import Browser, create_driver
 from sources.utility import pretty_print
 from sources.logger import Logger
 from sources.schemas import QueryRequest, QueryResponse
+
 
 from celery import Celery
 
@@ -131,7 +133,8 @@ async def get_latest_answer():
     global query_resp_history
     if interaction.current_agent is None:
         return JSONResponse(status_code=404, content={"error": "No agent available"})
-    if interaction.current_agent.last_answer not in [q["answer"] for q in query_resp_history]:
+    uid = str(uuid.uuid4())
+    if not any(q["answer"] == interaction.current_agent.last_answer for q in query_resp_history):
         query_resp = {
             "done": "false",
             "answer": interaction.current_agent.last_answer,
@@ -139,8 +142,9 @@ async def get_latest_answer():
             "success": interaction.current_agent.success,
             "blocks": {f'{i}': block.jsonify() for i, block in enumerate(interaction.current_agent.get_blocks_result())} if interaction.current_agent else {},
             "status": interaction.current_agent.get_status_message if interaction.current_agent else "No status available",
-            "timestamp": str(time.time())
+            "uid": uid
         }
+        interaction.current_agent.last_answer = ""
         query_resp_history.append(query_resp)
         return JSONResponse(status_code=200, content=query_resp)
     if query_resp_history:
@@ -176,7 +180,7 @@ async def process_query(request: QueryRequest):
         success="false",
         blocks={},
         status="Ready",
-        timestamp=str(time.time())
+        uid=str(uuid.uuid4())
     )
     if is_generating:
         logger.warning("Another query is being processed, please wait.")
@@ -215,7 +219,7 @@ async def process_query(request: QueryRequest):
             "success": query_resp.success,
             "blocks": query_resp.blocks,
             "status": query_resp.status,
-            "timestamp": query_resp.timestamp
+            "uid": query_resp.uid
         }
         query_resp_history.append(query_resp_dict)
 

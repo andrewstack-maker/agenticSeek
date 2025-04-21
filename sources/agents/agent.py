@@ -115,7 +115,7 @@ class Agent():
     
     def extract_reasoning_text(self, text: str) -> None:
         """
-        Extract the reasoning block of a easoning model like deepseek.
+        Extract the reasoning block of a reasoning model like deepseek.
         """
         start_tag = "<think>"
         end_tag = "</think>"

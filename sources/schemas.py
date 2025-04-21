@@ -23,10 +23,10 @@ class QueryResponse(BaseModel):
     success: str
     blocks: dict
     status: str
-    timestamp: str
+    uid: str
 
     def __str__(self):
-        return f"Done: {self.done}, Answer: {self.answer}, Agent Name: {self.agent_name}, Success: {self.success}, Blocks: {self.blocks}"
+        return f"Done: {self.done}, Answer: {self.answer}, Agent Name: {self.agent_name}, Success: {self.success}, Blocks: {self.blocks}, Status: {self.status}, UID: {self.uid}"
 
     def jsonify(self):
         return {
@@ -34,7 +34,9 @@ class QueryResponse(BaseModel):
             "answer": self.answer,
             "agent_name": self.agent_name,
             "success": self.success,
-            "blocks": self.blocks
+            "blocks": self.blocks,
+            "status": self.status,
+            "uid": self.uid
         }
 
 class executorResult:
