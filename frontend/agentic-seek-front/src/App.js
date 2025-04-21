@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
+import { colors } from './colors';
 
 function App() {
     const [query, setQuery] = useState('');
@@ -71,7 +72,7 @@ function App() {
         try {
             const res = await axios.get('http://0.0.0.0:8000/latest_answer');
             const data = res.data;
-    
+
             if (!data.answer || data.answer.trim() === '') {
                 return;
             }
@@ -99,7 +100,7 @@ function App() {
             console.error('Error fetching latest answer:', error);
         }
     };
-    
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -156,10 +157,16 @@ function App() {
                 <h1>AgenticSeek</h1>
             </header>
             <main className="main">
-                <div className="chat-container">
-                    <div className="left-panel">
-                        <h2>C H A T</h2>
-                        <br />
+                <div className="app-sections">
+                    <div className="task-section">
+                        <h2>Task</h2>
+                        <div className="task-details">
+                            <p className="placeholder">No active task. Start a conversation to create a task.</p>
+                        </div>
+                    </div>
+
+                    <div className="chat-section">
+                        <h2>Chat Interface</h2>
                         <div className="messages">
                             {messages.length === 0 ? (
                                 <p className="placeholder">No messages yet. Type below to start!</p>
@@ -199,9 +206,9 @@ function App() {
                             </button>
                         </form>
                     </div>
-                    <div className="right-panel">
-                        <h2>I N T E R F A C E</h2>
-                        <br />
+
+                    <div className="computer-section">
+                        <h2>Computer View</h2>
                         <div className="view-selector">
                             <button
                                 className={currentView === 'blocks' ? 'active' : ''}
@@ -247,7 +254,7 @@ function App() {
                                             e.target.src = 'placeholder.png';
                                             console.error('Failed to load screenshot');
                                         }}
-                                        key={responseData?.screenshotTimestamp || 'default'} 
+                                        key={responseData?.screenshotTimestamp || 'default'}
                                     />
                                 </div>
                             )}
