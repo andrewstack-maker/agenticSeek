@@ -56,6 +56,15 @@ def get_chrome_path() -> str:
         return path
     return None
 
+def get_random_user_agent() -> str:
+    """Get a random user agent string with associated vendor."""
+    user_agents = [
+        {"ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36", "vendor": "Google Inc."},
+        {"ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15", "vendor": "Apple Inc."},
+        {"ua": "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0", "vendor": ""},
+    ]
+    return random.choice(user_agents)
+
 def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx") -> webdriver.Chrome:
     """Create a Chrome WebDriver with specified options."""
     chrome_options = Options()
@@ -69,16 +78,16 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--disable-webgl")
-    #ua = UserAgent()
-    #user_agent = ua.random # NOTE sometime return bad ua crash, investigate
-    #chrome_options.add_argument(f'user-agent={user_agent}')
     user_data_dir = tempfile.mkdtemp()
+    user_agent = get_random_user_agent()
     chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--autoplay-policy=user-gesture-required")
     chrome_options.add_argument("--mute-audio")
     chrome_options.add_argument("--disable-notifications")
+    chrome_options.add_argument("--autoplay-policy=user-gesture-required")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_argument(f'user-agent={user_agent["ua"]}')
     resolutions = [(1920, 1080), (1366, 768), (1440, 900)]
     width, height = random.choice(resolutions)
     chrome_options.add_argument(f'--window-size={width},{height}')
@@ -98,20 +107,14 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
     
     service = Service(chromedriver_path)
     if stealth_mode:
+        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
         driver = uc.Chrome(service=service, options=chrome_options)
-        driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-            "source": """
-                Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => Math.floor(Math.random() * 8) + 2 });
-                Object.defineProperty(navigator, 'deviceMemory', { get: () => Math.floor(Math.random() * 8) + 2 });
-            """
-        })
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})") 
         chrome_version = driver.capabilities['browserVersion']
-        user_agent = f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{chrome_version} Safari/537.36"
-        chrome_options.add_argument(f'user-agent={user_agent}')
         stealth(driver,
             languages=["en-US", "en"],
-            vendor="Google Inc.",
-            platform="Win32",
+            vendor=user_agent["vendor"],
+            platform="Win64" if "Windows" in user_agent["ua"] else "MacIntel" if "Macintosh" in user_agent["ua"] else "Linux x86_64",
             webgl_vendor="Intel Inc.",
             renderer="Intel Iris OpenGL Engine",
             fix_hairline=True,
@@ -598,12 +601,12 @@ if __name__ == "__main__":
     
     input("press enter to continue")
     print("AntiCaptcha / Form Test")
-    #browser.go_to("https://practicetestautomation.com/practice-test-login/")
+    browser.go_to("https://www.browserscan.net/bot-detection")
     #txt = browser.get_text()
     #browser.go_to("https://www.google.com/recaptcha/api2/demo")
-    browser.go_to("https://home.openweathermap.org/users/sign_up")
+    #browser.go_to("https://home.openweathermap.org/users/sign_up")
     inputs_visible = browser.get_form_inputs()
     print("inputs:", inputs_visible)
-    inputs_fill = ['[q](checked)', '[q](checked)', '[user[username]](mlg)', '[user[email]](mlg.fcu@gmail.com)', '[user[password]](placeholder_P@ssw0rd123)', '[user[password_confirmation]](placeholder_P@ssw0rd123)']
-    browser.fill_form(inputs_fill)
+    #inputs_fill = ['[q](checked)', '[q](checked)', '[user[username]](mlg)', '[user[email]](mlg.fcu@gmail.com)', '[user[password]](placeholder_P@ssw0rd123)', '[user[password_confirmation]](placeholder_P@ssw0rd123)']
+    #browser.fill_form(inputs_fill)
     input("press enter to exit")
