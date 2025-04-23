@@ -601,10 +601,10 @@ if __name__ == "__main__":
     
     input("press enter to continue")
     print("AntiCaptcha / Form Test")
-    browser.go_to("https://www.browserscan.net/bot-detection")
+    #browser.go_to("https://www.browserscan.net/bot-detection")
     #txt = browser.get_text()
     #browser.go_to("https://www.google.com/recaptcha/api2/demo")
-    #browser.go_to("https://home.openweathermap.org/users/sign_up")
+    browser.go_to("https://home.openweathermap.org/users/sign_up")
     inputs_visible = browser.get_form_inputs()
     print("inputs:", inputs_visible)
     #inputs_fill = ['[q](checked)', '[q](checked)', '[user[username]](mlg)', '[user[email]](mlg.fcu@gmail.com)', '[user[password]](placeholder_P@ssw0rd123)', '[user[password_confirmation]](placeholder_P@ssw0rd123)']

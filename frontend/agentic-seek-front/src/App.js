@@ -98,6 +98,7 @@ function App() {
                     },
                 ]);
                 setStatus(data.status);
+                setResponseData(data);
                 scrollToBottom();
             } else {
                 console.log('Duplicate answer detected, skipping:', data.answer);
@@ -147,12 +148,8 @@ function App() {
 
     const handleGetScreenshot = async () => {
         try {
-            console.log('Fetching screenshot...');
-            const res = await axios.get('http://0.0.0.0:8000/screenshots/updated_screen.png');
-            setResponseData((prev) => ({ ...prev, screenshot: res.data.screenshot }));
             setCurrentView('screenshot');
         } catch (err) {
-            console.error('Error fetching screenshot:', err);
             setError('Browser not in use');
         }
     };
@@ -164,12 +161,7 @@ function App() {
             </header>
             <main className="main">
                 <div className="app-sections">
-                    <div className="task-section">
-                        <h2>Task</h2>
-                        <div className="task-details">
-                            <p className="placeholder">No active task. Start a conversation to create a task.</p>
-                        </div>
-                    </div>
+
 
                     <div className="chat-section">
                         <h2>Chat Interface</h2>
