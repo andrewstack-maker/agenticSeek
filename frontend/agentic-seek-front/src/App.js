@@ -79,6 +79,7 @@ function App() {
             const res = await axios.get('http://0.0.0.0:8000/latest_answer');
             const data = res.data;
 
+            updateData(data);
             if (!data.answer || data.answer.trim() === '') {
                 return;
             }
@@ -107,6 +108,17 @@ function App() {
         }
     };
 
+    const updateData = (data) => {
+        setResponseData((prev) => ({
+            ...prev,
+            blocks: data.blocks || prev.blocks || null,
+            done: data.done,
+            answer: data.answer,
+            agent_name: data.agent_name,
+            status: data.status,
+            uid: data.uid,
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -129,8 +141,7 @@ function App() {
             setQuery('Enter your query...');
             console.log('Response:', res.data);
             const data = res.data;
-            setResponseData(data);
-            fetchLatestAnswer();
+            updateData(data);
         } catch (err) {
             console.error('Error:', err);
             setError('Failed to process query.');
@@ -147,12 +158,8 @@ function App() {
 
     const handleGetScreenshot = async () => {
         try {
-            console.log('Fetching screenshot...');
-            const res = await axios.get('http://0.0.0.0:8000/screenshots/updated_screen.png');
-            setResponseData((prev) => ({ ...prev, screenshot: res.data.screenshot }));
             setCurrentView('screenshot');
         } catch (err) {
-            console.error('Error fetching screenshot:', err);
             setError('Browser not in use');
         }
     };
@@ -164,12 +171,7 @@ function App() {
             </header>
             <main className="main">
                 <div className="app-sections">
-                    <div className="task-section">
-                        <h2>Task</h2>
-                        <div className="task-details">
-                            <p className="placeholder">No active task. Start a conversation to create a task.</p>
-                        </div>
-                    </div>
+
 
                     <div className="chat-section">
                         <h2>Chat Interface</h2>

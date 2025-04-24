@@ -166,13 +166,17 @@ class Browser:
         try:
             initial_handles = self.driver.window_handles
             self.driver.get(url)
-            wait = WebDriverWait(self.driver, timeout=10)
-            wait.until(
-                lambda driver: (
-                    not any(keyword in driver.page_source.lower() for keyword in ["checking your browser", "captcha"])
-                ),
-                message="stuck on 'checking browser' or verification screen"
-            )
+            try:
+                wait = WebDriverWait(self.driver, timeout=10)
+                wait.until(
+                    lambda driver: (
+                        not any(keyword in driver.page_source.lower() for keyword in ["checking your browser", "captcha"])
+                    ),
+                    message="stuck on 'checking browser' or verification screen"
+                )
+            except TimeoutException:
+                self.logger.warning("Timeout while waiting for page to bypass 'checking your browser'")
+                return False
             self.apply_web_safety()
             self.logger.log(f"Navigated to: {url}")
             return True
@@ -601,10 +605,10 @@ if __name__ == "__main__":
     
     input("press enter to continue")
     print("AntiCaptcha / Form Test")
-    browser.go_to("https://www.browserscan.net/bot-detection")
+    #browser.go_to("https://www.browserscan.net/bot-detection")
     #txt = browser.get_text()
     #browser.go_to("https://www.google.com/recaptcha/api2/demo")
-    #browser.go_to("https://home.openweathermap.org/users/sign_up")
+    browser.go_to("https://home.openweathermap.org/users/sign_up")
     inputs_visible = browser.get_form_inputs()
     print("inputs:", inputs_visible)
     #inputs_fill = ['[q](checked)', '[q](checked)', '[user[username]](mlg)', '[user[email]](mlg.fcu@gmail.com)', '[user[password]](placeholder_P@ssw0rd123)', '[user[password_confirmation]](placeholder_P@ssw0rd123)']

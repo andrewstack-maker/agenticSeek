@@ -287,7 +287,19 @@ class BrowserAgent(Agent):
         for res in search_result:
             pretty_print(f"Title: {res['title']} - ", color="info", no_newline=True)
             pretty_print(f"Link: {res['link']}", color="status")
-
+    
+    def stuck_prompt(self, user_prompt: str, unvisited: List[str]) -> str:
+        """
+        Prompt for when the agent repeat itself, can happen when fail to extract a link.
+        """
+        prompt = self.make_newsearch_prompt(user_prompt, unvisited)
+        prompt += f"""
+        You previously said:
+        {self.last_answer}
+        You must consider other options. Choose other link.
+        """
+        return prompt
+    
     async def process(self, user_prompt: str, speech_module: type) -> Tuple[str, str]:
         """
         Process the user prompt to conduct an autonomous web search.
@@ -317,7 +329,11 @@ class BrowserAgent(Agent):
         while not complete and len(unvisited) > 0:
 
             self.memory.clear()
+            unvisited = self.select_unvisited(search_result)
             answer, reasoning = await self.llm_decide(prompt, show_reasoning = False)
+            if self.last_answer == answer:
+                prompt = self.stuck_prompt(user_prompt, unvisited)
+                continue
             self.last_answer = answer
             pretty_print('▂'*32, color="status")
 
@@ -339,6 +355,11 @@ class BrowserAgent(Agent):
 
             links = self.parse_answer(answer)
             link = self.select_link(links)
+            if link == self.current_page:
+                pretty_print(f"Already visited {link}. Search callback.", color="status")
+                prompt = self.make_newsearch_prompt(user_prompt, unvisited)
+                self.search_history.append(link)
+                continue
 
             if Action.REQUEST_EXIT.value in answer:
                 self.status_message = "Exiting web browser..."
@@ -349,7 +370,6 @@ class BrowserAgent(Agent):
             if (link == None and len(extracted_form) < 3) or Action.GO_BACK.value in answer or link in self.search_history:
                 pretty_print(f"Going back to results. Still {len(unvisited)}", color="status")
                 self.status_message = "Going back to search results..."
-                unvisited = self.select_unvisited(search_result)
                 prompt = self.make_newsearch_prompt(user_prompt, unvisited)
                 self.search_history.append(link)
                 self.current_page = link
@@ -357,8 +377,12 @@ class BrowserAgent(Agent):
 
             animate_thinking(f"Navigating to {link}", color="status")
             if speech_module: speech_module.speak(f"Navigating to {link}")
-            self.browser.go_to(link)
+            nav_ok = self.browser.go_to(link)
             self.search_history.append(link)
+            if not nav_ok:
+                pretty_print(f"Failed to navigate to {link}.", color="failure")
+                prompt = self.make_newsearch_prompt(user_prompt, unvisited)
+                continue
             self.current_page = link
             page_text = self.browser.get_text()
             self.navigable_links = self.browser.get_navigable()

@@ -5,44 +5,33 @@
 --------------------------------------------------------------------------------
 English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Français](./README_FR.md) | [日本語](./README_JP.md)
 
-# AgenticSeek: Manus-like AI powered by Deepseek R1 Agents.
+# AgenticSeek: Private, Local Manus Alternative.
 
 
-**A fully local alternative to Manus AI**, a voice-enabled AI assistant that codes, explores your filesystem, browse the web and correct it's mistakes all without sending a byte of data to the cloud. Built with reasoning models like DeepSeek R1, this autonomous agent runs entirely on your hardware, keeping your data private.
+*A **100% local alternative to Manus AI**, this voice-enabled AI assistant autonomously browses the web, writes code, and plans tasks while keeping all data on your device. Powered by advanced reasoning models like DeepSeek R1, it runs entirely on your hardware, ensuring complete privacy and zero cloud dependency.*
 
-[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/XSTKZ8nP) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
-
-> 🛠️ **Work in Progress** – Looking for contributors!
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/m37d7XxZ) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460) [![GitHub stars](https://img.shields.io/github/stars/Fosowl/agenticSeek?style=social)](https://github.com/Fosowl/agenticSeek/stargazers)
 
 
+> *Plan a 3 days solo trip to Budapest, find me a list of attractions and hostels, save everything in a CSV file*
 
 https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
+> 🛠️ **Work in Progress** – Looking for contributors!
 
-> *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
+### *Capabilities*
 
-> *Can you make a tetris game in C ?*
+- **100% Local**: *No cloud, runs on your hardware. Your data stays yours.*
 
-> *I would like to setup a new project file index as mark2.*
+- **Autonomous Web Browsing**: *Autonomous web navigation.*
 
+- **Autonomous Coding**: *Can write, debug, and run code in Python, C, Golang, Java...*
 
-## Features:
+- **Agent routing**: *Automatically picks the right agent for the job.*
 
-- **100% Local**: No cloud, runs on your hardware. Your data stays yours.
+- **Planning**: *For complex tasks, spins up multiple agents to plan and execute.*
 
-- **Filesystem interaction**: Use bash to navigate and manipulate your files effortlessly.
-
-- **Autonomous Coding**: Can write, debug, and run code in Python, C, Golang and more languages on the way.
-
-- **Agent routing**: Automatically picks the right agent for the job.
-
-- **Planning**: For complex tasks, spins up multiple agents to plan and execute.
-
-- **Autonomous Web Browsing**: Autonomous web navigation.
-
-- **Memory**: Efficient memory and sessions management. 
-
----
+- **Memory**: *Efficient memory and sessions management.*
 
 ## Installation
 
