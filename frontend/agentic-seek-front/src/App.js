@@ -79,6 +79,7 @@ function App() {
             const res = await axios.get('http://0.0.0.0:8000/latest_answer');
             const data = res.data;
 
+            updateData(data);
             if (!data.answer || data.answer.trim() === '') {
                 return;
             }
@@ -98,7 +99,6 @@ function App() {
                     },
                 ]);
                 setStatus(data.status);
-                setResponseData(data);
                 scrollToBottom();
             } else {
                 console.log('Duplicate answer detected, skipping:', data.answer);
@@ -108,6 +108,17 @@ function App() {
         }
     };
 
+    const updateData = (data) => {
+        setResponseData((prev) => ({
+            ...prev,
+            blocks: data.blocks || prev.blocks || null,
+            done: data.done,
+            answer: data.answer,
+            agent_name: data.agent_name,
+            status: data.status,
+            uid: data.uid,
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -130,7 +141,7 @@ function App() {
             setQuery('Enter your query...');
             console.log('Response:', res.data);
             const data = res.data;
-            setResponseData(data);
+            updateData(data);
             fetchLatestAnswer();
         } catch (err) {
             console.error('Error:', err);

@@ -12,12 +12,12 @@ English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Franç
 
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/m37d7XxZ) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460) [![GitHub stars](https://img.shields.io/github/stars/Fosowl/agenticSeek?style=social)](https://github.com/Fosowl/agenticSeek/stargazers)
 
-> 🛠️ **Work in Progress** – Looking for contributors!
 
-> *Plan a 3 days trip to Budapest, find me a list of attractions and hotels, save everything in a CSV file*
+> *Plan a 3 days solo trip to Budapest, find me a list of attractions and hostels, save everything in a CSV file*
 
 https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
+> 🛠️ **Work in Progress** – Looking for contributors!
 
 - **100% Local**: *No cloud, runs on your hardware. Your data stays yours.*
 
@@ -30,7 +30,6 @@ https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 - **Planning**: *For complex tasks, spins up multiple agents to plan and execute.*
 
 - **Memory**: *Efficient memory and sessions management.*
-
 
 ## Installation
 

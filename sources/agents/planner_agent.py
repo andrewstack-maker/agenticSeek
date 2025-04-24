@@ -135,10 +135,6 @@ class PlannerAgent(Agent):
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', prompt)
             answer, reasoning = await self.llm_request()
-            print("LLM answer:")
-            print(reasoning)
-            print(answer)
-            print("LLM answer end")
             if "NO_UPDATE" in answer:
                 return []
             agents_tasks = self.parse_agent_tasks(answer)
@@ -160,6 +156,7 @@ class PlannerAgent(Agent):
         Returns:
             dict: The updated plan.
         """
+        self.status_message = "Updating plan..."
         last_agent_work = agents_work_result[id]
         tool_success_str = "success" if success else "failure"
         pretty_print(f"Agent {id} work {tool_success_str}.", color="success" if success else "failure")
@@ -196,6 +193,7 @@ class PlannerAgent(Agent):
         Returns:
             str: The result of the agent process.
         """
+        self.status_message = f"Starting task {task['task']}..."
         agent_prompt = self.make_prompt(task['task'], required_infos)
         pretty_print(f"Agent {task['agent']} started working...", color="status")
         agent_answer, _ = await self.agents[task['agent'].lower()].process(agent_prompt, None)
@@ -219,6 +217,7 @@ class PlannerAgent(Agent):
         agents_tasks = []
         agents_work_result = dict()
 
+        self.status_message = "Making a plan..."
         agents_tasks = await self.make_plan(goal)
 
         if agents_tasks == []:
@@ -227,7 +226,7 @@ class PlannerAgent(Agent):
         steps = len(agents_tasks)
         while i < steps:
             task_name, task = agents_tasks[i][0], agents_tasks[i][1]
-            self.status_message = "Starting agent process..."
+            self.status_message = "Starting agents..."
             pretty_print(f"I will {task_name}.", color="info")
             pretty_print(f"Assigned agent {task['agent']} to {task_name}", color="info")
             if speech_module: speech_module.speak(f"I will {task_name}. I assigned the {task['agent']} agent to the task.")

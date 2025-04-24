@@ -166,13 +166,17 @@ class Browser:
         try:
             initial_handles = self.driver.window_handles
             self.driver.get(url)
-            wait = WebDriverWait(self.driver, timeout=10)
-            wait.until(
-                lambda driver: (
-                    not any(keyword in driver.page_source.lower() for keyword in ["checking your browser", "captcha"])
-                ),
-                message="stuck on 'checking browser' or verification screen"
-            )
+            try:
+                wait = WebDriverWait(self.driver, timeout=10)
+                wait.until(
+                    lambda driver: (
+                        not any(keyword in driver.page_source.lower() for keyword in ["checking your browser", "captcha"])
+                    ),
+                    message="stuck on 'checking browser' or verification screen"
+                )
+            except TimeoutException:
+                self.logger.warning("Timeout while waiting for page to bypass 'checking your browser'")
+                return False
             self.apply_web_safety()
             self.logger.log(f"Navigated to: {url}")
             return True
