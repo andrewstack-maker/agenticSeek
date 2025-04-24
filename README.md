@@ -19,6 +19,8 @@ https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
+### *Capabilities*
+
 - **100% Local**: *No cloud, runs on your hardware. Your data stays yours.*
 
 - **Autonomous Web Browsing**: *Autonomous web navigation.*
