@@ -329,7 +329,6 @@ class BrowserAgent(Agent):
         while not complete and len(unvisited) > 0:
 
             self.memory.clear()
-            print("Debug history:", self.search_history)
             unvisited = self.select_unvisited(search_result)
             answer, reasoning = await self.llm_decide(prompt, show_reasoning = False)
             if self.last_answer == answer:
