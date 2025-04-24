@@ -287,7 +287,19 @@ class BrowserAgent(Agent):
         for res in search_result:
             pretty_print(f"Title: {res['title']} - ", color="info", no_newline=True)
             pretty_print(f"Link: {res['link']}", color="status")
-
+    
+    def stuck_prompt(self, user_prompt: str, unvisited: List[str]) -> str:
+        """
+        Prompt for when the agent repeat itself, can happen when fail to extract a link.
+        """
+        prompt = self.make_newsearch_prompt(user_prompt, unvisited)
+        prompt += f"""
+        You previously said:
+        {self.answer}
+        You must consider other options. Choose other link.
+        """
+        return prompt
+    
     async def process(self, user_prompt: str, speech_module: type) -> Tuple[str, str]:
         """
         Process the user prompt to conduct an autonomous web search.
@@ -320,6 +332,9 @@ class BrowserAgent(Agent):
             print("Debug history:", self.search_history)
             unvisited = self.select_unvisited(search_result)
             answer, reasoning = await self.llm_decide(prompt, show_reasoning = False)
+            if self.last_answer == answer:
+                prompt = self.stuck_prompt(user_prompt, unvisited)
+                continue
             self.last_answer = answer
             pretty_print('▂'*32, color="status")
 

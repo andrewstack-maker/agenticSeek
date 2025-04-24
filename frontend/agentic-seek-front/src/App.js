@@ -142,7 +142,6 @@ function App() {
             console.log('Response:', res.data);
             const data = res.data;
             updateData(data);
-            fetchLatestAnswer();
         } catch (err) {
             console.error('Error:', err);
             setError('Failed to process query.');
