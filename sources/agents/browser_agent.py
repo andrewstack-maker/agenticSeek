@@ -295,7 +295,7 @@ class BrowserAgent(Agent):
         prompt = self.make_newsearch_prompt(user_prompt, unvisited)
         prompt += f"""
         You previously said:
-        {self.answer}
+        {self.last_answer}
         You must consider other options. Choose other link.
         """
         return prompt
