@@ -134,10 +134,14 @@ class PlannerAgent(Agent):
         while not ok:
             animate_thinking("Thinking...", color="status")
             self.memory.push('user', prompt)
-            answer, _ = await self.llm_request()
-            agents_tasks = self.parse_agent_tasks(answer)
-            if "NO_UPDATE" in agents_tasks:
+            answer, reasoning = await self.llm_request()
+            print("LLM answer:")
+            print(reasoning)
+            print(answer)
+            print("LLM answer end")
+            if "NO_UPDATE" in answer:
                 return []
+            agents_tasks = self.parse_agent_tasks(answer)
             if agents_tasks == []:
                 prompt = f"Failed to parse the tasks. Please make a plan within ```json.\n"
                 pretty_print("Failed to make plan. Retrying...", color="warning")
@@ -156,31 +160,26 @@ class PlannerAgent(Agent):
         Returns:
             dict: The updated plan.
         """
-        #self.memory.clear()
-
         last_agent_work = agents_work_result[id]
         tool_success_str = "success" if success else "failure"
         pretty_print(f"Agent {id} work {tool_success_str}.", color="success" if success else "failure")
         next_task = agents_tasks[int(id)][0]
-        if success:
-            return agents_tasks # we only update the plan if last task failed, for now
+        #if success:
+        #    return agents_tasks # we only update the plan if last task failed, for now
         update_prompt = f"""
-        Your goal was : {goal}
+        Your goal is : {goal}
         You previously made a plan, agents are currently working on it.
         The last agent working on task: {id}, did the following work:
         {last_agent_work}
-        But the agent {id} failed with the task.
+        Agent {id} work was a {tool_success_str} according to system interpreter.
         The agent {id} about to work on task: {next_task}
         Is the work done for task {id} leading to sucess or failure ? Did an agent fail with a task?
-        If agent work lead to success: answer "NO_UPDATE"
-        If agent work lead might to failure: update the plan.
+        If agent work was good: answer "NO_UPDATE"
+        If agent work is leading to failure: update the plan.
         plan should be within ```json like before.
-        You need to rewrite the whole plan, but only change the tasks after {id}.
-        Keep the plan as short as the original one if possible.
+        You need to rewrite the whole plan, but only change the tasks after task {id}.
+        Keep the plan as short as the original one if possible. Do not change past tasks.
         """
-        print("PROMPT")
-        print(update_prompt)
-        print("END PROMPT")
         pretty_print("Updating plan...", color="status")
         plan = await self.make_plan(update_prompt)
         if plan == []:
