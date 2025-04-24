@@ -14,35 +14,23 @@ English | [中文](./README_CHS.md) | [繁體中文](./README_CHT.md)  | [Franç
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
-
+> *Plan a 3 days trip to Budapest, find me a list of attractions and hotels, save everything in a CSV file*
 
 https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 
-> *Do a deep search of AI startup in Osaka and Tokyo, find at least 5, then save in the research_japan.txt file*
+- **100% Local**: *No cloud, runs on your hardware. Your data stays yours.*
 
-> *Can you make a tetris game in C ?*
+- **Autonomous Web Browsing**: *Autonomous web navigation.*
 
-> *I would like to setup a new project file index as mark2.*
+- **Autonomous Coding**: *Can write, debug, and run code in Python, C, Golang, Java...*
 
+- **Agent routing**: *Automatically picks the right agent for the job.*
 
-## Features:
+- **Planning**: *For complex tasks, spins up multiple agents to plan and execute.*
 
-- **100% Local**: No cloud, runs on your hardware. Your data stays yours.
+- **Memory**: *Efficient memory and sessions management.*
 
-- **Filesystem interaction**: Use bash to navigate and manipulate your files effortlessly.
-
-- **Autonomous Coding**: Can write, debug, and run code in Python, C, Golang and more languages on the way.
-
-- **Agent routing**: Automatically picks the right agent for the job.
-
-- **Planning**: For complex tasks, spins up multiple agents to plan and execute.
-
-- **Autonomous Web Browsing**: Autonomous web navigation.
-
-- **Memory**: Efficient memory and sessions management. 
-
----
 
 ## Installation
 
