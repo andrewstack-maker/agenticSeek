@@ -242,5 +242,4 @@ class Agent():
                 self.memory.push('user', feedback)
                 if save_path != None:
                     tool.save_block(blocks, save_path)
-        self.blocks_result = self.blocks_result
         return True, feedback
