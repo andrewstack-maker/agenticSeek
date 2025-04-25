@@ -205,6 +205,7 @@ class PlannerAgent(Agent):
         pretty_print(f"Agent {task['agent']} started working...", color="status")
         answer, _ = await self.agents[task['agent'].lower()].process(agent_prompt, None)
         self.last_answer = answer
+        self.blocks_result = self.agents[task['agent'].lower()].blocks_result
         agent_answer = self.agents[task['agent'].lower()].raw_answer_blocks(answer)
         success = self.agents[task['agent'].lower()].get_success
         self.agents[task['agent'].lower()].show_answer()
