@@ -173,8 +173,6 @@ python3 cli.py
 
 **Options 2:** Run with the Web interface.
 
-Note: Currently we advice you run the CLI instead. Web interface is an active work in progress.
-
 Start the backend.
 
 ```sh
@@ -182,8 +180,6 @@ python3 api.py
 ```
 
 Go to `http://localhost:3000/` and you should see the web interface.
-
-Please note that the Web interface doesn't stream messages at the moment.
 
 ---
 
