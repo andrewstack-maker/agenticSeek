@@ -69,6 +69,9 @@ class PlannerAgent(Agent):
             line_json = json.loads(block)
             if 'plan' in line_json:
                 for task in line_json['plan']:
+                    if task['agent'].lower() not in [ag_name.lower() for ag_name in self.agents.keys()]:
+                        pretty_print(f"Agent {task['agent']} does not exist.", color="warning")
+                        return []
                     agent = {
                         'agent': task['agent'],
                         'id': task['id'],
@@ -139,7 +142,7 @@ class PlannerAgent(Agent):
                 return []
             agents_tasks = self.parse_agent_tasks(answer)
             if agents_tasks == []:
-                prompt = f"Failed to parse the tasks. Please make a plan within ```json.\n"
+                prompt = f"Failed to parse the tasks. Please make a plan within ```json. Do not ask for clarification.\n"
                 pretty_print("Failed to make plan. Retrying...", color="warning")
                 continue
             self.show_plan(agents_tasks, answer)
@@ -160,7 +163,10 @@ class PlannerAgent(Agent):
         last_agent_work = agents_work_result[id]
         tool_success_str = "success" if success else "failure"
         pretty_print(f"Agent {id} work {tool_success_str}.", color="success" if success else "failure")
-        next_task = agents_tasks[int(id)][0]
+        if int(id) == len(agents_tasks):
+            next_task = "No task follow, this was the last step. If it failed add a task to recover."
+        else:
+            next_task = f"Next task is: {agents_tasks[int(id)][0]}."
         #if success:
         #    return agents_tasks # we only update the plan if last task failed, for now
         update_prompt = f"""
@@ -169,10 +175,11 @@ class PlannerAgent(Agent):
         The last agent working on task: {id}, did the following work:
         {last_agent_work}
         Agent {id} work was a {tool_success_str} according to system interpreter.
-        The agent {id} about to work on task: {next_task}
+        {next_task}
         Is the work done for task {id} leading to sucess or failure ? Did an agent fail with a task?
         If agent work was good: answer "NO_UPDATE"
         If agent work is leading to failure: update the plan.
+        If a task failed add a task to try again or recover from failure. You might have near identical task twice.
         plan should be within ```json like before.
         You need to rewrite the whole plan, but only change the tasks after task {id}.
         Keep the plan as short as the original one if possible. Do not change past tasks.
@@ -196,10 +203,15 @@ class PlannerAgent(Agent):
         self.status_message = f"Starting task {task['task']}..."
         agent_prompt = self.make_prompt(task['task'], required_infos)
         pretty_print(f"Agent {task['agent']} started working...", color="status")
-        agent_answer, _ = await self.agents[task['agent'].lower()].process(agent_prompt, None)
+        answer, _ = await self.agents[task['agent'].lower()].process(agent_prompt, None)
+        self.last_answer = answer
+        self.blocks_result = self.agents[task['agent'].lower()].blocks_result
+        agent_answer = self.agents[task['agent'].lower()].raw_answer_blocks(answer)
         success = self.agents[task['agent'].lower()].get_success
         self.agents[task['agent'].lower()].show_answer()
         pretty_print(f"Agent {task['agent']} completed task.", color="status")
+        # TODO ajouter feedback / agent et code executer
+        agent_answer += "\nAgent succeeded with task." if success else "\nAgent failed with task (Error detected)."
         return agent_answer, success
     
     def get_work_result_agent(self, task_needs, agents_work_result):
@@ -215,6 +227,7 @@ class PlannerAgent(Agent):
             Tuple[str, str]: The result of the agent process and empty reasoning string.
         """
         agents_tasks = []
+        required_infos = None
         agents_work_result = dict()
 
         self.status_message = "Making a plan..."
@@ -234,14 +247,12 @@ class PlannerAgent(Agent):
             if agents_work_result is not None:
                 required_infos = self.get_work_result_agent(task['need'], agents_work_result)
             try:
-                self.last_answer, success = await self.start_agent_process(task, required_infos)
+                answer, success = await self.start_agent_process(task, required_infos)
             except Exception as e:
                 raise e
-            agents_work_result[task['id']] = self.last_answer
-            if i == steps - 1:
-                break
+            agents_work_result[task['id']] = answer
             agents_tasks = await self.update_plan(goal, agents_tasks, agents_work_result, task['id'], success)
             steps = len(agents_tasks)
             i += 1
 
-        return self.last_answer, ""
+        return answer, ""

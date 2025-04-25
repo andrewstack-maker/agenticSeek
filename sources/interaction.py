@@ -69,6 +69,15 @@ class Interaction:
                 break
         return ai_name
     
+    def get_last_blocks_result(self) -> List[Dict]:
+        """Get the last blocks result."""
+        if self.current_agent is None:
+            return []
+        blks = []
+        for agent in self.agents:
+            blks.extend(agent.get_blocks_result())
+        return blks
+    
     def load_last_session(self):
         """Recover the last session."""
         for agent in self.agents:

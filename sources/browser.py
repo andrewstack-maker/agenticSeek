@@ -176,7 +176,6 @@ class Browser:
                 )
             except TimeoutException:
                 self.logger.warning("Timeout while waiting for page to bypass 'checking your browser'")
-                return False
             self.apply_web_safety()
             self.logger.log(f"Navigated to: {url}")
             return True

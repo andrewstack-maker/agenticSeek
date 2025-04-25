@@ -68,9 +68,8 @@ class executorResult:
             "success": self.success,
             "tool_type": self.tool_type
         }
-    
+
     def show(self):
         pretty_print('▂'*64, color="status")
-        pretty_print(self.block, color="code" if self.success else "failure")
-        pretty_print('▂'*64, color="status")
         pretty_print(self.feedback, color="success" if self.success else "failure")
+        pretty_print('▂'*64, color="status")

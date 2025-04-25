@@ -159,6 +159,23 @@ class Agent():
     
     def get_last_tool_type(self) -> str:
         return self.blocks_result[-1].tool_type if len(self.blocks_result) > 0 else None
+    
+    def raw_answer_blocks(self, answer: str) -> str:
+        """
+        Return the answer with all the blocks inserted, as text.
+        """
+        if self.last_answer is None:
+            return
+        raw = ""
+        lines = self.last_answer.split("\n")
+        for line in lines:
+            if "block:" in line:
+                block_idx = int(line.split(":")[1])
+                if block_idx < len(self.blocks_result):
+                    raw += self.blocks_result[block_idx].__str__()
+            else:
+                raw += line + "\n"
+        return raw
 
     def show_answer(self):
         """
@@ -175,7 +192,6 @@ class Agent():
                     self.blocks_result[block_idx].show()
             else:
                 pretty_print(line, color="output")
-        self.blocks_result = []
 
     def remove_blocks(self, text: str) -> str:
         """
@@ -197,6 +213,14 @@ class Agent():
                 post_lines.append(f"block:{block_idx}")
                 block_idx += 1
         return "\n".join(post_lines)
+    
+    def show_block(self, block: str) -> None:
+        """
+        Show the block in a pretty way.
+        """
+        pretty_print('▂'*64, color="status")
+        pretty_print(block, color="code")
+        pretty_print('▂'*64, color="status")
 
     def execute_modules(self, answer: str) -> Tuple[bool, str]:
         """
@@ -215,6 +239,7 @@ class Agent():
 
             if blocks != None:
                 for block in blocks:
+                    self.show_block(block)
                     output = tool.execute([block])
                     feedback = tool.interpreter_feedback(output) # tool interpreter feedback
                     success = not tool.execution_failure_check(output)
@@ -226,5 +251,4 @@ class Agent():
                 self.memory.push('user', feedback)
                 if save_path != None:
                     tool.save_block(blocks, save_path)
-        self.blocks_result = self.blocks_result
         return True, feedback
