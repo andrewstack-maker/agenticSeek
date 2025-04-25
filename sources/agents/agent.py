@@ -159,6 +159,23 @@ class Agent():
     
     def get_last_tool_type(self) -> str:
         return self.blocks_result[-1].tool_type if len(self.blocks_result) > 0 else None
+    
+    def raw_answer_blocks(self, answer: str) -> str:
+        """
+        Return the answer with all the blocks inserted, as text.
+        """
+        if self.last_answer is None:
+            return
+        raw = ""
+        lines = self.last_answer.split("\n")
+        for line in lines:
+            if "block:" in line:
+                block_idx = int(line.split(":")[1])
+                if block_idx < len(self.blocks_result):
+                    raw += self.blocks_result[block_idx].__str__()
+            else:
+                raw += line + "\n"
+        return raw
 
     def show_answer(self):
         """
@@ -175,7 +192,6 @@ class Agent():
                     self.blocks_result[block_idx].show()
             else:
                 pretty_print(line, color="output")
-        self.blocks_result = []
 
     def remove_blocks(self, text: str) -> str:
         """

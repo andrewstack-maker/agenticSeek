@@ -29,6 +29,7 @@ class Provider:
             "openai": self.openai_fn,
             "lm-studio": self.lm_studio_fn,
             "huggingface": self.huggingface_fn,
+            "google": self.google_fn,
             "deepseek": self.deepseek_fn,
             "together": self.together_fn,
             "dsk_deepseek": self.dsk_deepseek,
@@ -36,10 +37,10 @@ class Provider:
         }
         self.logger = Logger("provider.log")
         self.api_key = None
-        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek", "together"]
+        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek", "together", "google"]
         if self.provider_name not in self.available_providers:
             raise ValueError(f"Unknown provider: {provider_name}")
-        if self.provider_name in self.unsafe_providers:
+        if self.provider_name in self.unsafe_providers and self.is_local == False:
             pretty_print("Warning: you are using an API provider. You data will be sent to the cloud.", color="warning")
             self.api_key = self.get_api_key(self.provider_name)
         elif self.provider_name != "ollama":
@@ -140,7 +141,6 @@ class Provider:
             raise e
         return thought
 
-
     def ollama_fn(self, history, verbose = False):
         """
         Use local ollama server to generate text.
@@ -206,6 +206,29 @@ class Provider:
             return thought
         except Exception as e:
             raise Exception(f"OpenAI API error: {str(e)}") from e
+    
+    def google_fn(self, history, verbose=False):
+        """
+        Use google gemini to generate text.
+        """
+        base_url = self.server_ip
+        if self.is_local:
+            raise Exception("Google Gemini is not available for local use.")
+
+        client = OpenAI(api_key=self.api_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
+        try:
+            response = client.chat.completions.create(
+                model=self.model,
+                messages=history,
+            )
+            if response is None:
+                raise Exception("Google response is empty.")
+            thought = response.choices[0].message.content
+            if verbose:
+                print(thought)
+            return thought
+        except Exception as e:
+            raise Exception(f"GOOGLE API error: {str(e)}") from e
 
     def together_fn(self, history, verbose=False):
         """
