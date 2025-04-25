@@ -56,6 +56,7 @@ class CoderAgent(Agent):
                 self.last_answer = answer
                 await asyncio.sleep(0)
                 break
+            self.show_answer()
             animate_thinking("Executing code...", color="status")
             self.status_message = "Executing code..."
             exec_success, _ = self.execute_modules(answer)
@@ -67,7 +68,6 @@ class CoderAgent(Agent):
             pretty_print("Execution failure", color="failure")
             pretty_print("Correcting code...", color="status")
             self.status_message = "Correcting code..."
-            self.show_answer()
             attempt += 1
         self.status_message = "Ready"
         if attempt == max_attempts:

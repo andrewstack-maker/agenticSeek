@@ -213,6 +213,14 @@ class Agent():
                 post_lines.append(f"block:{block_idx}")
                 block_idx += 1
         return "\n".join(post_lines)
+    
+    def show_block(self, block: str) -> None:
+        """
+        Show the block in a pretty way.
+        """
+        pretty_print('▂'*64, color="status")
+        pretty_print(block, color="code")
+        pretty_print('▂'*64, color="status")
 
     def execute_modules(self, answer: str) -> Tuple[bool, str]:
         """
@@ -231,6 +239,7 @@ class Agent():
 
             if blocks != None:
                 for block in blocks:
+                    self.show_block(block)
                     output = tool.execute([block])
                     feedback = tool.interpreter_feedback(output) # tool interpreter feedback
                     success = not tool.execution_failure_check(output)
