@@ -108,8 +108,8 @@ class Provider:
         Use a remote server with LLM to generate text.
         """
         thought = ""
-        route_setup = f"http://{self.server_ip}/setup"
-        route_gen = f"http://{self.server_ip}/generate"
+        route_setup = f"{self.server_ip}/setup"
+        route_gen = f"{self.server_ip}/generate"
 
         if not self.is_ip_online(self.server_ip):
             pretty_print(f"Server is offline at {self.server_ip}", color="failure")
@@ -120,7 +120,7 @@ class Provider:
             is_complete = False
             while not is_complete:
                 try:
-                    response = requests.get(f"http://{self.server_ip}/get_updated_sentence")
+                    response = requests.get(f"{self.server_ip}/get_updated_sentence")
                     if "error" in response.json():
                         pretty_print(response.json()["error"], color="failure")
                         break
@@ -276,7 +276,7 @@ class Provider:
         lm studio use endpoint /v1/chat/completions not /chat/completions like openai
         """
         thought = ""
-        route_start = f"http://{self.server_ip}/v1/chat/completions"
+        route_start = f"{self.server_ip}/v1/chat/completions"
         payload = {
             "messages": history,
             "temperature": 0.7,
