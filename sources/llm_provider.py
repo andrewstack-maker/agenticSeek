@@ -45,6 +45,7 @@ class Provider:
             self.api_key = self.get_api_key(self.provider_name)
         elif self.provider_name != "ollama":
             pretty_print(f"Provider: {provider_name} initialized at {self.server_ip}", color="success")
+        print("IP online?", self.is_ip_online(self.server_ip.split(":")[0]))
 
     def get_api_key(self, provider):
         load_dotenv()
@@ -86,7 +87,9 @@ class Provider:
             return False
         if address.lower() in ["127.0.0.1", "localhost", "0.0.0.0"]:
             return True
-        hostname = urlparse(f'http://{address}' if not address.startswith(('http://', 'https://')) else address).hostname or address
+        parsed = urlparse(address if address.startswith(('http://', 'https://')) else f'http://{address}')
+        hostname = parsed.hostname or address
+    
         try:
             ip_address = socket.gethostbyname(hostname)
         except socket.gaierror:
@@ -99,6 +102,7 @@ class Provider:
             return result.returncode == 0
         except (subprocess.TimeoutExpired, subprocess.SubprocessError) as e:
             return False
+
 
     def server_fn(self, history, verbose = False):
         """
