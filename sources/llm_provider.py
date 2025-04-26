@@ -45,8 +45,6 @@ class Provider:
             self.api_key = self.get_api_key(self.provider_name)
         elif self.provider_name != "ollama":
             pretty_print(f"Provider: {provider_name} initialized at {self.server_ip}", color="success")
-        if not self.is_ip_online(self.server_ip.split(':')[0]):
-            raise Exception(f"Server at {self.server_ip} is offline.")
 
     def get_api_key(self, provider):
         load_dotenv()
@@ -282,8 +280,6 @@ class Provider:
             "max_tokens": 4096,
             "model": self.model
         }
-        if not self.is_ip_online(self.server_ip.split(":")[0]):
-            raise Exception(f"Server is offline at {self.server_ip}")
         try:
             response = requests.post(route_start, json=payload)
             result = response.json()
