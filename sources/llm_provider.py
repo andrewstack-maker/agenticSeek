@@ -111,7 +111,7 @@ class Provider:
         route_setup = f"http://{self.server_ip}/setup"
         route_gen = f"http://{self.server_ip}/generate"
 
-        if not self.is_ip_online(self.server_ip.split(":")):
+        if not self.is_ip_online(self.server_ip):
             pretty_print(f"Server is offline at {self.server_ip}", color="failure")
 
         try:
