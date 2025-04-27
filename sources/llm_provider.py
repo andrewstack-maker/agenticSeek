@@ -12,7 +12,6 @@ import platform
 from urllib.parse import urlparse
 from dotenv import load_dotenv, set_key
 from openai import OpenAI
-from huggingface_hub import InferenceClient
 from typing import List, Tuple, Type, Dict
 from sources.utility import pretty_print, animate_thinking
 from sources.logger import Logger
@@ -173,6 +172,7 @@ class Provider:
         """
         Use huggingface to generate text.
         """
+        from huggingface_hub import InferenceClient
         client = InferenceClient(
         	api_key=self.get_api_key("huggingface")
         )

@@ -10,7 +10,7 @@ else:
 
 class MCP_finder(Tools):
     """
-    Tool
+    Tool to find MCPs server
     """
     def __init__(self, api_key: str = None):
         super().__init__()

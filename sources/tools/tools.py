@@ -23,8 +23,6 @@ import configparser
 from abc import abstractmethod
 from sources.logger import Logger
 
-sys.path.append('..')
-
 class Tools():
     """
     Abstract class for all tools.

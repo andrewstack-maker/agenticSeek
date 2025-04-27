@@ -49,6 +49,7 @@ class BrowserAgent(Agent):
         matches = re.findall(pattern, search_result)
         trailing_punct = ".,!?;:)"
         cleaned_links = [link.rstrip(trailing_punct) for link in matches]
+        self.logger.info(f"Extracted links: {cleaned_links}")
         return self.clean_links(cleaned_links)
     
     def extract_form(self, text: str) -> List[str]:
@@ -73,6 +74,7 @@ class BrowserAgent(Agent):
 
     def make_newsearch_prompt(self, user_prompt: str, search_result: dict) -> str:
         search_choice = self.stringify_search_results(search_result)
+        self.logger.info(f"Search results: {search_choice}")
         return f"""
         Based on the search result:
         {search_choice}
@@ -88,6 +90,9 @@ class BrowserAgent(Agent):
         inputs_form = self.browser.get_form_inputs()
         inputs_form_text = '\n'.join(inputs_form)
         notes = '\n'.join(self.notes)
+        self.logger.info(f"Making navigation prompt with page text: {page_text[:100]}...\nremaining links: {remaining_links_text}")
+        self.logger.info(f"Inputs form: {inputs_form_text}")
+        self.logger.info(f"Notes: {notes}")
 
         return f"""
         You are navigating the web.
@@ -181,6 +186,7 @@ class BrowserAgent(Agent):
         for res in search_result:
             if res["link"] not in self.search_history:
                 results_unvisited.append(res) 
+        self.logger.info(f"Unvisited links: {results_unvisited}")
         return results_unvisited
 
     def jsonify_search_results(self, results_string: str) -> List[str]:
@@ -225,8 +231,11 @@ class BrowserAgent(Agent):
     def select_link(self, links: List[str]) -> str | None:
         for lk in links:
             if lk == self.current_page:
+                self.logger.info(f"Already visited {lk}. Skipping.")
                 continue
+            self.logger.info(f"Selected link: {lk}")
             return lk
+        self.logger.warning("No link selected.")
         return None
     
     def conclude_prompt(self, user_query: str) -> str:
@@ -397,6 +406,7 @@ class BrowserAgent(Agent):
         answer, reasoning = await self.llm_request()
         pretty_print(answer, color="output")
         self.status_message = "Ready"
+        self.last_answer = answer
         return answer, reasoning
 
 if __name__ == "__main__":

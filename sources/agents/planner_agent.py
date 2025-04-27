@@ -5,8 +5,10 @@ from sources.agents.agent import Agent
 from sources.agents.code_agent import CoderAgent
 from sources.agents.file_agent import FileAgent
 from sources.agents.browser_agent import BrowserAgent
+from sources.agents.casual_agent import CasualAgent
 from sources.text_to_speech import Speech
 from sources.tools.tools import Tools
+from sources.logger import Logger
 
 class PlannerAgent(Agent):
     def __init__(self, name, prompt_path, provider, verbose=False, browser=None):
@@ -22,10 +24,12 @@ class PlannerAgent(Agent):
         self.agents = {
             "coder": CoderAgent(name, "prompts/base/coder_agent.txt", provider, verbose=False),
             "file": FileAgent(name, "prompts/base/file_agent.txt", provider, verbose=False),
-            "web": BrowserAgent(name, "prompts/base/browser_agent.txt", provider, verbose=False, browser=browser)
+            "web": BrowserAgent(name, "prompts/base/browser_agent.txt", provider, verbose=False, browser=browser),
+            "casual": CasualAgent(name, "prompts/base/casual_agent.txt", provider, verbose=False)
         }
         self.role = "planification"
         self.type = "planner_agent"
+        self.logger = Logger("planner_agent.log")
     
     def get_task_names(self, text: str) -> List[str]:
         """
@@ -48,6 +52,7 @@ class PlannerAgent(Agent):
             if '##' in line or line[0].isdigit():
                 tasks_names.append(line)
                 continue
+        self.logger.info(f"Found {len(tasks_names)} tasks names.")
         return tasks_names
 
     def parse_agent_tasks(self, text: str) -> List[Tuple[str, str]]:
@@ -70,6 +75,7 @@ class PlannerAgent(Agent):
             if 'plan' in line_json:
                 for task in line_json['plan']:
                     if task['agent'].lower() not in [ag_name.lower() for ag_name in self.agents.keys()]:
+                        self.logger.warning(f"Agent {task['agent']} does not exist.")
                         pretty_print(f"Agent {task['agent']} does not exist.", color="warning")
                         return []
                     agent = {
@@ -77,7 +83,9 @@ class PlannerAgent(Agent):
                         'id': task['id'],
                         'task': task['task']
                     }
+                    self.logger.info(f"Created agent {task['agent']} with task: {task['task']}")
                     if 'need' in task:
+                        self.logger.info(f"Agent {task['agent']} was given info:\n {task['need']}")
                         agent['need'] = task['need']
                     tasks.append(agent)
         if len(tasks_names) != len(tasks):
@@ -106,6 +114,7 @@ class PlannerAgent(Agent):
         Your task is:
         {task}
         """
+        self.logger.info(f"Prompt for agent:\n{prompt}")
         return prompt
     
     def show_plan(self, agents_tasks: List[dict], answer: str) -> None:
@@ -147,6 +156,7 @@ class PlannerAgent(Agent):
                 continue
             self.show_plan(agents_tasks, answer)
             ok = True
+        self.logger.info(f"Plan made:\n{answer}")
         return self.parse_agent_tasks(answer)
     
     async def update_plan(self, goal: str, agents_tasks: List[dict], agents_work_result: dict, id: str, success: bool) -> dict:
@@ -182,13 +192,15 @@ class PlannerAgent(Agent):
         If a task failed add a task to try again or recover from failure. You might have near identical task twice.
         plan should be within ```json like before.
         You need to rewrite the whole plan, but only change the tasks after task {id}.
-        Keep the plan as short as the original one if possible. Do not change past tasks.
+        Make the plan the same length as the original one or with only one additional step.
+        Do not change past tasks. Change next tasks.
         """
         pretty_print("Updating plan...", color="status")
         plan = await self.make_plan(update_prompt)
         if plan == []:
             pretty_print("No plan update required.", color="info")
             return agents_tasks
+        self.logger.info(f"Plan updated:\n{plan}")
         return plan
     
     async def start_agent_process(self, task: dict, required_infos: dict | None) -> str:
@@ -203,6 +215,7 @@ class PlannerAgent(Agent):
         self.status_message = f"Starting task {task['task']}..."
         agent_prompt = self.make_prompt(task['task'], required_infos)
         pretty_print(f"Agent {task['agent']} started working...", color="status")
+        self.logger.info(f"Agent {task['agent']} started working on {task['task']}.")
         answer, _ = await self.agents[task['agent'].lower()].process(agent_prompt, None)
         self.last_answer = answer
         self.blocks_result = self.agents[task['agent'].lower()].blocks_result
@@ -210,12 +223,15 @@ class PlannerAgent(Agent):
         success = self.agents[task['agent'].lower()].get_success
         self.agents[task['agent'].lower()].show_answer()
         pretty_print(f"Agent {task['agent']} completed task.", color="status")
+        self.logger.info(f"Agent {task['agent']} finished working on {task['task']}. Success: {success}")
         # TODO ajouter feedback / agent et code executer
         agent_answer += "\nAgent succeeded with task." if success else "\nAgent failed with task (Error detected)."
         return agent_answer, success
     
     def get_work_result_agent(self, task_needs, agents_work_result):
-        return {k: agents_work_result[k] for k in task_needs if k in agents_work_result}
+        res = {k: agents_work_result[k] for k in task_needs if k in agents_work_result}
+        self.logger.info(f"Next agent needs: {task_needs}.\n Match previous agent result: {res}")
+        return res
 
     async def process(self, goal: str, speech_module: Speech) -> Tuple[str, str]:
         """

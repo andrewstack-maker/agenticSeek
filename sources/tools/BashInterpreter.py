@@ -25,13 +25,13 @@ class BashInterpreter(Tools):
         If so, return True, otherwise return False.
         Code written by the AI will be executed automatically, so it should not use bash to run it.
         """
-        lang_interpreter = ["python3", "gcc", "g++", "mvn", "go", "javac", "rustc", "clang", "clang++", "rustc", "rustc++", "rustc++"]
+        lang_interpreter = ["python", "gcc", "g++", "mvn", "go", "java", "javac", "rustc", "clang", "clang++", "rustc", "rustc++", "rustc++"]
         for word in command.split():
-            if word in lang_interpreter:
+            if any(word.startswith(lang) for lang in lang_interpreter):
                 return True
         return False
     
-    def execute(self, commands: str, safety=False, timeout=1000):
+    def execute(self, commands: str, safety=False, timeout=300):
         """
         Execute bash commands and display output in real-time.
         """
@@ -43,6 +43,7 @@ class BashInterpreter(Tools):
             command = f"cd {self.work_dir} && {command}"
             command = command.replace('\n', '')
             if self.safe_mode and is_unsafe(commands):
+                print(f"Unsafe command rejected: {command}")
                 return "Unsafe command detected, execution aborted."
             if self.language_bash_attempt(command) and self.allow_language_exec_bash == False:
                 continue

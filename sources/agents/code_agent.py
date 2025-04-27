@@ -9,6 +9,7 @@ from sources.tools.PyInterpreter import PyInterpreter
 from sources.tools.BashInterpreter import BashInterpreter
 from sources.tools.JavaInterpreter import JavaInterpreter
 from sources.tools.fileFinder import FileFinder
+from sources.logger import Logger
 
 class CoderAgent(Agent):
     """
@@ -27,6 +28,7 @@ class CoderAgent(Agent):
         self.work_dir = self.tools["file_finder"].get_work_dir()
         self.role = "code"
         self.type = "code_agent"
+        self.logger = Logger("code_agent.log")
     
     def add_sys_info_prompt(self, prompt):
         """Add system information to the prompt."""
@@ -59,7 +61,9 @@ class CoderAgent(Agent):
             self.show_answer()
             animate_thinking("Executing code...", color="status")
             self.status_message = "Executing code..."
+            self.logger.info(f"Attempt {attempt + 1}:\n{answer}")
             exec_success, _ = self.execute_modules(answer)
+            self.logger.info(f"Execution result: {exec_success}")
             answer = self.remove_blocks(answer)
             self.last_answer = answer
             await asyncio.sleep(0)
@@ -72,6 +76,7 @@ class CoderAgent(Agent):
         self.status_message = "Ready"
         if attempt == max_attempts:
             return "I'm sorry, I couldn't find a solution to your problem. How would you like me to proceed ?", reasoning
+        self.last_answer = answer
         return answer, reasoning
 
 if __name__ == "__main__":
