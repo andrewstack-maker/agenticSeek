@@ -26,9 +26,11 @@
 
 ### **Demo**
 
-> *Plan a 3 days solo trip to Budapest, find me a list of attractions and hostels, save everything in a CSV file*
+> *Can you search for the agenticSeek project, learn what skills are required, then open the CV_candidates.zip and then tell me which match best the project*
 
-https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
+https://github.com/user-attachments/assets/d4efdeed-2d68-43a2-997d-2769e7c0ef99
+
+Disclaimer: This demo, including all the files that appear (e.g: CV_candidates.zip), are entirely fictional. We are not a corporation, and we are not seeking candidates.
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
