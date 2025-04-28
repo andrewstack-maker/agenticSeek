@@ -28,7 +28,7 @@
 
 > *Can you search for the agenticSeek project, learn what skills are required, then open the CV_candidates.zip and then tell me which match best the project*
 
-https://github.com/user-attachments/assets/d4efdeed-2d68-43a2-997d-2769e7c0ef99
+https://github.com/user-attachments/assets/b8ca60e9-7b3b-4533-840e-08f9ac426316
 
 Disclaimer: This demo, including all the files that appear (e.g: CV_candidates.zip), are entirely fictional. We are not a corporation, we seek open-source contributors not candidates.
 
