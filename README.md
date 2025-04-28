@@ -30,7 +30,7 @@
 
 https://github.com/user-attachments/assets/d4efdeed-2d68-43a2-997d-2769e7c0ef99
 
-Disclaimer: This demo, including all the files that appear (e.g: CV_candidates.zip), are entirely fictional. We are not a corporation, and we are not seeking candidates.
+Disclaimer: This demo, including all the files that appear (e.g: CV_candidates.zip), are entirely fictional. We are not a corporation, we seek open-source contributors not candidates.
 
 > 🛠️ **Work in Progress** – Looking for contributors!
 
