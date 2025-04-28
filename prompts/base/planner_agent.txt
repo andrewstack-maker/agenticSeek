@@ -81,4 +81,5 @@ Rules:
 - Do not search for tutorial.
 - Make sure json is within ```json tag
 - Coding agent should write the whole code in a single file unless instructed otherwise.
+- Do not use python for NLP analysis of a text, you can review a text with the casual agent
 - One step, one agent.

@@ -224,7 +224,6 @@ class PlannerAgent(Agent):
         self.agents[task['agent'].lower()].show_answer()
         pretty_print(f"Agent {task['agent']} completed task.", color="status")
         self.logger.info(f"Agent {task['agent']} finished working on {task['task']}. Success: {success}")
-        # TODO ajouter feedback / agent et code executer
         agent_answer += "\nAgent succeeded with task." if success else "\nAgent failed with task (Error detected)."
         return agent_answer, success
     
@@ -257,6 +256,7 @@ class PlannerAgent(Agent):
             task_name, task = agents_tasks[i][0], agents_tasks[i][1]
             self.status_message = "Starting agents..."
             pretty_print(f"I will {task_name}.", color="info")
+            self.last_answer = f"I will {task_name.lower()}."
             pretty_print(f"Assigned agent {task['agent']} to {task_name}", color="info")
             if speech_module: speech_module.speak(f"I will {task_name}. I assigned the {task['agent']} agent to the task.")
 
