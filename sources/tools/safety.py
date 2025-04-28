@@ -20,6 +20,7 @@ unsafe_commands_unix = [
     "passwd",       # Password changes
     "useradd",      # Add users
     "userdel",      # Delete users
+    "brew",      # Homebrew package manager
     "groupadd",     # Add groups
     "groupdel",     # Delete groups
     "visudo",       # Edit sudoers file
@@ -30,7 +31,7 @@ unsafe_commands_unix = [
     "route"         # Routing table management
     "--force",     # Force flag for many commands
     "rebase",     # Rebase git repository
-    "git ." # Git commands, feel free to remove it but i dont want to risk agenticSeek pushing to its own repo lol (see 56b5db7)
+    "git ." # Git commands
 ]
 
 unsafe_commands_windows = [

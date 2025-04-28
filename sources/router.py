@@ -148,6 +148,8 @@ class AgentRouter:
             ("Man, write me a dope Python script to flex some random numbers", "LOW"),
             ("Search the web for peer-reviewed articles on gene editing", "LOW"),
             ("Locate ‘meeting_notes.docx’ in Downloads, I’m late for this call", "LOW"),
+            ("Make the game less hard", "LOW"),
+            ("Why did it fail?", "LOW"),
             ("Write a Python script to list all .pdf files in my Documents", "LOW"),
             ("Write a Python thing to sort my .jpg files by date", "LOW"),
             ("make a snake game please", "LOW"),
@@ -182,6 +184,7 @@ class AgentRouter:
             ("Find a public API for recipe data and build a web app to display recipes", "HIGH"),
             ("Search the web for recent space mission updates and build a Flask app", "HIGH"),
             ("Create a Python script to scrape a website and save data to a database", "HIGH"),
+            ("Find a shakespear txt then train a transformers on it to generate text", "HIGH"),
             ("Find a public API for fitness tracking and build a web app to show stats", "HIGH"),
             ("Search the web for tutorials on web development and build a sample site", "HIGH"),
             ("Create a Node.js app to query a public API for event listings and display them", "HIGH"),
@@ -402,9 +405,9 @@ class AgentRouter:
         if len(predictions) == 0:
             return "LOW"
         complexity, confidence = predictions[0][0], predictions[0][1]
-        if confidence < 0.4:
+        if confidence < 0.5:
             self.logger.info(f"Low confidence in complexity estimation: {confidence}")
-            return "LOW"
+            return "HIGH"
         if complexity == "HIGH":
             return "HIGH"
         elif complexity == "LOW":

@@ -33,12 +33,15 @@ class GoInterpreter(Tools):
                 f.write(code)
 
             try:
+                env = os.environ.copy()
+                env["GO111MODULE"] = "off"
                 compile_command = ["go", "build", "-o", exec_file, source_file]
                 compile_result = subprocess.run(
                     compile_command,
                     capture_output=True,
                     text=True,
-                    timeout=10
+                    timeout=10,
+                    env=env
                 )
 
                 if compile_result.returncode != 0:

@@ -93,6 +93,7 @@ class FileFinder(Tools):
                 return output
             if action is None:
                 action = "info"
+            print("File finder: recursive search started...")
             file_path = self.recursive_search(self.work_dir, filename)
             if file_path is None:
                 output = f"File: {filename} - not found\n"
@@ -143,6 +144,7 @@ class FileFinder(Tools):
         return feedback.strip()
 
 if __name__ == "__main__":
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     tool = FileFinder()
     result = tool.execute(["""
 action=read
