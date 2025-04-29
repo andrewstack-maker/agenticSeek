@@ -58,13 +58,43 @@ source agentic_seek_env/bin/activate
 
 ### 3️⃣ **Install package**
 
-**Automatic Installation:**
+**Automatic Installation (Recommanded):**
 
+For Linux/Macos:
 ```sh
 ./install.sh
 ```
 
+For windows:
+```sh
+./install.bat
+```
+
 **Manually:**
+
+First, you need to install these packages:
+
+- *Linux*: 
+
+Updates package list (apt-get update).
+
+Install these:
+alsa-utils, portaudio19-dev, python3-pyaudio, libgtk-3-dev, libnotify-dev, libgconf-2-4, libnss3, libxss1, selenium
+
+Make sure to install docker + docker-compose if not already.
+
+- *Macos*:
+
+Update package list.
+Install chromedriver.
+Install portaudio.
+Install chromedriver and selenium.
+
+- *Windows*:
+
+Install pyreadline3, selenium portaudio, pyAudio and chromedriver 
+
+Then install pip requirements:
 
 ```sh
 pip3 install -r requirements.txt
@@ -124,7 +154,7 @@ Next step: [Start services and run AgenticSeek](#Start-services-and-Run)
 
 ## Setup to run with an API
 
-Set the desired provider in the `config.ini`
+Set the desired provider in the `config.ini`. See below for a list of API providers.
 
 ```sh
 [MAIN]
@@ -133,12 +163,21 @@ provider_name = openai
 provider_model = gpt-4o
 provider_server_address = 127.0.0.1:5000
 ```
+Warning: Make sure there is not trailing space in the config.
 
-WARNING: Make sure there is not trailing space in the config.
+Export your API key: `export <<PROVIDER>>_API_KEY="xxx"`
 
-Set `is_local` to True if using a local openai-based api.
+Example: export `TOGETHER_API_KEY="xxxxx"`
 
-Change the IP address if your openai-based api run on your own server.
+**List of API providers**
+  
+| Provider  | Local? | Description                                               |
+|-----------|--------|-----------------------------------------------------------|
+| openai    | Depends  | Use ChatGPT API  |
+| deepseek-api  | No     | Deepseek API (non-private)                            |
+| huggingface| No    | Hugging-Face API (non-private)                            |
+| togetherAI | No    | Use together AI API (non-private)                         |
+| google | No    | Use google gemini API (non-private)                         |
 
 Next step: [Start services and run AgenticSeek](#Start-services-and-Run)
 
@@ -185,18 +224,11 @@ Go to `http://localhost:3000/` and you should see the web interface.
 
 ## Usage
 
-Make sure the services are up and running with `./start_services.sh` and run the AgenticSeek with `python3 main.py`
+Make sure the services are up and running with `./start_services.sh` and run the AgenticSeek with `python3 cli.py` for CLI mode or `python3 api.py` then go to `localhost:3000` for web interface.
 
-```sh
-sudo ./start_services.sh
-python3 cli.py
-```
+You can also use speech to text by setting `listen = True` in the config. Only for CLI mode.
 
-You will be prompted with `>>> `
-This indicate AgenticSeek await you type for instructions.
-You can also use speech to text by setting `listen = True` in the config.
-
-To exit, simply say `goodbye`.
+To exit, simply say/type `goodbye`.
 
 Here are some example usage:
 
@@ -247,9 +279,9 @@ Instead, ask:
 
 ---
 
-## **Bonus: Setup to run the LLM on your own server**  
+## **Setup to run the LLM on your own server**  
 
-If you have a powerful computer or a server that you can use, but you want to use it from your laptop you have the options to run the LLM on a remote server. 
+If you have a powerful computer or a server that you can use, but you want to use it from your laptop you have the options to run the LLM on a remote server using our custom llm server. 
 
 On your "server" that will run the AI model, get the ip address
 
@@ -302,6 +334,8 @@ Next step: [Start services and run AgenticSeek](#Start-services-and-Run)
 ---
 
 ## Speech to Text
+
+Please note that currently speech to text only work in english.
 
 The speech-to-text functionality is disabled by default. To enable it, set the listen option to True in the config.ini file:
 
@@ -393,6 +427,7 @@ The table below show the available providers:
 | deepseek-api  | No     | Deepseek API (non-private)                            |
 | huggingface| No    | Hugging-Face API (non-private)                            |
 | togetherAI | No    | Use together AI API (non-private)                         |
+| google | No    | Use google gemini API (non-private)                         |
 
 To select a provider change the config.ini:
 
