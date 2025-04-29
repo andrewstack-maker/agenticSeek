@@ -274,21 +274,26 @@ provider_server_address = x.x.x.x:3333
 
 Ensuite, exécutez avec le CLI ou l'interface graphique comme expliqué dans la section pour les fournisseurs locaux.
 
-## **Exécuter avec une API**  
+## **Exécuter avec une API externe**  
 
 AVERTISSEMENT : Assurez-vous qu’il n’y a pas d’espace en fin de ligne dans la configuration.
-
-Définissez is_local sur True si vous utilisez une API basée sur OpenAI localement.
-
-Changez l’adresse IP si votre API basée sur OpenAI fonctionne sur votre propre serveur.
 
 ```sh
 [MAIN]
 is_local = False
 provider_name = openai
 provider_model = gpt-4o
-provider_server_address = 127.0.0.1:5000
+provider_server_address = 127.0.0.1:5000 # n'importe pas
 ```
+
+**Liste de provideurs API**
+| Fournisseur  | Local ? | Description                                               |
+|--------------|---------|-----------------------------------------------------------|
+| openai       | Non  | Utilise l'API ChatGPT                                     |
+| deepseek-api | Non     | API Deepseek (non privé)                                  |
+| huggingface  | Non     | API Hugging-Face (non privé)                              |
+| togetherAI   | Non     | Utilise l'API Together AI (non privé)                     |
+| google       | Non     | Utilise l'API Google Gemini (non privé)                  |
 
 Ensuite, exécutez avec le CLI ou l'interface graphique comme expliqué dans la section pour les fournisseurs locaux.
 

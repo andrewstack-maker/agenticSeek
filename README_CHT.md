@@ -314,6 +314,8 @@ provider_server_address = x.x.x.x:3333
 
 ## 語音轉文字
 
+请注意，目前语音转文字功能仅支持英语。
+
 預設狀況下，語音轉文字功能是停用的。若要啟用它，請在 `config.ini` 檔案中，將 `listen` 選項設為 `True`：
 
 ```
@@ -470,7 +472,7 @@ https://googlechromelabs.github.io/chrome-for-testing/
 
 就其尺寸而言，Deepseek R1 在推理和使用方面表現出色。我們認為非常適合我們的需求，其他模型也很好用，但 Deepseek 是我們最後選定的模型。
 
-**Q：我在執行時 `main.py` 時出現錯誤。我該怎麼辦？**
+**Q：我在執行時 `cli.py` 時出現錯誤。我該怎麼辦？**
 
 1. 確保 Ollama 正在運行（ollama serve）
 2. 你 `config.ini` 內 `provider_name` 的框架選擇正確。
