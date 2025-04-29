@@ -41,11 +41,17 @@ else
 fi
 
 # Check if Docker Compose is installed
-if ! command_exists docker-compose; then
+if ! command_exists docker-compose && ! docker compose version >/dev/null 2>&1; then
     echo "Error: Docker Compose is not installed. Please install it first."
     echo "On Ubuntu: sudo apt install docker-compose"
     echo "Or via pip: pip install docker-compose"
     exit 1
+fi
+
+if command_exists docker-compose; then
+    COMPOSE_CMD="docker-compose"
+else
+    COMPOSE_CMD="docker compose"
 fi
 
 # Check if docker-compose.yml exists
@@ -60,8 +66,8 @@ sleep 4
 docker stop $(docker ps -a -q)
 echo "All containers stopped"
 
-if ! docker-compose up; then
-    echo "Error: Failed to start containers. Check Docker logs with 'docker compose logs'."
+if ! $COMPOSE_CMD up; then
+    echo "Error: Failed to start containers. Check Docker logs with '$COMPOSE_CMD logs'."
     echo "Possible fixes: Run with sudo or ensure port 8080 is free."
     exit 1
 fi
