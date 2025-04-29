@@ -204,11 +204,11 @@ python3 api.py
 
 警告: 現在、サポートされている言語は英語、中国語、フランス語のみです。他の言語でのプロンプトは機能しますが、適切なエージェントにルーティングされない場合があります。
 
-サービスが`./start_services.sh`で起動していることを確認し、`python3 main.py`でagenticSeekを実行します。
+サービスが`./start_services.sh`で起動していることを確認し、`python3 cli.py`でagenticSeekを実行します。
 
 ```sh
 sudo ./start_services.sh
-python3 main.py
+python3 cli.py
 ```
 
 `>>> `と表示されます
@@ -319,6 +319,8 @@ provider_server_address = x.x.x.x:3333
 ---
 
 ## 音声認識
+
+現在、音声認識は英語でのみ動作することに注意してください。
 
 音声認識機能はデフォルトで無効になっています。有効にするには、config.iniファイルでlistenオプションをTrueに設定します:
 
@@ -453,7 +455,7 @@ https://googlechromelabs.github.io/chrome-for-testing/
 
 Deepseek R1は、そのサイズに対して推論とツールの使用に優れています。私たちのニーズに最適だと考えています。他のモデルも問題なく動作しますが、Deepseekが私たちの主な選択です。
 
-**Q: `main.py`を実行するとエラーが発生します。どうすればよいですか？**  
+**Q: `cli.py`を実行するとエラーが発生します。どうすればよいですか？**  
 
 Ollamaが実行中であることを確認してください（`ollama serve`）、`config.ini`がプロバイダーに一致していること、および依存関係がインストールされていることを確認してください。それでも解決しない場合は、問題を報告してください。
 
