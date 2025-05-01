@@ -14,7 +14,7 @@ For example:
 print("Hello world")
 ```
 This is then executed by the tool with its own class implementation of execute().
-A tool is not just for code tool but also API, internet, etc..
+A tool is not just for code tool but also API, internet search, MCP, etc..
 """
 
 import sys
