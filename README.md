@@ -181,6 +181,8 @@ Example: export `TOGETHER_API_KEY="xxxxx"`
 
 *We advice against using gpt-4o or other closedAI models*, performance are poor for web browsing and task planning.
 
+Please also note that coding/bash might fail with gemini, it seem to ignore our prompt for format to respect, which are optimized for deepseek r1.
+
 Next step: [Start services and run AgenticSeek](#Start-services-and-Run)
 
 *See the **Known issues** section if you are having issues*
