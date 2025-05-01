@@ -242,7 +242,7 @@ class Agent():
             if blocks != None:
                 for block in blocks:
                     self.show_block(block)
-                    output = tool.execute([block], safety=True)
+                    output = tool.execute([block])
                     feedback = tool.interpreter_feedback(output) # tool interpreter feedback
                     success = not tool.execution_failure_check(output)
                     self.blocks_result.append(executorResult(block, feedback, success, name))
