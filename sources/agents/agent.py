@@ -123,6 +123,8 @@ class Agent():
         """
         start_tag = "<think>"
         end_tag = "</think>"
+        if text is None:
+            return None
         start_idx = text.find(start_tag)
         end_idx = text.rfind(end_tag)+8
         return text[start_idx:end_idx]
@@ -240,7 +242,7 @@ class Agent():
             if blocks != None:
                 for block in blocks:
                     self.show_block(block)
-                    output = tool.execute([block])
+                    output = tool.execute([block], safety=True)
                     feedback = tool.interpreter_feedback(output) # tool interpreter feedback
                     success = not tool.execution_failure_check(output)
                     self.blocks_result.append(executorResult(block, feedback, success, name))
