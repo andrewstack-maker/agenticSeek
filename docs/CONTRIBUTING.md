@@ -6,7 +6,7 @@
 - Docker or Orbstack.
 - Ollama with some deepseek-r1 variant installed or similar local reasoning model.
 - Basic familiarity with Python and AI models.
-- Join the discord (optional): https://discord.gg/v8r4xy8x
+- Join the discord (optional): https://discord.gg/8hGDaME3TC
 
 ## Contribution Guidelines
 
