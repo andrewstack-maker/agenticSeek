@@ -1,3 +1,5 @@
+kokoro==0.9.4
+certifi==2025.4.26
 fastapi>=0.115.12
 flask>=3.1.0
 celery>=5.5.1
@@ -18,10 +20,10 @@ torch>=2.4.1
 python-dotenv>=1.0.0
 ollama>=0.4.7
 scipy>=1.9.3
-kokoro>=0.7.12
 soundfile>=0.13.1
 protobuf>=3.20.3
 termcolor>=2.4.0
+pypdf>=5.4.0
 ipython>=8.13.0
 pyaudio>=0.2.14
 librosa>=0.10.2.post1
@@ -39,11 +41,8 @@ fake_useragent>=2.1.0
 selenium_stealth>=1.0.6
 undetected-chromedriver>=3.5.5
 sentencepiece>=0.2.0
+tqdm>4
 openai
 sniffio
-tqdm>4
-# if use chinese
 ordered_set
 pypinyin
-cn2an
-jieba

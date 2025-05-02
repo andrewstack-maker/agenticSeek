@@ -13,6 +13,8 @@ from fake_useragent import UserAgent
 from selenium_stealth import stealth
 import undetected_chromedriver as uc
 import chromedriver_autoinstaller
+import certifi
+import ssl
 import time
 import random
 import os
@@ -26,6 +28,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sources.utility import pretty_print, animate_thinking
 from sources.logger import Logger
+
 
 def get_chrome_path() -> str:
     """Get the path to the Chrome executable."""
@@ -84,6 +87,30 @@ def install_chromedriver() -> str:
         raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
     return chromedriver_path
 
+def bypass_ssl() -> str:
+    """
+    This is a fallback for stealth mode to bypass SSL verification. Which can fail on some setup.
+    """
+    pretty_print("This is a workaround for SSL issues but upsafe we strongly advice you update your certifi SSL certificate.", color="warning")
+    ssl._create_default_https_context = ssl._create_unverified_context
+
+def create_undetected_chromedriver(service, chrome_options) -> webdriver.Chrome:
+    """Create an undetected ChromeDriver instance."""
+    try:
+        driver = uc.Chrome(service=service, options=chrome_options)
+    except Exception as e:
+        pretty_print(f"Failed to create Chrome driver: {str(e)}. Trying to bypass SSL...", color="failure")
+        try:
+            bypass_ssl()
+            driver = uc.Chrome(service=service, options=chrome_options)
+        except Exception as e:
+            pretty_print(f"Failed to create Chrome driver, fallback failed:\n{str(e)}.", color="failure")
+            raise e
+        raise e
+    # hide webdriver flag
+    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})") 
+    return driver
+
 def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx") -> webdriver.Chrome:
     """Create a Chrome WebDriver with specified options."""
     chrome_options = Options()
@@ -122,8 +149,7 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
     service = Service(chromedriver_path)
     if stealth_mode:
         chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-        driver = uc.Chrome(service=service, options=chrome_options)
-        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})") 
+        driver = create_undetected_chromedriver(service, chrome_options)
         chrome_version = driver.capabilities['browserVersion']
         stealth(driver,
             languages=["en-US", "en"],
