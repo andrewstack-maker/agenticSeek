@@ -38,11 +38,12 @@ class FileFinder(Tools):
         Returns:
             str: The content of the file in markdown format
         """
+        mime_type, _ = mimetypes.guess_type(file_path)
+        if mime_type:
+            if mime_type.startswith(('image/', 'video/', 'audio/')):
+                return "can't read file type: image, video, or audio files are not supported."
         content_raw = self.read_file(file_path)
-        language = ["python", "bash", "javascript", "html", "css", "json"]
         if "text" in file_type:
-            content = content_raw
-        elif any(lang in file_type for lang in language):
             content = content_raw
         elif "pdf" in file_type:
             from pypdf import PdfReader
@@ -51,7 +52,7 @@ class FileFinder(Tools):
         elif "binary" in file_type:
             content = content_raw.decode('utf-8', errors='replace')
         else:
-            content = f"Can't read file: ![{file_type}]({file_path})"
+            content = content_raw
         return content
     
     def get_file_info(self, file_path: str) -> str:
@@ -178,7 +179,7 @@ if __name__ == "__main__":
     tool = FileFinder()
     result = tool.execute(["""
 action=read
-name=cover_letter_martin_legrand.pdf
+name=tools.py
 """], False)
     print("Execution result:")
     print(result)
