@@ -65,6 +65,25 @@ def get_random_user_agent() -> str:
     ]
     return random.choice(user_agents)
 
+def install_chromedriver() -> str:
+    """
+    Install the ChromeDriver if not already installed. Return the path.
+    """
+    chromedriver_path = shutil.which("chromedriver")
+    if not chromedriver_path:
+        try:
+            chromedriver_path = chromedriver_autoinstaller.install()
+        except Exception as e:
+            raise FileNotFoundError(
+                "ChromeDriver not found and could not be installed automatically. "
+                "Please install it manually from https://chromedriver.chromium.org/downloads."
+                "and ensure it's in your PATH or specify the path directly."
+                "See know issues in readme if your chrome version is above 115."
+            ) from e
+    if not chromedriver_path:
+        raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
+    return chromedriver_path
+
 def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx") -> webdriver.Chrome:
     """Create a Chrome WebDriver with specified options."""
     chrome_options = Options()
@@ -97,14 +116,9 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
             pretty_print(f"Anti-captcha CRX not found at {crx_path}.", color="failure")
         else:
             chrome_options.add_extension(crx_path)
-    
-    chromedriver_path = shutil.which("chromedriver")
-    if not chromedriver_path:
-        chromedriver_path = chromedriver_autoinstaller.install()
-    
-    if not chromedriver_path:
-        raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
-    
+
+    chromedriver_path = install_chromedriver()
+
     service = Service(chromedriver_path)
     if stealth_mode:
         chrome_options.add_argument("--disable-blink-features=AutomationControlled")

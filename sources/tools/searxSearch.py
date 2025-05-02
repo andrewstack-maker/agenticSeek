@@ -2,10 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
-if __name__ == "__main__":
-    from tools import Tools
-else:
-    from sources.tools.tools import Tools
+if __name__ == "__main__": # if running as a script for individual testing
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from sources.tools.tools import Tools
 
 class searxSearch(Tools):
     def __init__(self, base_url: str = None):

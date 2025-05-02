@@ -123,6 +123,8 @@ class Agent():
         """
         start_tag = "<think>"
         end_tag = "</think>"
+        if text is None:
+            return None
         start_idx = text.find(start_tag)
         end_idx = text.rfind(end_tag)+8
         return text[start_idx:end_idx]

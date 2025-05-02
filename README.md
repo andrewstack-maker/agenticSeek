@@ -159,9 +159,9 @@ Set the desired provider in the `config.ini`. See below for a list of API provid
 ```sh
 [MAIN]
 is_local = False
-provider_name = openai
-provider_model = gpt-4o
-provider_server_address = 127.0.0.1:5000
+provider_name = google
+provider_model = gemini-2.0-flash
+provider_server_address = 127.0.0.1:5000 # doesn't matter
 ```
 Warning: Make sure there is not trailing space in the config.
 
@@ -178,6 +178,10 @@ Example: export `TOGETHER_API_KEY="xxxxx"`
 | huggingface| No    | Hugging-Face API (non-private)                            |
 | togetherAI | No    | Use together AI API (non-private)                         |
 | google | No    | Use google gemini API (non-private)                         |
+
+*We advice against using gpt-4o or other closedAI models*, performance are poor for web browsing and task planning.
+
+Please also note that coding/bash might fail with gemini, it seem to ignore our prompt for format to respect, which are optimized for deepseek r1.
 
 Next step: [Start services and run AgenticSeek](#Start-services-and-Run)
 

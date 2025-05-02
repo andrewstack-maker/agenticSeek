@@ -14,13 +14,17 @@ For example:
 print("Hello world")
 ```
 This is then executed by the tool with its own class implementation of execute().
-A tool is not just for code tool but also API, internet, etc..
+A tool is not just for code tool but also API, internet search, MCP, etc..
 """
 
 import sys
 import os
 import configparser
 from abc import abstractmethod
+
+if __name__ == "__main__": # if running as a script for individual testing
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from sources.logger import Logger
 
 class Tools():

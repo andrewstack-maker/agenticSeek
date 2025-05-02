@@ -140,6 +140,7 @@ class Speech():
         return sentence
 
 if __name__ == "__main__":
+    # TODO add info message for cn2an, jieba chinese related import
     sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     speech = Speech()
     tosay_en = """

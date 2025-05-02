@@ -151,7 +151,7 @@ class PlannerAgent(Agent):
                 return []
             agents_tasks = self.parse_agent_tasks(answer)
             if agents_tasks == []:
-                prompt = f"Failed to parse the tasks. Please make a plan within ```json. Do not ask for clarification.\n"
+                prompt = f"Failed to parse the tasks. Please write down your task followed by a json plan within ```json. Do not ask for clarification.\n"
                 pretty_print("Failed to make plan. Retrying...", color="warning")
                 continue
             self.show_plan(agents_tasks, answer)

@@ -72,6 +72,8 @@ class Provider:
         except ModuleNotFoundError as e:
             raise ModuleNotFoundError(f"{str(e)}\nA import related to provider {self.provider_name} was not found. Is it installed ?")
         except Exception as e:
+            if "try again later" in str(e).lower():
+                return f"{self.provider_name} server is overloaded. Please try again later."
             if "refused" in str(e):
                 return f"Server {self.server_ip} seem offline. Unable to answer."
             raise Exception(f"Provider {self.provider_name} failed: {str(e)}") from e
@@ -214,7 +216,7 @@ class Provider:
         """
         base_url = self.server_ip
         if self.is_local:
-            raise Exception("Google Gemini is not available for local use.")
+            raise Exception("Google Gemini is not available for local use. Change config.ini")
 
         client = OpenAI(api_key=self.api_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
         try:
@@ -237,6 +239,8 @@ class Provider:
         """
         from together import Together
         client = Together(api_key=self.api_key)
+        if self.is_local:
+            raise Exception("Together AI is not available for local use. Change config.ini")
 
         try:
             response = client.chat.completions.create(
@@ -257,6 +261,8 @@ class Provider:
         Use deepseek api to generate text.
         """
         client = OpenAI(api_key=self.api_key, base_url="https://api.deepseek.com")
+        if self.is_local:
+            raise Exception("Deepseek (API) is not available for local use. Change config.ini")
         try:
             response = client.chat.completions.create(
                 model="deepseek-chat",

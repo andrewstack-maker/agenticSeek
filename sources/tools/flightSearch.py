@@ -1,13 +1,13 @@
-import os
+import os, sys
 import requests
 import dotenv
 
 dotenv.load_dotenv()
 
-if __name__ == "__main__":
-    from tools import Tools
-else:
-    from sources.tools.tools import Tools
+if __name__ == "__main__": # if running as a script for individual testing
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from sources.tools.tools import Tools
 
 class FlightSearch(Tools):
     def __init__(self, api_key: str = None):
