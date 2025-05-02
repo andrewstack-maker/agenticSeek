@@ -1,12 +1,13 @@
-import os
+import os, sys
 import requests
 from urllib.parse import urljoin
 from typing import Dict, Any, Optional
 
-if __name__ == "__main__":
-    from tools import Tools
-else:
-    from sources.tools.tools import Tools
+from sources.tools.tools import Tools
+
+if __name__ == "__main__": # if running as a script for individual testing
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
 
 class MCP_finder(Tools):
     """

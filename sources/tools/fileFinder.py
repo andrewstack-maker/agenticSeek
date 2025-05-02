@@ -1,13 +1,12 @@
-import os
+import os, sys
 import stat
 import mimetypes
 import configparser
 
-if __name__ == "__main__":
-    from tools import Tools
-else:
-    from sources.tools.tools import Tools
+if __name__ == "__main__": # if running as a script for individual testing
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
+from sources.tools.tools import Tools
 
 class FileFinder(Tools):
     """
@@ -30,14 +29,45 @@ class FileFinder(Tools):
                 return file.read()
         except Exception as e:
             return f"Error reading file: {e}"
+        
+    def read_arbitrary_file(self, file_path: str, file_type: str) -> str:
+        """
+        Reads the content of a file with arbitrary encoding.
+        Args:
+            file_path (str): The path to the file to read
+        Returns:
+            str: The content of the file in markdown format
+        """
+        content_raw = self.read_file(file_path)
+        language = ["python", "bash", "javascript", "html", "css", "json"]
+        if "text" in file_type:
+            content = content_raw
+        elif any(lang in file_type for lang in language):
+            content = content_raw
+        elif "pdf" in file_type:
+            from pypdf import PdfReader
+            reader = PdfReader(file_path)
+            content = '\n'.join([pt.extract_text() for pt in reader.pages])
+        elif "binary" in file_type:
+            content = content_raw.decode('utf-8', errors='replace')
+        else:
+            content = f"Can't read file: ![{file_type}]({file_path})"
+        return content
     
     def get_file_info(self, file_path: str) -> str:
+        """
+        Gets information about a file, including its name, path, type, content, and permissions.
+        Args:
+            file_path (str): The path to the file
+        Returns:
+            str: A dictionary containing the file information
+        """
         if os.path.exists(file_path):
             stats = os.stat(file_path)
             permissions = oct(stat.S_IMODE(stats.st_mode))
             file_type, _ = mimetypes.guess_type(file_path)
             file_type = file_type if file_type else "Unknown"
-            content = self.read_file(file_path)
+            content = self.read_arbitrary_file(file_path, file_type)
             
             result = {
                 "filename": os.path.basename(file_path),
@@ -148,7 +178,7 @@ if __name__ == "__main__":
     tool = FileFinder()
     result = tool.execute(["""
 action=read
-name=tools.py
+name=cover_letter_martin_legrand.pdf
 """], False)
     print("Execution result:")
     print(result)

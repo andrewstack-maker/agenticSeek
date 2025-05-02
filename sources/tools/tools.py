@@ -21,6 +21,10 @@ import sys
 import os
 import configparser
 from abc import abstractmethod
+
+if __name__ == "__main__": # if running as a script for individual testing
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from sources.logger import Logger
 
 class Tools():

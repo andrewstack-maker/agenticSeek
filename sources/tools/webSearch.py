@@ -5,14 +5,8 @@ import dotenv
 
 dotenv.load_dotenv()
 
-if __name__ == "__main__":
-    import sys
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from utility import animate_thinking, pretty_print
-    from tools import Tools
-else:
-    from sources.tools.tools import Tools
-    from sources.utility import animate_thinking, pretty_print
+from sources.tools.tools import Tools
+from sources.utility import animate_thinking, pretty_print
 
 """
 WARNING
