@@ -79,6 +79,14 @@ source agentic_seek_env/bin/activate
 ./install.sh
 ```
 
+** テキスト読み上げ（TTS）機能で日本語をサポートするには、fugashi（日本語分かち書きライブラリ）をインストールする必要があります：**
+
+```
+pip3 install --upgrade pyopenjtalk jaconv mojimoji unidic fugashi
+pip install unidic-lite
+python -m unidic download
+```
+
 **手動で:**
 
 ```sh

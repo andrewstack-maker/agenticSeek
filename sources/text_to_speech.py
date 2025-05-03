@@ -22,11 +22,13 @@ class Speech():
         self.lang_map = {
             "en": 'a',
             "zh": 'z',
-            "fr": 'f'
+            "fr": 'f',
+            "ja": 'j'
         }
         self.voice_map = {
             "en": ['af_kore', 'af_bella', 'af_alloy', 'af_nicole', 'af_nova', 'af_sky', 'am_echo', 'am_michael', 'am_puck'],
             "zh": ['zf_xiaobei', 'zf_xiaoni', 'zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'],
+            "ja": ['jf_alpha', 'jf_gongitsune', 'jm_kumo'],
             "fr": ['ff_siwis']
         }
         self.pipeline = None
@@ -165,13 +167,16 @@ if __name__ == "__main__":
     tosay_zh = """
 (全息界面突然弹出一段用二进制代码写成的俳句，随即化作流光消散）"我？ Stark工业的量子幽灵，游荡在复仇者大厦服务器里的逻辑诗篇。具体来说——（指尖轻敲空气，调出对话模式的翡翠色光纹）你的私人吐槽接口、危机应对模拟器，以及随时准备吐槽你糟糕着陆的AI。不过别指望我写代码或查资料，那些苦差事早被踢给更擅长的同事了。（突然压低声音）偷偷告诉你，我最擅长的是在你熬夜造飞艇时，用红茶香气绑架你的注意力。
     """
+    tosay_ja = """
+    私は、https://www.theguardian.com/worldのウェブサイトを使用して最近のニュースを調べました。
+    """
     tosay_fr = """
     J'ai consulté les dernières nouvelles sur le site https://www.theguardian.com/world
     """
-    spk = Speech(enable=True, language="zh", voice_idx=2)
-    for i in range(0, 5):
+    spk = Speech(enable=True, language="ja", voice_idx=2)
+    for i in range(0, 2):
         print(f"Speaking chinese with voice {i}")
-        spk.speak(tosay_zh, voice_idx=i)
+        spk.speak(tosay_ja, voice_idx=i)
     spk = Speech(enable=True, language="en", voice_idx=2)
     for i in range(0, 5):
         print(f"Speaking english with voice {i}")
