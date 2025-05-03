@@ -173,10 +173,10 @@ if __name__ == "__main__":
     tosay_fr = """
     J'ai consulté les dernières nouvelles sur le site https://www.theguardian.com/world
     """
-    spk = Speech(enable=True, language="ja", voice_idx=2)
+    spk = Speech(enable=True, language="zh", voice_idx=0)
     for i in range(0, 2):
         print(f"Speaking chinese with voice {i}")
-        spk.speak(tosay_ja, voice_idx=i)
+        spk.speak(tosay_zh, voice_idx=i)
     spk = Speech(enable=True, language="en", voice_idx=2)
     for i in range(0, 5):
         print(f"Speaking english with voice {i}")

@@ -62,6 +62,7 @@ async def main():
             interaction.get_user()
             if await interaction.think():
                 interaction.show_answer()
+                interaction.speak_answer()
     except Exception as e:
         if config.getboolean('MAIN', 'save_session'):
             interaction.save_session()

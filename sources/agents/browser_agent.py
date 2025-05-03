@@ -250,6 +250,7 @@ class BrowserAgent(Agent):
 
         Expand on the finding or step that lead to success, and provide a conclusion that answer the request. Include link when possible.
         Do not give advices or try to answer the human. Just structure the AI finding in a structured and clear way.
+        You should answer in the same language as the user.
         """
     
     def search_prompt(self, user_prompt: str) -> str:

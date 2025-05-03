@@ -5,6 +5,7 @@ from sources.text_to_speech import Speech
 from sources.utility import pretty_print, animate_thinking
 from sources.router import AgentRouter
 from sources.speech_to_text import AudioTranscriber, AudioRecorder
+import threading
 
 
 class Interaction:
@@ -173,12 +174,20 @@ class Interaction:
             return None
         return self.current_agent.get_last_block_answer()
     
+    def speak_answer(self) -> None:
+        """Speak the answer to the user in a non-blocking thread."""
+        if self.last_query is None:
+            return
+        if self.tts_enabled and self.last_answer and self.speech:
+            def speak_in_thread(speech_instance, text):
+                speech_instance.speak(text)
+            thread = threading.Thread(target=speak_in_thread, args=(self.speech, self.last_answer))
+            thread.start()
+    
     def show_answer(self) -> None:
         """Show the answer to the user."""
         if self.last_query is None:
             return
         if self.current_agent is not None:
             self.current_agent.show_answer()
-        if self.tts_enabled and self.last_answer:
-            self.speech.speak(self.last_answer)
 
