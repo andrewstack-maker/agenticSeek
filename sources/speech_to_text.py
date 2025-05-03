@@ -127,10 +127,10 @@ class AudioTranscriber:
         self.transcriptor = Transcript()
         self.thread = threading.Thread(target=self._transcribe, daemon=True)
         self.trigger_words = {
-            'EN': [f"{self.ai_name}"],
-            'FR': [f"{self.ai_name}"],
-            'ZH': [f"{self.ai_name}"],
-            'ES': [f"{self.ai_name}"]
+            'EN': [f"{self.ai_name}", "hello", "hi"],
+            'FR': [f"{self.ai_name}", "hello", "hi"],
+            'ZH': [f"{self.ai_name}", "hello", "hi"],
+            'ES': [f"{self.ai_name}", "hello", "hi"]
         }
         self.confirmation_words = {
             'EN': ["do it", "go ahead", "execute", "run", "start", "thanks", "would ya", "please", "okay?", "proceed", "continue", "go on", "do that", "go it", "do you understand?"],

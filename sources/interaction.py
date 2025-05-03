@@ -31,6 +31,7 @@ class Interaction:
         self.transcriber = None
         self.recorder = None
         self.is_generating = False
+        self.languages = langs
         if tts_enabled:
             self.initialize_tts()
         if stt_enabled:
@@ -38,12 +39,17 @@ class Interaction:
         if recover_last_session:
             self.load_last_session()
         self.emit_status()
+    
+    def get_spoken_language(self) -> str:
+        """Get the primary TTS language."""
+        lang = self.languages[0]
+        return lang
 
     def initialize_tts(self):
         """Initialize TTS."""
         if not self.speech:
             animate_thinking("Initializing text-to-speech...", color="status")
-            self.speech = Speech(enable=self.tts_enabled)
+            self.speech = Speech(enable=self.tts_enabled, language=self.get_spoken_language(), voice_idx=1)
 
     def initialize_stt(self):
         """Initialize STT."""

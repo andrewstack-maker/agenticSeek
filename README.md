@@ -214,6 +214,8 @@ start ./start_services.cmd # Window
 python3 cli.py
 ```
 
+We advice you set `headless_browser` to False in the config.ini for CLI mode.
+
 **Options 2:** Run with the Web interface.
 
 Start the backend.

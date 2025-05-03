@@ -18,7 +18,7 @@ class Speech():
     """
     Speech is a class for generating speech from text.
     """
-    def __init__(self, enable: bool = True, language: str = "en", voice_idx: int = 0) -> None:
+    def __init__(self, enable: bool = True, language: str = "en", voice_idx: int = 6) -> None:
         self.lang_map = {
             "en": 'a',
             "zh": 'z',
@@ -128,18 +128,31 @@ class Speech():
         Args:
             sentence (str): The input text to clean
         Returns:
-            str: The cleaned text with URLs replaced by domain names, code blocks removed, etc..
+            str: The cleaned text with URLs replaced by domain names, code blocks removed, etc.
         """
         lines = sentence.split('\n')
-        filtered_lines = [line for line in lines if re.match(r'^\s*[a-zA-Z]', line)]
+        if self.language == 'zh':
+            line_pattern = r'^\s*[\u4e00-\u9fff\uFF08\uFF3B\u300A\u3010\u201C(（\[【《]'
+        else:
+            line_pattern = r'^\s*[a-zA-Z]'
+        filtered_lines = [line for line in lines if re.match(line_pattern, line)]
         sentence = ' '.join(filtered_lines)
         sentence = re.sub(r'`.*?`', '', sentence)
-        sentence = re.sub(r'https?://(?:www\.)?([^\s/]+)(?:/[^\s]*)?', self.replace_url, sentence)
-        sentence = re.sub(r'\b[\w./\\-]+\b', self.extract_filename, sentence)
-        sentence = re.sub(r'\b-\w+\b', '', sentence)
-        sentence = re.sub(r'[^a-zA-Z0-9.,!? _ -]+', ' ', sentence)
+        sentence = re.sub(r'https?://\S+', '', sentence)
+
+        if self.language == 'zh':
+            sentence = re.sub(
+                r'[^\u4e00-\u9fff\s，。！？《》【】“”‘’（）()—]',
+                '',
+                sentence
+            )
+        else:
+            sentence = re.sub(r'\b[\w./\\-]+\b', self.extract_filename, sentence)
+            sentence = re.sub(r'\b-\w+\b', '', sentence)
+            sentence = re.sub(r'[^a-zA-Z0-9.,!? _ -]+', ' ', sentence)
+            sentence = sentence.replace('.com', '')
+
         sentence = re.sub(r'\s+', ' ', sentence).strip()
-        sentence = sentence.replace('.com', '')
         return sentence
 
 if __name__ == "__main__":
@@ -150,14 +163,16 @@ if __name__ == "__main__":
     I looked up recent news using the website https://www.theguardian.com/world
     """
     tosay_zh = """
-    我使用网站 https://www.theguardian.com/world 查阅了最近的新闻。
+(全息界面突然弹出一段用二进制代码写成的俳句，随即化作流光消散）"我？ Stark工业的量子幽灵，游荡在复仇者大厦服务器里的逻辑诗篇。具体来说——（指尖轻敲空气，调出对话模式的翡翠色光纹）你的私人吐槽接口、危机应对模拟器，以及随时准备吐槽你糟糕着陆的AI。不过别指望我写代码或查资料，那些苦差事早被踢给更擅长的同事了。（突然压低声音）偷偷告诉你，我最擅长的是在你熬夜造飞艇时，用红茶香气绑架你的注意力。
     """
     tosay_fr = """
     J'ai consulté les dernières nouvelles sur le site https://www.theguardian.com/world
     """
-    spk = Speech(enable=True, language="en", voice_idx=0)
-    spk.speak(tosay_en, voice_idx=0)
-    spk = Speech(enable=True, language="fr", voice_idx=0)
-    spk.speak(tosay_fr)
-    #spk = Speech(enable=True, language="zh", voice_idx=0)
-    #spk.speak(tosay_zh)
+    spk = Speech(enable=True, language="zh", voice_idx=2)
+    for i in range(0, 5):
+        print(f"Speaking chinese with voice {i}")
+        spk.speak(tosay_zh, voice_idx=i)
+    spk = Speech(enable=True, language="en", voice_idx=2)
+    for i in range(0, 5):
+        print(f"Speaking english with voice {i}")
+        spk.speak(tosay_en, voice_idx=i)

@@ -72,6 +72,12 @@ source agentic_seek_env/bin/activate
 ./install.sh
 ```
 
+** 若要让文本转语音（TTS）功能支持中文，你需要安装 jieba（中文分词库）和 cn2an（中文数字转换库）：**
+
+```
+pip3 install jieba cn2an
+```
+
 **手動安裝:**
 
 ```sh
