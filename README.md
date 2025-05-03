@@ -514,5 +514,9 @@ We’re looking for developers to improve AgenticSeek! Check out open issues or 
 [![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
 
 ## Maintainers:
- > [Fosowl](https://github.com/Fosowl)
- > [steveh8758](https://github.com/steveh8758) 
+
+ > [Fosowl](https://github.com/Fosowl) | Paris Time | (Sometime busy)
+
+ > [https://github.com/antoineVIVIES](https://github.com/antoineVIVIES) | Taipei Time | (Often busy)
+
+ > [steveh8758](https://github.com/steveh8758) | Taipei Time | (Always busy)
