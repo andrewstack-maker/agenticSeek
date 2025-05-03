@@ -439,6 +439,7 @@ Nous recherchons des développeurs pour améliorer AgenticSeek ! Consultez la se
 
 [Guide du contributeur](./docs/CONTRIBUTING.md)
 
-## Auteurs/Mainteneurs:
+## Mainteneurs:
  > [Fosowl](https://github.com/Fosowl)
  > [steveh8758](https://github.com/steveh8758)
+ > [https://github.com/antoineVIVIES](https://github.com/antoineVIVIES)

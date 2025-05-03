@@ -71,6 +71,12 @@ source agentic_seek_env/bin/activate
 ./install.sh
 ```
 
+** 若要让文本转语音（TTS）功能支持中文，你需要安装 jieba（中文分词库）和 cn2an（中文数字转换库）：**
+
+```
+pip3 install jieba cn2an
+```
+
 **手动安装:**
 
 ```sh
@@ -510,6 +516,10 @@ DeepSeek R1 天生会说中文
 
 [Contribution guide](./docs/CONTRIBUTING.md)
 
-## 作者:
-> [Fosowl](https://github.com/Fosowl)
-> [steveh8758](https://github.com/steveh8758)
+## 维护者:
+
+ > [Fosowl](https://github.com/Fosowl) | 巴黎时间 | （有时很忙）
+
+ > [https://github.com/antoineVIVIES](https://github.com/antoineVIVIES) | 台北时间 | （经常很忙）
+
+ > [steveh8758](https://github.com/steveh8758) | 台北时间 | （总是很忙）
