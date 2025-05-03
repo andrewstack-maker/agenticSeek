@@ -151,9 +151,8 @@ async def get_latest_answer():
         return JSONResponse(status_code=200, content=query_resp_history[-1])
     return JSONResponse(status_code=404, content={"error": "No answer available"})
 
-async def think_wrapper(interaction, query, tts_enabled):
+async def think_wrapper(interaction, query):
     try:
-        interaction.tts_enabled = tts_enabled
         interaction.last_query = query
         logger.info("Agents request is being processed")
         success = await interaction.think()
@@ -162,6 +161,8 @@ async def think_wrapper(interaction, query, tts_enabled):
             interaction.last_success = False
         else:
             interaction.last_success = True
+        pretty_print(interaction.last_answer)
+        interaction.speak_answer()
         return success
     except Exception as e:
         logger.error(f"Error in think_wrapper: {str(e)}")
@@ -188,7 +189,7 @@ async def process_query(request: QueryRequest):
 
     try:
         is_generating = True
-        success = await think_wrapper(interaction, request.query, request.tts_enabled)
+        success = await think_wrapper(interaction, request.query)
         is_generating = False
 
         if not success:
