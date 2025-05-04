@@ -151,7 +151,7 @@ save_session = True # whenever to remember the current session
 speak = True # text to speech
 listen = False # Speech to text, only for CLI
 work_dir =  /Users/mlg/Documents/workspace # The workspace for AgenticSeek.
-jarvis_personality = False # Whenever to use a more "Jarvis" like personality, not recommanded with small model
+jarvis_personality = False # Whenever to use a more "Jarvis" like personality (experimental)
 languages = en zh # The list of languages, Text to speech will default to the first language on the list
 [BROWSER]
 headless_browser = True # Whenever to use headless browser, recommanded only if you use web interface.
@@ -264,37 +264,22 @@ To exit, simply say/type `goodbye`.
 
 Here are some example usage:
 
-### Coding/Bash
+> *Make a snake game in python!*
 
-> *Make a snake game in python*
+> *Search the web for top cafes in Rennes, France, and save a list of three with their addresses in rennes_cafes.txt.*
 
-> *Show me how to multiply matrice in C*
+> *Write a Go program to calculate the factorial of a number, save it as factorial.go in your workspace*
 
-> *Make a blackjack in golang*
+> *Search my summer_pictures folder for all JPG files, rename them with today’s date, and save a list of renamed files in photos_list.txt*
 
-### Web search
+> *Search online for popular sci-fi movies from 2024 and pick three to watch tonight. Save the list in movie_night.txt.*
 
-> *Do a web search to find cool tech startup in Japan working on cutting edge AI research*
+> *Search the web for the latest AI news articles from 2025, select three, and write a Python script to scrape their titles and summaries. Save the script as news_scraper.py and the summaries in ai_news.txt in /home/projects*
 
-> *Can you find on the internet who created AgenticSeek?*
+> *Friday, search the web for a free stock price API, register with supersuper7434567@gmail.com then write a Python script to fetch using the API daily prices for Tesla, and save the results in stock_prices.csv*
 
-> *Can you use a fuel calculator online to estimate the cost of a Nice - Milan trip*
+*Note that form filling capabilities are still experimental and might fail.*
 
-### File system
-
-> *Hey can you find where is contract.pdf i lost it*
-
-> *Show me how much space I have left on my disk*
-
-> *Can you follow the readme and install project at /home/path/project*
-
-### Casual
-
-> *Tell me about Rennes, France*
-
-> *Should I pursue a phd ?*
-
-> *What's the best workout routine ?*
 
 
 After you type your query, AgenticSeek will allocate the best agent for the task.
