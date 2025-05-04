@@ -80,11 +80,45 @@ pip3 install jieba cn2an
 
 **手動安裝:**
 
-```sh
-pip3 install -r requirements.txt
-# or
-python3 setup.py install
-```
+
+**注意：对于任何操作系统，请确保您安装的 ChromeDriver 与您已安装的 Chrome 版本匹配。运行 `google-chrome --version`。如果您的 Chrome 版本 > 135，请参阅已知问题**
+
+- *Linux*:
+
+更新软件包列表：`sudo apt update`
+
+安装依赖项：`sudo apt install -y alsa-utils portaudio19-dev python3-pyaudio libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1`
+
+安装与您的 Chrome 浏览器版本匹配的 ChromeDriver：
+`sudo apt install -y chromium-chromedriver`
+
+安装 requirements：`pip3 install -r requirements.txt`
+
+- *Macos*:
+
+更新 brew：`brew update`
+
+安装 chromedriver：`brew install --cask chromedriver`
+
+安装 portaudio：`brew install portaudio`
+
+升级 pip：`python3 -m pip install --upgrade pip`
+
+升级 wheel：`pip3 install --upgrade setuptools wheel`
+
+安装 requirements：`pip3 install -r requirements.txt`
+
+- *Windows*:
+
+安装 pyreadline3：`pip install pyreadline3`
+
+手动安装 portaudio（例如，通过 vcpkg 或预编译的二进制文件），然后运行：`pip install pyaudio`
+
+从以下网址手动下载并安装 chromedriver：https://sites.google.com/chromium.org/driver/getting-started
+
+将 chromedriver 放置在包含在您的 PATH 中的目录中。
+
+安装 requirements：`pip3 install -r requirements.txt`
 
 ## 在本地機器上運行 AgenticSeek
 

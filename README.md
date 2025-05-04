@@ -58,6 +58,10 @@ source agentic_seek_env/bin/activate
 
 ### 3️⃣ **Install package**
 
+Ensure Python, Docker and docker compose, and Google chrome are installed.
+
+We recommand Python 3.10.0.
+
 **Automatic Installation (Recommanded):**
 
 For Linux/Macos:
@@ -66,41 +70,51 @@ For Linux/Macos:
 ```
 
 For windows:
+
 ```sh
 ./install.bat
 ```
 
 **Manually:**
 
-First, you need to install these packages:
+**Note: For any OS, ensure the ChromeDriver you install matches your installed Chrome version. Run `google-chrome --version`. See known issues if you have chrome >135**
 
 - *Linux*: 
 
-Updates package list (apt-get update).
+Update Package List: `sudo apt update`
 
-Install these:
-alsa-utils, portaudio19-dev, python3-pyaudio, libgtk-3-dev, libnotify-dev, libgconf-2-4, libnss3, libxss1, selenium
+Install Dependencies: `sudo apt install -y alsa-utils portaudio19-dev python3-pyaudio libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1`
 
-Make sure to install docker + docker-compose if not already.
+Install ChromeDriver matching your Chrome browser version:
+`sudo apt install -y chromium-chromedriver`
+
+Install requirements: `pip3 install -r requirements.txt`
 
 - *Macos*:
 
-Update package list.
-Install chromedriver.
-Install portaudio.
-Install chromedriver and selenium.
+Update brew : `brew update`
+
+Install chromedriver : `brew install --cask chromedriver`
+
+Install portaudio: `brew install portaudio`
+
+Upgrade pip : `python3 -m pip install --upgrade pip`
+
+Upgrade wheel : : `pip3 install --upgrade setuptools wheel`
+
+Install requirements: `pip3 install -r requirements.txt`
 
 - *Windows*:
 
-Install pyreadline3, selenium portaudio, pyAudio and chromedriver 
+Install pyreadline3 `pip install pyreadline3`
 
-Then install pip requirements:
+Install portaudio manually (e.g., via vcpkg or prebuilt binaries) and then run: `pip install pyaudio`
 
-```sh
-pip3 install -r requirements.txt
-# or
-python3 setup.py install
-```
+Download and install chromedriver manually from: https://sites.google.com/chromium.org/driver/getting-started
+
+Place chromedriver in a directory included in your PATH.
+
+Install requirements: `pip3 install -r requirements.txt`
 
 ---
 
@@ -476,6 +490,27 @@ And download the chromedriver version matching your OS.
 
 If this section is incomplete please raise an issue.
 
+##  connection adapters Issues
+
+```
+Exception: Provider lm-studio failed: HTTP request failed: No connection adapters were found for '127.0.0.1:11434/v1/chat/completions'
+```
+
+Make sure you have `http://` in front of the provider IP address :
+
+`provider_server_address = http://127.0.0.1:11434`
+
+## SearxNG base URL must be provided
+
+```
+raise ValueError("SearxNG base URL must be provided either as an argument or via the SEARXNG_BASE_URL environment variable.")
+ValueError: SearxNG base URL must be provided either as an argument or via the SEARXNG_BASE_URL environment variable.
+```
+
+Maybe you didn't move `.env.example` as `.env` ? You can also export SEARXNG_BASE_URL:
+
+`export  SEARXNG_BASE_URL="http://127.0.0.1:8080"`
+
 ## FAQ
 
 **Q: What hardware do I need?**  
@@ -517,6 +552,6 @@ We’re looking for developers to improve AgenticSeek! Check out open issues or 
 
  > [Fosowl](https://github.com/Fosowl) | Paris Time | (Sometime busy)
 
- > [https://github.com/antoineVIVIES](https://github.com/antoineVIVIES) | Taipei Time | (Often busy)
+ > [https://github.com/antoineVIVIES](antoineVIVIES) | Taipei Time | (Often busy)
 
  > [steveh8758](https://github.com/steveh8758) | Taipei Time | (Always busy)
