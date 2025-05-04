@@ -171,6 +171,7 @@ class AgentRouter:
             ("Search the web for the latest trends in web development and build a sample site", "HIGH"),
             ("Use my research_note.txt file, double check the informations on the web", "HIGH"),
             ("Make a web server in go that query a flight API and display them in a app", "HIGH"),
+            ("Search the web for top cafes in Rennes, France, and save a list of three with their addresses in rennes_cafes.txt.", "HIGH"),
             ("Search the web for the latest trends in AI and demo it in pytorch", "HIGH"),
             ("can you lookup for api that track flight and build a web flight tracking app", "HIGH"),
             ("Find the file toto.pdf then use its content to reply to Jojo on superforum.com", "HIGH"),

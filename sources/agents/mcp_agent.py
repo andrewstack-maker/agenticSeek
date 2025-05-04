@@ -41,8 +41,7 @@ class McpAgent(Agent):
         """
         Expands the prompt with the tools available.
         """
-        tools_name = self.get_tools_name()
-        tools_str = ", ".join(tools_name)
+        tools_str = self.get_tools_description()
         prompt += f"""
         You can use the following tools and MCPs:
         {tools_str}

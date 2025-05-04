@@ -96,6 +96,15 @@ class Agent():
         """
         return list(self.tools.keys())
     
+    def get_tools_description(self) -> str:
+        """
+        Get the list of tools names and their description.
+        """
+        description = ""
+        for name in self.get_tools_name():
+            description += f"{tool}: {self.tools[name].description}\n"
+        return description
+    
     def load_prompt(self, file_path: str) -> str:
         try:
             with open(file_path, 'r', encoding="utf-8") as f:
