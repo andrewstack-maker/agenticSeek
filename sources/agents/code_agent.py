@@ -62,14 +62,14 @@ class CoderAgent(Agent):
             animate_thinking("Executing code...", color="status")
             self.status_message = "Executing code..."
             self.logger.info(f"Attempt {attempt + 1}:\n{answer}")
-            exec_success, _ = self.execute_modules(answer)
+            exec_success, feedback = self.execute_modules(answer)
             self.logger.info(f"Execution result: {exec_success}")
             answer = self.remove_blocks(answer)
             self.last_answer = answer
             await asyncio.sleep(0)
             if exec_success and self.get_last_tool_type() != "bash":
                 break
-            pretty_print("Execution failure", color="failure")
+            pretty_print(f"Execution failure:\n{feedback}", color="failure")
             pretty_print("Correcting code...", color="status")
             self.status_message = "Correcting code..."
             attempt += 1

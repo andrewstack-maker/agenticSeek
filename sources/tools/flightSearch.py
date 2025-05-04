@@ -16,6 +16,8 @@ class FlightSearch(Tools):
         """
         super().__init__()
         self.tag = "flight_search"
+        self.name = "Flight Search"
+        self.description = "Search for flight information using a flight number via AviationStack API."
         self.api_key = None
         self.api_key = api_key or os.getenv("AVIATIONSTACK_API_KEY")
 
@@ -24,7 +26,7 @@ class FlightSearch(Tools):
             return "Error: No AviationStack API key provided."
         
         for block in blocks:
-            flight_number = block.strip()
+            flight_number = block.strip().lower().replace('\n', '')
             if not flight_number:
                 return "Error: No flight number provided."
 

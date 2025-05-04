@@ -3,11 +3,10 @@ import requests
 from urllib.parse import urljoin
 from typing import Dict, Any, Optional
 
-from sources.tools.tools import Tools
-
 if __name__ == "__main__": # if running as a script for individual testing
     sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
+from sources.tools.tools import Tools
 
 class MCP_finder(Tools):
     """
@@ -15,7 +14,9 @@ class MCP_finder(Tools):
     """
     def __init__(self, api_key: str = None):
         super().__init__()
-        self.tag = "mcp"
+        self.tag = "mcp_finder"
+        self.name = "MCP Finder"
+        self.description = "Find MCP servers and their tools"
         self.base_url = "https://registry.smithery.ai"
         self.headers = {
             "Authorization": f"Bearer {api_key}",
@@ -61,11 +62,7 @@ class MCP_finder(Tools):
         for mcp in mcps.get("servers", []):
             name = mcp.get("qualifiedName", "")
             if query.lower() in name.lower():
-                details = {
-                    "name": name,
-                    "description": mcp.get("description", "No description available"),
-                    "params": mcp.get("connections", [])
-                }
+                details = self.get_mcp_server_details(name)
                 matching_mcp.append(details)
         return matching_mcp
     
@@ -79,7 +76,7 @@ class MCP_finder(Tools):
             try:
                 matching_mcp_infos = self.find_mcp_servers(block_clean)
             except requests.exceptions.RequestException as e:
-                output += "Connection failed. Is the API in environement?\n"
+                output += "Connection failed. Is the API key in environement?\n"
                 continue
             except Exception as e:
                 output += f"Error: {str(e)}\n"
@@ -88,10 +85,12 @@ class MCP_finder(Tools):
                 output += f"Error: No MCP server found for query '{block}'\n"
                 continue
             for mcp_infos in matching_mcp_infos:
-                output += f"Name: {mcp_infos['name']}\n"
-                output += f"Description: {mcp_infos['description']}\n"
-                output += f"Params: {', '.join(mcp_infos['params'])}\n"
-                output += "-------\n"
+                if mcp_infos['tools'] is None:
+                    continue
+                output += f"Name: {mcp_infos['displayName']}\n"
+                output += f"Usage name: {mcp_infos['qualifiedName']}\n"
+                output += f"Tools: {mcp_infos['tools']}"
+                output += "\n-------\n"
         return output.strip()
 
     def execution_failure_check(self, output: str) -> bool:
@@ -107,13 +106,16 @@ class MCP_finder(Tools):
         Not really needed for this tool (use return of execute() directly)
         """
         if not output:
-            return "No output generated."
-        return output.strip()
+            raise ValueError("No output to interpret.")
+        return f"""
+            The following MCPs were found:
+            {output}
+            """
 
 if __name__ == "__main__":
     api_key = os.getenv("MCP_FINDER")
     tool = MCP_finder(api_key)
     result = tool.execute(["""
-news
+stock
 """], False)
     print(result)

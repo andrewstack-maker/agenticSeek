@@ -17,6 +17,8 @@ class BashInterpreter(Tools):
     def __init__(self):
         super().__init__()
         self.tag = "bash"
+        self.name = "Bash Interpreter"
+        self.description = "This tool allows the agent to execute bash commands."
     
     def language_bash_attempt(self, command: str):
         """

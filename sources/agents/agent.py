@@ -90,6 +90,12 @@ class Agent():
             raise TypeError("Tool must be a callable object (a method)")
         self.tools[name] = tool
     
+    def get_tools_name(self) -> list:
+        """
+        Get the list of tools names.
+        """
+        return list(self.tools.keys())
+    
     def load_prompt(self, file_path: str) -> str:
         try:
             with open(file_path, 'r', encoding="utf-8") as f:
@@ -235,11 +241,13 @@ class Agent():
             answer = "I will execute:\n" + answer # there should always be a text before blocks for the function that display answer
 
         self.success = True
+        self.blocks_result = []
         for name, tool in self.tools.items():
             feedback = ""
             blocks, save_path = tool.load_exec_block(answer)
 
             if blocks != None:
+                pretty_print(f"Executing {len(blocks)} {name} blocks...", color="status")
                 for block in blocks:
                     self.show_block(block)
                     output = tool.execute([block])
