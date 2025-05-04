@@ -123,17 +123,34 @@ Lancer votre provider local, par exemple avec ollama:
 ollama serve
 ```
 
-Voyez la section **Provider** pour la liste de provideurs disponible.
+**Configurer le config.ini**
 
-Modifiez le fichier config.ini pour définir provider_name sur le nom d'un provideur et provider_model sur le LLM à utiliser.
+Modifiez le fichier config.ini pour définir provider_name sur un fournisseur supporté et provider_model sur un LLM compatible avec votre fournisseur. Nous recommandons des modèles de raisonnement comme *Qwen* ou *Deepseek*.
+
+Consultez la section **FAQ** à la fin du README pour connaître le matériel requis.
 
 ```sh
 [MAIN]
-is_local = True
-provider_name = ollama # ou lm-studio, openai, etc...
-provider_model = deepseek-r1:14b
+is_local = True # Si vous exécutez localement ou avec un fournisseur distant.
+provider_name = ollama # ou lm-studio, openai, etc..
+provider_model = deepseek-r1:14b # choisissez un modèle adapté à votre matériel
 provider_server_address = 127.0.0.1:11434
+agent_name = Jarvis # nom de votre IA
+recover_last_session = True # récupérer ou non la session précédente
+save_session = True # mémoriser ou non la session actuelle
+speak = True # synthèse vocale
+listen = False # reconnaissance vocale, uniquement pour CLI
+work_dir =  /Users/mlg/Documents/workspace # L'espace de travail pour AgenticSeek.
+jarvis_personality = False # Utiliser une personnalité plus "Jarvis", non recommandé avec des petits modèles
+languages = en fr # Liste des langages, la synthèse vocale utilisera par défaut la première langue de la liste
+[BROWSER]
+headless_browser = True # Utiliser ou non le navigateur sans interface graphique, recommandé uniquement avec l'interface web.
+stealth_mode = True # Utiliser selenium non détectable pour réduire la détection du navigateur
 ```
+
+Remarque : Certains fournisseurs (ex : lm-studio) nécessitent `http://` devant l'adresse IP. Par exemple `http://127.0.0.1:1234`
+
+
 
 **Liste des provideurs locaux**
 

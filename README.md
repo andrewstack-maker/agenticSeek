@@ -135,17 +135,30 @@ See below for a list of local supported provider.
 
 **Update the config.ini**
 
-Change the config.ini file to set the provider_name to a supported provider and provider_model to `deepseek-r1:14b`
+Change the config.ini file to set the provider_name to a supported provider and provider_model to a LLM supported by your provider. We recommand reasoning model such as *Qwen* or *Deepseek*.
 
-NOTE: `deepseek-r1:14b`is an example, use a bigger model if your hardware allow it.
+See the **FAQ** at the end of the README for required hardware.
 
 ```sh
 [MAIN]
-is_local = True
+is_local = True # Whenever you are running locally or with remote provider.
 provider_name = ollama # or lm-studio, openai, etc..
-provider_model = deepseek-r1:14b
+provider_model = deepseek-r1:14b # choose a model that fit your hardware
 provider_server_address = 127.0.0.1:11434
+agent_name = Jarvis # name of your AI
+recover_last_session = True # whenever to recover the previous session
+save_session = True # whenever to remember the current session
+speak = True # text to speech
+listen = False # Speech to text, only for CLI
+work_dir =  /Users/mlg/Documents/workspace # The workspace for AgenticSeek.
+jarvis_personality = False # Whenever to use a more "Jarvis" like personality, not recommanded with small model
+languages = en zh # The list of languages, Text to speech will default to the first language on the list
+[BROWSER]
+headless_browser = True # Whenever to use headless browser, recommanded only if you use web interface.
+stealth_mode = True # Use undetected selenium to reduce browser detection
 ```
+
+Note: Some provider (eg: lm-studio) require you to have `http://` in front of the IP. For example `http://127.0.0.1:1234`
 
 **List of local providers**
 
@@ -153,8 +166,7 @@ provider_server_address = 127.0.0.1:11434
 |-----------|--------|-----------------------------------------------------------|
 | ollama    | Yes    | Run LLMs locally with ease using ollama as a LLM provider |
 | lm-studio  | Yes    | Run LLM locally with LM studio (set `provider_name` to `lm-studio`)|
-| openai    | Yes     |  Use openai compatible API  |
-
+| openai    | Yes     |  Use openai compatible API (eg: llama.cpp server)  |
 
 Next step: [Start services and run AgenticSeek](#Start-services-and-Run)  
 

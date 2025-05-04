@@ -1,3 +1,5 @@
+# AgenticSeek: 類似 Manus 但基於 Deepseek R1 Agents 的本地模型。
+
 <p align="center">
 <img align="center" src="./media/whale_readme.jpg">
 <p>
@@ -5,40 +7,28 @@
 --------------------------------------------------------------------------------
 [English](./README.md) | 繁體中文 | [日本語](./README_JP.md)
 
-# AgenticSeek: 類似 Manus 但基於 Deepseek R1 Agents 的本地模型。
 
-
-**Manus AI 的本地替代品**，它是一個具有語音功能的大語言模型秘書，可以 Coding、訪問你的電腦文件、瀏覽網頁，並自動修正錯誤與反省，最重要的是不會向雲端傳送任何資料。採用 DeepSeek R1 等推理模型構建，完全在本地硬體上運行，進而保證資料的隱私。
+*一个 **100% 本地替代 Manus AI** 的方案，这款支持语音的 AI 助理能够自主浏览网页、编写代码和规划任务，同时将所有数据保留在您的设备上。专为本地推理模型量身打造，完全在您自己的硬件上运行，确保完全的隐私保护和零云端依赖。*
 
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/m37d7XxZ) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
 
-> 🛠️ **目前還在開發階段** – 歡迎任何貢獻者加入我們！
+### 为什么选择 AgenticSeek？
+
+* 🔒 完全本地化与隐私保护 - 所有功能都在您的设备上运行 — 无云端服务，无数据共享。您的文件、对话和搜索始终保持私密。
+
+* 🌐 智能网页浏览 - AgenticSeek 能够自主浏览互联网 — 搜索、阅读、提取信息、填写网页表单 — 全程无需人工操作。
+
+* 💻 自主编码助手 - 需要代码？它可以编写、调试并运行 Python、C、Go、Java 等多种语言的程序 — 全程无需监督。
+
+* 🧠 智能代理选择 - 您提问，它会自动选择最适合该任务的代理。就像拥有一个随时待命的专家团队。
+
+* 📋 规划与执行复杂任务 - 从旅行规划到复杂项目 — 它能将大型任务分解为步骤，并利用多个 AI 代理完成工作。
+
+* 🎙️ 语音功能 - 清晰、快速、未来感十足的语音与语音转文本功能，让您能像科幻电影中一样与您的个人 AI 助手对话。
 
 https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
-> *在大阪和東京深入搜尋人工智慧新創公司，至少找到 5 家，然後儲存在 research_japan.txt 檔案中*
-
-> *你可以用 C 語言製作俄羅斯方塊遊戲嗎？*
-
-> *我想設定一個新的專案檔案索引，命名為 mark2。*
-
-
-
-## Features:
-
-- **100% 本機運行**: 本機運行，不使用雲端服務，所以資料絕不會散布出去，我的東西還是我的！不會被當作其他服務的訓練資料。
-
-- **文件的交互系統**: 使用 bash 去瀏覽本機資料和操作本機系統。
-
-- **自主 Coding**: AgenticSeek 可以自己運行、Debug、編譯 Python、C、Golang 和各種語言。
-
-- **代理助理**: 不同的工作由不同的助理去處理問題。AgenticSeek 會自己尋找最適合的助理去做相對應的工作。
-
-- **規劃**: 對於複雜的任務，AgenticSeek 會交辦給不同的助理進行規劃和執行。
-
-- **自主學習**: 自動在網路上尋找資料。
-
-- **記憶功能**: 對於每次的對話進行統整、保存對話，並且在本地儲存用戶的使用習慣。
+> 🛠️ **目前還在開發階段** – 歡迎任何貢獻者加入我們！
 
 ---
 
