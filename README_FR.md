@@ -74,9 +74,44 @@ source agentic_seek_env/bin/activate
 
 **Manuel:**
 
-```sh
-pip3 install -r requirements.txt
-```
+**Note : Pour tous les systèmes d'exploitation, assurez-vous que le ChromeDriver que vous installez correspond à la version de Chrome installée. Exécutez `google-chrome --version`. Consultez les problèmes connus si vous avez Chrome >135**
+
+- *Linux*:
+
+Mettre à jour la liste des paquets : `sudo apt update`
+
+Installer les dépendances : `sudo apt install -y alsa-utils portaudio19-dev python3-pyaudio libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1`
+
+Installer ChromeDriver correspondant à la version de votre navigateur Chrome :
+`sudo apt install -y chromium-chromedriver`
+
+Installer les prérequis : `pip3 install -r requirements.txt`
+
+- *macOS*:
+
+Mettre à jour brew : `brew update`
+
+Installer chromedriver : `brew install --cask chromedriver`
+
+Installer portaudio : `brew install portaudio`
+
+Mettre à jour pip : `python3 -m pip install --upgrade pip`
+
+Mettre à jour wheel : `pip3 install --upgrade setuptools wheel`
+
+Installer les prérequis : `pip3 install -r requirements.txt`
+
+- *Windows*:
+
+Installer pyreadline3 : `pip install pyreadline3`
+
+Installer portaudio manuellement (par exemple, via vcpkg ou des binaires précompilés) puis exécutez : `pip install pyaudio`
+
+Télécharger et installer chromedriver manuellement depuis : https://sites.google.com/chromium.org/driver/getting-started
+
+Placez chromedriver dans un répertoire inclus dans votre PATH.
+
+Installer les prérequis : `pip3 install -r requirements.txt`
 
 
 ## Faire fonctionner sur votre machine 
@@ -88,17 +123,34 @@ Lancer votre provider local, par exemple avec ollama:
 ollama serve
 ```
 
-Voyez la section **Provider** pour la liste de provideurs disponible.
+**Configurer le config.ini**
 
-Modifiez le fichier config.ini pour définir provider_name sur le nom d'un provideur et provider_model sur le LLM à utiliser.
+Modifiez le fichier config.ini pour définir provider_name sur un fournisseur supporté et provider_model sur un LLM compatible avec votre fournisseur. Nous recommandons des modèles de raisonnement comme *Qwen* ou *Deepseek*.
+
+Consultez la section **FAQ** à la fin du README pour connaître le matériel requis.
 
 ```sh
 [MAIN]
-is_local = True
-provider_name = ollama # ou lm-studio, openai, etc...
-provider_model = deepseek-r1:14b
+is_local = True # Si vous exécutez localement ou avec un fournisseur distant.
+provider_name = ollama # ou lm-studio, openai, etc..
+provider_model = deepseek-r1:14b # choisissez un modèle adapté à votre matériel
 provider_server_address = 127.0.0.1:11434
+agent_name = Jarvis # nom de votre IA
+recover_last_session = True # récupérer ou non la session précédente
+save_session = True # mémoriser ou non la session actuelle
+speak = True # synthèse vocale
+listen = False # reconnaissance vocale, uniquement pour CLI
+work_dir =  /Users/mlg/Documents/workspace # L'espace de travail pour AgenticSeek.
+jarvis_personality = False # Utiliser une personnalité plus "Jarvis", non recommandé avec des petits modèles
+languages = en fr # Liste des langages, la synthèse vocale utilisera par défaut la première langue de la liste
+[BROWSER]
+headless_browser = True # Utiliser ou non le navigateur sans interface graphique, recommandé uniquement avec l'interface web.
+stealth_mode = True # Utiliser selenium non détectable pour réduire la détection du navigateur
 ```
+
+Remarque : Certains fournisseurs (ex : lm-studio) nécessitent `http://` devant l'adresse IP. Par exemple `http://127.0.0.1:1234`
+
+
 
 **Liste des provideurs locaux**
 

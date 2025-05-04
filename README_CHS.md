@@ -1,43 +1,32 @@
+# AgenticSeek: Private, Local Manus Alternative.
+
 <p align="center">
 <img align="center" src="./media/whale_readme.jpg">
 <p>
 
-
 [English](./README.md) | 中文 | [日本語](./README_JP.md)
 
-# AgenticSeek: 類似 Manus 但基於 Deepseek R1 Agents 的本地模型。
-
-**Manus AI 的本地替代品**，它是一个具有语音功能的大语言模型秘书，可以 Coding、访问你的电脑文件、浏览网页，并自动修正错误与反省，最重要的是不会向云端传送任何资料。采用 DeepSeek R1 等推理模型构建，完全在本地硬体上运行，进而保证资料的隐私。
+*一个 **100% 本地替代 Manus AI** 的方案，这款支持语音的 AI 助理能够自主浏览网页、编写代码和规划任务，同时将所有数据保留在您的设备上。专为本地推理模型量身打造，完全在您自己的硬件上运行，确保完全的隐私保护和零云端依赖。*
 
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/8hGDaME3TC) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460)
 
-> 🛠️ **目前还在开发阶段** – 欢迎任何贡献者加入我们！
+### 为什么选择 AgenticSeek？
+
+* 🔒 完全本地化与隐私保护 - 所有功能都在您的设备上运行 — 无云端服务，无数据共享。您的文件、对话和搜索始终保持私密。
+
+* 🌐 智能网页浏览 - AgenticSeek 能够自主浏览互联网 — 搜索、阅读、提取信息、填写网页表单 — 全程无需人工操作。
+
+* 💻 自主编码助手 - 需要代码？它可以编写、调试并运行 Python、C、Go、Java 等多种语言的程序 — 全程无需监督。
+
+* 🧠 智能代理选择 - 您提问，它会自动选择最适合该任务的代理。就像拥有一个随时待命的专家团队。
+
+* 📋 规划与执行复杂任务 - 从旅行规划到复杂项目 — 它能将大型任务分解为步骤，并利用多个 AI 代理完成工作。
+
+* 🎙️ 语音功能 - 清晰、快速、未来感十足的语音与语音转文本功能，让您能像科幻电影中一样与您的个人 AI 助手对话。
 
 https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
-> *在大阪和东京深入搜寻人工智慧新创公司，至少找到 5 家，然后储存在 research_japan.txt 档案中*
-
-> *你可以用 C 语言制作俄罗斯方块游戏吗？*
-
-> *我想设定一个新的专案档案索引，命名为 mark2。*
-
-
-
-## Features:
-
-- **100% 本机运行**: 本机运行，不使用云端服务，所以资料绝不会散布出去，我的东西还是我的！不会被当作其他服务的训练资料。
-
-- **文件的交互系统**: 使用 bash 去浏览本机资料和操作本机系统。
-
-- **自主 Coding**: AgenticSeek 可以自己运行、Debug、编译 Python、C、Golang 和各种语言。
-
-- **代理助理**: 不同的工作由不同的助理去处理问题。AgenticSeek 会自己寻找最适合的助理去做相对应的工作。
-
-- **规划**: 对于复杂的任务，AgenticSeek 会交办给不同的助理进行规划和执行。
-
-- **自主学习**: 自动在网路上寻找资料。
-
-- **记忆功能**: 对于每次的对话进行统整、保存对话，并且在本地储存用户的使用习惯。
+> 🛠️ **目前还在开发阶段** – 欢迎任何贡献者加入我们！
 
 ---
 
@@ -79,11 +68,47 @@ pip3 install jieba cn2an
 
 **手动安装:**
 
-```sh
-pip3 install -r requirements.txt
-# or
-python3 setup.py install
-```
+
+**注意：对于任何操作系统，请确保您安装的 ChromeDriver 与您已安装的 Chrome 版本匹配。运行 `google-chrome --version`。如果您的 Chrome 版本 > 135，请参阅已知问题**
+
+- *Linux*:
+
+更新软件包列表：`sudo apt update`
+
+安装依赖项：`sudo apt install -y alsa-utils portaudio19-dev python3-pyaudio libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1`
+
+安装与您的 Chrome 浏览器版本匹配的 ChromeDriver：
+`sudo apt install -y chromium-chromedriver`
+
+安装 requirements：`pip3 install -r requirements.txt`
+
+- *Macos*:
+
+更新 brew：`brew update`
+
+安装 chromedriver：`brew install --cask chromedriver`
+
+安装 portaudio：`brew install portaudio`
+
+升级 pip：`python3 -m pip install --upgrade pip`
+
+升级 wheel：`pip3 install --upgrade setuptools wheel`
+
+安装 requirements：`pip3 install -r requirements.txt`
+
+- *Windows*:
+
+安装 pyreadline3：`pip install pyreadline3`
+
+手动安装 portaudio（例如，通过 vcpkg 或预编译的二进制文件），然后运行：`pip install pyaudio`
+
+从以下网址手动下载并安装 chromedriver：https://sites.google.com/chromium.org/driver/getting-started
+
+将 chromedriver 放置在包含在您的 PATH 中的目录中。
+
+安装 requirements：`pip3 install -r requirements.txt`
+
+
 
 ## 在本地机器上运行 AgenticSeek
 
@@ -99,17 +124,34 @@ ollama serve
 
 请参阅下方支持的本地提供者列表。
 
-修改 `config.ini` 文件，将 `provider_name` 设置为支持的提供者，并将 `provider_model` 设置为 `deepseek-r1:14b`。
+**更新 config.ini**
 
-注意：`deepseek-r1:14b` 只是一个示例，如果你的硬件允许，可以使用更大的模型。
+修改 config.ini 文件以设置 provider_name 为支持的提供者，并将 provider_model 设置为该提供者支持的 LLM。我们推荐使用具有推理能力的模型，如 *Qwen* 或 *Deepseek*。
+
+请参见 README 末尾的 **FAQ** 部分了解所需硬件。
 
 ```sh
 [MAIN]
-is_local = True
-provider_name = ollama # 或 lm-studio, openai 等
-provider_model = deepseek-r1:14b
+is_local = True # 无论是在本地运行还是使用远程提供者。
+provider_name = ollama # 或 lm-studio, openai 等..
+provider_model = deepseek-r1:14b # 选择适合您硬件的模型
 provider_server_address = 127.0.0.1:11434
+agent_name = Jarvis # 您的 AI 助手的名称
+recover_last_session = True # 是否恢复之前的会话
+save_session = True # 是否记住当前会话
+speak = True # 文本转语音
+listen = False # 语音转文本，仅适用于命令行界面
+work_dir = /Users/mlg/Documents/workspace # AgenticSeek 的工作空间。
+jarvis_personality = False # 是否使用更"贾维斯"风格的性格，不推荐在小型模型上使用
+languages = en zh # 语言列表，文本转语音将默认使用列表中的第一种语言
+[BROWSER]
+headless_browser = True # 是否使用无头浏览器，只有在使用网页界面时才推荐使用。
+stealth_mode = True # 使用无法检测的 selenium 来减少浏览器检测
 ```
+
+注意：某些提供者（如 lm-studio）需要在 IP 前面加上 `http://`。例如 `http://127.0.0.1:1234`
+
+
 
 **本地提供者列表**
 
