@@ -10,6 +10,7 @@ from sources.tools.BashInterpreter import BashInterpreter
 from sources.tools.JavaInterpreter import JavaInterpreter
 from sources.tools.fileFinder import FileFinder
 from sources.logger import Logger
+from sources.memory import Memory
 
 class CoderAgent(Agent):
     """
@@ -29,6 +30,10 @@ class CoderAgent(Agent):
         self.role = "code"
         self.type = "code_agent"
         self.logger = Logger("code_agent.log")
+        self.memory = Memory(self.load_prompt(prompt_path),
+                        recover_last_session=False, # session recovery in handled by the interaction class
+                        memory_compression=False,
+                        model_provider=provider.get_model_name())
     
     def add_sys_info_prompt(self, prompt):
         """Add system information to the prompt."""

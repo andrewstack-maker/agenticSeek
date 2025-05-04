@@ -4,6 +4,7 @@ import asyncio
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
 from sources.tools.mcpFinder import MCP_finder
+from sources.memory import Memory
 
 # NOTE MCP agent is an active work in progress, not functional yet.
 
@@ -22,6 +23,10 @@ class McpAgent(Agent):
         }
         self.role = "mcp"
         self.type = "mcp_agent"
+        self.memory = Memory(self.load_prompt(prompt_path),
+                                recover_last_session=False, # session recovery in handled by the interaction class
+                                memory_compression=False,
+                                model_provider=provider.get_model_name())
         self.enabled = True
     
     def get_api_keys(self) -> dict:

@@ -10,6 +10,7 @@ from sources.agents.agent import Agent
 from sources.tools.searxSearch import searxSearch
 from sources.browser import Browser
 from sources.logger import Logger
+from sources.memory import Memory
 
 class Action(Enum):
     REQUEST_EXIT = "REQUEST_EXIT"
@@ -37,6 +38,10 @@ class BrowserAgent(Agent):
         self.notes = []
         self.date = self.get_today_date()
         self.logger = Logger("browser_agent.log")
+        self.memory = Memory(self.load_prompt(prompt_path),
+                        recover_last_session=False, # session recovery in handled by the interaction class
+                        memory_compression=False,
+                        model_provider=provider.get_model_name())
     
     def get_today_date(self) -> str:
         """Get the date"""

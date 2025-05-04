@@ -4,6 +4,7 @@ from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
 from sources.tools.fileFinder import FileFinder
 from sources.tools.BashInterpreter import BashInterpreter
+from sources.memory import Memory
 
 class FileAgent(Agent):
     def __init__(self, name, prompt_path, provider, verbose=False):
@@ -18,6 +19,10 @@ class FileAgent(Agent):
         self.work_dir = self.tools["file_finder"].get_work_dir()
         self.role = "files"
         self.type = "file_agent"
+        self.memory = Memory(self.load_prompt(prompt_path),
+                        recover_last_session=False, # session recovery in handled by the interaction class
+                        memory_compression=False,
+                        model_provider=provider.get_model_name())
     
     async def process(self, prompt, speech_module) -> str:
         exec_success = False

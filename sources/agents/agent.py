@@ -39,9 +39,7 @@ class Agent():
         self.type = None
         self.current_directory = os.getcwd()
         self.llm = provider 
-        self.memory = Memory(self.load_prompt(prompt_path),
-                                recover_last_session=False, # session recovery in handled by the interaction class
-                                memory_compression=False)
+        self.memory = None
         self.tools = {}
         self.blocks_result = []
         self.success = True

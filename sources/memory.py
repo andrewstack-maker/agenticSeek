@@ -8,7 +8,7 @@ from typing import List, Tuple, Type, Dict
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-from sources.utility import timer_decorator, pretty_print
+from sources.utility import timer_decorator, pretty_print, animate_thinking
 from sources.logger import Logger
 
 class Memory():
@@ -18,7 +18,8 @@ class Memory():
     """
     def __init__(self, system_prompt: str,
                  recover_last_session: bool = False,
-                 memory_compression: bool = True):
+                 memory_compression: bool = True,
+                 model_provider: str = "deepseek-r1:14b"):
         self.memory = []
         self.memory = [{'role': 'system', 'content': system_prompt}]
         
@@ -31,21 +32,42 @@ class Memory():
             self.load_memory()
             self.session_recovered = True
         # memory compression system
-        self.model = "pszemraj/led-base-book-summary"
+        self.model = None
+        self.tokenizer = None
         self.device = self.get_cuda_device()
         self.memory_compression = memory_compression
-        self.tokenizer = None
-        self.model = None
+        self.model_provider = model_provider
         if self.memory_compression:
             self.download_model()
+
+    def get_ideal_ctx(self, model_name: str) -> int:
+        """
+        Estimate context size based on the model name.
+        """
+        import re
+        import math
+
+        def extract_number_before_b(sentence: str) -> int:
+            match = re.search(r'(\d+)b', sentence, re.IGNORECASE)
+            return int(match.group(1)) if match else None
+
+        model_size = extract_number_before_b(model_name)
+        if not model_size:
+            return None
+        base_size = 7  # Base model size in billions
+        base_context = 4096  # Base context size in tokens
+        scaling_factor = 1.5  # Approximate scaling factor for context size growth
+        context_size = int(base_context * (model_size / base_size) ** scaling_factor)
+        context_size = 2 ** round(math.log2(context_size))
+        self.logger.info(f"Estimated context size for {model_name}: {context_size} tokens.")
+        return context_size
     
     def download_model(self):
         """Download the model if not already downloaded."""
-        pretty_print("Downloading memory compression model...", color="status")
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model)
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model)
+        animate_thinking("Loading memory compression model...", color="status")
+        self.tokenizer = AutoTokenizer.from_pretrained("pszemraj/led-base-book-summary")
+        self.model = AutoModelForSeq2SeqLM.from_pretrained("pszemraj/led-base-book-summary")
         self.logger.info("Memory compression system initialized.")
-
     
     def get_filename(self) -> str:
         """Get the filename for the save file."""
@@ -106,13 +128,15 @@ class Memory():
     
     def push(self, role: str, content: str) -> int:
         """Push a message to the memory."""
-        if self.memory_compression and role == 'assistant':
-            self.logger.info("Compressing memories on message push.")
+        ideal_ctx = self.get_ideal_ctx(self.model_provider)
+        if self.memory_compression and len(content) > ideal_ctx:
+            self.logger.info(f"Compressing memory: Content {len(content)} > {ideal_ctx} model context.")
             self.compress()
         curr_idx = len(self.memory)
         if self.memory[curr_idx-1]['content'] == content:
             pretty_print("Warning: same message have been pushed twice to memory", color="error")
-        self.memory.append({'role': role, 'content': content})
+        time_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.memory.append({'role': role, 'content': content, 'time': time_str, 'model_used': self.model_provider})
         return curr_idx-1
     
     def clear(self) -> None:
@@ -182,11 +206,9 @@ class Memory():
             self.logger.warning("No tokenizer or model to perform memory compression.")
             return
         for i in range(len(self.memory)):
-            if i < 2:
-                continue
             if self.memory[i]['role'] == 'system':
                 continue
-            if len(self.memory[i]['content']) > 128:
+            if len(self.memory[i]['content']) > 2048:
                 self.memory[i]['content'] = self.summarize(self.memory[i]['content'])
 
 if __name__ == "__main__":
