@@ -56,7 +56,8 @@ Now that I know how to use the MCP, I will choose the search-stock-news tool and
         "type": "object",
         "required": ["symbol"],
         "properties": {
-          "symbol": "IBM"
+          "symbol": "AAPL",
+          "companyName": "IBM"
         }
     }
 }
