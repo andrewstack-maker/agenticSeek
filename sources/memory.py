@@ -118,13 +118,13 @@ class Memory():
                 json_memory = json.load(f)
         except FileNotFoundError:
             self.logger.warning(f"File not found: {path}")
-            return None
+            return {}
         except json.JSONDecodeError:
             self.logger.warning(f"Error decoding JSON from file: {path}")
-            return None
+            return {}
         except Exception as e:
             self.logger.warning(f"Error loading file {path}: {e}")
-            return None
+            return {}
         return json_memory
 
     def load_memory(self, agent_type: str = "casual_agent") -> None:
