@@ -238,7 +238,7 @@ class Memory():
             if len(self.memory[i]['content']) > 1024:
                 self.memory[i]['content'] = self.summarize(self.memory[i]['content'])
     
-    def trip_text_to_max_ctx(self, text: str) -> str:
+    def trim_text_to_max_ctx(self, text: str) -> str:
         """
         Truncate a text to fit within the maximum context size of the model.
         """
