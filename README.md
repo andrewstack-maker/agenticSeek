@@ -52,7 +52,7 @@ mv .env.example .env
 
 ```sh
 python3 -m venv agentic_seek_env
-source agentic_seek_env/bin/activate     
+source agentic_seek_env/bin/activate
 # On Windows: agentic_seek_env\Scripts\activate
 ```
 
