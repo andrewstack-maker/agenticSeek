@@ -1,8 +1,5 @@
 @echo off
 
-REM Up the provider in windows
-start ollama serve
-
 docker-compose up
 if %ERRORLEVEL% neq 0 (
     echo Error: Failed to start containers. Check Docker logs with 'docker compose logs'.
