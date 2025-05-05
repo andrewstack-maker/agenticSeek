@@ -116,14 +116,26 @@ ollama serve
 config.iniファイルを変更して、`provider_name`をサポートされているプロバイダーに設定し、`provider_model`を`deepseek-r1:14b`に設定します。
 
 注意: `deepseek-r1:14b`は例です。ハードウェアが許可する場合は、より大きなモデルを使用してください。
-
 ```sh
 [MAIN]
-is_local = True
+is_local = True # ローカルで実行するか、リモートプロバイダーを使用するか
 provider_name = ollama # または lm-studio、openai など
-provider_model = deepseek-r1:14b
+provider_model = deepseek-r1:14b # ハードウェアに適したモデルを選択
 provider_server_address = 127.0.0.1:11434
+agent_name = Jarvis # AIの名前
+recover_last_session = True # 前回のセッションを復元するかどうか
+save_session = True # 現在のセッションを記憶するかどうか
+speak = True # テキスト読み上げ
+listen = False # 音声認識、CLIのみ
+work_dir =  /Users/mlg/Documents/workspace # AgenticSeekのワークスペース
+jarvis_personality = False # より「Jarvis」らしい性格を使用するかどうか（実験的）
+languages = en zh # 言語のリスト、テキスト読み上げはリストの最初の言語がデフォルトになります
+[BROWSER]
+headless_browser = True # ヘッドレスブラウザを使用するかどうか、ウェブインターフェースを使用する場合のみ推奨
+stealth_mode = True # ブラウザ検出を減らすために検出されないSeleniumを使用
 ```
+
+注意: 一部のプロバイダー(例：lm-studio)では、IPの前に`http://`が必要です。例えば`http://127.0.0.1:1234`のように設定してください。
 
 **ローカルプロバイダーのリスト**
 
