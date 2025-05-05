@@ -149,6 +149,8 @@ headless_browser = True # 是否使用无头浏览器，只有在使用网页界
 stealth_mode = True # 使用无法检测的 selenium 来减少浏览器检测
 ```
 
+警告：使用 LM-studio 运行 LLM 时，请*不要*将 provider_name 设置为 `openai`。请将其设置为 `lm-studio`。
+
 注意：某些提供者（如 lm-studio）需要在 IP 前面加上 `http://`。例如 `http://127.0.0.1:1234`
 
 

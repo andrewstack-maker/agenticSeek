@@ -135,6 +135,8 @@ headless_browser = True # ヘッドレスブラウザを使用するかどうか
 stealth_mode = True # ブラウザ検出を減らすために検出されないSeleniumを使用
 ```
 
+警告: LM-studioでLLMを実行する場合、provider_nameを`openai`に設定しないでください。`lm-studio`に設定してください。
+
 注意: 一部のプロバイダー(例：lm-studio)では、IPの前に`http://`が必要です。例えば`http://127.0.0.1:1234`のように設定してください。
 
 **ローカルプロバイダーのリスト**

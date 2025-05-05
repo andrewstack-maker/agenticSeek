@@ -158,6 +158,8 @@ headless_browser = True # Whenever to use headless browser, recommanded only if 
 stealth_mode = True # Use undetected selenium to reduce browser detection
 ```
 
+Warning: Do *NOT* set provider_name to `openai` if using LM-studio for running LLMs. Set it to `lm-studio`.
+
 Note: Some provider (eg: lm-studio) require you to have `http://` in front of the IP. For example `http://127.0.0.1:1234`
 
 **List of local providers**
