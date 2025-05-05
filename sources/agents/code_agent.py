@@ -46,7 +46,7 @@ class CoderAgent(Agent):
     async def process(self, prompt, speech_module) -> str:
         answer = ""
         attempt = 0
-        max_attempts = 4
+        max_attempts = 5
         prompt = self.add_sys_info_prompt(prompt)
         self.memory.push('user', prompt)
         clarify_trigger = "REQUEST_CLARIFICATION"

@@ -248,7 +248,6 @@ class Agent():
             answer = "I will execute:\n" + answer # there should always be a text before blocks for the function that display answer
 
         self.success = True
-        self.blocks_result = []
         for name, tool in self.tools.items():
             feedback = ""
             blocks, save_path = tool.load_exec_block(answer)
