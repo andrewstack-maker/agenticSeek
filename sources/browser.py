@@ -266,7 +266,7 @@ class Browser:
             result = re.sub(r'!\[(.*?)\]\(.*?\)', r'[IMAGE: \1]', result)
             self.logger.info(f"Extracted text: {result[:100]}...")
             self.logger.info(f"Extracted text length: {len(result)}")
-            return result[:8192]
+            return result[:32768]
         except Exception as e:
             self.logger.error(f"Error getting text: {str(e)}")
             return None
