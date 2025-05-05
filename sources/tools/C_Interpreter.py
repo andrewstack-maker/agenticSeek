@@ -15,6 +15,8 @@ class CInterpreter(Tools):
     def __init__(self):
         super().__init__()
         self.tag = "c"
+        self.name = "C Interpreter"
+        self.description = "This tool allows the agent to execute C code."
 
     def execute(self, codes: str, safety=False) -> str:
         """

@@ -81,7 +81,11 @@ source agentic_seek_env/bin/activate
 
 ** テキスト読み上げ（TTS）機能で日本語をサポートするには、fugashi（日本語分かち書きライブラリ）をインストールする必要があります：**
 
-```
+** 注意: 日本語のテキスト読み上げ（TTS）機能には多くの依存関係が必要で、問題が発生する可能性があります。`mecabrc`に関する問題が発生することがあります。現在のところ、この問題を修正する方法が見つかっていません。当面は日本語でのテキスト読み上げ機能を無効にすることをお勧めします。**
+
+必要なライブラリをインストールする場合は以下のコマンドを実行してください：
+
+```sh
 pip3 install --upgrade pyopenjtalk jaconv mojimoji unidic fugashi
 pip install unidic-lite
 python -m unidic download
@@ -116,14 +120,28 @@ ollama serve
 config.iniファイルを変更して、`provider_name`をサポートされているプロバイダーに設定し、`provider_model`を`deepseek-r1:14b`に設定します。
 
 注意: `deepseek-r1:14b`は例です。ハードウェアが許可する場合は、より大きなモデルを使用してください。
-
 ```sh
 [MAIN]
-is_local = True
+is_local = True # ローカルで実行するか、リモートプロバイダーを使用するか
 provider_name = ollama # または lm-studio、openai など
-provider_model = deepseek-r1:14b
+provider_model = deepseek-r1:14b # ハードウェアに適したモデルを選択
 provider_server_address = 127.0.0.1:11434
+agent_name = Jarvis # AIの名前
+recover_last_session = True # 前回のセッションを復元するかどうか
+save_session = True # 現在のセッションを記憶するかどうか
+speak = True # テキスト読み上げ
+listen = False # 音声認識、CLIのみ
+work_dir =  /Users/mlg/Documents/workspace # AgenticSeekのワークスペース
+jarvis_personality = False # より「Jarvis」らしい性格を使用するかどうか（実験的）
+languages = en zh # 言語のリスト、テキスト読み上げはリストの最初の言語がデフォルトになります
+[BROWSER]
+headless_browser = True # ヘッドレスブラウザを使用するかどうか、ウェブインターフェースを使用する場合のみ推奨
+stealth_mode = True # ブラウザ検出を減らすために検出されないSeleniumを使用
 ```
+
+警告: LM-studioでLLMを実行する場合、provider_nameを`openai`に設定しないでください。`lm-studio`に設定してください。
+
+注意: 一部のプロバイダー(例：lm-studio)では、IPの前に`http://`が必要です。例えば`http://127.0.0.1:1234`のように設定してください。
 
 **ローカルプロバイダーのリスト**
 

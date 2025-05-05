@@ -8,7 +8,7 @@ from typing import List, Tuple, Type, Dict
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-from sources.utility import timer_decorator, pretty_print
+from sources.utility import timer_decorator, pretty_print, animate_thinking
 from sources.logger import Logger
 
 class Memory():
@@ -18,8 +18,8 @@ class Memory():
     """
     def __init__(self, system_prompt: str,
                  recover_last_session: bool = False,
-                 memory_compression: bool = True):
-        self.memory = []
+                 memory_compression: bool = True,
+                 model_provider: str = "deepseek-r1:14b"):
         self.memory = [{'role': 'system', 'content': system_prompt}]
         
         self.logger = Logger("memory.log")
@@ -31,21 +31,43 @@ class Memory():
             self.load_memory()
             self.session_recovered = True
         # memory compression system
-        self.model = "pszemraj/led-base-book-summary"
+        self.model = None
+        self.tokenizer = None
         self.device = self.get_cuda_device()
         self.memory_compression = memory_compression
-        self.tokenizer = None
-        self.model = None
+        self.model_provider = model_provider
         if self.memory_compression:
             self.download_model()
+
+    def get_ideal_ctx(self, model_name: str) -> int | None:
+        """
+        Estimate context size based on the model name.
+        EXPERIMENTAL for memory compression
+        """
+        import re
+        import math
+
+        def extract_number_before_b(sentence: str) -> int:
+            match = re.search(r'(\d+)b', sentence, re.IGNORECASE)
+            return int(match.group(1)) if match else None
+
+        model_size = extract_number_before_b(model_name)
+        if not model_size:
+            return None
+        base_size = 7  # Base model size in billions
+        base_context = 4096  # Base context size in tokens
+        scaling_factor = 1.5  # Approximate scaling factor for context size growth
+        context_size = int(base_context * (model_size / base_size) ** scaling_factor)
+        context_size = 2 ** round(math.log2(context_size))
+        self.logger.info(f"Estimated context size for {model_name}: {context_size} tokens.")
+        return context_size
     
     def download_model(self):
         """Download the model if not already downloaded."""
-        pretty_print("Downloading memory compression model...", color="status")
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model)
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model)
+        animate_thinking("Loading memory compression model...", color="status")
+        self.tokenizer = AutoTokenizer.from_pretrained("pszemraj/led-base-book-summary")
+        self.model = AutoModelForSeq2SeqLM.from_pretrained("pszemraj/led-base-book-summary")
         self.logger.info("Memory compression system initialized.")
-
     
     def get_filename(self) -> str:
         """Get the filename for the save file."""
@@ -78,6 +100,32 @@ class Memory():
             self.logger.info(f"Last session found at {saved_sessions[0][0]}")
             return saved_sessions[0][0]
         return None
+    
+    def save_json_file(self, path: str, json_memory: dict) -> None:
+        """Save a JSON file."""
+        try:
+            with open(path, 'w') as f:
+                json.dump(json_memory, f)
+                self.logger.info(f"Saved memory json at {path}")
+        except Exception as e:
+            self.logger.warning(f"Error saving file {path}: {e}")
+    
+    def load_json_file(self, path: str) -> dict:
+        """Load a JSON file."""
+        json_memory = {}
+        try:
+            with open(path, 'r') as f:
+                json_memory = json.load(f)
+        except FileNotFoundError:
+            self.logger.warning(f"File not found: {path}")
+            return {}
+        except json.JSONDecodeError:
+            self.logger.warning(f"Error decoding JSON from file: {path}")
+            return {}
+        except Exception as e:
+            self.logger.warning(f"Error loading file {path}: {e}")
+            return {}
+        return json_memory
 
     def load_memory(self, agent_type: str = "casual_agent") -> None:
         """Load the memory from the last session."""
@@ -93,8 +141,7 @@ class Memory():
             pretty_print("Last session memory not found.", color="warning")
             return
         path = os.path.join(save_path, filename)
-        with open(path, 'r') as f:
-            self.memory = json.load(f)
+        self.memory = self.load_json_file(path) 
         if self.memory[-1]['role'] == 'user':
             self.memory.pop()
         self.compress()
@@ -106,13 +153,16 @@ class Memory():
     
     def push(self, role: str, content: str) -> int:
         """Push a message to the memory."""
-        if self.memory_compression and role == 'assistant':
-            self.logger.info("Compressing memories on message push.")
-            self.compress()
+        ideal_ctx = self.get_ideal_ctx(self.model_provider)
+        if ideal_ctx is not None:
+            if self.memory_compression and len(content) > ideal_ctx * 1.5:
+                self.logger.info(f"Compressing memory: Content {len(content)} > {ideal_ctx} model context.")
+                self.compress()
         curr_idx = len(self.memory)
         if self.memory[curr_idx-1]['content'] == content:
             pretty_print("Warning: same message have been pushed twice to memory", color="error")
-        self.memory.append({'role': role, 'content': content})
+        time_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.memory.append({'role': role, 'content': content, 'time': time_str, 'model_used': self.model_provider})
         return curr_idx-1
     
     def clear(self) -> None:
@@ -170,24 +220,47 @@ class Memory():
         )
         summary = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         summary.replace('summary:', '')
-        self.logger.info(f"Memory summarization success from len {len(text)} to {len(summary)}.")
+        self.logger.info(f"Memory summarized from len {len(text)} to {len(summary)}.")
+        self.logger.info(f"Summarized text:\n{summary}")
         return summary
     
     #@timer_decorator
     def compress(self) -> str:
         """
-        Compress the memory using the AI model.
+        Compress (summarize) the memory using the model.
         """
         if self.tokenizer is None or self.model is None:
             self.logger.warning("No tokenizer or model to perform memory compression.")
             return
         for i in range(len(self.memory)):
-            if i < 2:
-                continue
             if self.memory[i]['role'] == 'system':
                 continue
-            if len(self.memory[i]['content']) > 128:
+            if len(self.memory[i]['content']) > 1024:
                 self.memory[i]['content'] = self.summarize(self.memory[i]['content'])
+    
+    def trim_text_to_max_ctx(self, text: str) -> str:
+        """
+        Truncate a text to fit within the maximum context size of the model.
+        """
+        ideal_ctx = self.get_ideal_ctx(self.model_provider)
+        return text[:ideal_ctx] if ideal_ctx is not None else text
+    
+    #@timer_decorator
+    def compress_text_to_max_ctx(self, text) -> str:
+        """
+        Compress a text to fit within the maximum context size of the model.
+        """
+        if self.tokenizer is None or self.model is None:
+            self.logger.warning("No tokenizer or model to perform memory compression.")
+            return text
+        ideal_ctx = self.get_ideal_ctx(self.model_provider)
+        if ideal_ctx is None:
+            self.logger.warning("No ideal context size found.")
+            return text
+        while len(text) > ideal_ctx:
+            self.logger.info(f"Compressing text: {len(text)} > {ideal_ctx} model context.")
+            text = self.summarize(text)
+        return text
 
 if __name__ == "__main__":
     sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

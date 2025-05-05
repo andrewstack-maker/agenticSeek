@@ -33,6 +33,8 @@ class Tools():
     """
     def __init__(self):
         self.tag = "undefined"
+        self.name = "undefined"
+        self.description = "undefined"
         self.client = None
         self.messages = []
         self.logger = Logger("tools.log")

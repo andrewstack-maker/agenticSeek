@@ -10,6 +10,7 @@ from sources.agents.agent import Agent
 from sources.tools.searxSearch import searxSearch
 from sources.browser import Browser
 from sources.logger import Logger
+from sources.memory import Memory
 
 class Action(Enum):
     REQUEST_EXIT = "REQUEST_EXIT"
@@ -37,6 +38,10 @@ class BrowserAgent(Agent):
         self.notes = []
         self.date = self.get_today_date()
         self.logger = Logger("browser_agent.log")
+        self.memory = Memory(self.load_prompt(prompt_path),
+                        recover_last_session=False, # session recovery in handled by the interaction class
+                        memory_compression=False,
+                        model_provider=provider.get_model_name())
     
     def get_today_date(self) -> str:
         """Get the date"""
@@ -238,6 +243,14 @@ class BrowserAgent(Agent):
         self.logger.warning("No link selected.")
         return None
     
+    def get_page_text(self, limit_to_model_ctx = False) -> str:
+        """Get the text content of the current page."""
+        page_text = self.browser.get_text()
+        if limit_to_model_ctx:
+            #page_text = self.memory.compress_text_to_max_ctx(page_text)
+            page_text = self.memory.trim_text_to_max_ctx(page_text)
+        return page_text
+    
     def conclude_prompt(self, user_query: str) -> str:
         annotated_notes = [f"{i+1}: {note.lower()}" for i, note in enumerate(self.notes)]
         search_note = '\n'.join(annotated_notes)
@@ -352,13 +365,13 @@ class BrowserAgent(Agent):
                 self.status_message = "Filling web form..."
                 pretty_print(f"Filling inputs form...", color="status")
                 fill_success = self.browser.fill_form(extracted_form)
-                page_text = self.browser.get_text()
+                page_text = self.get_page_text(limit_to_model_ctx=True)
                 answer = self.handle_update_prompt(user_prompt, page_text, fill_success)
                 answer, reasoning = await self.llm_decide(prompt)
 
             if Action.FORM_FILLED.value in answer:
                 pretty_print(f"Filled form. Handling page update.", color="status")
-                page_text = self.browser.get_text()
+                page_text = self.get_page_text(limit_to_model_ctx=True)
                 self.navigable_links = self.browser.get_navigable()
                 prompt = self.make_navigation_prompt(user_prompt, page_text)
                 continue
@@ -394,7 +407,7 @@ class BrowserAgent(Agent):
                 prompt = self.make_newsearch_prompt(user_prompt, unvisited)
                 continue
             self.current_page = link
-            page_text = self.browser.get_text()
+            page_text = self.get_page_text(limit_to_model_ctx=True)
             self.navigable_links = self.browser.get_navigable()
             prompt = self.make_navigation_prompt(user_prompt, page_text)
             self.status_message = "Navigating..."

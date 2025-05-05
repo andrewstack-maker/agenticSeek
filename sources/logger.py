@@ -17,11 +17,13 @@ class Logger:
     def create_logging(self, log_filename):
         self.logger = logging.getLogger(log_filename)
         self.logger.setLevel(logging.DEBUG)
-        if not self.logger.handlers:
-            file_handler = logging.FileHandler(self.log_path)
-            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            file_handler.setFormatter(formatter)
-            self.logger.addHandler(file_handler)
+        self.logger.handlers.clear()
+        self.logger.propagate = False
+        file_handler = logging.FileHandler(self.log_path)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        file_handler.setFormatter(formatter)
+        self.logger.addHandler(file_handler)
+
     
     def create_folder(self, path):
         """Create log dir"""

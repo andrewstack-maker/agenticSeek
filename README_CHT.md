@@ -124,16 +124,27 @@ ollama serve
 
 请参阅下方支持的本地提供者列表。
 
-修改 `config.ini` 文件，将 `provider_name` 设置为支持的提供者，并将 `provider_model` 设置为 `deepseek-r1:14b`。
+修改 config.ini 文件以设置 provider_name 为支持的提供者，并将 provider_model 设置为该提供者支持的 LLM。我们推荐使用具有推理能力的模型，如 *Qwen* 或 *Deepseek*。
 
-注意：`deepseek-r1:14b` 只是一个示例，如果你的硬件允许，可以使用更大的模型。
+请参见 README 末尾的 **FAQ** 部分了解所需硬件。
 
 ```sh
 [MAIN]
-is_local = True
-provider_name = ollama # 或 lm-studio, openai 等
-provider_model = deepseek-r1:14b
+is_local = True # 无论是在本地运行还是使用远程提供者。
+provider_name = ollama # 或 lm-studio, openai 等..
+provider_model = deepseek-r1:14b # 选择适合您硬件的模型
 provider_server_address = 127.0.0.1:11434
+agent_name = Jarvis # 您的 AI 助手的名称
+recover_last_session = True # 是否恢复之前的会话
+save_session = True # 是否记住当前会话
+speak = True # 文本转语音
+listen = False # 语音转文本，仅适用于命令行界面
+work_dir = /Users/mlg/Documents/workspace # AgenticSeek 的工作空间。
+jarvis_personality = False # 是否使用更"贾维斯"风格的性格，不推荐在小型模型上使用
+languages = en zh # 语言列表，文本转语音将默认使用列表中的第一种语言
+[BROWSER]
+headless_browser = True # 是否使用无头浏览器，只有在使用网页界面时才推荐使用。
+stealth_mode = True # 使用无法检测的 selenium 来减少浏览器检测
 ```
 
 **本地提供者列表**

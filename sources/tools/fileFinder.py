@@ -15,6 +15,8 @@ class FileFinder(Tools):
     def __init__(self):
         super().__init__()
         self.tag = "file_finder"
+        self.name = "File Finder"
+        self.description = "Finds files in the current directory and returns their information."
     
     def read_file(self, file_path: str) -> str:
         """

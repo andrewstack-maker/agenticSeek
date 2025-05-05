@@ -6,6 +6,7 @@ from sources.tools.searxSearch import searxSearch
 from sources.tools.flightSearch import FlightSearch
 from sources.tools.fileFinder import FileFinder
 from sources.tools.BashInterpreter import BashInterpreter
+from sources.memory import Memory
 
 class CasualAgent(Agent):
     def __init__(self, name, prompt_path, provider, verbose=False):
@@ -17,6 +18,10 @@ class CasualAgent(Agent):
         } # No tools for the casual agent
         self.role = "talk"
         self.type = "casual_agent"
+        self.memory = Memory(self.load_prompt(prompt_path),
+                                recover_last_session=False, # session recovery in handled by the interaction class
+                                memory_compression=False,
+                                model_provider=provider.get_model_name())
     
     async def process(self, prompt, speech_module) -> str:
         self.memory.push('user', prompt)

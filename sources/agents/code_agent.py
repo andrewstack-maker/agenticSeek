@@ -10,6 +10,7 @@ from sources.tools.BashInterpreter import BashInterpreter
 from sources.tools.JavaInterpreter import JavaInterpreter
 from sources.tools.fileFinder import FileFinder
 from sources.logger import Logger
+from sources.memory import Memory
 
 class CoderAgent(Agent):
     """
@@ -29,6 +30,10 @@ class CoderAgent(Agent):
         self.role = "code"
         self.type = "code_agent"
         self.logger = Logger("code_agent.log")
+        self.memory = Memory(self.load_prompt(prompt_path),
+                        recover_last_session=False, # session recovery in handled by the interaction class
+                        memory_compression=False,
+                        model_provider=provider.get_model_name())
     
     def add_sys_info_prompt(self, prompt):
         """Add system information to the prompt."""
@@ -41,7 +46,7 @@ class CoderAgent(Agent):
     async def process(self, prompt, speech_module) -> str:
         answer = ""
         attempt = 0
-        max_attempts = 4
+        max_attempts = 5
         prompt = self.add_sys_info_prompt(prompt)
         self.memory.push('user', prompt)
         clarify_trigger = "REQUEST_CLARIFICATION"
@@ -62,14 +67,14 @@ class CoderAgent(Agent):
             animate_thinking("Executing code...", color="status")
             self.status_message = "Executing code..."
             self.logger.info(f"Attempt {attempt + 1}:\n{answer}")
-            exec_success, _ = self.execute_modules(answer)
+            exec_success, feedback = self.execute_modules(answer)
             self.logger.info(f"Execution result: {exec_success}")
             answer = self.remove_blocks(answer)
             self.last_answer = answer
             await asyncio.sleep(0)
             if exec_success and self.get_last_tool_type() != "bash":
                 break
-            pretty_print("Execution failure", color="failure")
+            pretty_print(f"Execution failure:\n{feedback}", color="failure")
             pretty_print("Correcting code...", color="status")
             self.status_message = "Correcting code..."
             attempt += 1

@@ -15,6 +15,8 @@ class GoInterpreter(Tools):
     def __init__(self):
         super().__init__()
         self.tag = "go"
+        self.name = "Go Interpreter"
+        self.description = "This tool allows you to execute Go code."
 
     def execute(self, codes: str, safety=False) -> str:
         """

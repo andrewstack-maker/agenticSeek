@@ -9,6 +9,7 @@ from sources.agents.casual_agent import CasualAgent
 from sources.text_to_speech import Speech
 from sources.tools.tools import Tools
 from sources.logger import Logger
+from sources.memory import Memory
 
 class PlannerAgent(Agent):
     def __init__(self, name, prompt_path, provider, verbose=False, browser=None):
@@ -29,6 +30,10 @@ class PlannerAgent(Agent):
         }
         self.role = "planification"
         self.type = "planner_agent"
+        self.memory = Memory(self.load_prompt(prompt_path),
+                                recover_last_session=False, # session recovery in handled by the interaction class
+                                memory_compression=False,
+                                model_provider=provider.get_model_name())
         self.logger = Logger("planner_agent.log")
     
     def get_task_names(self, text: str) -> List[str]:

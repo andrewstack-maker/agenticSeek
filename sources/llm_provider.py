@@ -44,6 +44,9 @@ class Provider:
             self.api_key = self.get_api_key(self.provider_name)
         elif self.provider_name != "ollama":
             pretty_print(f"Provider: {provider_name} initialized at {self.server_ip}", color="success")
+    
+    def get_model_name(self) -> str:
+        return self.model
 
     def get_api_key(self, provider):
         load_dotenv()

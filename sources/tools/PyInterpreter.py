@@ -16,6 +16,8 @@ class PyInterpreter(Tools):
     def __init__(self):
         super().__init__()
         self.tag = "python"
+        self.name = "Python Interpreter"
+        self.description = "This tool allows the agent to execute python code."
 
     def execute(self, codes:str, safety = False) -> str:
         """

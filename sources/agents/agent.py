@@ -39,9 +39,7 @@ class Agent():
         self.type = None
         self.current_directory = os.getcwd()
         self.llm = provider 
-        self.memory = Memory(self.load_prompt(prompt_path),
-                                recover_last_session=False, # session recovery in handled by the interaction class
-                                memory_compression=False)
+        self.memory = None
         self.tools = {}
         self.blocks_result = []
         self.success = True
@@ -89,6 +87,21 @@ class Agent():
         if tool is not Callable:
             raise TypeError("Tool must be a callable object (a method)")
         self.tools[name] = tool
+    
+    def get_tools_name(self) -> list:
+        """
+        Get the list of tools names.
+        """
+        return list(self.tools.keys())
+    
+    def get_tools_description(self) -> str:
+        """
+        Get the list of tools names and their description.
+        """
+        description = ""
+        for name in self.get_tools_name():
+            description += f"{name}: {self.tools[name].description}\n"
+        return description
     
     def load_prompt(self, file_path: str) -> str:
         try:
@@ -240,6 +253,7 @@ class Agent():
             blocks, save_path = tool.load_exec_block(answer)
 
             if blocks != None:
+                pretty_print(f"Executing {len(blocks)} {name} blocks...", color="status")
                 for block in blocks:
                     self.show_block(block)
                     output = tool.execute([block])

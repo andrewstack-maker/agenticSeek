@@ -140,6 +140,11 @@ class Interaction:
         self.last_query = query
         return query
     
+    def set_query(self, query: str) -> None:
+        """Set the query"""
+        self.is_active = True
+        self.last_query = query
+    
     async def think(self) -> bool:
         """Request AI agents to process the user input."""
         push_last_agent_memory = False
