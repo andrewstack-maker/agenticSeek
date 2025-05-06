@@ -36,7 +36,9 @@ Disclaimer: This demo, including all the files that appear (e.g: CV_candidates.z
 
 ## Installation
 
-Make sure you have chrome driver, docker and python3.10 (or newer) installed.
+Make sure you have chrome driver, docker and python3.10 installed.
+
+We highly advice you use exactly python3.10 for the setup. Dependencies error might happen otherwise.
 
 For issues related to chrome driver, see the **Chromedriver** section.
 
