@@ -36,7 +36,9 @@ https://github.com/user-attachments/assets/b8ca60e9-7b3b-4533-840e-08f9ac426316
 
 ## インストール
 
-Chromeドライバー、Docker、Python3.10（またはそれ以降）がインストールされていることを確認してください。
+Chrome Driver、Docker、Python 3.10がインストールされていることを確認してください。
+
+セットアップにはPython 3.10を正確に使用することを強くお勧めします。そうでない場合、依存関係のエラーが発生する可能性があります。
 
 Chromeドライバーに関する問題については、**Chromedriver**セクションを参照してください。
 

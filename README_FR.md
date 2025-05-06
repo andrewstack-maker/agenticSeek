@@ -23,7 +23,6 @@ https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 
 
-
 ## Fonctionnalités:
 
 - **100% Local**: Fonctionne en local sur votre PC. Vos données restent les vôtres. 
@@ -44,7 +43,9 @@ https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 ## **Installation**
 
-Assurez-vous d’avoir installé le pilote Chrome, Docker et Python 3.10 (ou une version plus récente).
+Assurez-vous d’avoir installé le pilote Chrome, Docker et Python 3.10.
+
+Nous vous conseillons fortement d'utiliser exactement Python 3.10 pour l'installation. Des erreurs de dépendances pourraient survenir autrement.
 
 Pour les problèmes liés au pilote Chrome, consultez la section Chromedriver.
 

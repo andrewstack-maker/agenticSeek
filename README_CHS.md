@@ -34,6 +34,8 @@ https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 确保已安装了 Chrome driver，Docker 和 Python 3.10（或更新）。
 
+我们强烈建议您使用 Python 3.10 进行设置，否则可能会发生依赖错误。
+
 有关于 Chrome driver 的问题，请参见 **Chromedriver** 部分。
 
 ### 1️⃣ **复制储存库与设置环境变数**
