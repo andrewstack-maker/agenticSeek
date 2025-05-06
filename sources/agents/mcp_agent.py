@@ -35,8 +35,7 @@ class McpAgent(Agent):
         """
         api_key_mcp_finder = os.getenv("MCP_FINDER_API_KEY")
         if not api_key_mcp_finder or api_key_mcp_finder == "":
-            pretty_print("MCP Finder API key not found. Please set the MCP_FINDER_API_KEY environment variable.", color="failure")
-            pretty_print("MCP Finder disabled.", color="failure")
+            pretty_print("MCP Finder disabled.", color="warning")
             self.enabled = False
         return {
             "mcp_finder": api_key_mcp_finder
