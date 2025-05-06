@@ -122,8 +122,9 @@ Install requirements: `pip3 install -r requirements.txt`
 
 ## Setup for running LLM locally on your machine
 
-**We recommend using at the very least Deepseek 14B, smaller models will struggle with tasks especially for web browsing.**
+**Hardware Requirements:**
 
+To run LLMs locally, you'll need sufficient hardware. At a minimum, a GPU capable of running Qwen/Deepseek 14B is required. See the FAQ for detailed model/performance recommendations.
 
 **Setup your local provider**  
 
