@@ -31,7 +31,7 @@ unsafe_commands_unix = [
     "route"         # Routing table management
     "--force",     # Force flag for many commands
     "rebase",     # Rebase git repository
-    "git ." # Git commands
+    "git" # Git commands
 ]
 
 unsafe_commands_windows = [
