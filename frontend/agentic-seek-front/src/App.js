@@ -25,7 +25,7 @@ function App() {
 
     const checkHealth = async () => {
         try {
-            await axios.get('http://0.0.0.0:8000/health');
+            await axios.get('http://127.0.0.1:8000/health');
             setIsOnline(true);
             console.log('System is online');
         } catch {
@@ -37,7 +37,7 @@ function App() {
     const fetchScreenshot = async () => {
         try {
             const timestamp = new Date().getTime();
-            const res = await axios.get(`http://0.0.0.0:8000/screenshots/updated_screen.png?timestamp=${timestamp}`, {
+            const res = await axios.get(`http://127.0.0.1:8000/screenshots/updated_screen.png?timestamp=${timestamp}`, {
                 responseType: 'blob'
             });
             console.log('Screenshot fetched successfully');
@@ -76,7 +76,7 @@ function App() {
 
     const fetchLatestAnswer = async () => {
         try {
-            const res = await axios.get('http://0.0.0.0:8000/latest_answer');
+            const res = await axios.get('http://127.0.0.1:8000/latest_answer');
             const data = res.data;
 
             updateData(data);
@@ -134,7 +134,7 @@ function App() {
         try {
             console.log('Sending query:', query);
             setQuery('waiting for response...');
-            const res = await axios.post('http://0.0.0.0:8000/query', {
+            const res = await axios.post('http://127.0.0.1:8000/query', {
                 query,
                 tts_enabled: false
             });
