@@ -616,19 +616,24 @@ class Browser:
         return self.screenshot_folder + "/updated_screen.png"
 
     def screenshot(self, filename:str = 'updated_screen.png') -> bool:
-        """Take a screenshot of the current page."""
-        self.logger.info("Taking screenshot...")
+        """Take a screenshot of the current page, attempt to capture the full page by zooming out."""
+        self.logger.info("Taking full page screenshot...")
         time.sleep(0.1)
         try:
+            original_zoom = self.driver.execute_script("return document.body.style.zoom || 1;")
+            self.driver.execute_script("document.body.style.zoom='75%'")
+            time.sleep(0.1)  # Allow time for the zoom to take effect
             path = os.path.join(self.screenshot_folder, filename)
             if not os.path.exists(self.screenshot_folder):
                 os.makedirs(self.screenshot_folder)
             self.driver.save_screenshot(path)
-            self.logger.info(f"Screenshot saved as {filename}")
-            return True
+            self.logger.info(f"Full page screenshot saved as {filename}")
         except Exception as e:
-            self.logger.error(f"Error taking screenshot: {str(e)}")
+            self.logger.error(f"Error taking full page screenshot: {str(e)}")
             return False
+        finally:
+            self.driver.execute_script(f"document.body.style.zoom='1'")
+        return True
 
     def apply_web_safety(self):
         """
