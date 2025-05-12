@@ -205,7 +205,7 @@ Example: export `TOGETHER_API_KEY="xxxxx"`
 | Provider  | Local? | Description                                               |
 |-----------|--------|-----------------------------------------------------------|
 | openai    | Depends  | Use ChatGPT API  |
-| deepseek-api  | No     | Deepseek API (non-private)                            |
+| deepseek  | No     | Deepseek API (non-private)                            |
 | huggingface| No    | Hugging-Face API (non-private)                            |
 | togetherAI | No    | Use together AI API (non-private)                         |
 | google | No    | Use google gemini API (non-private)                         |
@@ -319,7 +319,7 @@ Clone the repository and enter the `server/`folder.
 
 ```sh
 git clone --depth 1 https://github.com/Fosowl/agenticSeek.git
-cd agenticSeek/server/
+cd agenticSeek/llm_server/
 ```
 
 Install server specific requirements:
