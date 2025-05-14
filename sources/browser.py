@@ -172,16 +172,25 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
         )
         return driver
     security_prefs = {
-        "profile.default_content_setting_values.media_stream": 2,
-        "profile.default_content_setting_values.geolocation": 2,
-        "profile.default_content_setting_values.notifications": 2,
-        "profile.default_content_setting_values.camera": 2,
-        "profile.default_content_setting_values.microphone": 2,
+        # Set all permissions to prompt (1=allow, 2=block, 0=prompt)
+        "profile.default_content_setting_values.geolocation": 0,
+        "profile.default_content_setting_values.notifications": 0,
+        "profile.default_content_setting_values.camera": 0,
+        "profile.default_content_setting_values.microphone": 0,
+        "profile.default_content_setting_values.midi_sysex": 0,
+        "profile.default_content_setting_values.clipboard": 0,
+        "profile.default_content_setting_values.media_stream": 0,
+        "profile.default_content_setting_values.background_sync": 0,
+        "profile.default_content_setting_values.sensors": 0,
+        "profile.default_content_setting_values.accessibility_events": 0,
         "safebrowsing.enabled": True,
+        "credentials_enable_service": False,
+        "profile.password_manager_enabled": False,
         "webkit.webprefs.accelerated_2d_canvas_enabled": True,
         "webkit.webprefs.force_dark_mode_enabled": False,
-        "webkit.webprefs.accelerated_2d_canvas_enabled": True,
         "webkit.webprefs.accelerated_2d_canvas_msaa_sample_count": 4,
+        "enable_webgl": True,
+        "enable_webgl2_compute_context": True
     }
     chrome_options.add_experimental_option("prefs", security_prefs)
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -688,15 +697,13 @@ class Browser:
         input_elements = self.driver.execute_script(script)
 
 if __name__ == "__main__":
-    driver = create_driver(headless=False, stealth_mode=False)
+    driver = create_driver(headless=False, stealth_mode=True)
     browser = Browser(driver, anticaptcha_manual_install=False)
     
     input("press enter to continue")
     print("AntiCaptcha / Form Test")
-    browser.go_to("https://browserleaks.com/webgl")
-    time.sleep(20)
     browser.go_to("https://bot.sannysoft.com/")
-    time.sleep(5)
+    time.sleep(50)
     browser.go_to("https://antoinevastel.com/bots/")
     time.sleep(5)
     #txt = browser.get_text()

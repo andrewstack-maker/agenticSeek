@@ -4,6 +4,7 @@ Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
 delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array; 
 delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise; 
 delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol; 
+
 Object.keys(window).forEach((key) => {
   if (key.includes("webdriver") || key.includes("selenium") || key.includes("driver")) {
     delete window[key];
@@ -174,21 +175,51 @@ Object.defineProperty(navigator, 'languages', {
     get: () => ['en-US', 'en'],
 });
 
-try {
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    if (gl) {
-        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-        Object.defineProperty(WebGLRenderingContext.prototype, 'getParameter', {
-            value: function(parameter) {
-                if (parameter === 37445) { // UNMASKED_VENDOR_WEBGL
-                    return 'Intel Inc.';
-                }
-                if (parameter === 37446) { // UNMASKED_RENDERER_WEBGL
-                    return 'Intel Iris OpenGL Engine';
-                }
-                return this.__proto__.getParameter(parameter);
+const canvas = document.createElement('canvas');
+const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+if (gl) {
+    // Store original getParameter function
+    const originalGetParameter = gl.getParameter;
+    // Override getParameter to spoof values
+    gl.getParameter = function(parameter) {
+        // UNMASKED_VENDOR_WEBGL
+        if (parameter === 37445) return 'Intel Inc.';
+        // UNMASKED_RENDERER_WEBGL
+        if (parameter === 37446) return 'Intel Iris Pro OpenGL Engine';
+        // Other common fingerprint points
+        if (parameter === gl.VERSION) return 'WebGL 2.0 (OpenGL ES 3.0 Intel)';
+        if (parameter === gl.SHADING_LANGUAGE_VERSION) return 'WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0)';
+        
+        // Default to original behavior
+        return originalGetParameter.call(gl, parameter);
+    };
+    
+    // Spoof debug renderer info extension
+    const debugInfo = {
+        getExtension: function(name) {
+            if (name === 'WEBGL_debug_renderer_info') {
+                return {
+                    UNMASKED_VENDOR_WEBGL: 37445,
+                    UNMASKED_RENDERER_WEBGL: 37446,
+                    __proto__: WebGLExtension.prototype
+                };
             }
-        });
-    }
-} catch(e) {}
+            return null;
+        },
+        __proto__: WebGLRenderingContext.prototype
+    };
+    
+    // Override getExtension
+    const originalGetExtension = gl.getExtension;
+    gl.getExtension = function(name) {
+        if (name === 'WEBGL_debug_renderer_info') {
+            return debugInfo;
+        }
+        return originalGetExtension.call(gl, name);
+    };
+    
+    // Freeze objects to prevent detection
+    Object.freeze(gl);
+    Object.freeze(debugInfo);
+}
