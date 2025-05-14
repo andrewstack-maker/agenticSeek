@@ -62,9 +62,9 @@ def get_chrome_path() -> str:
 def get_random_user_agent() -> str:
     """Get a random user agent string with associated vendor."""
     user_agents = [
-        {"ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36", "vendor": "Google Inc."},
-        {"ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15", "vendor": "Apple Inc."},
-        {"ua": "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0", "vendor": ""},
+        {"ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36", "vendor": "Google Inc."},
+        {"ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36", "vendor": "Apple Inc."},
+        {"ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36", "vendor": "Google Inc."},
     ]
     return random.choice(user_agents)
 
@@ -91,7 +91,7 @@ def bypass_ssl() -> str:
     """
     This is a fallback for stealth mode to bypass SSL verification. Which can fail on some setup.
     """
-    pretty_print("This is a workaround for SSL issues but upsafe we strongly advice you update your certifi SSL certificate.", color="warning")
+    pretty_print("Bypassing SSL verification issues, we strongly advice you update your certifi SSL certificate.", color="warning")
     ssl._create_default_https_context = ssl._create_unverified_context
 
 def create_undetected_chromedriver(service, chrome_options) -> webdriver.Chrome:
@@ -107,7 +107,6 @@ def create_undetected_chromedriver(service, chrome_options) -> webdriver.Chrome:
             pretty_print(f"Failed to create Chrome driver, fallback failed:\n{str(e)}.", color="failure")
             raise e
         raise e
-    # hide webdriver flag
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})") 
     return driver
 
@@ -122,16 +121,28 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
     
     if headless:
         chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--disable-webgl")
+        chrome_options.add_argument("--use-gl=swiftshader")
+        #chrome_options.add_argument("--disable-gpu")
+        #chrome_options.add_argument("--disable-webgl") # prevent some website from working, commented for now
     user_data_dir = tempfile.mkdtemp()
     user_agent = get_random_user_agent()
     chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
+    chrome_options.add_argument("--use-gl=egl")
+    chrome_options.add_argument("--enable-webgl")
+    chrome_options.add_argument("--enable-3d-apis")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--mute-audio")
     chrome_options.add_argument("--disable-notifications")
     chrome_options.add_argument("--autoplay-policy=user-gesture-required")
+    # Essential WebGL arguments
+    chrome_options.add_argument("--ignore-gpu-blocklist")
+    chrome_options.add_argument("--enable-webgl")
+    chrome_options.add_argument("--enable-webgl-developer-extensions")
+    chrome_options.add_argument("--enable-webgl-draft-extensions")
+    chrome_options.add_argument("--disable-webgl-anti-fingerprinting")
+    chrome_options.add_argument("--allow-webgl-developer-extensions")
+    chrome_options.add_argument("--font-render-hinting=none")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument(f'user-agent={user_agent["ua"]}')
     resolutions = [(1920, 1080), (1366, 768), (1440, 900)]
@@ -154,7 +165,7 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
         stealth(driver,
             languages=["en-US", "en"],
             vendor=user_agent["vendor"],
-            platform="Win64" if "Windows" in user_agent["ua"] else "MacIntel" if "Macintosh" in user_agent["ua"] else "Linux x86_64",
+            platform="Win64" if "windows" in user_agent["ua"].lower() else "MacIntel" if "mac" in user_agent["ua"].lower() else "Linux x86_64",
             webgl_vendor="Intel Inc.",
             renderer="Intel Iris OpenGL Engine",
             fix_hairline=True,
@@ -163,7 +174,14 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
     security_prefs = {
         "profile.default_content_setting_values.media_stream": 2,
         "profile.default_content_setting_values.geolocation": 2,
+        "profile.default_content_setting_values.notifications": 2,
+        "profile.default_content_setting_values.camera": 2,
+        "profile.default_content_setting_values.microphone": 2,
         "safebrowsing.enabled": True,
+        "webkit.webprefs.accelerated_2d_canvas_enabled": True,
+        "webkit.webprefs.force_dark_mode_enabled": False,
+        "webkit.webprefs.accelerated_2d_canvas_enabled": True,
+        "webkit.webprefs.accelerated_2d_canvas_msaa_sample_count": 4,
     }
     chrome_options.add_experimental_option("prefs", security_prefs)
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -184,6 +202,7 @@ class Browser:
         except Exception as e:
             raise Exception(f"Failed to initialize browser: {str(e)}")
         self.setup_tabs()
+        self.patch_browser_fingerprint()
         if anticaptcha_manual_install:
             self.load_anticatpcha_manually()
     
@@ -200,6 +219,30 @@ class Browser:
         pretty_print("You might want to install the AntiCaptcha extension for captchas.", color="warning")
         self.driver.get(self.anticaptcha)
 
+    def human_move(element):
+        actions = ActionChains(driver)
+        x_offset = random.randint(-5,5)
+        for _ in range(random.randint(2,5)):
+            actions.move_by_offset(x_offset, random.randint(-2,2))
+            actions.pause(random.uniform(0.1,0.3))
+        actions.click().perform()
+
+    def human_scroll(self):
+        scroll_pixels = random.randint(200, 800)
+        scroll_time = random.uniform(0.5, 2.0)
+        self.driver.execute_script(f"""
+        window.scrollBy({{
+            top: {scroll_pixels},
+            behavior: 'smooth',
+            duration: {scroll_time}
+        }});
+        """)
+        time.sleep(scroll_time + random.uniform(0.2, 0.5))
+
+    def patch_browser_fingerprint(self) -> None:
+        script = self.load_js("spoofing.js")
+        self.driver.execute_script(script)
+    
     def go_to(self, url:str) -> bool:
         """Navigate to a specified URL."""
         time.sleep(random.uniform(0.4, 2.5)) # more human behavior
@@ -216,7 +259,8 @@ class Browser:
                 )
             except TimeoutException:
                 self.logger.warning("Timeout while waiting for page to bypass 'checking your browser'")
-            self.apply_web_safety()
+            #self.apply_web_safety()
+            self.human_scroll()
             self.logger.log(f"Navigated to: {url}")
             return True
         except TimeoutException as e:
@@ -644,12 +688,17 @@ class Browser:
         input_elements = self.driver.execute_script(script)
 
 if __name__ == "__main__":
-    driver = create_driver(headless=False, stealth_mode=True)
-    browser = Browser(driver, anticaptcha_manual_install=True)
+    driver = create_driver(headless=False, stealth_mode=False)
+    browser = Browser(driver, anticaptcha_manual_install=False)
     
     input("press enter to continue")
     print("AntiCaptcha / Form Test")
-    #browser.go_to("https://www.browserscan.net/bot-detection")
+    browser.go_to("https://browserleaks.com/webgl")
+    time.sleep(20)
+    browser.go_to("https://bot.sannysoft.com/")
+    time.sleep(5)
+    browser.go_to("https://antoinevastel.com/bots/")
+    time.sleep(5)
     #txt = browser.get_text()
     #browser.go_to("https://www.google.com/recaptcha/api2/demo")
     browser.go_to("https://home.openweathermap.org/users/sign_up")
@@ -658,3 +707,13 @@ if __name__ == "__main__":
     #inputs_fill = ['[q](checked)', '[q](checked)', '[user[username]](mlg)', '[user[email]](mlg.fcu@gmail.com)', '[user[password]](placeholder_P@ssw0rd123)', '[user[password_confirmation]](placeholder_P@ssw0rd123)']
     #browser.fill_form(inputs_fill)
     input("press enter to exit")
+
+# Test sites for browser fingerprinting and captcha
+"""
+https://nowsecure.nl/ (thanks to user Michael Mintz)
+https://bot.sannysoft.com
+https://browserleaks.com/
+https://bot.incolumitas.com/
+https://fingerprintjs.github.io/fingerprintjs/
+https://antoinevastel.com/bots/
+"""
