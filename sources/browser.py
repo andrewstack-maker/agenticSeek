@@ -127,21 +127,22 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
     user_data_dir = tempfile.mkdtemp()
     user_agent = get_random_user_agent()
     chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
+    chrome_options.add_argument("accept=text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+    chrome_options.add_argument("--accept-lang=fr-FR,fr;q=0.9")
+    chrome_options.add_argument("--timezone=Europe/Paris")
     chrome_options.add_argument("--use-gl=egl")
-    chrome_options.add_argument("--enable-webgl")
+    chrome_options.add_argument("--enable-webgl") # no webgl is red flag for some anti-bot
     chrome_options.add_argument("--enable-3d-apis")
+    chrome_options.add_argument("--use-gpu-driver-bug-workaround")
+    chrome_options.add_argument("--allow-webgl-developer-extensions")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--mute-audio")
     chrome_options.add_argument("--disable-notifications")
     chrome_options.add_argument("--autoplay-policy=user-gesture-required")
+    chrome_options.add_argument("--disable-features=SitePerProcess,IsolateOrigins")
+    chrome_options.add_argument("--enable-features=NetworkService,NetworkServiceInProcess")
     # Essential WebGL arguments
-    chrome_options.add_argument("--ignore-gpu-blocklist")
-    chrome_options.add_argument("--enable-webgl")
-    chrome_options.add_argument("--enable-webgl-developer-extensions")
-    chrome_options.add_argument("--enable-webgl-draft-extensions")
-    chrome_options.add_argument("--disable-webgl-anti-fingerprinting")
-    chrome_options.add_argument("--allow-webgl-developer-extensions")
     chrome_options.add_argument("--font-render-hinting=none")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument(f'user-agent={user_agent["ua"]}')
@@ -237,16 +238,13 @@ class Browser:
         actions.click().perform()
 
     def human_scroll(self):
-        scroll_pixels = random.randint(200, 800)
-        scroll_time = random.uniform(0.5, 2.0)
-        self.driver.execute_script(f"""
-        window.scrollBy({{
-            top: {scroll_pixels},
-            behavior: 'smooth',
-            duration: {scroll_time}
-        }});
-        """)
-        time.sleep(scroll_time + random.uniform(0.2, 0.5))
+        for _ in range(random.randint(1, 3)):
+            scroll_pixels = random.randint(150, 1200)
+            self.driver.execute_script(f"window.scrollBy(0, {scroll_pixels});")
+            time.sleep(random.uniform(0.5, 2.0))
+            if random.random() < 0.4:
+                self.driver.execute_script(f"window.scrollBy(0, -{random.randint(50, 300)});")
+                time.sleep(random.uniform(0.3, 1.0))
 
     def patch_browser_fingerprint(self) -> None:
         script = self.load_js("spoofing.js")
@@ -258,6 +256,7 @@ class Browser:
         try:
             initial_handles = self.driver.window_handles
             self.driver.get(url)
+            time.sleep(random.uniform(0.01, 0.3))
             try:
                 wait = WebDriverWait(self.driver, timeout=10)
                 wait.until(
@@ -269,6 +268,7 @@ class Browser:
             except TimeoutException:
                 self.logger.warning("Timeout while waiting for page to bypass 'checking your browser'")
             #self.apply_web_safety()
+            time.sleep(random.uniform(0.01, 0.2))
             self.human_scroll()
             self.logger.log(f"Navigated to: {url}")
             return True
@@ -702,8 +702,6 @@ if __name__ == "__main__":
     
     input("press enter to continue")
     print("AntiCaptcha / Form Test")
-    browser.go_to("https://bot.sannysoft.com/")
-    time.sleep(50)
     browser.go_to("https://antoinevastel.com/bots/")
     time.sleep(5)
     #txt = browser.get_text()
