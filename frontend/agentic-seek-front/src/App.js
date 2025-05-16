@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
 import axios from 'axios';
 import './App.css';
 import { colors } from './colors';
@@ -193,7 +194,7 @@ function App() {
                                         {msg.type === 'agent' && (
                                             <span className="agent-name">{msg.agentName}</span>
                                         )}
-                                        <p>{msg.content}</p>
+                                        <ReactMarkdown>{msg.content}</ReactMarkdown>
                                     </div>
                                 ))
                             )}
