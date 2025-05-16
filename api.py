@@ -34,7 +34,7 @@ config.read('config.ini')
 
 api.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -212,7 +212,6 @@ async def process_query(request: QueryRequest):
         query_resp.success = str(interaction.last_success)
         query_resp.blocks = blocks_json
         
-        # Store the raw dictionary representation
         query_resp_dict = {
             "done": query_resp.done,
             "answer": query_resp.answer,
