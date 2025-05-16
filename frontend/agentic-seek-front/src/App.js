@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
 import axios from 'axios';
 import './App.css';
 import { colors } from './colors';
@@ -193,7 +194,7 @@ function App() {
                                         {msg.type === 'agent' && (
                                             <span className="agent-name">{msg.agentName}</span>
                                         )}
-                                        <p>{msg.content}</p>
+                                        <ReactMarkdown>{msg.content}</ReactMarkdown>
                                     </div>
                                 ))
                             )}
@@ -241,9 +242,11 @@ function App() {
                                                 <p className="block-tool">Tool: {block.tool_type}</p>
                                                 <pre>{block.block}</pre>
                                                 <p className="block-feedback">Feedback: {block.feedback}</p>
-                                                <p className="block-success">
-                                                    Success: {block.success ? 'Yes' : 'No'}
-                                                </p>
+                                                {block.success ? (
+                                                    <p className="block-success">Success</p>
+                                                ) : (
+                                                    <p className="block-failure">Failure</p>
+                                                )}
                                             </div>
                                         ))
                                     ) : (

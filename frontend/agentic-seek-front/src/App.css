@@ -366,6 +366,10 @@ body {
   color: #28a745; /* success */
 }
 
+.block-failure {
+  color: #d21b0b; /* success */
+}
+
 .block pre {
   background-color: #1a202c; /* Darker than darkCard */
   padding: 12px;

@@ -34,7 +34,7 @@ config.read('config.ini')
 
 api.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,7 +58,7 @@ def initialize_system():
     logger.info(f"Provider initialized: {provider.provider_name} ({provider.model})")
 
     browser = Browser(
-        create_driver(headless=config.getboolean('BROWSER', 'headless_browser'), stealth_mode=stealth_mode),
+        create_driver(headless=config.getboolean('BROWSER', 'headless_browser'), stealth_mode=stealth_mode, lang=languages[0]),
         anticaptcha_manual_install=stealth_mode
     )
     logger.info("Browser initialized")
@@ -212,7 +212,6 @@ async def process_query(request: QueryRequest):
         query_resp.success = str(interaction.last_success)
         query_resp.blocks = blocks_json
         
-        # Store the raw dictionary representation
         query_resp_dict = {
             "done": query_resp.done,
             "answer": query_resp.answer,

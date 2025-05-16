@@ -21,7 +21,5 @@ window.fetch = function() {
     console.log('Blocked fetch request');
     return Promise.reject('Blocked');
 };
-// Block annoying dialogs
-window.alert = function() {};
-window.confirm = function() { return false; };
+
 window.prompt = function() { return null; };
