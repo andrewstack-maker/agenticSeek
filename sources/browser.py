@@ -110,7 +110,7 @@ def create_undetected_chromedriver(service, chrome_options) -> webdriver.Chrome:
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})") 
     return driver
 
-def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx") -> webdriver.Chrome:
+def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx", lang="en") -> webdriver.Chrome:
     """Create a Chrome WebDriver with specified options."""
     chrome_options = Options()
     chrome_path = get_chrome_path()
@@ -121,20 +121,14 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
     
     if headless:
         chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--use-gl=swiftshader")
-        #chrome_options.add_argument("--disable-gpu")
-        #chrome_options.add_argument("--disable-webgl") # prevent some website from working, commented for now
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--disable-webgl") # prevent some website from working, commented for now
     user_data_dir = tempfile.mkdtemp()
     user_agent = get_random_user_agent()
+    width, height = (1920, 1080)
     chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
-    chrome_options.add_argument("accept=text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-    chrome_options.add_argument("--accept-lang=fr-FR,fr;q=0.9")
+    chrome_options.add_argument(f"--accept-lang={lang}-{lang.upper()},{lang};q=0.9")
     chrome_options.add_argument("--timezone=Europe/Paris")
-    chrome_options.add_argument("--use-gl=egl")
-    chrome_options.add_argument("--enable-webgl") # no webgl is red flag for some anti-bot
-    chrome_options.add_argument("--enable-3d-apis")
-    chrome_options.add_argument("--use-gpu-driver-bug-workaround")
-    chrome_options.add_argument("--allow-webgl-developer-extensions")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--mute-audio")
@@ -142,12 +136,8 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
     chrome_options.add_argument("--autoplay-policy=user-gesture-required")
     chrome_options.add_argument("--disable-features=SitePerProcess,IsolateOrigins")
     chrome_options.add_argument("--enable-features=NetworkService,NetworkServiceInProcess")
-    # Essential WebGL arguments
-    chrome_options.add_argument("--font-render-hinting=none")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument(f'user-agent={user_agent["ua"]}')
-    resolutions = [(1920, 1080), (1366, 768), (1440, 900)]
-    width, height = random.choice(resolutions)
     chrome_options.add_argument(f'--window-size={width},{height}')
     if not stealth_mode:
         # crx file can't be installed in stealth mode
@@ -702,7 +692,7 @@ if __name__ == "__main__":
     
     input("press enter to continue")
     print("AntiCaptcha / Form Test")
-    browser.go_to("https://antoinevastel.com/bots/")
+    browser.go_to("https://bot.sannysoft.com")
     time.sleep(5)
     #txt = browser.get_text()
     #browser.go_to("https://www.google.com/recaptcha/api2/demo")
@@ -715,7 +705,7 @@ if __name__ == "__main__":
 
 # Test sites for browser fingerprinting and captcha
 """
-https://nowsecure.nl/ (thanks to user Michael Mintz)
+https://nowsecure.nl/
 https://bot.sannysoft.com
 https://browserleaks.com/
 https://bot.incolumitas.com/
