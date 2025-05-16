@@ -45,7 +45,7 @@ def get_chrome_path() -> str:
         paths = ["/usr/bin/google-chrome", "/usr/bin/chromium-browser", "/usr/bin/chromium", "/opt/chrome/chrome", "/usr/local/bin/chrome"]
 
     for path in paths:
-        if os.path.exists(path) and os.access(path, os.X_OK):  # Check if executable
+        if os.path.exists(path) and os.access(path, os.X_OK):
             return path
     print("Looking for Google Chrome in these locations failed:")
     print('\n'.join(paths))
@@ -140,7 +140,6 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
     chrome_options.add_argument(f'user-agent={user_agent["ua"]}')
     chrome_options.add_argument(f'--window-size={width},{height}')
     if not stealth_mode:
-        # crx file can't be installed in stealth mode
         if not os.path.exists(crx_path):
             pretty_print(f"Anti-captcha CRX not found at {crx_path}.", color="failure")
         else:
@@ -163,7 +162,6 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
         )
         return driver
     security_prefs = {
-        # Set all permissions to prompt (1=allow, 2=block, 0=prompt)
         "profile.default_content_setting_values.geolocation": 0,
         "profile.default_content_setting_values.notifications": 0,
         "profile.default_content_setting_values.camera": 0,
@@ -242,7 +240,7 @@ class Browser:
     
     def go_to(self, url:str) -> bool:
         """Navigate to a specified URL."""
-        time.sleep(random.uniform(0.4, 2.5)) # more human behavior
+        time.sleep(random.uniform(0.4, 2.5))
         try:
             initial_handles = self.driver.window_handles
             self.driver.get(url)
@@ -257,7 +255,7 @@ class Browser:
                 )
             except TimeoutException:
                 self.logger.warning("Timeout while waiting for page to bypass 'checking your browser'")
-            #self.apply_web_safety()
+            self.apply_web_safety()
             time.sleep(random.uniform(0.01, 0.2))
             self.human_scroll()
             self.logger.log(f"Navigated to: {url}")
@@ -665,7 +663,7 @@ class Browser:
         try:
             original_zoom = self.driver.execute_script("return document.body.style.zoom || 1;")
             self.driver.execute_script("document.body.style.zoom='75%'")
-            time.sleep(0.1)  # Allow time for the zoom to take effect
+            time.sleep(0.1)
             path = os.path.join(self.screenshot_folder, filename)
             if not os.path.exists(self.screenshot_folder):
                 os.makedirs(self.screenshot_folder)
@@ -704,11 +702,9 @@ if __name__ == "__main__":
     input("press enter to exit")
 
 # Test sites for browser fingerprinting and captcha
-"""
-https://nowsecure.nl/
-https://bot.sannysoft.com
-https://browserleaks.com/
-https://bot.incolumitas.com/
-https://fingerprintjs.github.io/fingerprintjs/
-https://antoinevastel.com/bots/
-"""
+# https://nowsecure.nl/
+# https://bot.sannysoft.com
+# https://browserleaks.com/
+# https://bot.incolumitas.com/
+# https://fingerprintjs.github.io/fingerprintjs/
+# https://antoinevastel.com/bots/

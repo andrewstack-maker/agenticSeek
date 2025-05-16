@@ -29,7 +29,7 @@ async def main():
                         is_local=config.getboolean('MAIN', 'is_local'))
 
     browser = Browser(
-        create_driver(headless=config.getboolean('BROWSER', 'headless_browser'), stealth_mode=stealth_mode),
+        create_driver(headless=config.getboolean('BROWSER', 'headless_browser'), stealth_mode=stealth_mode, lang=languages[0]),
         anticaptcha_manual_install=stealth_mode
     )
 
