@@ -242,9 +242,11 @@ function App() {
                                                 <p className="block-tool">Tool: {block.tool_type}</p>
                                                 <pre>{block.block}</pre>
                                                 <p className="block-feedback">Feedback: {block.feedback}</p>
-                                                <p className="block-success">
-                                                    Success: {block.success ? 'Yes' : 'No'}
-                                                </p>
+                                                {block.success ? (
+                                                    <p className="block-success">Success</p>
+                                                ) : (
+                                                    <p className="block-failure">Failure</p>
+                                                )}
                                             </div>
                                         ))
                                     ) : (
