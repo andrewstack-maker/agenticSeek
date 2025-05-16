@@ -122,7 +122,7 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
     if headless:
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--disable-webgl") # prevent some website from working, commented for now
+        chrome_options.add_argument("--disable-webgl")
     user_data_dir = tempfile.mkdtemp()
     user_agent = get_random_user_agent()
     width, height = (1920, 1080)
