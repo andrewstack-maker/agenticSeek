@@ -22,6 +22,7 @@ class Interaction:
         self.current_agent = None
         self.last_query = None
         self.last_answer = None
+        self.last_reasoning = None
         self.agents = agents
         self.tts_enabled = tts_enabled
         self.stt_enabled = stt_enabled
@@ -158,7 +159,7 @@ class Interaction:
         tmp = self.last_answer
         self.current_agent = agent
         self.is_generating = True
-        self.last_answer, _ = await agent.process(self.last_query, self.speech)
+        self.last_answer, self.last_reasoning = await agent.process(self.last_query, self.speech)
         self.is_generating = False
         if push_last_agent_memory:
             self.current_agent.memory.push('user', self.last_query)

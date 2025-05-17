@@ -94,6 +94,7 @@ function App() {
                     {
                         type: 'agent',
                         content: data.answer,
+                        reasoning: data.reasoning,
                         agentName: data.agent_name,
                         status: data.status,
                         uid: data.uid,
@@ -231,6 +232,12 @@ function App() {
                             >
                                 Browser View
                             </button>
+                            <button
+                                className={currentView === 'thinking' ? 'active' : ''}
+                                onClick={() => setCurrentView('thinking')}
+                            >
+                                Reasoning view
+                            </button>
                         </div>
                         <div className="content">
                             {error && <p className="error">{error}</p>}
@@ -255,6 +262,33 @@ function App() {
                                             <pre>No file opened</pre>
                                         </div>
                                     )}
+                                </div>
+                            ) : currentView == 'thinking' ? (
+                                <div className="thinking">
+                                    <div className="messages">
+                                        {messages.length === 0 ? (
+                                            <p className="placeholder">No thinking yet.</p>
+                                        ) : (
+                                            messages.map((msg, index) => (
+                                                <div
+                                                    key={index}
+                                                    className={`message ${
+                                                        msg.type === 'user'
+                                                            ? 'user-message'
+                                                            : msg.type === 'agent'
+                                                            ? 'agent-message'
+                                                            : 'error-message'
+                                                    }`}
+                                                >
+                                                    {msg.type === 'agent' && (
+                                                        <span className="agent-name">{msg.agentName}</span>
+                                                    )}
+                                                    <ReactMarkdown>{msg.reasoning}</ReactMarkdown>
+                                                </div>
+                                            ))
+                                        )}
+                                <div ref={messagesEndRef} />
+                        </div>
                                 </div>
                             ) : (
                                 <div className="screenshot">

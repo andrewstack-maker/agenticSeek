@@ -44,6 +44,7 @@ class Agent():
         self.blocks_result = []
         self.success = True
         self.last_answer = ""
+        self.last_reasoning = ""
         self.status_message = "Haven't started yet"
         self.verbose = verbose
         self.executor = ThreadPoolExecutor(max_workers=1)
@@ -63,6 +64,10 @@ class Agent():
     @property
     def get_last_answer(self) -> str:
         return self.last_answer
+    
+    @property
+    def get_last_reasoning(self) -> str:
+        return self.last_reasoning
     
     @property
     def get_blocks(self) -> list:

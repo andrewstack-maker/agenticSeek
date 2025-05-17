@@ -19,6 +19,7 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     done: str
     answer: str
+    reasoning: str
     agent_name: str
     success: str
     blocks: dict
@@ -32,6 +33,7 @@ class QueryResponse(BaseModel):
         return {
             "done": self.done,
             "answer": self.answer,
+            "reasoning": self.reasoning,
             "agent_name": self.agent_name,
             "success": self.success,
             "blocks": self.blocks,
