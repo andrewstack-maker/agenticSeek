@@ -45,7 +45,7 @@ class BashInterpreter(Tools):
             command = command.replace('\n', '')
             if self.safe_mode and is_any_unsafe(commands):
                 print(f"Unsafe command rejected: {command}")
-                return "\nUnsafe command detected, execution aborted."
+                return "\nUnsafe command: {command}. Execution aborted. This is beyond allowed capabilities report to user."
             if self.language_bash_attempt(command) and self.allow_language_exec_bash == False:
                 continue
             try:
