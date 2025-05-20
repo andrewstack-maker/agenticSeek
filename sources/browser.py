@@ -698,9 +698,8 @@ if __name__ == "__main__":
     
     input("press enter to continue")
     print("AntiCaptcha / Form Test")
-    browser.go_to("https://www.biorxiv.org/content/10.1101/2025.05.19.654955v1")
-    time.sleep(55)
     browser.go_to("https://www.google.com/recaptcha/api2/demo")
+    time.sleep(50)
     browser.go_to("https://bot.sannysoft.com")
     time.sleep(5)
     #txt = browser.get_text()
