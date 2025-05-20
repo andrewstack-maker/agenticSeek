@@ -83,11 +83,15 @@ class PlannerAgent(Agent):
                         self.logger.warning(f"Agent {task['agent']} does not exist.")
                         pretty_print(f"Agent {task['agent']} does not exist.", color="warning")
                         return []
-                    agent = {
-                        'agent': task['agent'],
-                        'id': task['id'],
-                        'task': task['task']
-                    }
+                    try:
+                        agent = {
+                            'agent': task['agent'],
+                            'id': task['id'],
+                            'task': task['task']
+                        }
+                    except:
+                        self.logger.warning("Missing field in json plan.")
+                        return []
                     self.logger.info(f"Created agent {task['agent']} with task: {task['task']}")
                     if 'need' in task:
                         self.logger.info(f"Agent {task['agent']} was given info:\n {task['need']}")
@@ -156,6 +160,7 @@ class PlannerAgent(Agent):
                 return []
             agents_tasks = self.parse_agent_tasks(answer)
             if agents_tasks == []:
+                self.show_plan(agents_tasks, answer)
                 prompt = f"Failed to parse the tasks. Please write down your task followed by a json plan within ```json. Do not ask for clarification.\n"
                 pretty_print("Failed to make plan. Retrying...", color="warning")
                 continue
@@ -178,7 +183,11 @@ class PlannerAgent(Agent):
         last_agent_work = agents_work_result[id]
         tool_success_str = "success" if success else "failure"
         pretty_print(f"Agent {id} work {tool_success_str}.", color="success" if success else "failure")
-        if int(id) == len(agents_tasks):
+        try:
+            id_int = int(id)
+        except Exception as e:
+            return agents_tasks
+        if id_int == len(agents_tasks):
             next_task = "No task follow, this was the last step. If it failed add a task to recover."
         else:
             next_task = f"Next task is: {agents_tasks[int(id)][0]}."
@@ -258,7 +267,7 @@ class PlannerAgent(Agent):
             return "Failed to parse the tasks.", ""
         i = 0
         steps = len(agents_tasks)
-        while i < steps:
+        while i < steps and not self.stop:
             task_name, task = agents_tasks[i][0], agents_tasks[i][1]
             self.status_message = "Starting agents..."
             pretty_print(f"I will {task_name}.", color="info")
@@ -272,6 +281,8 @@ class PlannerAgent(Agent):
                 answer, success = await self.start_agent_process(task, required_infos)
             except Exception as e:
                 raise e
+            if self.stop:
+                pretty_print(f"Requested stop.", color="failure")
             agents_work_result[task['id']] = answer
             agents_tasks = await self.update_plan(goal, agents_tasks, agents_work_result, task['id'], success)
             steps = len(agents_tasks)

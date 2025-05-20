@@ -46,6 +46,7 @@ class Agent():
         self.last_answer = ""
         self.last_reasoning = ""
         self.status_message = "Haven't started yet"
+        self.stop = False
         self.verbose = verbose
         self.executor = ThreadPoolExecutor(max_workers=1)
     
@@ -118,6 +119,13 @@ class Agent():
             raise PermissionError(f"Permission denied to read prompt file at path: {file_path}")
         except Exception as e:
             raise e
+    
+    def request_stop(self) -> None:
+        """
+        Request the agent to stop.
+        """
+        self.stop = True
+        self.status_message = "Stopped"
     
     @abstractmethod
     def process(self, prompt, speech_module) -> str:

@@ -122,6 +122,19 @@ function App() {
         }));
     };
 
+    const handleStop = async (e) => {
+        e.preventDefault();
+        checkHealth();
+        setIsLoading(false);
+        setError(null);
+        try {
+            const res = await axios.get('http://127.0.0.1:8000/stop');
+            setStatus("Requesting stop...");
+        } catch (err) {
+            console.error('Error stopping the agent:', err);
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         checkHealth();
@@ -213,6 +226,9 @@ function App() {
                             />
                             <button type="submit" disabled={isLoading}>
                                 Send
+                            </button>
+                            <button onClick={handleStop}>
+                                Stop
                             </button>
                         </form>
                     </div>

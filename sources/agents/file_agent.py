@@ -28,10 +28,11 @@ class FileAgent(Agent):
         exec_success = False
         prompt += f"\nYou must work in directory: {self.work_dir}"
         self.memory.push('user', prompt)
-        while exec_success is False:
+        while exec_success is False and not self.stop:
             await self.wait_message(speech_module)
             animate_thinking("Thinking...", color="status")
             answer, reasoning = await self.llm_request()
+            self.last_reasoning = reasoning
             exec_success, _ = self.execute_modules(answer)
             answer = self.remove_blocks(answer)
             self.last_answer = answer

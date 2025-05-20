@@ -206,7 +206,11 @@ class Browser:
     
     def setup_tabs(self):
         self.tabs = self.driver.window_handles
-        self.driver.get("https://www.google.com")
+        try:
+            self.driver.get("https://www.google.com")
+        except Exception as e:
+            self.logger.log(f"Failed to setup initial tab:" + str(e))
+            pass
         self.screenshot()
     
     def switch_control_tab(self):
@@ -215,7 +219,11 @@ class Browser:
             
     def load_anticatpcha_manually(self):
         pretty_print("You might want to install the AntiCaptcha extension for captchas.", color="warning")
-        self.driver.get(self.anticaptcha)
+        try:
+            self.driver.get(self.anticaptcha)
+        except Exception as e:
+            self.logger.log(f"Failed to setup initial tab:" + str(e))
+            pass
 
     def human_move(element):
         actions = ActionChains(driver)
@@ -685,15 +693,17 @@ class Browser:
         input_elements = self.driver.execute_script(script)
 
 if __name__ == "__main__":
-    driver = create_driver(headless=False, stealth_mode=True)
-    browser = Browser(driver, anticaptcha_manual_install=False)
+    driver = create_driver(headless=False, stealth_mode=True, crx_path="../crx/nopecha.crx")
+    browser = Browser(driver, anticaptcha_manual_install=True)
     
     input("press enter to continue")
     print("AntiCaptcha / Form Test")
+    browser.go_to("https://www.biorxiv.org/content/10.1101/2025.05.19.654955v1")
+    time.sleep(55)
+    browser.go_to("https://www.google.com/recaptcha/api2/demo")
     browser.go_to("https://bot.sannysoft.com")
     time.sleep(5)
     #txt = browser.get_text()
-    #browser.go_to("https://www.google.com/recaptcha/api2/demo")
     browser.go_to("https://home.openweathermap.org/users/sign_up")
     inputs_visible = browser.get_form_inputs()
     print("inputs:", inputs_visible)

@@ -128,6 +128,12 @@ async def is_active():
     logger.info("Is active endpoint called")
     return {"is_active": interaction.is_active}
 
+@api.get("/stop")
+async def stop():
+    logger.info("Stop endpoint called")
+    interaction.current_agent.request_stop()
+    return JSONResponse(status_code=200, content={"status": "stopped"})
+
 @api.get("/latest_answer")
 async def get_latest_answer():
     global query_resp_history
