@@ -209,6 +209,7 @@ Example: export `TOGETHER_API_KEY="xxxxx"`
 | huggingface| No    | Hugging-Face API (non-private)                            |
 | togetherAI | No    | Use together AI API (non-private)                         |
 | google | No    | Use google gemini API (non-private)                         |
+| openrouter | No    | Use OpenRouter API (non-private)                         |
 
 *We advice against using gpt-4o or other closedAI models*, performance are poor for web browsing and task planning.
 
@@ -275,7 +276,7 @@ Here are some example usage:
 
 > *Write a Go program to calculate the factorial of a number, save it as factorial.go in your workspace*
 
-> *Search my summer_pictures folder for all JPG files, rename them with today’s date, and save a list of renamed files in photos_list.txt*
+> *Search my summer_pictures folder for all JPG files, rename them with today's date, and save a list of renamed files in photos_list.txt*
 
 > *Search online for popular sci-fi movies from 2024 and pick three to watch tonight. Save the list in movie_night.txt.*
 
@@ -408,7 +409,7 @@ stealth_mode = False
 
 - is_local -> Runs the agent locally (True) or on a remote server (False).
 
-- provider_name -> The provider to use (one of: `ollama`, `server`, `lm-studio`, `deepseek-api`)
+- provider_name -> The provider to use (one of: `ollama`, `server`, `lm-studio`, `deepseek-api`, `openrouter`)
 
 - provider_model -> The model used, e.g., deepseek-r1:32b.
 
@@ -450,6 +451,7 @@ The table below show the available providers:
 | huggingface| No    | Hugging-Face API (non-private)                            |
 | togetherAI | No    | Use together AI API (non-private)                         |
 | google | No    | Use google gemini API (non-private)                         |
+| openrouter | No    | Use OpenRouter API (non-private)                         |
 
 To select a provider change the config.ini:
 
@@ -526,7 +528,7 @@ Maybe you didn't move `.env.example` as `.env` ? You can also export SEARXNG_BAS
 
 **Q: Why Deepseek R1 over other models?**  
 
-Deepseek R1 excels at reasoning and tool use for its size. We think it’s a solid fit for our needs other models work fine, but Deepseek is our primary pick.
+Deepseek R1 excels at reasoning and tool use for its size. We think it's a solid fit for our needs other models work fine, but Deepseek is our primary pick.
 
 **Q: I get an error running `cli.py`. What do I do?**  
 
@@ -538,13 +540,13 @@ Yes with Ollama, lm-studio or server providers, all speech to text, LLM and text
 
 **Q: Why should I use AgenticSeek when I have Manus?**
 
-This started as Side-Project we did out of interest about AI agents. What’s special about it is that we want to use local model and avoid APIs.
+This started as Side-Project we did out of interest about AI agents. What's special about it is that we want to use local model and avoid APIs.
 We draw inspiration from Jarvis and Friday (Iron man movies) to make it "cool" but for functionnality we take more inspiration from Manus, because that's what people want in the first place: a local manus alternative.
 Unlike Manus, AgenticSeek prioritizes independence from external systems, giving you more control, privacy and avoid api cost.
 
 ## Contribute
 
-We’re looking for developers to improve AgenticSeek! Check out open issues or discussion.
+We're looking for developers to improve AgenticSeek! Check out open issues or discussion.
 
 [Contribution guide](./docs/CONTRIBUTING.md)
 

@@ -32,11 +32,12 @@ class Provider:
             "deepseek": self.deepseek_fn,
             "together": self.together_fn,
             "dsk_deepseek": self.dsk_deepseek,
+            "openrouter": self.openrouter_fn,
             "test": self.test_fn
         }
         self.logger = Logger("provider.log")
         self.api_key = None
-        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek", "together", "google"]
+        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek", "together", "google", "openrouter"]
         if self.provider_name not in self.available_providers:
             raise ValueError(f"Unknown provider: {provider_name}")
         if self.provider_name in self.unsafe_providers and self.is_local == False:
@@ -312,6 +313,29 @@ class Provider:
         except Exception as e:
             raise Exception(f"An error occurred: {str(e)}") from e
         return thought
+
+    def openrouter_fn(self, history, verbose=False):
+        """
+        Use OpenRouter API to generate text.
+        """
+        client = OpenAI(api_key=self.api_key, base_url="https://openrouter.ai/api/v1")
+        if self.is_local:
+            # This case should ideally not be reached if unsafe_providers is set correctly
+            # and is_local is False in config for openrouter
+            raise Exception("OpenRouter is not available for local use. Change config.ini")
+        try:
+            response = client.chat.completions.create(
+                model=self.model,
+                messages=history,
+            )
+            if response is None:
+                raise Exception("OpenRouter response is empty.")
+            thought = response.choices[0].message.content
+            if verbose:
+                print(thought)
+            return thought
+        except Exception as e:
+            raise Exception(f"OpenRouter API error: {str(e)}") from e
 
     def dsk_deepseek(self, history, verbose=False):
         """

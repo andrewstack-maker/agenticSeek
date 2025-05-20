@@ -31,7 +31,7 @@ https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 - **Codage semi-autonome**: Peut écrire, déboguer et exécuter du code en Python, C, Golang et d'autres langages à venir. 
 
-- **Routage d'Agent**: Sélectionne automatiquement l’agent approprié pour la tâche. 
+- **Routage d'Agent**: Sélectionne automatiquement l'agent approprié pour la tâche. 
 
 - **Planification**: Pour les taches complexe utilise plusieurs agents.
 
@@ -43,7 +43,7 @@ https://github.com/user-attachments/assets/4bd5faf6-459f-4f94-bd1d-238c4b331469
 
 ## **Installation**
 
-Assurez-vous d’avoir installé le pilote Chrome, Docker et Python 3.10.
+Assurez-vous d'avoir installé le pilote Chrome, Docker et Python 3.10.
 
 Nous vous conseillons fortement d'utiliser exactement Python 3.10 pour l'installation. Des erreurs de dépendances pourraient survenir autrement.
 
@@ -117,7 +117,7 @@ Installer les prérequis : `pip3 install -r requirements.txt`
 
 ## Faire fonctionner sur votre machine 
 
-**Nous recommandons d’utiliser au minimum DeepSeek 14B, les modèles plus petits ont du mal avec l’utilisation des outils et oublient rapidement le contexte.**
+**Nous recommandons d'utiliser au minimum DeepSeek 14B, les modèles plus petits ont du mal avec l'utilisation des outils et oublient rapidement le contexte.**
 
 Lancer votre provider local, par exemple avec ollama:
 ```sh
@@ -198,7 +198,7 @@ Allez sur `http://localhost:3000/` et vous devriez voir l'interface web.
 Veuillez noter que l'interface web ne diffuse pas les messages en continu pour le moment.
 
 
-Voyez la section **Utilisation** si vous ne comprenez pas comment l’utiliser
+Voyez la section **Utilisation** si vous ne comprenez pas comment l'utiliser
 
 Voyez la section **Problèmes** connus si vous rencontrez des problèmes
 
@@ -210,11 +210,11 @@ Voyez la section **Configuration** pour une explication détaillée du fichier d
 
 ## Utilisation
 
-Assurez-vous que les services sont en cours d’exécution avec ./start_services.sh et lancez AgenticSeek avec le CLI ou l'interface Web.
+Assurez-vous que les services sont en cours d'exécution avec ./start_services.sh et lancez AgenticSeek avec le CLI ou l'interface Web.
 
 **CLI:**
 Vous verrez un prompt : ">>> "  
-Cela indique qu’AgenticSeek attend que vous saisissiez des instructions.  
+Cela indique qu'AgenticSeek attend que vous saisissiez des instructions.  
 Vous pouvez également utiliser la reconnaissance vocale en définissant `listen = True` dans la configuration.  
 Pour quitter, dites simplement `goodbye`.  
 
@@ -225,7 +225,7 @@ Allez sur `localhost:3000` où vous verrez une interface web.
 Tapez simplement votre message et patientez.  
 Si vous n'avez pas d'interface sur `localhost:3000`, c'est que vous n'avez pas démarré les services avec `start_services.sh`.
 
-Voici quelques exemples d’utilisation :
+Voici quelques exemples d'utilisation :
 
 ### Programmation
 
@@ -245,11 +245,11 @@ Voici quelques exemples d’utilisation :
 
 ### Fichier
 
-> *Hé, peux-tu trouver où est contrat.pdf ? Je l’ai perdu*
+> *Hé, peux-tu trouver où est contrat.pdf ? Je l'ai perdu*
 
-> *Montre-moi combien d’espace il me reste sur mon disque*
+> *Montre-moi combien d'espace il me reste sur mon disque*
 
-> *Trouve et lis le fichier README.md et suis les instructions d’installation*
+> *Trouve et lis le fichier README.md et suis les instructions d'installation*
 
 ### Conversation
 
@@ -263,7 +263,7 @@ Après avoir saisi votre requête, AgenticSeek attribuera le meilleur agent pour
 
 Le système de routage des agents peut parfois ne pas toujours attribuer le bon agent en fonction de votre requête.
 
-Par conséquent, vous devez être assez explicite sur ce que vous voulez et sur la manière dont l’IA doit procéder. Par exemple, si vous voulez qu’elle effectue une recherche sur le web, ne dites pas :
+Par conséquent, vous devez être assez explicite sur ce que vous voulez et sur la manière dont l'IA doit procéder. Par exemple, si vous voulez qu'elle effectue une recherche sur le web, ne dites pas :
 
 Connait-tu de bons pays pour voyager seul ?
 
@@ -275,17 +275,17 @@ Fait une recherche sur le web, quels sont les meilleurs pays pour voyager seul?
 
 ## **Exécuter le LLM sur votre propre serveur**  
 
-Si vous disposez d’un ordinateur puissant ou d’un serveur que vous voulez utiliser, mais que vous souhaitez y accéder depuis votre ordinateur portable, vous avez la possibilité d’exécuter le LLM sur un serveur distant.
+Si vous disposez d'un ordinateur puissant ou d'un serveur que vous voulez utiliser, mais que vous souhaitez y accéder depuis votre ordinateur portable, vous avez la possibilité d'exécuter le LLM sur un serveur distant.
 
 ### 1️⃣  **Configurer et démarrer les scripts du serveur** 
 
-Sur votre "serveur" qui exécutera le modèle IA, obtenez l’adresse IP
+Sur votre "serveur" qui exécutera le modèle IA, obtenez l'adresse IP
 
 ```sh
 ip a | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | cut -d/ -f1
 ```
 
-Remarque : Pour Windows ou macOS, utilisez respectivement ipconfig ou ifconfig pour trouver l’adresse IP.
+Remarque : Pour Windows ou macOS, utilisez respectivement ipconfig ou ifconfig pour trouver l'adresse IP.
 
 Clonez le dépôt et entrez dans le dossier server/.
 
@@ -315,7 +315,7 @@ Maintenant, sur votre ordinateur personnel :
 
 Modifiez le fichier config.ini pour définir provider_name sur server et provider_model sur deepseek-r1:14b.
 
-Définissez provider_server_address sur l’adresse IP de la machine qui exécutera le modèle.
+Définissez provider_server_address sur l'adresse IP de la machine qui exécutera le modèle.
 
 ```sh
 [MAIN]
@@ -329,7 +329,7 @@ Ensuite, exécutez avec le CLI ou l'interface graphique comme expliqué dans la 
 
 ## **Exécuter avec une API externe**  
 
-AVERTISSEMENT : Assurez-vous qu’il n’y a pas d’espace en fin de ligne dans la configuration.
+AVERTISSEMENT : Assurez-vous qu'il n'y a pas d'espace en fin de ligne dans la configuration.
 
 ```sh
 [MAIN]
@@ -347,6 +347,7 @@ provider_server_address = 127.0.0.1:5000 # n'importe pas
 | huggingface  | Non     | API Hugging-Face (non privé)                              |
 | togetherAI   | Non     | Utilise l'API Together AI (non privé)                     |
 | google       | Non     | Utilise l'API Google Gemini (non privé)                  |
+| openrouter   | Non     | Utilise l'API OpenRouter (non privé)                     |
 
 Ensuite, exécutez avec le CLI ou l'interface graphique comme expliqué dans la section pour les fournisseurs locaux.
 
@@ -374,15 +375,15 @@ stealth_mode = False
 
 **Explication du fichier config.ini**:
 
-`is_local` -> Exécute l’agent localement (True) ou sur un serveur distant (False).
+`is_local` -> Exécute l'agent localement (True) ou sur un serveur distant (False).
 
 `provider_name` -> Le fournisseur à utiliser (parmi : ollama, server, lm-studio, deepseek-api).
 
 `provider_model` -> Le modèle utilisé, par exemple, deepseek-r1:1.5b.
 
-`provider_server_address` -> Adresse du serveur, par exemple, 127.0.0.1:11434 pour local. Définissez n’importe quoi pour une API non locale.
+`provider_server_address` -> Adresse du serveur, par exemple, 127.0.0.1:11434 pour local. Définissez n'importe quoi pour une API non locale.
 
-`agent_name` -> Nom de l’agent, par exemple, Friday. Utilisé comme mot déclencheur pour la reconnaissance vocale.
+`agent_name` -> Nom de l'agent, par exemple, Friday. Utilisé comme mot déclencheur pour la reconnaissance vocale.
 
 `recover_last_session` -> Reprend la dernière session (True) ou non (False).
 
@@ -392,13 +393,13 @@ stealth_mode = False
 
 `listen` -> Écoute les entrées vocales (True) ou non (False).
 
-`work_dir` -> Dossier auquel l’IA aura accès, par exemple : /Users/user/Documents/.
+`work_dir` -> Dossier auquel l'IA aura accès, par exemple : /Users/user/Documents/.
 
 `jarvis_personality` -> Utilise une personnalité inspiré de Jarvis (True) ou non (False). Cela utilise simplement une prompt alternative. Marche moins bien en français.
 
 `headless_browser` -> Exécute le navigateur sans fenêtre visible (True) ou non (False).
 
-`stealth_mode` -> Rend la détection des bots plus difficile. Le seul inconvénient est que vous devez installer manuellement l’extension anticaptcha.
+`stealth_mode` -> Rend la détection des bots plus difficile. Le seul inconvénient est que vous devez installer manuellement l'extension anticaptcha.
 
 `languages` -> La liste de languages supportés (nécessaire pour le routage d'agents). Plus la liste est longue. Plus un nombre important de modèles sera téléchargés.
 
@@ -415,6 +416,7 @@ Le tableau ci-dessous montre les LLM providers disponibles :
 | deepseek-api  | No     | Utilise l'API Deepseek (pas privé) |
 | huggingface| No    | Utilise Hugging-Face (pas privé) |
 | together| No    | Utilise l'api Together AI |
+| openrouter   | Non     | Utilise l'API OpenRouter (non privé)                     |
 
 Pour sélectionner un provider LLM, modifiez le config.ini :
 
@@ -429,9 +431,9 @@ provider_server_address = 127.0.0.1:5000
 
 `provider_name` : Sélectionnez le fournisseur à utiliser par son nom, voir la liste des fournisseurs ci-dessus.
 
-`provider_model` : Définissez le modèle à utiliser par l’agent.
+`provider_model` : Définissez le modèle à utiliser par l'agent.
 
-`provider_server_address` : peut être défini sur n’importe quoi si vous n’utilisez pas le fournisseur server.
+`provider_server_address` : peut être défini sur n'importe quoi si vous n'utilisez pas le fournisseur server.
 
 # Problèmes connus 
 
@@ -442,7 +444,7 @@ Erreur #1:**incompatibilité**
 `Exception: Failed to initialize browser: Message: session not created: This version of ChromeDriver only supports Chrome version 113
 Current browser version is 134.0.6998.89 with binary path`
 
-Cela se produit s’il y a une incompatibilité entre votre navigateur et la version de chromedriver.
+Cela se produit s'il y a une incompatibilité entre votre navigateur et la version de chromedriver.
 
 Vous devez naviguer pour télécharger la dernière version :
 
@@ -452,7 +454,7 @@ Si vous utilisez Chrome version 115 ou plus récent, allez sur :
 
 https://googlechromelabs.github.io/chrome-for-testing/
 
-Et téléchargez la version de chromedriver correspondant à votre système d’exploitation.
+Et téléchargez la version de chromedriver correspondant à votre système d'exploitation.
 
 ![alt text](./media/chromedriver_readme.png)
 
@@ -470,11 +472,11 @@ Si cette section est incomplète, merci de faire une nouvelle issue sur github.
 
 **Q: Pourquoi deepseek et pas un autre modèle**  
 
-DeepSeek R1 excelle dans le raisonnement et l’utilisation d’outils pour sa taille. Nous pensons que c’est un choix solide pour nos besoins, bien que d’autres modèles fonctionnent également (bien que moins bien pour un nombre équivalent de paramètres).
+DeepSeek R1 excelle dans le raisonnement et l'utilisation d'outils pour sa taille. Nous pensons que c'est un choix solide pour nos besoins, bien que d'autres modèles fonctionnent également (bien que moins bien pour un nombre équivalent de paramètres).
 
 **Q: J'ai une erreur quand je lance le programme, je fait quoi?**  
 
-Assurez-vous qu’Ollama est en cours d’exécution (ollama serve), que votre config.ini correspond à votre fournisseur, et que les dépendances sont installées. Si cela ne fonctionne pas, n’hésitez pas à signaler un problème.
+Assurez-vous qu'Ollama est en cours d'exécution (ollama serve), que votre config.ini correspond à votre fournisseur, et que les dépendances sont installées. Si cela ne fonctionne pas, n'hésitez pas à signaler un problème.
 
 **Q: C'est vraiment 100% local?**  
 
@@ -482,7 +484,7 @@ Oui, avec les fournisseurs Ollama, lm-studio ou Server, toute la reconnaissance 
 
 **Q: En quoi c'est supérieur à Manus**
 
-Il ne l'est certainement pas, mais nous privilégions l’exécution locale et la confidentialité par rapport à une approche basée sur le cloud. C’est une alternative plus accessible et surtout moins cher !
+Il ne l'est certainement pas, mais nous privilégions l'exécution locale et la confidentialité par rapport à une approche basée sur le cloud. C'est une alternative plus accessible et surtout moins cher !
 
 ## Contribution
 

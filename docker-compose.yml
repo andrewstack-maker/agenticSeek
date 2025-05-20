@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   redis:
     container_name: redis
@@ -28,8 +26,8 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
-    volumes:
-      - ./searxng:/etc/searxng:rw
+    # volumes:
+      # - ./searxng:/etc/searxng:rw
     environment:
       - SEARXNG_BASE_URL=http://localhost:8080/
       - SEARXNG_SECRET_KEY=$(openssl rand -hex 32)
