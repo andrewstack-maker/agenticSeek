@@ -94,6 +94,7 @@ function App() {
                     {
                         type: 'agent',
                         content: data.answer,
+                        reasoning: data.reasoning,
                         agentName: data.agent_name,
                         status: data.status,
                         uid: data.uid,
@@ -120,6 +121,19 @@ function App() {
             uid: data.uid,
         }));
     };
+
+    const handleStop = async (e) => {
+        e.preventDefault();
+        checkHealth();
+        setIsLoading(false);
+        setError(null);
+        try {
+            const res = await axios.get('http://127.0.0.1:8000/stop');
+            setStatus("Requesting stop...");
+        } catch (err) {
+            console.error('Error stopping the agent:', err);
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -213,6 +227,9 @@ function App() {
                             <button type="submit" disabled={isLoading}>
                                 Send
                             </button>
+                            <button onClick={handleStop}>
+                                Stop
+                            </button>
                         </form>
                     </div>
 
@@ -230,6 +247,12 @@ function App() {
                                 onClick={responseData?.screenshot ? () => setCurrentView('screenshot') : handleGetScreenshot}
                             >
                                 Browser View
+                            </button>
+                            <button
+                                className={currentView === 'thinking' ? 'active' : ''}
+                                onClick={() => setCurrentView('thinking')}
+                            >
+                                Reasoning view
                             </button>
                         </div>
                         <div className="content">
@@ -255,6 +278,33 @@ function App() {
                                             <pre>No file opened</pre>
                                         </div>
                                     )}
+                                </div>
+                            ) : currentView == 'thinking' ? (
+                                <div className="thinking">
+                                    <div className="messages">
+                                        {messages.length === 0 ? (
+                                            <p className="placeholder">No thinking yet.</p>
+                                        ) : (
+                                            messages.map((msg, index) => (
+                                                <div
+                                                    key={index}
+                                                    className={`message ${
+                                                        msg.type === 'user'
+                                                            ? 'user-message'
+                                                            : msg.type === 'agent'
+                                                            ? 'agent-message'
+                                                            : 'error-message'
+                                                    }`}
+                                                >
+                                                    {msg.type === 'agent' && (
+                                                        <span className="agent-name">{msg.agentName}</span>
+                                                    )}
+                                                    <ReactMarkdown>{msg.reasoning}</ReactMarkdown>
+                                                </div>
+                                            ))
+                                        )}
+                                <div ref={messagesEndRef} />
+                        </div>
                                 </div>
                             ) : (
                                 <div className="screenshot">

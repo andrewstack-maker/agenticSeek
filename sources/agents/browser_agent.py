@@ -181,6 +181,7 @@ class BrowserAgent(Agent):
         animate_thinking("Thinking...", color="status")
         self.memory.push('user', prompt)
         answer, reasoning = await self.llm_request()
+        self.last_reasoning = reasoning
         if show_reasoning:
             pretty_print(reasoning, color="failure")
         pretty_print(answer, color="output")
@@ -349,11 +350,13 @@ class BrowserAgent(Agent):
         self.show_search_results(search_result)
         prompt = self.make_newsearch_prompt(user_prompt, search_result)
         unvisited = [None]
-        while not complete and len(unvisited) > 0:
-
+        while not complete and len(unvisited) > 0 and not self.stop:
             self.memory.clear()
             unvisited = self.select_unvisited(search_result)
             answer, reasoning = await self.llm_decide(prompt, show_reasoning = False)
+            if self.stop:
+                pretty_print(f"Requested stop.", color="failure")
+                break
             if self.last_answer == answer:
                 prompt = self.stuck_prompt(user_prompt, unvisited)
                 continue

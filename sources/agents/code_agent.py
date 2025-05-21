@@ -51,10 +51,12 @@ class CoderAgent(Agent):
         self.memory.push('user', prompt)
         clarify_trigger = "REQUEST_CLARIFICATION"
 
-        while attempt < max_attempts:
+        while attempt < max_attempts and not self.stop:
+            print("Stopped?", self.stop)
             animate_thinking("Thinking...", color="status")
             await self.wait_message(speech_module)
             answer, reasoning = await self.llm_request()
+            self.last_reasoning = reasoning
             if clarify_trigger in answer:
                 self.last_answer = answer
                 await asyncio.sleep(0)

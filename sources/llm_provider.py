@@ -32,11 +32,12 @@ class Provider:
             "deepseek": self.deepseek_fn,
             "together": self.together_fn,
             "dsk_deepseek": self.dsk_deepseek,
-            "test": self.test_fn
+            "test": self.test_fn,
+            "anthropic": self.anthropic_fn
         }
         self.logger = Logger("provider.log")
         self.api_key = None
-        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek", "together", "google"]
+        self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek", "together", "google", "anthropic"]
         if self.provider_name not in self.available_providers:
             raise ValueError(f"Unknown provider: {provider_name}")
         if self.provider_name in self.unsafe_providers and self.is_local == False:
@@ -56,6 +57,38 @@ class Provider:
             pretty_print(f"API key {api_key_var} not found in .env file. Please add it", color="warning")
             exit(1)
         return api_key
+
+    def anthropic_fn(self, history, verbose=False):
+        """
+        Use Anthropic to generate text.
+        """
+        from anthropic import Anthropic
+
+        client = Anthropic(api_key=self.api_key)
+        system_message = None
+        messages = []
+        for message in history:
+            clean_message = {'role': message['role'], 'content': message['content']}
+            if message['role'] == 'system':
+                system_message = message['content']
+            else:
+                messages.append(clean_message)
+
+        try:
+            response = client.messages.create(
+                model=self.model,
+                max_tokens=1024,
+                messages=messages,
+                system=system_message
+            )
+            if response is None:
+                raise Exception("Anthropic response is empty.")
+            thought = response.content[0].text
+            if verbose:
+                print(thought)
+            return thought
+        except Exception as e:
+            raise Exception(f"Anthropic API error: {str(e)}") from e
 
     def respond(self, history, verbose=True):
         """

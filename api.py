@@ -128,6 +128,12 @@ async def is_active():
     logger.info("Is active endpoint called")
     return {"is_active": interaction.is_active}
 
+@api.get("/stop")
+async def stop():
+    logger.info("Stop endpoint called")
+    interaction.current_agent.request_stop()
+    return JSONResponse(status_code=200, content={"status": "stopped"})
+
 @api.get("/latest_answer")
 async def get_latest_answer():
     global query_resp_history
@@ -138,6 +144,7 @@ async def get_latest_answer():
         query_resp = {
             "done": "false",
             "answer": interaction.current_agent.last_answer,
+            "reasoning": interaction.current_agent.last_reasoning,
             "agent_name": interaction.current_agent.agent_name if interaction.current_agent else "None",
             "success": interaction.current_agent.success,
             "blocks": {f'{i}': block.jsonify() for i, block in enumerate(interaction.get_last_blocks_result())} if interaction.current_agent else {},
@@ -145,6 +152,7 @@ async def get_latest_answer():
             "uid": uid
         }
         interaction.current_agent.last_answer = ""
+        interaction.current_agent.last_reasoning = ""
         query_resp_history.append(query_resp)
         return JSONResponse(status_code=200, content=query_resp)
     if query_resp_history:
@@ -158,6 +166,7 @@ async def think_wrapper(interaction, query):
         success = await interaction.think()
         if not success:
             interaction.last_answer = "Error: No answer from agent"
+            interaction.last_reasoning = "Error: No reasoning from agent"
             interaction.last_success = False
         else:
             interaction.last_success = True
@@ -166,7 +175,8 @@ async def think_wrapper(interaction, query):
         return success
     except Exception as e:
         logger.error(f"Error in think_wrapper: {str(e)}")
-        interaction.last_answer = f"Error: {str(e)}"
+        interaction.last_answer = f""
+        interaction.last_reasoning = f"Error: {str(e)}"
         interaction.last_success = False
         raise e
 
@@ -177,6 +187,7 @@ async def process_query(request: QueryRequest):
     query_resp = QueryResponse(
         done="false",
         answer="",
+        reasoning="",
         agent_name="Unknown",
         success="false",
         blocks={},
@@ -194,6 +205,7 @@ async def process_query(request: QueryRequest):
 
         if not success:
             query_resp.answer = interaction.last_answer
+            query_resp.reasoning = interaction.last_reasoning
             return JSONResponse(status_code=400, content=query_resp.jsonify())
 
         if interaction.current_agent:
@@ -208,6 +220,7 @@ async def process_query(request: QueryRequest):
         logger.info(f"Blocks: {blocks_json}")
         query_resp.done = "true"
         query_resp.answer = interaction.last_answer
+        query_resp.reasoning = interaction.last_reasoning
         query_resp.agent_name = interaction.current_agent.agent_name
         query_resp.success = str(interaction.last_success)
         query_resp.blocks = blocks_json

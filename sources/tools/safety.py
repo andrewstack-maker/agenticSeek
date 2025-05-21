@@ -66,6 +66,15 @@ unsafe_commands_windows = [
     "bootcfg"
 ]
 
+def is_any_unsafe(cmds):
+    """
+    check if any bash command is unsafe.
+    """
+    for cmd in cmds:
+        if is_unsafe(cmd):
+            return True
+    return False
+
 def is_unsafe(cmd):
     """
     check if a bash command is unsafe.

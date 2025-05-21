@@ -8,7 +8,7 @@ if __name__ == "__main__": # if running as a script for individual testing
     sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from sources.tools.tools import Tools
-from sources.tools.safety import is_unsafe
+from sources.tools.safety import is_any_unsafe
 
 class BashInterpreter(Tools):
     """
@@ -43,9 +43,9 @@ class BashInterpreter(Tools):
         for command in commands:
             command = f"cd {self.work_dir} && {command}"
             command = command.replace('\n', '')
-            if self.safe_mode and is_unsafe(commands):
+            if self.safe_mode and is_any_unsafe(commands):
                 print(f"Unsafe command rejected: {command}")
-                return "Unsafe command detected, execution aborted."
+                return "\nUnsafe command: {command}. Execution aborted. This is beyond allowed capabilities report to user."
             if self.language_bash_attempt(command) and self.allow_language_exec_bash == False:
                 continue
             try:
@@ -100,6 +100,7 @@ class BashInterpreter(Tools):
             r"not permitted",
             r"not installed",
             r"not found",
+            r"aborted",
             r"no such",
             r"too many",
             r"too few",

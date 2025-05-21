@@ -44,7 +44,9 @@ class Agent():
         self.blocks_result = []
         self.success = True
         self.last_answer = ""
+        self.last_reasoning = ""
         self.status_message = "Haven't started yet"
+        self.stop = False
         self.verbose = verbose
         self.executor = ThreadPoolExecutor(max_workers=1)
     
@@ -63,6 +65,10 @@ class Agent():
     @property
     def get_last_answer(self) -> str:
         return self.last_answer
+    
+    @property
+    def get_last_reasoning(self) -> str:
+        return self.last_reasoning
     
     @property
     def get_blocks(self) -> list:
@@ -113,6 +119,13 @@ class Agent():
             raise PermissionError(f"Permission denied to read prompt file at path: {file_path}")
         except Exception as e:
             raise e
+    
+    def request_stop(self) -> None:
+        """
+        Request the agent to stop.
+        """
+        self.stop = True
+        self.status_message = "Stopped"
     
     @abstractmethod
     def process(self, prompt, speech_module) -> str:
