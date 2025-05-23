@@ -542,14 +542,6 @@ This started as Side-Project we did out of interest about AI agents. What’s sp
 We draw inspiration from Jarvis and Friday (Iron man movies) to make it "cool" but for functionnality we take more inspiration from Manus, because that's what people want in the first place: a local manus alternative.
 Unlike Manus, AgenticSeek prioritizes independence from external systems, giving you more control, privacy and avoid api cost.
 
-## Contribute
-
-We’re looking for developers to improve AgenticSeek! Check out open issues or discussion.
-
-[Contribution guide](./docs/CONTRIBUTING.md)
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Fosowl/agenticSeek&type=Date)](https://www.star-history.com/#Fosowl/agenticSeek&Date)
-
 ## Maintainers:
 
  > [Fosowl](https://github.com/Fosowl) | Paris Time | (Sometime busy)
