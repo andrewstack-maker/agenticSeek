@@ -8,7 +8,7 @@
 
 *A **100% local alternative to Manus AI**, this voice-enabled AI assistant autonomously browses the web, writes code, and plans tasks while keeping all data on your device. Tailored for local reasoning models, it runs entirely on your hardware, ensuring complete privacy and zero cloud dependency.*
 
-[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![GitHub stars](https://img.shields.io/github/stars/Fosowl/agenticSeek?style=social)](https://github.com/Fosowl/agenticSeek/stargazers)
+[![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://andrewstack-maker.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green)
 
 ### Why AgenticSeek ?
 
@@ -45,7 +45,7 @@ For issues related to chrome driver, see the **Chromedriver** section.
 ### 1️⃣ **Clone the repository and setup**
 
 ```sh
-git clone https://github.com/Fosowl/agenticSeek.git
+git clone https://github.com/andrewstack-maker/agenticSeek.git
 cd agenticSeek
 mv .env.example .env
 ```
@@ -318,7 +318,7 @@ Clone the repository and enter the `server/`folder.
 
 
 ```sh
-git clone --depth 1 https://github.com/Fosowl/agenticSeek.git
+git clone --depth 1 https://github.com/andrewstack-maker/agenticSeek.git
 cd agenticSeek/llm_server/
 ```
 
