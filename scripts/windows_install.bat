@@ -14,4 +14,4 @@ echo Also, download and install chromedriver manually from: https://sites.google
 echo Place chromedriver in a directory included in your PATH.
 
 echo Installation partially complete for Windows. Follow manual steps above.
-pause
+pause 
