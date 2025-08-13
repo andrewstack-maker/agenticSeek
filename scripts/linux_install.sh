@@ -24,7 +24,7 @@ sudo apt-get install -y \
     python3-pip \
     python3-wheel \
     build-essential \
-    alsa-utils \
+    alsa-utils \ 
     portaudio19-dev \
     python3-pyaudio \
     libgtk-3-dev \
