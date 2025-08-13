@@ -6,7 +6,7 @@ from sources.tools.searxSearch import searxSearch
 from dotenv import load_dotenv
 import requests  # Import the requests module
 
-load_dotenv()
+load_dotenv() 
 
 class TestSearxSearch(unittest.TestCase):
 
