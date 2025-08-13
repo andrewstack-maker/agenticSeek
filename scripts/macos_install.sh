@@ -10,7 +10,7 @@ if ! command -v python3.10 &> /dev/null; then
     exit 1
 fi
 
-# Check if pip3.10 is available
+# Check if pip3.10 is available 
 if ! python3.10 -m pip --version &> /dev/null; then
     echo "Error: pip for Python 3.10 is not installed. Installing python3.10-pip..."
     sudo apt-get install -y python3.10-pip || { echo "Failed to install python3.10-pip"; exit 1; }
