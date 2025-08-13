@@ -28,7 +28,7 @@ brew update
 brew install wget
 # Install chromedriver using Homebrew
 brew install --cask chromedriver
-# Install portaudio for pyAudio using Homebrew
+# Install portaudio for pyAudio using Homebrew 
 brew install portaudio
 
 # Upgrade pip for Python 3.10
