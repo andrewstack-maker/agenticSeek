@@ -25,7 +25,7 @@ class TestMemory(unittest.TestCase):
                     os.rmdir(os.path.join(root, name))
             os.rmdir("conversations")
 
-    def test_initialization(self):
+    def test_initialization(self): 
         self.assertEqual(len(self.memory.memory), 1)
         self.assertEqual(self.memory.memory[0]['role'], 'system')
         self.assertEqual(self.memory.memory[0]['content'], self.system_prompt)
