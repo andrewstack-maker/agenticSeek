@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting installation for Linux..."
+echo "Starting installation for Linux..." 
 
 set -e
 
