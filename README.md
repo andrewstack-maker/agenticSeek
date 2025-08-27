@@ -1,6 +1,6 @@
 # AgenticSeek: Private, Local Manus Alternative.
 
-<a href="#" style="display: inline-block; background-color: #238636; color: white; padding: 3px 8px; font-size: 15px; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; text-decoration: none; border-radius: 4px; border: 1px solid rgba(240, 246, 252, 0.1); margin: 0 5px; white-space: nowrap;">CA: Coming Soon!</a>
+<a href="#" style="display: inline-block; background-color: #238636; color: white; padding: 3px 8px; font-size: 17px; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; text-decoration: none; border-radius: 4px; border: 1px solid rgba(240, 246, 252, 0.1); margin: 0 5px; white-space: nowrap;">CA: Coming Soon!</a>
 
 
 <p align="center">
