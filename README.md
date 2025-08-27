@@ -10,6 +10,8 @@
 
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://andrewstack-maker.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green)
 
+<a href="#" style="display: inline-block; background-color: #238636; color: white; padding: 3px 8px; font-size: 12px; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; text-decoration: none; border-radius: 4px; border: 1px solid rgba(240, 246, 252, 0.1); margin: 0 5px; white-space: nowrap;">CA: Coming Soon!</a>
+
 ### Why AgenticSeek ?
 
 * 🔒 Fully Local & Private - Everything runs on your machine — no cloud, no data sharing. Your files, conversations, and searches stay private.
